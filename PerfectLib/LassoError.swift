@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import struct ICU.UErrorCode
 
 /// Some but not all of the exception types which may be thrown by the system
 public enum LassoError : ErrorType {
@@ -15,7 +14,6 @@ public enum LassoError : ErrorType {
 	case FileError(Int32, String)
 	case SystemError(Int32, String)
 	case APIError(String)
-	case ICUError(UErrorCode, String)
 }
 
 @noreturn

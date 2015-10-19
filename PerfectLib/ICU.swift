@@ -61,7 +61,7 @@ public class ICU {
 		
 		print("ICUError: \(code.rawValue) \(msg)")
 		
-		throw LassoError.ICUError(code, msg)
+		throw LassoError.SystemError(code.rawValue, msg)
 	}
 	
 	/// Parse a date string according to the indicated format string and return an ICU date.

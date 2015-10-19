@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import ICU
 
 let json_open_object = UnicodeScalar(UInt32(123))
 let json_open_array = UnicodeScalar(UInt32(91))
@@ -301,9 +300,9 @@ public class JSONDecode {
 			case json_quote_double:
 				try handlePop(try readString())
 			default:
-				if ICU.isWhiteSpace(c) {
+				if c.isWhiteSpace() {
 					// nothing
-				} else if ICU.isDigit(c) || c == "-" || c == "+" {
+				} else if c.isDigit() || c == "-" || c == "+" {
 					try handlePop(try readNumber(c))
 				} else if c == "t" || c == "T" {
 					try handlePop(try readTrue())
@@ -406,7 +405,7 @@ public class JSONDecode {
 						guard let hexC = next else {
 							throw JSONError.SyntaxError("Malformed hex sequence")
 						}
-						guard ICU.isHexDigit(hexC) else {
+						guard hexC.isHexDigit() else {
 							throw JSONError.SyntaxError("Malformed hex sequence")
 						}
 						hexStr.append(hexC)
@@ -442,7 +441,7 @@ public class JSONDecode {
 		var next = self.next()
 		var last = firstChar
 		while let c = next {
-			if ICU.isDigit(c) {
+			if c.isDigit() {
 				s.append(c)
 			} else if c == "." && !needPeriod {
 				break
@@ -462,7 +461,7 @@ public class JSONDecode {
 					pushBack = next!
 				}
 				
-			} else if ICU.isDigit(last) {
+			} else if last.isDigit() {
 				pushBack = c
 				if needPeriod && needExp {
 					return Int(s)!
@@ -492,7 +491,7 @@ public class JSONDecode {
 			throw JSONError.SyntaxError("Malformed boolean literal")
 		}
 		next = self.next()
-		guard next != nil && !ICU.isAlphaNum(next!) else {
+		guard next != nil && !next!.isAlphaNum() else {
 			throw JSONError.SyntaxError("Malformed boolean literal")
 		}
 		pushBack = next!
@@ -517,7 +516,7 @@ public class JSONDecode {
 			throw JSONError.SyntaxError("Malformed boolean literal")
 		}
 		next = self.next()
-		guard next != nil && !ICU.isAlphaNum(next!) else {
+		guard next != nil && !next!.isAlphaNum() else {
 			throw JSONError.SyntaxError("Malformed boolean literal")
 		}
 		pushBack = next!
@@ -538,7 +537,7 @@ public class JSONDecode {
 			throw JSONError.SyntaxError("Malformed null literal")
 		}
 		next = self.next()
-		guard next != nil && !ICU.isAlphaNum(next!) else {
+		guard next != nil && !next!.isAlphaNum() else {
 			throw JSONError.SyntaxError("Malformed null literal")
 		}
 		pushBack = next!
