@@ -1,0 +1,7 @@
+module ICU [system] {
+    header "unicode/uchar.h"
+    header "unicode/ucal.h"
+    header "unicode/udat.h"
+	// probably want some others. add them here as needed
+    export *
+}

@@ -1,0 +1,5 @@
+module OpenSSL [system] {
+    header "openssl/ssl.h"
+    header "openssl/err.h"
+    export *
+}

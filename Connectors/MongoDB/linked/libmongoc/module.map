@@ -1,0 +1,5 @@
+module libmongoc [system] {
+    header "include/libbson-1.0/bson.h"
+    header "include/libmongoc-1.0/mongoc.h"
+    export *
+}
