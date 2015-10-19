@@ -55,6 +55,20 @@
 		F8F28A2F1BD554A300367249 /* libicudata.55.1.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F28A1B1BD5445B00367249 /* libicudata.55.1.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		F8F28A301BD554A700367249 /* libicui18n.55.1.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F28A1C1BD5445B00367249 /* libicui18n.55.1.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		F8F28A311BD554AB00367249 /* libicuuc.55.1.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F28A1D1BD5445B00367249 /* libicuuc.55.1.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		F8F28A3B1BD5633100367249 /* PerfectLib.h in Headers */ = {isa = PBXBuildFile; fileRef = F8F28A3A1BD5633100367249 /* PerfectLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F8F28A401BD5636F00367249 /* Closeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DB1BD5427000367249 /* Closeable.swift */; settings = {ASSET_TAGS = (); }; };
+		F8F28A411BD5637D00367249 /* LassoObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E51BD5427000367249 /* LassoObject.swift */; settings = {ASSET_TAGS = (); }; };
+		F8F28A421BD5638500367249 /* Bytes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DA1BD5427000367249 /* Bytes.swift */; settings = {ASSET_TAGS = (); }; };
+		F8F28A431BD5638B00367249 /* cURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DC1BD5427000367249 /* cURL.swift */; settings = {ASSET_TAGS = (); }; };
+		F8F28A441BD5639400367249 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E31BD5427000367249 /* JSON.swift */; settings = {ASSET_TAGS = (); }; };
+		F8F28A451BD563AC00367249 /* AJAXObjectDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289D91BD5427000367249 /* AJAXObjectDriver.swift */; settings = {ASSET_TAGS = (); }; };
+		F8F28A461BD563B300367249 /* curl_support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8F28A2A1BD5545000367249 /* curl_support.cpp */; settings = {ASSET_TAGS = (); }; };
+		F8F28A471BD563BB00367249 /* LassoError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E41BD5427000367249 /* LassoError.swift */; settings = {ASSET_TAGS = (); }; };
+		F8F28A491BD563E500367249 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A481BD563E500367249 /* libz.tbd */; };
+		F8F28A4B1BD563F600367249 /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A4A1BD563F600367249 /* libcurl.a */; };
+		F8F28A4C1BD566C000367249 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289F51BD5427000367249 /* Utilities.swift */; settings = {ASSET_TAGS = (); }; };
+		F8F28A4E1BD5720400367249 /* Utilities-Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F28A4D1BD5720400367249 /* Utilities-Server.swift */; settings = {ASSET_TAGS = (); }; };
+		F8F28A501BD5733D00367249 /* Utilities-Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F28A4F1BD5733D00367249 /* Utilities-Client.swift */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -132,6 +146,13 @@
 		F8F28A241BD5447E00367249 /* libssl-x86_64.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libssl-x86_64.a"; path = "linked/OpenSSL/osx/libssl-x86_64.a"; sourceTree = "<group>"; };
 		F8F28A271BD544A100367249 /* sqlite.3.8.10.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = sqlite.3.8.10.2.dylib; path = linked/SQLite3/osx/sqlite.3.8.10.2.dylib; sourceTree = "<group>"; };
 		F8F28A2A1BD5545000367249 /* curl_support.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = curl_support.cpp; path = linked/cURL/curl_support.cpp; sourceTree = "<group>"; };
+		F8F28A381BD5633100367249 /* PerfectLib.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PerfectLib.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F8F28A3A1BD5633100367249 /* PerfectLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PerfectLib.h; path = ../iOS/PerfectLib.h; sourceTree = "<group>"; };
+		F8F28A3C1BD5633100367249 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../iOS/Info.plist; sourceTree = "<group>"; };
+		F8F28A481BD563E500367249 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.0.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
+		F8F28A4A1BD563F600367249 /* libcurl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcurl.a; path = linked/cURL/ios/libcurl.a; sourceTree = "<group>"; };
+		F8F28A4D1BD5720400367249 /* Utilities-Server.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Utilities-Server.swift"; sourceTree = "<group>"; };
+		F8F28A4F1BD5733D00367249 /* Utilities-Client.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Utilities-Client.swift"; path = "iOS/Utilities-Client.swift"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -158,6 +179,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F8F28A341BD5633100367249 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F8F28A491BD563E500367249 /* libz.tbd in Frameworks */,
+				F8F28A4B1BD563F600367249 /* libcurl.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -166,6 +196,7 @@
 			children = (
 				F8F289D81BD53EC800367249 /* Source */,
 				F8F289C01BD53CF000367249 /* PerfectLibOSX */,
+				F8F28A391BD5633100367249 /* PerfectLibiOS */,
 				F8F289CC1BD53CF000367249 /* PerfectLibOSXTests */,
 				F8F28A291BD544B700367249 /* Linked */,
 				F8F289BF1BD53CF000367249 /* Products */,
@@ -177,6 +208,7 @@
 			children = (
 				F8F289BE1BD53CF000367249 /* PerfectLib.framework */,
 				F8F289C81BD53CF000367249 /* PerfectLibOSXTests.xctest */,
+				F8F28A381BD5633100367249 /* PerfectLib.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -237,6 +269,7 @@
 				F8F289F81BD5427000367249 /* WebResponse.swift */,
 				F8F289F41BD5427000367249 /* util.c */,
 				F8F28A2A1BD5545000367249 /* curl_support.cpp */,
+				F8F28A4D1BD5720400367249 /* Utilities-Server.swift */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -244,6 +277,8 @@
 		F8F28A291BD544B700367249 /* Linked */ = {
 			isa = PBXGroup;
 			children = (
+				F8F28A4A1BD563F600367249 /* libcurl.a */,
+				F8F28A481BD563E500367249 /* libz.tbd */,
 				F8F28A271BD544A100367249 /* sqlite.3.8.10.2.dylib */,
 				F8F28A231BD5447E00367249 /* libcrypto-x86_64.a */,
 				F8F28A241BD5447E00367249 /* libssl-x86_64.a */,
@@ -256,6 +291,17 @@
 			name = Linked;
 			sourceTree = "<group>";
 		};
+		F8F28A391BD5633100367249 /* PerfectLibiOS */ = {
+			isa = PBXGroup;
+			children = (
+				F8F28A3A1BD5633100367249 /* PerfectLib.h */,
+				F8F28A3C1BD5633100367249 /* Info.plist */,
+				F8F28A4F1BD5733D00367249 /* Utilities-Client.swift */,
+			);
+			name = PerfectLibiOS;
+			path = PerfectLib;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -263,6 +309,14 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8F28A351BD5633100367249 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F8F28A3B1BD5633100367249 /* PerfectLib.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -306,6 +360,24 @@
 			productReference = F8F289C81BD53CF000367249 /* PerfectLibOSXTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		F8F28A371BD5633100367249 /* PerfectLibiOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F8F28A3D1BD5633100367249 /* Build configuration list for PBXNativeTarget "PerfectLibiOS" */;
+			buildPhases = (
+				F8F28A331BD5633100367249 /* Sources */,
+				F8F28A341BD5633100367249 /* Frameworks */,
+				F8F28A351BD5633100367249 /* Headers */,
+				F8F28A361BD5633100367249 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PerfectLibiOS;
+			productName = PerfectLib;
+			productReference = F8F28A381BD5633100367249 /* PerfectLib.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -320,6 +392,9 @@
 						CreatedOnToolsVersion = 7.0;
 					};
 					F8F289C71BD53CF000367249 = {
+						CreatedOnToolsVersion = 7.0;
+					};
+					F8F28A371BD5633100367249 = {
 						CreatedOnToolsVersion = 7.0;
 					};
 				};
@@ -338,6 +413,7 @@
 			targets = (
 				F8F289BD1BD53CF000367249 /* PerfectLibOSX */,
 				F8F289C71BD53CF000367249 /* PerfectLibOSXTests */,
+				F8F28A371BD5633100367249 /* PerfectLibiOS */,
 			);
 		};
 /* End PBXProject section */
@@ -351,6 +427,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F8F289C61BD53CF000367249 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8F28A361BD5633100367249 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -391,6 +474,7 @@
 				F8F289FD1BD5427000367249 /* Dir.swift in Sources */,
 				F8F28A041BD5427000367249 /* LassoError.swift in Sources */,
 				F8F28A181BD5427000367249 /* WebResponse.swift in Sources */,
+				F8F28A4E1BD5720400367249 /* Utilities-Server.swift in Sources */,
 				F8F289FE1BD5427000367249 /* DynamicLoader.swift in Sources */,
 				F8F28A131BD5427000367249 /* SysProcess.swift in Sources */,
 				F8F28A001BD5427000367249 /* FastCGIServer.swift in Sources */,
@@ -405,6 +489,23 @@
 			buildActionMask = 2147483647;
 			files = (
 				F8F289CE1BD53CF000367249 /* PerfectLibTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8F28A331BD5633100367249 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F8F28A401BD5636F00367249 /* Closeable.swift in Sources */,
+				F8F28A441BD5639400367249 /* JSON.swift in Sources */,
+				F8F28A451BD563AC00367249 /* AJAXObjectDriver.swift in Sources */,
+				F8F28A461BD563B300367249 /* curl_support.cpp in Sources */,
+				F8F28A421BD5638500367249 /* Bytes.swift in Sources */,
+				F8F28A411BD5637D00367249 /* LassoObject.swift in Sources */,
+				F8F28A4C1BD566C000367249 /* Utilities.swift in Sources */,
+				F8F28A431BD5638B00367249 /* cURL.swift in Sources */,
+				F8F28A471BD563BB00367249 /* LassoError.swift in Sources */,
+				F8F28A501BD5733D00367249 /* Utilities-Client.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -588,6 +689,61 @@
 			};
 			name = Release;
 		};
+		F8F28A3E1BD5633100367249 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = "$(SRCROOT)/iOS/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/linked/cURL/ios",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = ca.perfectlysoft.PerfectLib;
+				PRODUCT_NAME = PerfectLib;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_INCLUDE_PATHS = "${SRCROOT}/linked/cURL";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F8F28A3F1BD5633100367249 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = "$(SRCROOT)/iOS/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/linked/cURL/ios",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = ca.perfectlysoft.PerfectLib;
+				PRODUCT_NAME = PerfectLib;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_INCLUDE_PATHS = "${SRCROOT}/linked/cURL";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -617,6 +773,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		F8F28A3D1BD5633100367249 /* Build configuration list for PBXNativeTarget "PerfectLibiOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F8F28A3E1BD5633100367249 /* Debug */,
+				F8F28A3F1BD5633100367249 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
