@@ -6,6 +6,7 @@
 //
 //
 
+import Foundation
 import OpenSSL
 
 public class NetTCPSSL : NetTCP {
