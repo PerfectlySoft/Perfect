@@ -8,6 +8,9 @@
       location = "group:Connectors/mod_perfect/mod_perfect.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:Connectors/PostgreSQL/../MySQL/MySQL.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:Connectors/PostgreSQL/PostgreSQL.xcodeproj">
    </FileRef>
 </Workspace>
