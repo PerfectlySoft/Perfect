@@ -6,6 +6,7 @@
 //  Copyright © 2015 TreeFrog. All rights reserved.
 //
 
+import Foundation
 import PerfectLib
 
 public class PGLassoObject : LassoObject {
