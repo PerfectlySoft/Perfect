@@ -18,7 +18,7 @@ public enum SQLiteError : ErrorType {
 public class SQLite : Closeable {
 
 	let path: String
-	let sqlite3: COpaquePointer
+	var sqlite3: COpaquePointer
 	
 	public init(_ path: String) throws {
 		self.path = path

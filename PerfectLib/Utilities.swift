@@ -41,20 +41,20 @@ internal func split_thread(closure:()->()) {
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), closure)
 }
 
-struct GenerateFromPointer<T> : GeneratorType {
+public struct GenerateFromPointer<T> : GeneratorType {
 	
-	typealias Element = T
+	public typealias Element = T
 	
 	var count = 0
 	var pos = 0
 	var from: UnsafeMutablePointer<T>
 	
-	init(from: UnsafeMutablePointer<T>, count: Int) {
+	public init(from: UnsafeMutablePointer<T>, count: Int) {
 		self.from = from
 		self.count = count
 	}
 	
-	mutating func next() -> Element? {
+	mutating public func next() -> Element? {
 		guard count > 0 else {
 			return nil
 		}
