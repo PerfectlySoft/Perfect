@@ -1,5 +1,5 @@
 //
-//  PGLassoObject.swift
+//  PGPerfectObject.swift
 //  PostgreSQL
 //
 //  Created by Kyle Jessup on 2015-08-04.
@@ -9,11 +9,11 @@
 import Foundation
 import PerfectLib
 
-public class PGLassoObject : LassoObject {
+public class PGPerfectObject : PerfectObject {
 
 }
 
-public class PGLassoObjectDriver: LassoObjectDriver {
+public class PGPerfectObjectDriver: PerfectObjectDriver {
 	
 	var _p: PGConnection
 	
@@ -50,7 +50,7 @@ public class PGLassoObjectDriver: LassoObjectDriver {
 		return r
 	}
 	
-	public func delete(type: LassoObject) -> (Int, String) {
+	public func delete(type: PerfectObject) -> (Int, String) {
 		let r = exec("DELETE FROM \(type.tableName()) WHERE \(type.primaryKeyName()) = $1::uuid", params: [String.fromUUID(type.objectId())])
 		guard r.status() == .CommandOK else {
 			return (r.statusInt(), r.errorMessage())
@@ -58,7 +58,7 @@ public class PGLassoObjectDriver: LassoObjectDriver {
 		return (0, "")
 	}
 	
-	public func load<T : LassoObject>(type: T, withId: uuid_t) -> T {
+	public func load<T : PerfectObject>(type: T, withId: uuid_t) -> T {
 		let r = exec("SELECT * FROM \(type.tableName()) WHERE \(type.primaryKeyName()) = $1::uuid", params: [String.fromUUID(withId)])
 		if r.status() == .TuplesOK && r.numTuples() == 1 {
 			var dict = [String:String]()
@@ -71,7 +71,7 @@ public class PGLassoObjectDriver: LassoObjectDriver {
 		return type
 	}
 	
-	public func load<T : LassoObject>(type: T, withUniqueField: (String,String)) -> T {
+	public func load<T : PerfectObject>(type: T, withUniqueField: (String,String)) -> T {
 		let r = exec("SELECT * FROM \(type.tableName()) WHERE \(withUniqueField.0) = $1", params: [withUniqueField.1])
 		defer { r.close() }
 		if r.status() == .TuplesOK && r.numTuples() > 0 {
@@ -85,7 +85,7 @@ public class PGLassoObjectDriver: LassoObjectDriver {
 		return type
 	}
 	
-	func commitOneChange(type: LassoObject) -> (Int, String) {
+	func commitOneChange(type: PerfectObject) -> (Int, String) {
 		let dict = type.unloadDirty()
 		guard dict.count > 0 else {
 			return (0, "")
@@ -110,28 +110,28 @@ public class PGLassoObjectDriver: LassoObjectDriver {
 		return (0, "")
 	}
 	
-	public func commitChanges(type: LassoObject) -> (Int, String) {
+	public func commitChanges(type: PerfectObject) -> (Int, String) {
 		exec("BEGIN")
 		let ret = self.commitOneChange(type)
 		exec("COMMIT")
 		return ret
 	}
 	
-	public func commitChanges(types: [LassoObject]) -> [(Int, String)] {
+	public func commitChanges(types: [PerfectObject]) -> [(Int, String)] {
 		exec("BEGIN")
 		let ret = types.map { self.commitOneChange($0) }
 		exec("COMMIT")
 		return ret
 	}
 	
-	private func makeOrderByClause(o: LassoObject) -> String {
+	private func makeOrderByClause(o: PerfectObject) -> String {
 		if let orderBy = o.orderBy() {
 			return " ORDER BY \"" + orderBy + "\"" + (o.orderDesc() ? " DESC" : "")
 		}
 		return ""
 	}
 	
-	public func joinTable<T : LassoObject>(type: LassoObject, name: String) -> [T] {
+	public func joinTable<T : PerfectObject>(type: PerfectObject, name: String) -> [T] {
 		
 		let typeTableName = type.tableName()
 		var keyField = "id_"
@@ -166,7 +166,7 @@ public class PGLassoObjectDriver: LassoObjectDriver {
 	// For example, a user may be created with a password but the password is in another table
 	// Only use fields which exist for this object's table, but pass in all the fields
 	// to the created() method
-	public func create<T : LassoObject>(withFields: [(String,String)]) -> T {
+	public func create<T : PerfectObject>(withFields: [(String,String)]) -> T {
 		let type = T(driver: self)
 		
 		var fieldsSet = Set<String>()
@@ -203,12 +203,12 @@ public class PGLassoObjectDriver: LassoObjectDriver {
 			self.load(type, withId: uuid.asUUID())
 			type.created(withFields)
 		} else {
-			print("PGLassoObjectDriver error: " + r0.errorMessage())
+			print("PGPerfectObjectDriver error: " + r0.errorMessage())
 		}
 		return type
 	}
 	
-	public func list<T : LassoObject>() -> [T] {
+	public func list<T : PerfectObject>() -> [T] {
 		var ret = [T]()
 		let type = T(driver: self)
 		let fieldList = type.fieldList()
@@ -231,7 +231,7 @@ public class PGLassoObjectDriver: LassoObjectDriver {
 		return ret
 	}
 	
-	public func list<T : LassoObject>(withCriterion: (String,String)) -> [T] {
+	public func list<T : PerfectObject>(withCriterion: (String,String)) -> [T] {
 		var ret = [T]()
 		let type = T(driver: self)
 		let fieldList = type.fieldList()

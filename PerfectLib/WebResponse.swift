@@ -91,10 +91,10 @@ public class WebResponse {
 	}
 	
 	/// Provides access to the indicated `SessionManager` object using the given `SessionConfiguration` data.
-	/// - throws: If the session already exists, `LassoError.APIError` is thrown.
+	/// - throws: If the session already exists, `PerfectError.APIError` is thrown.
 	public func getSession(named: String, withConfiguration: SessionConfiguration) throws -> SessionManager {
 		guard self.sessions[named] == nil else {
-			throw LassoError.APIError("WebResponse getSession withConfiguration: session was already initialized")
+			throw PerfectError.APIError("WebResponse getSession withConfiguration: session was already initialized")
 		}
 		let s = SessionManager(SessionConfiguration(named, id: getSessionKey(SESSION_NAME_PREFIX + named), copyFrom: withConfiguration))
 		self.sessions[named] = s
@@ -160,7 +160,7 @@ public class WebResponse {
 		
 			try include(request.pathInfo())
 			
-		} catch LassoError.FileError(let code, let msg) {
+		} catch PerfectError.FileError(let code, let msg) {
 			
 			print("File exception \(code) \(msg)")
 			self.setStatus(code == 404 ? Int(code) : 500, message: msg)
@@ -202,7 +202,7 @@ public class WebResponse {
 	func include(path: String, local: Bool = false) throws {
 		
 		if !path.hasSuffix("."+MOUSTACHE_EXTENSION) {
-			throw LassoError.FileError(404, "The file \(path) was not a moustache template file")
+			throw PerfectError.FileError(404, "The file \(path) was not a moustache template file")
 		}
 		
 		var fullPath = path
@@ -214,7 +214,7 @@ public class WebResponse {
 		do {
 			let file = File(fullPath)
 			guard file.exists() else {
-				throw LassoError.FileError(404, "Not Found")
+				throw PerfectError.FileError(404, "Not Found")
 			}
 			
 			try file.openRead()

@@ -1,5 +1,5 @@
 //
-//  Lasso.swift
+//  Perfect.swift
 //  PerfectLib
 //
 //  Created by Kyle Jessup on 7/5/15.
@@ -9,13 +9,13 @@
 //import Foundation
 
 let SQLITE_DBS = "SQliteDBs/"
-let LASSO_LIBRARIES = "LassoLibraries/"
+let Perfect_LIBRARIES = "PerfectLibraries/"
 
 /// Provides access to various system level features for the process.
-/// A static instance of this class is created at startup and all access to this object go through the `LassoServer.staticLassoServer` static property.
-public class LassoServer {
+/// A static instance of this class is created at startup and all access to this object go through the `PerfectServer.staticPerfectServer` static property.
+public class PerfectServer {
 	
-	public static let staticLassoServer = LassoServer()
+	public static let staticPerfectServer = PerfectServer()
 	
 	internal init() {
 		
@@ -32,7 +32,7 @@ public class LassoServer {
 		
 		// !FIX! OS X only
 		let dl = DynamicLoader()
-		let baseDir = Dir(homeDir() + LASSO_LIBRARIES)
+		let baseDir = Dir(homeDir() + Perfect_LIBRARIES)
 		do {
 			try baseDir.forEachEntry { (name: String) -> () in
 				if name.hasSuffix(".framework") || name.hasSuffix(".framework/") {

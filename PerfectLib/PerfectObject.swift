@@ -1,5 +1,5 @@
 //
-//  LassoObject.swift
+//  PerfectObject.swift
 //  PerfectLib
 //
 //  Created by Kyle Jessup on 2015-08-04.
@@ -53,30 +53,30 @@ extension HandlerAction {
 	}
 }
 
-public protocol LassoObjectDriver : Closeable {
-	func load<T : LassoObject>(type: T, withId: uuid_t) -> T
-	func load<T : LassoObject>(type: T, withUniqueField: (String,String)) -> T
-	func delete(type: LassoObject) -> (Int, String)
-	func commitChanges(type: LassoObject) -> (Int, String)
-	func commitChanges(types: [LassoObject]) -> [(Int, String)]
-	func create<T : LassoObject>(withFields: [(String,String)]) -> T
-	func joinTable<T : LassoObject>(type: LassoObject, name: String) -> [T]
-	func list<T : LassoObject>() -> [T]
-	func list<T : LassoObject>(withCriterion: (String,String)) -> [T]
+public protocol PerfectObjectDriver : Closeable {
+	func load<T : PerfectObject>(type: T, withId: uuid_t) -> T
+	func load<T : PerfectObject>(type: T, withUniqueField: (String,String)) -> T
+	func delete(type: PerfectObject) -> (Int, String)
+	func commitChanges(type: PerfectObject) -> (Int, String)
+	func commitChanges(types: [PerfectObject]) -> [(Int, String)]
+	func create<T : PerfectObject>(withFields: [(String,String)]) -> T
+	func joinTable<T : PerfectObject>(type: PerfectObject, name: String) -> [T]
+	func list<T : PerfectObject>() -> [T]
+	func list<T : PerfectObject>(withCriterion: (String,String)) -> [T]
 }
 
-extension LassoObjectDriver {
+extension PerfectObjectDriver {
 	public func generateUUID() -> uuid_t {		
 		return random_uuid()
 	}
 }
 
-public class LassoObject {
+public class PerfectObject {
 	
 	// Caching on joined tables
-	var joinCache = [String:[LassoObject]]()
+	var joinCache = [String:[PerfectObject]]()
 	
-	let driver: LassoObjectDriver
+	let driver: PerfectObjectDriver
 	var id: uuid_t = empty_uuid()
 	var pkName = "id"
 	var simpleNameStr = ""
@@ -84,8 +84,8 @@ public class LassoObject {
 	var _orderDesc: Bool = false
 	
 	/// The driver must be passed down to any newly loaded objects.
-	/// It is assumed that the children of a LassoObject will have the same driver *instance* as the parent.
-	public required init(driver: LassoObjectDriver) {
+	/// It is assumed that the children of a PerfectObject will have the same driver *instance* as the parent.
+	public required init(driver: PerfectObjectDriver) {
 		self.driver = driver
 	}
 	
@@ -113,7 +113,7 @@ public class LassoObject {
 	}
 	
 	/// Provides access to the object driver for this instance
-	public func objectDriver() -> LassoObjectDriver {
+	public func objectDriver() -> PerfectObjectDriver {
 		return self.driver
 	}
 	
@@ -189,7 +189,7 @@ public class LassoObject {
 		return "Not overridden"
 	}
 	
-	public func joinTable<T : LassoObject>(name: String) -> [T] {
+	public func joinTable<T : PerfectObject>(name: String) -> [T] {
 		if let found = self.joinCache[name] as! [T]? {
 			return found
 		}

@@ -1,5 +1,5 @@
 //
-//  LassoError.swift
+//  PerfectError.swift
 //  PerfectLib
 //
 //  Created by Kyle Jessup on 7/5/15.
@@ -9,7 +9,7 @@
 import Foundation
 
 /// Some but not all of the exception types which may be thrown by the system
-public enum LassoError : ErrorType {
+public enum PerfectError : ErrorType {
 	case NetworkError(Int32, String)
 	case FileError(Int32, String)
 	case SystemError(Int32, String)
@@ -23,7 +23,7 @@ func ThrowFileError() throws {
 	
 	print("FileError: \(err) \(msg)")
 	
-	throw LassoError.FileError(err, msg)
+	throw PerfectError.FileError(err, msg)
 }
 
 @noreturn
@@ -33,7 +33,7 @@ func ThrowSystemError() throws {
 	
 	print("SystemError: \(err) \(msg)")
 	
-	throw LassoError.SystemError(err, msg)
+	throw PerfectError.SystemError(err, msg)
 }
 
 @noreturn
@@ -43,5 +43,5 @@ func ThrowNetworkError() throws {
 	
 	print("NetworkError: \(err) \(msg)")
 	
-	throw LassoError.NetworkError(err, msg)
+	throw PerfectError.NetworkError(err, msg)
 }

@@ -26,7 +26,7 @@ public class NetNamedPipe : NetTCP {
 	
 	/// Bind the socket to the address path
 	/// - parameter address: The path on the file system at which to create and bind the socket
-	/// - throws: `LassoError.NetworkError`
+	/// - throws: `PerfectError.NetworkError`
 	public func bind(address: String) throws {
 		
 		initSocket()
@@ -50,7 +50,7 @@ public class NetNamedPipe : NetTCP {
 		
 		let bRes = Foundation.bind(fd.fd, UnsafePointer<sockaddr>(addrPtr), socklen_t(addrLen))
 		if bRes == -1 {
-			throw LassoError.NetworkError(errno, String.fromCString(strerror(errno))!)
+			throw PerfectError.NetworkError(errno, String.fromCString(strerror(errno))!)
 		}
 	}
 	
@@ -58,7 +58,7 @@ public class NetNamedPipe : NetTCP {
 	/// - parameter address: The server socket file.
 	/// - parameter timeoutSeconds: The number of seconds to wait for the connection to complete. A timeout of negative one indicates that there is no timeout.
 	/// - parameter callBack: The closure which will be called when the connection completes. If the connection completes successfully then the current NetNamedPipe instance will be passed to the callback, otherwise, a nil object will be passed.
-	/// - returns: `LassoError.NetworkError`
+	/// - returns: `PerfectError.NetworkError`
 	public func connect(address: String, timeoutSeconds: Double, callBack: (NetNamedPipe?) -> ()) throws {
 		
 		initSocket()
@@ -104,7 +104,7 @@ public class NetNamedPipe : NetTCP {
 	/// Send the existing opened file descriptor over the connection to the recipient
 	/// - parameter fd: The file descriptor to send
 	/// - parameter callBack: The callback to call when the send completes. The parameter passed will be `true` if the send completed without error.
-	/// - throws: `LassoError.NetworkError`
+	/// - throws: `PerfectError.NetworkError`
 	public func sendFd(fd: Int32, callBack: (Bool) -> ()) throws {
 		let length = sizeof(Foundation.cmsghdr) + sizeof(Int32)
 		let msghdr = UnsafeMutablePointer<Foundation.msghdr>.alloc(1)
@@ -170,7 +170,7 @@ public class NetNamedPipe : NetTCP {
 	
 	/// Receive an existing opened file descriptor from the sender
 	/// - parameter callBack: The callback to call when the receive completes. The parameter passed will be the received file descriptor or INVALID_SOCKET.
-	/// - throws: `LassoError.NetworkError`
+	/// - throws: `PerfectError.NetworkError`
 	public func receiveFd(callBack: (Int32) -> ()) throws {
 		let length = sizeof(Foundation.cmsghdr) + sizeof(Int32)
 		var msghdr = Foundation.msghdr()
@@ -234,7 +234,7 @@ public class NetNamedPipe : NetTCP {
 	/// Send the existing & opened `File`'s descriptor over the connection to the recipient
 	/// - parameter file: The `File` whose descriptor to send
 	/// - parameter callBack: The callback to call when the send completes. The parameter passed will be `true` if the send completed without error.
-	/// - throws: `LassoError.NetworkError`
+	/// - throws: `PerfectError.NetworkError`
 	public func sendFile(file: File, callBack: (Bool) -> ()) throws {
 		try self.sendFd(Int32(file.fd), callBack: callBack)
 	}
@@ -242,14 +242,14 @@ public class NetNamedPipe : NetTCP {
 	/// Send the existing & opened `NetTCP`'s descriptor over the connection to the recipient
 	/// - parameter file: The `NetTCP` whose descriptor to send
 	/// - parameter callBack: The callback to call when the send completes. The parameter passed will be `true` if the send completed without error.
-	/// - throws: `LassoError.NetworkError`
+	/// - throws: `PerfectError.NetworkError`
 	public func sendFile(file: NetTCP, callBack: (Bool) -> ()) throws {
 		try self.sendFd(file.fd.fd, callBack: callBack)
 	}
 	
 	/// Receive an existing opened `File` descriptor from the sender
 	/// - parameter callBack: The callback to call when the receive completes. The parameter passed will be the received `File` object or nil.
-	/// - throws: `LassoError.NetworkError`
+	/// - throws: `PerfectError.NetworkError`
 	public func receiveFile(callBack: (File?) -> ()) throws {
 		try self.receiveFd {
 			(fd: Int32) -> () in
@@ -264,7 +264,7 @@ public class NetNamedPipe : NetTCP {
 	
 	/// Receive an existing opened `NetTCP` descriptor from the sender
 	/// - parameter callBack: The callback to call when the receive completes. The parameter passed will be the received `NetTCP` object or nil.
-	/// - throws: `LassoError.NetworkError`
+	/// - throws: `PerfectError.NetworkError`
 	public func receiveNetTCP(callBack: (NetTCP?) -> ()) throws {
 		try self.receiveFd {
 			(fd: Int32) -> () in
@@ -279,7 +279,7 @@ public class NetNamedPipe : NetTCP {
 	
 	/// Receive an existing opened `NetNamedPipe` descriptor from the sender
 	/// - parameter callBack: The callback to call when the receive completes. The parameter passed will be the received `NetNamedPipe` object or nil.
-	/// - throws: `LassoError.NetworkError`
+	/// - throws: `PerfectError.NetworkError`
 	public func receiveNetNamedPipe(callBack: (NetNamedPipe?) -> ()) throws {
 		try self.receiveFd {
 			(fd: Int32) -> () in

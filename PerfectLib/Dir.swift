@@ -34,7 +34,7 @@ public class Dir {
 	
 	/// Creates the directory using the provided permissions. All directories along the path will be created if need be.
 	/// - parameter perms: The permissions for use for the new directory and preceeding directories which need to be created. Defaults to RWX-GUO
-	/// - throws: `LassoError.FileError`
+	/// - throws: `PerfectError.FileError`
 	public func create(perms: Int = Int(S_IRWXG|S_IRWXU|S_IRWXO)) throws {
 		
 		let pth = realPath()
@@ -55,7 +55,7 @@ public class Dir {
 	}
 	
 	/// Deletes the directory. The directory must be empty in order to be successfuly deleted.
-	/// - throws: `LassoError.FileError`
+	/// - throws: `PerfectError.FileError`
 	public func delete() throws {
 		let res = Foundation.rmdir(realPath())
 		guard res != -1 else {
@@ -87,7 +87,7 @@ public class Dir {
 	
 	/// Enumerates the contents of the directory passing the name of each contained element to the provided callback.
 	/// - parameter closure: The callback which will receive each entry's name
-	/// - throws: `LassoError.FileError`
+	/// - throws: `PerfectError.FileError`
 	public func forEachEntry(closure: (name: String) -> ()) throws {
 		let dir = opendir(realPath())
 		guard dir != nil else {

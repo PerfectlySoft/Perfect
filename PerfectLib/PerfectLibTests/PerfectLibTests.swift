@@ -349,7 +349,7 @@ class PerfectLibTests: XCTestCase {
 				testFile.delete()
 			})
 			
-		} catch LassoError.NetworkError(let code, let msg) {
+		} catch PerfectError.NetworkError(let code, let msg) {
 			XCTAssert(false, "Exception: \(code) \(msg)")
 		} catch let e {
 			XCTAssert(false, "Exception: \(e)")

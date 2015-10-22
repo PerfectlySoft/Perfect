@@ -9,8 +9,8 @@
 import Foundation
 import func ICU.ucal_getNow
 
-let LASSO_SESSION_DB = "lasso_sessions"
-let SESSION_NAME_PREFIX = "_LassoSessionTracker_"
+let Perfect_SESSION_DB = "Perfect_sessions"
+let SESSION_NAME_PREFIX = "_PerfectSessionTracker_"
 
 /// This struct is used for configuring the various options available for a session
 /// - seealso `SessionManager`
@@ -103,9 +103,9 @@ public class SessionManager {
 	
 	static func initializeSessionsDatabase() throws {
 		
-		try Dir(LassoServer.staticLassoServer.homeDir() + SQLITE_DBS).create()
+		try Dir(PerfectServer.staticPerfectServer.homeDir() + SQLITE_DBS).create()
 		
-		let sqlite = try SQLite(LassoServer.staticLassoServer.homeDir() + SQLITE_DBS + LASSO_SESSION_DB)
+		let sqlite = try SQLite(PerfectServer.staticPerfectServer.homeDir() + SQLITE_DBS + Perfect_SESSION_DB)
 		sqlite.doWithClose {
 			do {
 				try sqlite.execute("CREATE TABLE IF NOT EXISTS sessions (" +
@@ -136,7 +136,7 @@ public class SessionManager {
 		let fullKey = name + ":" + key
 		// load values
 		do {
-			let sqlite = try SQLite(LassoServer.staticLassoServer.homeDir() + SQLITE_DBS + LASSO_SESSION_DB)
+			let sqlite = try SQLite(PerfectServer.staticPerfectServer.homeDir() + SQLITE_DBS + Perfect_SESSION_DB)
 			defer { sqlite.close() }
 			try sqlite.execute("BEGIN")
 			try sqlite.forEachRow("SELECT data,last_access,expire_minutes FROM sessions WHERE session_key = ?",
@@ -210,7 +210,7 @@ public class SessionManager {
 		// save values
 		let fullKey = self.configuration.name + ":" + self.configuration.id
 		let encoded = try JSONEncode().encode(self.dictionary!)
-		let sqlite = try SQLite(LassoServer.staticLassoServer.homeDir() + SQLITE_DBS + LASSO_SESSION_DB)
+		let sqlite = try SQLite(PerfectServer.staticPerfectServer.homeDir() + SQLITE_DBS + Perfect_SESSION_DB)
 		defer { sqlite.close() }
 		
 		try sqlite.execute("INSERT OR REPLACE INTO sessions (data,last_access,expire_minutes,session_key) " +
