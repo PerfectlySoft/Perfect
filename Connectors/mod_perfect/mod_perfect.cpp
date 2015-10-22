@@ -32,25 +32,11 @@
 #endif
 
 #ifdef WIN32
-#define SQLITE_IM_DB_END "SQLiteDBs\\lasso9_instance_manager"
-std::string SQLITE_IM_DB = "\\Program Files\\LassoSoft\\Lasso Instance Manager\\home\\";
 static void child_init_handler(apr_pool_t *, server_rec *)
 {
-	HKEY hKey;
-	if( RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("SOFTWARE\\LassoSoft"), 0, KEY_EXECUTE, &hKey) == ERROR_SUCCESS )
-	{
-		char value[1025];
-		unsigned long bufLen = 1024;
-		if( RegQueryValueEx( hKey, TEXT("LASSO9_HOME"), NULL, NULL, (LPBYTE)value, &bufLen ) == ERROR_SUCCESS )
-		{
-			SQLITE_IM_DB.clear();
-			SQLITE_IM_DB.append(value);
-		}
-		RegCloseKey( hKey );
-	}
-	SQLITE_IM_DB.append(SQLITE_IM_DB_END);
+
 }
-inline const char * sqlite_db_path() { return SQLITE_IM_DB.c_str(); }
+
 inline std::string & fixNamedPipe(std::string & inout)
 {
 	std::string front("\\\\.\\pipe\\"), nout;
@@ -93,8 +79,7 @@ inline const char * _formatMessage(DWORD code, std::string & outStr)
 	return "Unknown Error";
 }
 #else
-#define SQLITE_IM_DB "/var/lasso/home/SQLiteDBs/lasso9_instance_manager"
-inline const char * sqlite_db_path() { return SQLITE_IM_DB; }
+
 #endif
 
 #if (AP_SERVER_MAJORVERSION_NUMBER == 2) && (AP_SERVER_MINORVERSION_NUMBER < 4)
@@ -124,7 +109,7 @@ inline const char * sqlite_db_path() { return SQLITE_IM_DB; }
 #define X_BUFFER_SIZE (1024*128) // when reading writing X_STDIN
 enum { FCGI_X_STDIN = 50 };
 
-static int lassoswift_handler (request_rec *r);
+static int perfect_handler (request_rec *r);
 
 #if CACHE_HOSTS
 static char * cached_host = (char*)malloc(1024);
@@ -167,7 +152,7 @@ static
 	void register_9hooks(apr_pool_t *p);
 void register_9hooks(apr_pool_t *p)
 {
-	ap_hook_handler(lassoswift_handler, NULL, NULL, APR_HOOK_MIDDLE);
+	ap_hook_handler(perfect_handler, NULL, NULL, APR_HOOK_MIDDLE);
 #ifdef WIN32
 	ap_hook_child_init(child_init_handler,NULL,NULL,APR_HOOK_MIDDLE);
 #endif
@@ -404,11 +389,11 @@ static int pull_header_line(const char *& data, uint16_t & len,
 	return 1;
 }
 
-int lassoswift_handler(request_rec *r)
+int perfect_handler(request_rec *r)
 {
 //	AP_LOG_FAIL_2("%s %s", "got request", r->handler);
 
-	if (strncmp(r->handler,"lassoswift", 10) != 0 && strcmp(r->handler, "application/x-httpd-lasso") != 0)
+	if (strncmp(r->handler,"perfect", 10) != 0 && strcmp(r->handler, "application/x-httpd-perfect") != 0)
 		return DECLINED;
 #ifdef WIN32
 	std::string matchHome,
@@ -422,93 +407,10 @@ int lassoswift_handler(request_rec *r)
 	
 	std::string body;
 	header_gather fnd;
-
-//	sqlite3 * sql = NULL;
-//	sqlite3_stmt * prep = NULL;
 	
 	matchHome = ap_context_document_root(r);
-	matchSocket = "/../lasso.fastcgi.sock";
-/*
-	if (strcmp(r->handler,"lasso9-instancemanager") == 0)//strncasecmp("/lasso9/instancemanager", r->uri, 23) == 0)
-	{
-		matchHome = "/var/lasso/home/";
-		matchSocket = "lasso9.im.fastcgi.sock";
-	}
-#if CACHE_HOSTS
-	else if ((matchHome = is_cached_host(r->hostname, r->server)) != NULL)
-	{
-		matchSocket = "/lasso.fastcgi.sock";
-	}
-#endif
-	else
-	{
-		// find the lasso instance
-#ifdef WIN32
-		res = sqlite3_open_v2(sqlite_db_path(), &sql, SQLITE_OPEN_READONLY, NULL);
-#else
-		res = sqlite3_open(sqlite_db_path(), &sql);
-#endif
-		if (res != SQLITE_OK)
-		{
-			AP_LOG_FAIL_2("%s%s", "Unable to open database: ", SQLITE_IM_DB);
-			return HTTP_INTERNAL_SERVER_ERROR;
-		}
-		const char * statStr = "SELECT i.home_path AS home_path "	
-				"FROM host_criteria AS h "
-				"JOIN lasso9_instances AS i ON i.id = h.instance_id "
-				"WHERE i.enabled = 'Y' "
-				"	AND ? LIKE h.host_pattern "
-				"ORDER BY LENGTH(h.host_pattern) DESC LIMIT 0,1";
-		const char * statStrEnd = statStr;
-		res = sqlite3_prepare_v2(sql, statStr, (int)strlen(statStr), &prep, &statStrEnd);
-		if (res != SQLITE_OK)
-		{
-			sqlite3_close(sql);
-			AP_LOG_FAIL("%s", "Unable to prep sql");
-			return HTTP_INTERNAL_SERVER_ERROR;
-		}
-		res = sqlite3_bind_text(prep, 1, r->hostname, -1, SQLITE_STATIC);
-		if (res != SQLITE_OK)
-		{
-			sqlite3_finalize(prep);
-			sqlite3_close(sql);
-			AP_LOG_FAIL("%s", "Unable bind host name");
-			return HTTP_INTERNAL_SERVER_ERROR;
-		}
-		res = sqlite3_step(prep);
-		while(res == SQLITE_BUSY)
-		{
-			usleep(10000);
-			res = sqlite3_step(prep);
-		}
-		if (res != SQLITE_ROW)
-		{
-			sqlite3_finalize(prep);
-			sqlite3_close(sql);
-			AP_LOG_FAIL_2("%s%s", "No matching instance host name: ", r->hostname);
-			return HTTP_INTERNAL_SERVER_ERROR;		
-		}
-		
-		matchHome = (const char*)sqlite3_column_text(prep, 0);
-		matchSocket = "/lasso.fastcgi.sock";
-		
-//		AP_LOG_FAIL_3("%s %s| |%s", "Socket", matchHome, matchSocket);
-#ifdef WIN32
-		if (matchHome.size() == 0)
-#else
-		if (!matchHome || !matchHome[0])
-#endif
-		{
-			sqlite3_finalize(prep);
-			sqlite3_close(sql);
-			AP_LOG_FAIL_2("%s %s", "No matching instance host name:", r->hostname);
-			return HTTP_INTERNAL_SERVER_ERROR;
-		}
-#if CACHE_HOSTS
-		cache_host(r->hostname, matchHome, r->server);
-#endif
-	}	
-*/
+	matchSocket = "/../perfect.fastcgi.sock";
+
 	SOCKET sock = INVALID_SOCKET;
 #ifdef WIN32
 	DWORD error;
@@ -534,10 +436,7 @@ int lassoswift_handler(request_rec *r)
 	addr.sun_family = AF_UNIX;
 	strcpy(addr.sun_path, matchHome);
 	strcat(addr.sun_path, matchSocket);
-//	if (prep)
-//		sqlite3_finalize(prep);
-//	if (sql)
-//		sqlite3_close(sql);
+	
 	res = connect(sock, (struct sockaddr*)&addr, sizeof(addr));
 	if (res != 0)
 	{
@@ -737,14 +636,9 @@ close_denied:
 	return HTTP_INTERNAL_SERVER_ERROR;
 }
 
-//void child_init_handler(apr_pool_t *pchild, server_rec *s)
-//{
-//	ap_log_error(__FILE__, __LINE__, APLOG_NOTICE, 0, s, "%s", "init");
-//}
-
 extern "C"
 {
-	module AP_MODULE_DECLARE_DATA lassoswift_module =
+	module AP_MODULE_DECLARE_DATA perfect_module =
 	{
 		STANDARD20_MODULE_STUFF,
 		NULL,			/* dir config creator */

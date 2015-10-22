@@ -1,6 +1,6 @@
 //
 //  main.swift
-//  lassoserver
+//  PerfectServer
 //
 //  Created by Kyle Jessup on 7/6/15.
 //
@@ -9,11 +9,11 @@
 import Foundation
 import PerfectLib
 
-let ls = LassoServer.staticLassoServer
+let ls = PerfectServer.staticPerfectServer
 ls.initializeServices()
 
 let fastCgiServer = FastCGIServer()
 
-try fastCgiServer.start("./lasso.fastcgi.sock")
+try fastCgiServer.start("./perfect.fastcgi.sock")
 
 print("Good bye, World!")
