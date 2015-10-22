@@ -40,13 +40,11 @@ public class PGPerfectObjectDriver: PerfectObjectDriver {
 	
 	private func exec(statement: String, params: [String]) -> PGResult {
 		let r = self.p.exec(statement, params: params)
-//		print("Status \( r.status() ) Msg: \( self.p.errorMessage() )")
 		return r
 	}
 	
 	private func exec(statement: String) -> PGResult {
 		let r = self.p.exec(statement)
-//		print("Status \( r.status() ) Msg: \( self.p.errorMessage() )")
 		return r
 	}
 	

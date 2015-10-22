@@ -5,6 +5,9 @@
       location = "group:PerfectLib/PerfectLib.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:PerfectServer/PerfectServer.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:Connectors/mod_perfect/mod_perfect.xcodeproj">
    </FileRef>
    <FileRef
