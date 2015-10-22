@@ -365,10 +365,6 @@ public class MySQLStmt {
 	var paramBinds = UnsafeMutablePointer<MYSQL_BIND>()
 	var paramBindsOffset = 0
 	
-	public enum BindType {
-		case Date(String), DateTime(String)
-	}
-	
 	public enum FetchResult {
 		case OK, Error, NoData, DataTruncated
 	}
@@ -462,6 +458,10 @@ public class MySQLStmt {
 		return r == 0
 	}
 	
+	public func results() -> MySQLStmt.Results {
+		return Results(self)
+	}
+	
 	public func fetch() -> FetchResult {
 		let r = mysql_stmt_fetch(self.ptr)
 		switch r {
@@ -520,16 +520,6 @@ public class MySQLStmt {
 		return true
 	}
 	
-	public func bindParam(type: BindType) -> Bool {
-		switch type {
-		case .Date(let s):
-			self.bindParam(s, type: MYSQL_TYPE_DATE)
-		case .DateTime(let s):
-			self.bindParam(s, type: MYSQL_TYPE_DATETIME)
-		}
-		return true
-	}
-	
 	public func bindParam(d: Double) -> Bool {
 		self.paramBinds[self.paramBindsOffset].buffer_type = MYSQL_TYPE_DOUBLE
 		self.paramBinds[self.paramBindsOffset].buffer_length = UInt(sizeof(Double))
@@ -575,6 +565,17 @@ public class MySQLStmt {
 		return true
 	}
 	
+	public func bindParam(b: [UInt8]) -> Bool {
+		self.paramBinds[self.paramBindsOffset].buffer_type = MYSQL_TYPE_LONG_BLOB
+		self.paramBinds[self.paramBindsOffset].buffer_length = UInt(b.count)
+		self.paramBinds[self.paramBindsOffset].length = UnsafeMutablePointer<UInt>.alloc(1)
+		self.paramBinds[self.paramBindsOffset].length.initialize(UInt(b.count))
+		self.paramBinds[self.paramBindsOffset].buffer = UnsafeMutablePointer<()>(b)
+		
+		self.paramBindsOffset += 1
+		return true
+	}
+	
 	// null
 	public func bindParam() -> Bool {
 		self.paramBinds[self.paramBindsOffset].buffer_type = MYSQL_TYPE_NULL
@@ -584,11 +585,27 @@ public class MySQLStmt {
 	}
 	
 	public class Results: GeneratorType {
-		let stmt: MySQLStmt
 		public typealias Element = [Any?]
+		
+		let stmt: MySQLStmt
+		public let numFields: Int
+		
+		var meta: UnsafeMutablePointer<MYSQL_RES>
+		let binds: UnsafeMutablePointer<MYSQL_BIND>
+		
+		let lengthBuffers: UnsafeMutablePointer<UInt>
+		let isNullBuffers: UnsafeMutablePointer<my_bool>
 		
 		init(_ stmt: MySQLStmt) {
 			self.stmt = stmt
+			numFields = Int(stmt.fieldCount())
+			
+			binds = UnsafeMutablePointer<MYSQL_BIND>.alloc(numFields)
+			
+			lengthBuffers = UnsafeMutablePointer<UInt>.alloc(numFields)
+			isNullBuffers = UnsafeMutablePointer<my_bool>.alloc(numFields)
+			
+			meta = mysql_stmt_result_metadata(self.stmt.ptr)
 		}
 		
 		deinit {
@@ -596,15 +613,20 @@ public class MySQLStmt {
 		}
 		
 		public func close() {
-			
+			if meta != nil {
+				mysql_free_result(meta)
+				
+				binds.dealloc(numFields)
+				
+				lengthBuffers.dealloc(numFields)
+				isNullBuffers.dealloc(numFields)
+				
+				meta = nil
+			}
 		}
 		
-		public func numRows() -> Int {
+		public var numRows: Int {
 			return Int(self.stmt.numRows())
-		}
-		
-		public func numFields() -> Int {
-			return Int(self.stmt.fieldCount())
 		}
 		
 		public func next() -> Element? {
@@ -612,14 +634,230 @@ public class MySQLStmt {
 			return nil
 		}
 		
-		public func forEachRow(callback: (Element) -> ()) {
-			let numFields = self.numFields()
-			let binds = UnsafeMutablePointer<MYSQL_BIND>.alloc(numFields)
-			let blankBind = MYSQL_BIND()
+		enum GeneralType {
+			case Integer(enum_field_types),
+				Double(enum_field_types),
+				Bytes(enum_field_types),
+				String(enum_field_types),
+				Date(enum_field_types),
+				Null
+		}
+		
+		func mysqlTypeToGeneralType(type: enum_field_types) -> GeneralType {
+			switch type {
+			case MYSQL_TYPE_NULL:
+				return .Null
+			case MYSQL_TYPE_FLOAT,
+				MYSQL_TYPE_DOUBLE:
+				return .Double(type)
+			case MYSQL_TYPE_TINY,
+				MYSQL_TYPE_SHORT,
+				MYSQL_TYPE_LONG,
+				MYSQL_TYPE_INT24,
+				MYSQL_TYPE_LONGLONG:
+				return .Integer(type)
+			case MYSQL_TYPE_TIMESTAMP,
+				MYSQL_TYPE_DATE,
+				MYSQL_TYPE_TIME,
+				MYSQL_TYPE_DATETIME,
+				MYSQL_TYPE_YEAR,
+				MYSQL_TYPE_NEWDATE:
+				return .Date(type)
+			case MYSQL_TYPE_TINY_BLOB,
+				MYSQL_TYPE_MEDIUM_BLOB,
+				MYSQL_TYPE_LONG_BLOB,
+				MYSQL_TYPE_BLOB:
+				return .Bytes(type)
+			case MYSQL_TYPE_DECIMAL,
+				MYSQL_TYPE_NEWDECIMAL:
+				return .String(type)
+			default:
+				return .String(type)
+			}
+		}
+		
+		func bindField(field: UnsafeMutablePointer<MYSQL_FIELD>) -> MYSQL_BIND {
+			let fieldType = field.memory.type
+			let generalType = mysqlTypeToGeneralType(fieldType)
+			let bind = bindToType(generalType)
+			return bind
+		}
+		
+		public func forEachRow(callback: Element -> ()) -> Bool {
+			
+			let scratch = UnsafeMutablePointer<()>(UnsafeMutablePointer<Int8>.alloc(0))
+			
 			for i in 0..<numFields {
-				binds.advancedBy(i).initialize(blankBind)
+				let field = mysql_fetch_field_direct(meta, UInt32(i))
+				var bind = bindField(field)
+				bind.length = lengthBuffers.advancedBy(i)
+				bind.length.initialize(0)
+				bind.is_null = isNullBuffers.advancedBy(i)
+				bind.is_null.initialize(0)
+				
+				let genType = mysqlTypeToGeneralType(bind.buffer_type)
+				switch genType {
+				case .Double:
+					bind.buffer = UnsafeMutablePointer<()>(UnsafeMutablePointer<Double>.alloc(1))
+					bind.buffer_length = UInt(sizeof(Double))
+				case .Integer:
+					bind.buffer = UnsafeMutablePointer<()>(UnsafeMutablePointer<Int64>.alloc(1))
+					bind.buffer_length = UInt(sizeof(Int64))
+				case .Bytes, .String, .Date, .Null:
+					bind.buffer = scratch
+					bind.buffer_length = 0
+				}
+				
+				binds.advancedBy(i).initialize(bind)
 			}
 			
+			defer {
+				for i in 0..<numFields {
+					let bind = binds[i]
+					let genType = mysqlTypeToGeneralType(bind.buffer_type)
+					switch genType {
+					case .Double:
+						UnsafeMutablePointer<Double>(bind.buffer).dealloc(1)
+					case .Integer:
+						UnsafeMutablePointer<Int64>(bind.buffer).dealloc(1)
+					case .Bytes, .String, .Date, .Null:
+						() // do nothing. these were cleaned right after use or not allocated at all
+					}
+				}
+			}
+			
+			guard 0 == mysql_stmt_bind_result(self.stmt.ptr, binds) else {
+				return false
+			}
+			
+			while true {
+				
+				let fetchRes = mysql_stmt_fetch(self.stmt.ptr)
+				if fetchRes == MYSQL_NO_DATA {
+					return true
+				}
+				if fetchRes == 1 {
+					return false
+				}
+				
+				var row = [Any?]()
+				
+				for i in 0..<numFields {
+					var bind = binds[i]
+					let genType = mysqlTypeToGeneralType(bind.buffer_type)
+					let length = Int(bind.length.memory)
+					let isNull = bind.is_null.memory
+					
+					if isNull != 0 {
+						row.append(nil)
+					} else {
+						
+						switch genType {
+						case .Double:
+							if length == sizeof(Float) {
+								let f = UnsafeMutablePointer<Float>(bind.buffer).memory
+								row.append(Double(f))
+							} else {
+								let d = UnsafeMutablePointer<Double>(bind.buffer).memory
+								row.append(d)
+							}
+						case .Integer:
+							let i = UnsafeMutablePointer<Int64>(bind.buffer).memory
+							row.append(i)
+						case .Bytes:
+							
+							let raw = UnsafeMutablePointer<UInt8>.alloc(length)
+							defer {
+								raw.dealloc(length)
+							}
+							bind.buffer = UnsafeMutablePointer<()>(raw)
+							bind.buffer_length = UInt(length)
+							
+							let res = mysql_stmt_fetch_column(self.stmt.ptr, &bind, UInt32(i), 0)
+							guard res == 0 else {
+								return false
+							}
+							
+							var a = [UInt8]()
+							var gen = GenerateFromPointer(from: raw, count: length)
+							while let c = gen.next() {
+								a.append(c)
+							}
+							row.append(a)
+							
+						case .String, .Date:
+							
+							let raw = UnsafeMutablePointer<UInt8>.alloc(length)
+							defer {
+								raw.dealloc(length)
+							}
+							bind.buffer = UnsafeMutablePointer<()>(raw)
+							bind.buffer_length = UInt(length)
+							
+							let res = mysql_stmt_fetch_column(self.stmt.ptr, &bind, UInt32(i), 0)
+							guard res == 0 else {
+								return false
+							}
+							
+							let s = UTF8Encoding.encode(GenerateFromPointer(from: raw, count: length))
+							row.append(s)
+							
+						case .Null:
+							row.append(nil)
+						}
+					}
+				}
+				
+				callback(row)
+			}
+			// @unreachable
+		}
+		
+		func bindToType(type: GeneralType) -> MYSQL_BIND {
+			switch type {
+			case .Double(let s):
+				return bindToIntegral(s)
+			case .Integer(let s):
+				return bindToIntegral(s)
+			case .Bytes:
+				return bindToBlob()
+			case .String, .Date:
+				return bindToString()
+			case .Null:
+				return bindToNull()
+			}
+		}
+		
+		func bindToDouble() -> MYSQL_BIND {
+			return bindToIntegral(MYSQL_TYPE_DOUBLE)
+		}
+		
+		func bindToInteger() -> MYSQL_BIND {
+			return bindToIntegral(MYSQL_TYPE_LONGLONG)
+		}
+		
+		func bindToBlob() -> MYSQL_BIND {
+			var bind = MYSQL_BIND()
+			bind.buffer_type = MYSQL_TYPE_LONG_BLOB
+			return bind
+		}
+		
+		func bindToString() -> MYSQL_BIND {
+			var bind = MYSQL_BIND()
+			bind.buffer_type = MYSQL_TYPE_VAR_STRING
+			return bind
+		}
+		
+		func bindToNull() -> MYSQL_BIND {
+			var bind = MYSQL_BIND()
+			bind.buffer_type = MYSQL_TYPE_NULL
+			return bind
+		}
+		
+		func bindToIntegral(type: enum_field_types) -> MYSQL_BIND {
+			var bind = MYSQL_BIND()
+			bind.buffer_type = type
+			return bind
 		}
 	}
 }

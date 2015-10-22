@@ -7,40 +7,40 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F8F289C91BD53CF000367249 /* PerfectLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F289BE1BD53CF000367249 /* PerfectLib.framework */; settings = {ASSET_TAGS = (); }; };
+		F8F289C91BD53CF000367249 /* PerfectLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F289BE1BD53CF000367249 /* PerfectLib.framework */; };
 		F8F289CE1BD53CF000367249 /* PerfectLibTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289CD1BD53CF000367249 /* PerfectLibTests.swift */; };
-		F8F289F91BD5427000367249 /* AJAXObjectDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289D91BD5427000367249 /* AJAXObjectDriver.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F289FA1BD5427000367249 /* Bytes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DA1BD5427000367249 /* Bytes.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F289FB1BD5427000367249 /* Closeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DB1BD5427000367249 /* Closeable.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F289FC1BD5427000367249 /* cURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DC1BD5427000367249 /* cURL.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F289FD1BD5427000367249 /* Dir.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DD1BD5427000367249 /* Dir.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F289FE1BD5427000367249 /* DynamicLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DE1BD5427000367249 /* DynamicLoader.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F289FF1BD5427000367249 /* FastCGI.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DF1BD5427000367249 /* FastCGI.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A001BD5427000367249 /* FastCGIServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E01BD5427000367249 /* FastCGIServer.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A011BD5427000367249 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E11BD5427000367249 /* File.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A021BD5427000367249 /* ICU.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E21BD5427000367249 /* ICU.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A031BD5427000367249 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E31BD5427000367249 /* JSON.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A041BD5427000367249 /* LassoError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E41BD5427000367249 /* LassoError.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A051BD5427000367249 /* LassoObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E51BD5427000367249 /* LassoObject.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A061BD5427000367249 /* LassoObjectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E61BD5427000367249 /* LassoObjectHandler.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A071BD5427000367249 /* LassoServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E71BD5427000367249 /* LassoServer.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A081BD5427000367249 /* LibEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E81BD5427000367249 /* LibEvent.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A091BD5427000367249 /* LogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E91BD5427000367249 /* LogManager.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A0A1BD5427000367249 /* MimeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289EA1BD5427000367249 /* MimeReader.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A0B1BD5427000367249 /* Moustache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289EB1BD5427000367249 /* Moustache.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A0C1BD5427000367249 /* Net.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289EC1BD5427000367249 /* Net.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A0D1BD5427000367249 /* NetNamedPipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289ED1BD5427000367249 /* NetNamedPipe.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A0E1BD5427000367249 /* NetTCP.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289EE1BD5427000367249 /* NetTCP.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A0F1BD5427000367249 /* NetTCPSSL.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289EF1BD5427000367249 /* NetTCPSSL.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A101BD5427000367249 /* PageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289F01BD5427000367249 /* PageHandler.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A111BD5427000367249 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289F11BD5427000367249 /* SessionManager.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A121BD5427000367249 /* SQLite.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289F21BD5427000367249 /* SQLite.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A131BD5427000367249 /* SysProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289F31BD5427000367249 /* SysProcess.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A141BD5427000367249 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = F8F289F41BD5427000367249 /* util.c */; settings = {ASSET_TAGS = (); }; };
-		F8F28A151BD5427000367249 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289F51BD5427000367249 /* Utilities.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A161BD5427000367249 /* WebConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289F61BD5427000367249 /* WebConnection.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A171BD5427000367249 /* WebRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289F71BD5427000367249 /* WebRequest.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A181BD5427000367249 /* WebResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289F81BD5427000367249 /* WebResponse.swift */; settings = {ASSET_TAGS = (); }; };
+		F8F289F91BD5427000367249 /* AJAXObjectDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289D91BD5427000367249 /* AJAXObjectDriver.swift */; };
+		F8F289FA1BD5427000367249 /* Bytes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DA1BD5427000367249 /* Bytes.swift */; };
+		F8F289FB1BD5427000367249 /* Closeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DB1BD5427000367249 /* Closeable.swift */; };
+		F8F289FC1BD5427000367249 /* cURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DC1BD5427000367249 /* cURL.swift */; };
+		F8F289FD1BD5427000367249 /* Dir.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DD1BD5427000367249 /* Dir.swift */; };
+		F8F289FE1BD5427000367249 /* DynamicLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DE1BD5427000367249 /* DynamicLoader.swift */; };
+		F8F289FF1BD5427000367249 /* FastCGI.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DF1BD5427000367249 /* FastCGI.swift */; };
+		F8F28A001BD5427000367249 /* FastCGIServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E01BD5427000367249 /* FastCGIServer.swift */; };
+		F8F28A011BD5427000367249 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E11BD5427000367249 /* File.swift */; };
+		F8F28A021BD5427000367249 /* ICU.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E21BD5427000367249 /* ICU.swift */; };
+		F8F28A031BD5427000367249 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E31BD5427000367249 /* JSON.swift */; };
+		F8F28A041BD5427000367249 /* LassoError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E41BD5427000367249 /* LassoError.swift */; };
+		F8F28A051BD5427000367249 /* LassoObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E51BD5427000367249 /* LassoObject.swift */; };
+		F8F28A061BD5427000367249 /* LassoObjectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E61BD5427000367249 /* LassoObjectHandler.swift */; };
+		F8F28A071BD5427000367249 /* LassoServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E71BD5427000367249 /* LassoServer.swift */; };
+		F8F28A081BD5427000367249 /* LibEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E81BD5427000367249 /* LibEvent.swift */; };
+		F8F28A091BD5427000367249 /* LogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E91BD5427000367249 /* LogManager.swift */; };
+		F8F28A0A1BD5427000367249 /* MimeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289EA1BD5427000367249 /* MimeReader.swift */; };
+		F8F28A0B1BD5427000367249 /* Moustache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289EB1BD5427000367249 /* Moustache.swift */; };
+		F8F28A0C1BD5427000367249 /* Net.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289EC1BD5427000367249 /* Net.swift */; };
+		F8F28A0D1BD5427000367249 /* NetNamedPipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289ED1BD5427000367249 /* NetNamedPipe.swift */; };
+		F8F28A0E1BD5427000367249 /* NetTCP.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289EE1BD5427000367249 /* NetTCP.swift */; };
+		F8F28A0F1BD5427000367249 /* NetTCPSSL.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289EF1BD5427000367249 /* NetTCPSSL.swift */; };
+		F8F28A101BD5427000367249 /* PageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289F01BD5427000367249 /* PageHandler.swift */; };
+		F8F28A111BD5427000367249 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289F11BD5427000367249 /* SessionManager.swift */; };
+		F8F28A121BD5427000367249 /* SQLite.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289F21BD5427000367249 /* SQLite.swift */; };
+		F8F28A131BD5427000367249 /* SysProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289F31BD5427000367249 /* SysProcess.swift */; };
+		F8F28A141BD5427000367249 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = F8F289F41BD5427000367249 /* util.c */; };
+		F8F28A151BD5427000367249 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289F51BD5427000367249 /* Utilities.swift */; };
+		F8F28A161BD5427000367249 /* WebConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289F61BD5427000367249 /* WebConnection.swift */; };
+		F8F28A171BD5427000367249 /* WebRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289F71BD5427000367249 /* WebRequest.swift */; };
+		F8F28A181BD5427000367249 /* WebResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289F81BD5427000367249 /* WebResponse.swift */; };
 		F8F28A1A1BD5445500367249 /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A191BD5445500367249 /* libcurl.tbd */; };
 		F8F28A1E1BD5445B00367249 /* libicudata.55.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A1B1BD5445B00367249 /* libicudata.55.1.dylib */; };
 		F8F28A1F1BD5445B00367249 /* libicui18n.55.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A1C1BD5445B00367249 /* libicui18n.55.1.dylib */; };
@@ -49,26 +49,26 @@
 		F8F28A251BD5447E00367249 /* libcrypto-x86_64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A231BD5447E00367249 /* libcrypto-x86_64.a */; };
 		F8F28A261BD5447E00367249 /* libssl-x86_64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A241BD5447E00367249 /* libssl-x86_64.a */; };
 		F8F28A281BD544A100367249 /* sqlite.3.8.10.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A271BD544A100367249 /* sqlite.3.8.10.2.dylib */; };
-		F8F28A2B1BD5545000367249 /* curl_support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8F28A2A1BD5545000367249 /* curl_support.cpp */; settings = {ASSET_TAGS = (); }; };
+		F8F28A2B1BD5545000367249 /* curl_support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8F28A2A1BD5545000367249 /* curl_support.cpp */; };
 		F8F28A2D1BD5549800367249 /* sqlite.3.8.10.2.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F28A271BD544A100367249 /* sqlite.3.8.10.2.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		F8F28A2E1BD5549B00367249 /* libevent-2.0.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F28A211BD5447400367249 /* libevent-2.0.5.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		F8F28A2F1BD554A300367249 /* libicudata.55.1.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F28A1B1BD5445B00367249 /* libicudata.55.1.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		F8F28A301BD554A700367249 /* libicui18n.55.1.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F28A1C1BD5445B00367249 /* libicui18n.55.1.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		F8F28A311BD554AB00367249 /* libicuuc.55.1.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F28A1D1BD5445B00367249 /* libicuuc.55.1.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		F8F28A3B1BD5633100367249 /* PerfectLib.h in Headers */ = {isa = PBXBuildFile; fileRef = F8F28A3A1BD5633100367249 /* PerfectLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F8F28A401BD5636F00367249 /* Closeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DB1BD5427000367249 /* Closeable.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A411BD5637D00367249 /* LassoObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E51BD5427000367249 /* LassoObject.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A421BD5638500367249 /* Bytes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DA1BD5427000367249 /* Bytes.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A431BD5638B00367249 /* cURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DC1BD5427000367249 /* cURL.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A441BD5639400367249 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E31BD5427000367249 /* JSON.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A451BD563AC00367249 /* AJAXObjectDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289D91BD5427000367249 /* AJAXObjectDriver.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A461BD563B300367249 /* curl_support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8F28A2A1BD5545000367249 /* curl_support.cpp */; settings = {ASSET_TAGS = (); }; };
-		F8F28A471BD563BB00367249 /* LassoError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E41BD5427000367249 /* LassoError.swift */; settings = {ASSET_TAGS = (); }; };
+		F8F28A401BD5636F00367249 /* Closeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DB1BD5427000367249 /* Closeable.swift */; };
+		F8F28A411BD5637D00367249 /* LassoObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E51BD5427000367249 /* LassoObject.swift */; };
+		F8F28A421BD5638500367249 /* Bytes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DA1BD5427000367249 /* Bytes.swift */; };
+		F8F28A431BD5638B00367249 /* cURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DC1BD5427000367249 /* cURL.swift */; };
+		F8F28A441BD5639400367249 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E31BD5427000367249 /* JSON.swift */; };
+		F8F28A451BD563AC00367249 /* AJAXObjectDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289D91BD5427000367249 /* AJAXObjectDriver.swift */; };
+		F8F28A461BD563B300367249 /* curl_support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8F28A2A1BD5545000367249 /* curl_support.cpp */; };
+		F8F28A471BD563BB00367249 /* LassoError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E41BD5427000367249 /* LassoError.swift */; };
 		F8F28A491BD563E500367249 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A481BD563E500367249 /* libz.tbd */; };
 		F8F28A4B1BD563F600367249 /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A4A1BD563F600367249 /* libcurl.a */; };
-		F8F28A4C1BD566C000367249 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289F51BD5427000367249 /* Utilities.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A4E1BD5720400367249 /* Utilities-Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F28A4D1BD5720400367249 /* Utilities-Server.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A501BD5733D00367249 /* Utilities-Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F28A4F1BD5733D00367249 /* Utilities-Client.swift */; settings = {ASSET_TAGS = (); }; };
+		F8F28A4C1BD566C000367249 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289F51BD5427000367249 /* Utilities.swift */; };
+		F8F28A4E1BD5720400367249 /* Utilities-Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F28A4D1BD5720400367249 /* Utilities-Server.swift */; };
+		F8F28A501BD5733D00367249 /* Utilities-Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F28A4F1BD5733D00367249 /* Utilities-Client.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -692,12 +692,13 @@
 		F8F28A3E1BD5633100367249 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/iOS/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -719,12 +720,13 @@
 		F8F28A3F1BD5633100367249 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/iOS/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";

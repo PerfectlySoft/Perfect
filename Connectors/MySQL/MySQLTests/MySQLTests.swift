@@ -300,6 +300,101 @@ class MySQLTests: XCTestCase {
 		}
 	}
 	
+	func testQueryStmt2() {
+		let mysql = MySQL()
+		defer {
+			mysql.close()
+		}
+		
+		let res = mysql.connect()
+		XCTAssert(res)
+		
+		if !res {
+			print(mysql.errorMessage())
+		}
+		
+		let sres = mysql.selectDatabase("test")
+		XCTAssert(sres == true)
+		
+		mysql.query("DROP TABLE IF EXISTS all_data_types")
+		
+		let qres = mysql.query("CREATE TABLE `all_data_types` (`varchar` VARCHAR( 20 ),\n`tinyint` TINYINT,\n`text` TEXT,\n`date` DATE,\n`smallint` SMALLINT,\n`mediumint` MEDIUMINT,\n`int` INT,\n`bigint` BIGINT,\n`float` FLOAT( 10, 2 ),\n`double` DOUBLE,\n`decimal` DECIMAL( 10, 2 ),\n`datetime` DATETIME,\n`timestamp` TIMESTAMP,\n`time` TIME,\n`year` YEAR,\n`char` CHAR( 10 ),\n`tinyblob` TINYBLOB,\n`tinytext` TINYTEXT,\n`blob` BLOB,\n`mediumblob` MEDIUMBLOB,\n`mediumtext` MEDIUMTEXT,\n`longblob` LONGBLOB,\n`longtext` LONGTEXT,\n`enum` ENUM( '1', '2', '3' ),\n`set` SET( '1', '2', '3' ),\n`bool` BOOL,\n`binary` BINARY( 20 ),\n`varbinary` VARBINARY( 20 ) ) ENGINE = MYISAM")
+		XCTAssert(qres == true, mysql.errorMessage())
+		
+		for _ in 1...2 {
+			let stmt1 = MySQLStmt(mysql)
+			defer {
+				stmt1.close()
+			}
+			let prepRes = stmt1.prepare("INSERT INTO all_data_types VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
+			XCTAssert(prepRes, stmt1.errorMessage())
+			XCTAssert(stmt1.paramCount() == 28)
+			
+			stmt1.bindParam("varchar 20 string")
+			stmt1.bindParam(1)
+			stmt1.bindParam("text string")
+			stmt1.bindParam("2015-10-21")
+			stmt1.bindParam(1)
+			stmt1.bindParam(1)
+			stmt1.bindParam(1)
+			stmt1.bindParam(1)
+			stmt1.bindParam(1.1)
+			stmt1.bindParam(1.1)
+			stmt1.bindParam(1.1)
+			stmt1.bindParam("2015-10-21 12:00:00")
+			stmt1.bindParam("2015-10-21 12:00:00")
+			stmt1.bindParam("03:14:07")
+			stmt1.bindParam("2015")
+			stmt1.bindParam("K")
+			
+			"BLOB DATA".withCString { p in
+				stmt1.bindParam(p, length: 9)
+				
+				stmt1.bindParam("tiny text string")
+				
+				stmt1.bindParam(p, length: 9)
+				stmt1.bindParam(p, length: 9)
+				
+				stmt1.bindParam("medium text string")
+				
+				stmt1.bindParam(p, length: 9)
+				
+				stmt1.bindParam("long text string")
+				stmt1.bindParam("1")
+				stmt1.bindParam("2")
+				stmt1.bindParam(1)
+				stmt1.bindParam(1)
+				stmt1.bindParam(1)
+				
+				let execRes = stmt1.execute()
+				XCTAssert(execRes, "\(stmt1.errorCode()) \(stmt1.errorMessage()) - \(mysql.errorCode()) \(mysql.errorMessage())")
+				
+				stmt1.close()
+			}
+		}
+		
+		do {
+			let stmt1 = MySQLStmt(mysql)
+			
+			let prepRes = stmt1.prepare("SELECT * FROM all_data_types")
+			XCTAssert(prepRes, stmt1.errorMessage())
+			
+			let execRes = stmt1.execute()
+			XCTAssert(execRes, stmt1.errorMessage())
+			
+			let results = stmt1.results()
+			
+			let ok = results.forEachRow {
+				e in
+				print(e)
+			}
+			XCTAssert(ok, stmt1.errorMessage())
+			
+			results.close()
+			stmt1.close()
+		}
+	}
+	
 	
 	
 	
