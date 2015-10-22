@@ -230,7 +230,7 @@ public class WebRequest {
 	internal init(_ c: WebConnection) {
 		self.connection = c
 		
-		var f = self.connection.requestParams["LASSOSERVER_DOCUMENT_ROOT"]
+		var f = self.connection.requestParams["PERFECTSERVER_DOCUMENT_ROOT"]
 		if let r = f {
 			self.documentRoot = r
 		} else {

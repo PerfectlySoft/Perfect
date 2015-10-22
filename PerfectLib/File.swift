@@ -95,7 +95,7 @@ public class File : Closeable {
 	}
 	
 	/// Opens the file using the default open mode.
-	/// - throws: `LassoError.FileError`
+	/// - throws: `PerfectError.FileError`
 	public func open() throws {
 		let openFd = Foundation.open(internalPath, CInt(openMode), mode_t(S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP))
 		guard openFd != -1 else {
@@ -105,35 +105,35 @@ public class File : Closeable {
 	}
 	
 	/// Opens the file for read-only access.
-	/// - throws: `LassoError.FileError`
+	/// - throws: `PerfectError.FileError`
 	public func openRead() throws {
 		openMode = Int(O_RDONLY)
 		try open()
 	}
 	
 	/// Opens the file for read-write access, creating the file if it did not exist.
-	/// - throws: `LassoError.FileError`
+	/// - throws: `PerfectError.FileError`
 	public func openWrite() throws {
 		openMode = Int(O_RDWR|O_CREAT)
 		try open()
 	}
 	
 	/// Opens the file for write-only access, creating the file if it did not exist.
-	/// - throws: `LassoError.FileError`
+	/// - throws: `PerfectError.FileError`
 	public func openWriteOnly() throws {
 		openMode = Int(O_WRONLY|O_CREAT)
 		try open()
 	}
 	
 	/// Opens the file for read-write access, creating the file if it did not exist and moving the file marker to the end.
-	/// - throws: `LassoError.FileError`
+	/// - throws: `PerfectError.FileError`
 	public func openAppend() throws {
 		openMode = Int(O_RDWR|O_APPEND|O_CREAT)
 		try open()
 	}
 	
 	/// Opens the file for read-write access, creating the file if it did not exist and setting the file's size to zero.
-	/// - throws: `LassoError.FileError`
+	/// - throws: `PerfectError.FileError`
 	public func openTruncate() throws {
 		openMode = Int(O_RDWR|O_TRUNC|O_CREAT)
 		try open()
@@ -141,7 +141,7 @@ public class File : Closeable {
 	
 	/// Opens the file for read-only access.
 	/// - parameter path: The path
-	/// - throws: `LassoError.FileError`
+	/// - throws: `PerfectError.FileError`
 	public func openRead(path: String) throws {
 		internalPath = path
 		openMode = Int(O_RDONLY)
@@ -150,7 +150,7 @@ public class File : Closeable {
 	
 	/// Opens the file for read-write access, creating the file if it did not exist.
 	/// - parameter path: The path
-	/// - throws: `LassoError.FileError`
+	/// - throws: `PerfectError.FileError`
 	public func openWrite(path: String) throws {
 		internalPath = path
 		openMode = Int(O_RDWR|O_CREAT)
@@ -159,7 +159,7 @@ public class File : Closeable {
 	
 	/// Opens the file for write-only access, creating the file if it did not exist.
 	/// - parameter path: The path
-	/// - throws: `LassoError.FileError`
+	/// - throws: `PerfectError.FileError`
 	public func openWriteOnly(path: String) throws {
 		internalPath = path
 		openMode = Int(O_WRONLY|O_CREAT)
@@ -168,7 +168,7 @@ public class File : Closeable {
 	
 	/// Opens the file for read-write access, creating the file if it did not exist and moving the file marker to the end.
 	/// - parameter path: The path
-	/// - throws: `LassoError.FileError`
+	/// - throws: `PerfectError.FileError`
 	public func openAppend(path: String) throws {
 		internalPath = path
 		openMode = Int(O_RDWR|O_APPEND|O_CREAT)
@@ -177,7 +177,7 @@ public class File : Closeable {
 	
 	/// Opens the file for read-write access, creating the file if it did not exist and setting the file's size to zero.
 	/// - parameter path: The path
-	/// - throws: `LassoError.FileError`
+	/// - throws: `PerfectError.FileError`
 	public func openTruncate(path: String) throws {
 		internalPath = path
 		openMode = Int(O_RDWR|O_TRUNC|O_CREAT)
@@ -219,14 +219,14 @@ public class File : Closeable {
 	/// - parameter path: The path to move the file to
 	/// - parameter overWrite: Indicates that any existing file at the destination path should first be deleted
 	/// - returns: Returns a new file object representing the new location
-	/// - throws: `LassoError.FileError`
+	/// - throws: `PerfectError.FileError`
 	public func moveTo(path: String, overWrite: Bool = false) throws -> File {
 		let destFile = File(path)
 		if destFile.exists() {
 			if overWrite {
 				destFile.delete()
 			} else {
-				throw LassoError.FileError(-1, "Can not overwrite existing file")
+				throw PerfectError.FileError(-1, "Can not overwrite existing file")
 			}
 		}
 		close()
@@ -246,14 +246,14 @@ public class File : Closeable {
 	/// - parameter path: The path to copy the file to
 	/// - parameter overWrite: Indicates that any existing file at the destination path should first be deleted
 	/// - returns: Returns a new file object representing the new location
-	/// - throws: `LassoError.FileError`
+	/// - throws: `PerfectError.FileError`
 	public func copyTo(path: String, overWrite: Bool = false) throws -> File {
 		let destFile = File(path)
 		if destFile.exists() {
 			if overWrite {
 				destFile.delete()
 			} else {
-				throw LassoError.FileError(-1, "Can not overwrite existing file")
+				throw PerfectError.FileError(-1, "Can not overwrite existing file")
 			}
 		}
 		let wasOpen = self.isOpen()
@@ -352,7 +352,7 @@ public class File : Closeable {
 	/// Reads up to the indicated number of bytes from the file
 	/// - parameter count: The maximum number of bytes to read
 	/// - returns: The bytes read as an array of UInt8. May have a count of zero.
-	/// - throws: `LassoError.FileError`
+	/// - throws: `PerfectError.FileError`
 	public func readSomeBytes(count: Int) throws -> [UInt8] {
 		if !isOpen() {
 			try openRead()
@@ -379,7 +379,7 @@ public class File : Closeable {
 	/// Writes the string to the file using UTF-8 encoding
 	/// - parameter s: The string to write
 	/// - returns: Returns the number of bytes which were written
-	/// - throws: `LassoError.FileError`
+	/// - throws: `PerfectError.FileError`
 	public func writeString(s: String) throws -> Int {
 		return try writeBytes(Array(s.utf8))
 	}
@@ -387,7 +387,7 @@ public class File : Closeable {
 	/// Writes the array of bytes to the file
 	/// - parameter bytes: The bytes to write
 	/// - returns: The number of bytes which were written
-	/// - throws: `LassoError.FileError`
+	/// - throws: `PerfectError.FileError`
 	public func writeBytes(bytes: [UInt8]) throws -> Int {
 		return try writeBytes(bytes, dataPosition: 0, length: bytes.count)
 	}
@@ -396,7 +396,7 @@ public class File : Closeable {
 	/// - parameter bytes: The array of UInt8 to write.
 	/// - parameter dataPosition: The offset within `bytes` at which to begin writing.
 	/// - parameter length: The number of bytes to write.
-	/// - throws: `LassoError.FileError`
+	/// - throws: `PerfectError.FileError`
 	public func writeBytes(bytes: [UInt8], dataPosition: Int, length: Int) throws -> Int {
 		
 		let ptr = UnsafeMutablePointer<UInt8>(bytes).advancedBy(dataPosition)
@@ -409,7 +409,7 @@ public class File : Closeable {
 	
 	/// Attempts to place an advisory lock starting from the current position marker up to the indicated byte count. This function will block the current thread until the lock can be performed.
 	/// - parameter byteCount: The number of bytes to lock
-	/// - throws: `LassoError.FileError`
+	/// - throws: `PerfectError.FileError`
 	public func lock(byteCount: Int) throws {
 		if !isOpen() {
 			try openWrite()
@@ -422,7 +422,7 @@ public class File : Closeable {
 	
 	/// Unlocks the number of bytes starting from the current position marker up to the indicated byte count.
 	/// - parameter byteCount: The number of bytes to unlock
-	/// - throws: `LassoError.FileError`
+	/// - throws: `PerfectError.FileError`
 	public func unlock(byteCount: Int) throws {
 		if !isOpen() {
 			try openWrite()
@@ -435,7 +435,7 @@ public class File : Closeable {
 	
 	/// Attempts to place an advisory lock starting from the current position marker up to the indicated byte count. This function will throw an exception if the file is already locked, but will not block the current thread.
 	/// - parameter byteCount: The number of bytes to lock
-	/// - throws: `LassoError.FileError`
+	/// - throws: `PerfectError.FileError`
 	public func tryLock(byteCount: Int) throws {
 		if !isOpen() {
 			try openWrite()
@@ -449,7 +449,7 @@ public class File : Closeable {
 	/// Tests if the indicated bytes are locked
 	/// - parameter byteCount: The number of bytes to test
 	/// - returns: True if the file is locked
-	/// - throws: `LassoError.FileError`
+	/// - throws: `PerfectError.FileError`
 	public func testLock(byteCount: Int) throws -> Bool {
 		if !isOpen() {
 			try openWrite()

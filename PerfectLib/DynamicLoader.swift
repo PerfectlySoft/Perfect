@@ -10,12 +10,12 @@ import Foundation
 
 class DynamicLoader {
 	
-	// sketchy! LassoServerModuleInit is not defined as convention(c)
+	// sketchy! PerfectServerModuleInit is not defined as convention(c)
 	// but it does not seem to matter provided it is Void->Void
 	// I am unsure on how to convert a void* to a legit Swift ()->() func
 	typealias InitFunction = @convention(c) ()->()
 	
-	let initFuncName = "LassoServerModuleInit"
+	let initFuncName = "PerfectServerModuleInit"
 	
 	init() {
 		

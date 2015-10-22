@@ -23,7 +23,7 @@ let kBoundary = "boundary"
 let kContentDisposition = "Content-Disposition"
 let kContentType = "Content-Type"
 
-let kLassoTempPrefix = "lasso_upload_"
+let kPerfectTempPrefix = "perfect_upload_"
 
 let mime_cr = UInt8(13)
 let mime_lf = UInt8(10)
@@ -103,7 +103,7 @@ public class MimeReader {
 	}
 	
 	func openTempFile(spec: BodySpec) {
-		spec.file = File(tempFilePrefix: self.tempDirectory + kLassoTempPrefix)
+		spec.file = File(tempFilePrefix: self.tempDirectory + kPerfectTempPrefix)
 		spec.tmpFileName = spec.file!.path()
 	}
 	

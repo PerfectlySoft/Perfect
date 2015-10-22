@@ -321,7 +321,7 @@ public class NetTCPSSL : NetTCP {
 //			
 //			print("SSL NetworkError: \(err) \(msg)")
 //			
-//			throw LassoError.NetworkError(err, msg)
+//			throw PerfectError.NetworkError(err, msg)
 //		}
 //	}
 

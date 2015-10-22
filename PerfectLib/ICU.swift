@@ -61,7 +61,7 @@ public class ICU {
 		
 		print("ICUError: \(code.rawValue) \(msg)")
 		
-		throw LassoError.SystemError(code.rawValue, msg)
+		throw PerfectError.SystemError(code.rawValue, msg)
 	}
 	
 	/// Parse a date string according to the indicated format string and return an ICU date.
@@ -70,7 +70,7 @@ public class ICU {
 	/// - parameter timezone: The optional timezone in which the date is expected to be based. Default is the local timezone.
 	/// - parameter locale: The optional locale which will be used when parsing the date. Default is the current global locale.
 	/// - returns: The resulting date
-	/// - throws: `LassoError.ICUError`
+	/// - throws: `PerfectError.ICUError`
 	/// - Seealso [Date Time Format Syntax](http://userguide.icu-project.org/formatparse/datetime#TOC-Date-Time-Format-Syntax)
 	public static func parseDate(dateStr: String, format: String, timezone inTimezone: String? = nil, locale inLocale: String? = nil) throws -> Double {
 		var status = UErrorCode(0)
@@ -114,7 +114,7 @@ public class ICU {
 	/// - parameter timezone: The optional timezone in which the date is expected to be based. Default is the local timezone.
 	/// - parameter locale: The optional locale which will be used when parsing the date. Default is the current global locale.
 	/// - returns: The resulting date string
-	/// - throws: `LassoError.ICUError`
+	/// - throws: `PerfectError.ICUError`
 	/// - Seealso [Date Time Format Syntax](http://userguide.icu-project.org/formatparse/datetime#TOC-Date-Time-Format-Syntax)
 	public static func formatDate(date: Double, format: String, timezone inTimezone: String? = nil, locale inLocale: String? = nil) throws -> String {
 		var status = UErrorCode(0)

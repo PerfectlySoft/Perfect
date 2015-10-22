@@ -1,6 +1,6 @@
 //
 //  util.c
-//  lasso_lib
+//  PerfectLib
 //
 //  Created by Kyle Jessup on 7/6/15.
 //

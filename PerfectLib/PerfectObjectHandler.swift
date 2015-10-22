@@ -1,12 +1,12 @@
 //
-//  LassoObjectHandler.swift
+//  PerfectObjectHandler.swift
 //  PerfectLib
 //
 //  Created by Kyle Jessup on 2015-08-18.
 //
 //
 
-public class LassoObjectHandler: PageHandler {
+public class PerfectObjectHandler: PageHandler {
 	
 	public var action: HandlerAction = .None
 	public var params = [String:String]()

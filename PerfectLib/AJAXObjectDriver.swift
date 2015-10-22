@@ -12,7 +12,7 @@ let ACTION_PARAM_NAME = "_action"
 
 /// This client-side class handles access to the AJAX/XHR API.
 /// It provides facilities for setting up the parameters for the raw requests
-public class AJAXObjectDriver : LassoObjectDriver {
+public class AJAXObjectDriver : PerfectObjectDriver {
 	
 	let endpointBase: String
 	let fileExtension: String
@@ -38,7 +38,7 @@ public class AJAXObjectDriver : LassoObjectDriver {
 		return (code, UTF8Encoding.encode(head), UTF8Encoding.encode(body))
 	}
 	
-	public func load<T : LassoObject>(type: T, withId: uuid_t) -> T {
+	public func load<T : PerfectObject>(type: T, withId: uuid_t) -> T {
 		let fileName = type.simpleName() + self.fileExtension
 		var url = self.endpointBase + fileName + "?" + ACTION_PARAM_NAME + "=" + HandlerAction.Load.asString()
 		url.appendContentsOf("&" + type.primaryKeyName().stringByEncodingURL + "=" + String.fromUUID(withId).stringByEncodingURL)
@@ -69,7 +69,7 @@ public class AJAXObjectDriver : LassoObjectDriver {
 		return type
 	}
 	
-	public func load<T : LassoObject>(type: T, withUniqueField: (String,String)) -> T {
+	public func load<T : PerfectObject>(type: T, withUniqueField: (String,String)) -> T {
 		let fileName = type.simpleName() + self.fileExtension
 		var url = self.endpointBase + fileName + "?" + ACTION_PARAM_NAME + "=" + HandlerAction.Load.asString()
 		url.appendContentsOf("&" + withUniqueField.0.stringByEncodingURL + "=" + withUniqueField.1.stringByEncodingURL)
@@ -100,7 +100,7 @@ public class AJAXObjectDriver : LassoObjectDriver {
 		return type
 	}
 	
-	public func delete(type: LassoObject) -> (Int, String) {
+	public func delete(type: PerfectObject) -> (Int, String) {
 		let fileName = type.simpleName() + self.fileExtension
 		var url = self.endpointBase + fileName + "?" + ACTION_PARAM_NAME + "=" + HandlerAction.Delete.asString()
 		url.appendContentsOf("&" + type.primaryKeyName().stringByEncodingURL + "=" + String.fromUUID(type.objectId()).stringByEncodingURL)
@@ -121,7 +121,7 @@ public class AJAXObjectDriver : LassoObjectDriver {
 		return (-1, "Invalid response")
 	}
 	
-	public func commitChanges(type: LassoObject) -> (Int, String) {
+	public func commitChanges(type: PerfectObject) -> (Int, String) {
 		let fileName = type.simpleName() + self.fileExtension
 		var url = self.endpointBase + fileName + "?" + ACTION_PARAM_NAME + "=" + HandlerAction.Commit.asString()
 		url.appendContentsOf("&" + type.primaryKeyName().stringByEncodingURL + "=" + String.fromUUID(type.objectId()).stringByEncodingURL)
@@ -148,11 +148,11 @@ public class AJAXObjectDriver : LassoObjectDriver {
 	}
 	
 	// !FIX! optimize this so that it can accomplish the updates in one request
-	public func commitChanges(types: [LassoObject]) -> [(Int, String)] {
+	public func commitChanges(types: [PerfectObject]) -> [(Int, String)] {
 		return types.map { self.commitChanges($0) }
 	}
 	
-	public func create<T : LassoObject>(withFields: [(String,String)]) -> T {
+	public func create<T : PerfectObject>(withFields: [(String,String)]) -> T {
 		let t = T(driver: self)
 		let fileName = t.simpleName() + self.fileExtension
 		var url = self.endpointBase + fileName + "?" + ACTION_PARAM_NAME + "=" + HandlerAction.Create.asString()
@@ -187,13 +187,13 @@ public class AJAXObjectDriver : LassoObjectDriver {
 		return t
 	}
 	
-	public func joinTable<T : LassoObject>(type: LassoObject, name: String) -> [T] {
+	public func joinTable<T : PerfectObject>(type: PerfectObject, name: String) -> [T] {
 		let keyField = "id_" + type.simpleName()
 		let ret:[T] = self.list((keyField, String.fromUUID(type.objectId())))
 		return ret
 	}
 	
-	public func list<T : LassoObject>() -> [T] {
+	public func list<T : PerfectObject>() -> [T] {
 		var returning = [T]()
 		var t = T(driver: self)
 		let fileName = t.simpleName() + self.fileExtension
@@ -229,7 +229,7 @@ public class AJAXObjectDriver : LassoObjectDriver {
 		return returning
 	}
 	
-	public func list<T : LassoObject>(withCriterion: (String,String)) -> [T] {
+	public func list<T : PerfectObject>(withCriterion: (String,String)) -> [T] {
 		var returning = [T]()
 		var t = T(driver: self)
 		let fileName = t.simpleName() + self.fileExtension

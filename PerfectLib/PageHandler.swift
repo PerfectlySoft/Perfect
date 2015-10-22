@@ -11,11 +11,11 @@ import Foundation
 private let GLOBAL_HANDLER = "%GLOBAL%"
 
 /// Use this class to register handlers which supply values for moustache templates.
-/// This registration would occur in the `LassoServerModuleInit` function which every LassoServer library module should define. LassoServer will call this method when it loads each module as the server process starts up.
+/// This registration would occur in the `PerfectServerModuleInit` function which every PerfectServer library module should define. PerfectServer will call this method when it loads each module as the server process starts up.
 ///
 /// Example:
 ///```
-///	public func LassoServerModuleInit() {
+///	public func PerfectServerModuleInit() {
 ///		PageHandlerRegistry.addPageHandler("test_page_handler") {
 ///			(r: WebResponse) -> PageHandler in
 ///			return MyTestHandler()

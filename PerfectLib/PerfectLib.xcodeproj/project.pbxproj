@@ -20,10 +20,10 @@
 		F8F28A011BD5427000367249 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E11BD5427000367249 /* File.swift */; };
 		F8F28A021BD5427000367249 /* ICU.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E21BD5427000367249 /* ICU.swift */; };
 		F8F28A031BD5427000367249 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E31BD5427000367249 /* JSON.swift */; };
-		F8F28A041BD5427000367249 /* LassoError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E41BD5427000367249 /* LassoError.swift */; };
-		F8F28A051BD5427000367249 /* LassoObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E51BD5427000367249 /* LassoObject.swift */; };
-		F8F28A061BD5427000367249 /* LassoObjectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E61BD5427000367249 /* LassoObjectHandler.swift */; };
-		F8F28A071BD5427000367249 /* LassoServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E71BD5427000367249 /* LassoServer.swift */; };
+		F8F28A041BD5427000367249 /* PerfectError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E41BD5427000367249 /* PerfectError.swift */; };
+		F8F28A051BD5427000367249 /* PerfectObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E51BD5427000367249 /* PerfectObject.swift */; };
+		F8F28A061BD5427000367249 /* PerfectObjectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E61BD5427000367249 /* PerfectObjectHandler.swift */; };
+		F8F28A071BD5427000367249 /* PerfectServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E71BD5427000367249 /* PerfectServer.swift */; };
 		F8F28A081BD5427000367249 /* LibEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E81BD5427000367249 /* LibEvent.swift */; };
 		F8F28A091BD5427000367249 /* LogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E91BD5427000367249 /* LogManager.swift */; };
 		F8F28A0A1BD5427000367249 /* MimeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289EA1BD5427000367249 /* MimeReader.swift */; };
@@ -57,13 +57,13 @@
 		F8F28A311BD554AB00367249 /* libicuuc.55.1.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F28A1D1BD5445B00367249 /* libicuuc.55.1.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		F8F28A3B1BD5633100367249 /* PerfectLib.h in Headers */ = {isa = PBXBuildFile; fileRef = F8F28A3A1BD5633100367249 /* PerfectLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F8F28A401BD5636F00367249 /* Closeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DB1BD5427000367249 /* Closeable.swift */; };
-		F8F28A411BD5637D00367249 /* LassoObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E51BD5427000367249 /* LassoObject.swift */; };
+		F8F28A411BD5637D00367249 /* PerfectObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E51BD5427000367249 /* PerfectObject.swift */; };
 		F8F28A421BD5638500367249 /* Bytes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DA1BD5427000367249 /* Bytes.swift */; };
 		F8F28A431BD5638B00367249 /* cURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DC1BD5427000367249 /* cURL.swift */; };
 		F8F28A441BD5639400367249 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E31BD5427000367249 /* JSON.swift */; };
 		F8F28A451BD563AC00367249 /* AJAXObjectDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289D91BD5427000367249 /* AJAXObjectDriver.swift */; };
 		F8F28A461BD563B300367249 /* curl_support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8F28A2A1BD5545000367249 /* curl_support.cpp */; };
-		F8F28A471BD563BB00367249 /* LassoError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E41BD5427000367249 /* LassoError.swift */; };
+		F8F28A471BD563BB00367249 /* PerfectError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E41BD5427000367249 /* PerfectError.swift */; };
 		F8F28A491BD563E500367249 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A481BD563E500367249 /* libz.tbd */; };
 		F8F28A4B1BD563F600367249 /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A4A1BD563F600367249 /* libcurl.a */; };
 		F8F28A4C1BD566C000367249 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289F51BD5427000367249 /* Utilities.swift */; };
@@ -116,10 +116,10 @@
 		F8F289E11BD5427000367249 /* File.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		F8F289E21BD5427000367249 /* ICU.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ICU.swift; sourceTree = "<group>"; };
 		F8F289E31BD5427000367249 /* JSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
-		F8F289E41BD5427000367249 /* LassoError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LassoError.swift; sourceTree = "<group>"; };
-		F8F289E51BD5427000367249 /* LassoObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LassoObject.swift; sourceTree = "<group>"; };
-		F8F289E61BD5427000367249 /* LassoObjectHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LassoObjectHandler.swift; sourceTree = "<group>"; };
-		F8F289E71BD5427000367249 /* LassoServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LassoServer.swift; sourceTree = "<group>"; };
+		F8F289E41BD5427000367249 /* PerfectError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PerfectError.swift; sourceTree = "<group>"; };
+		F8F289E51BD5427000367249 /* PerfectObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PerfectObject.swift; sourceTree = "<group>"; };
+		F8F289E61BD5427000367249 /* PerfectObjectHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PerfectObjectHandler.swift; sourceTree = "<group>"; };
+		F8F289E71BD5427000367249 /* PerfectServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PerfectServer.swift; sourceTree = "<group>"; };
 		F8F289E81BD5427000367249 /* LibEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibEvent.swift; sourceTree = "<group>"; };
 		F8F289E91BD5427000367249 /* LogManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogManager.swift; sourceTree = "<group>"; };
 		F8F289EA1BD5427000367249 /* MimeReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MimeReader.swift; sourceTree = "<group>"; };
@@ -247,10 +247,10 @@
 				F8F289E11BD5427000367249 /* File.swift */,
 				F8F289E21BD5427000367249 /* ICU.swift */,
 				F8F289E31BD5427000367249 /* JSON.swift */,
-				F8F289E41BD5427000367249 /* LassoError.swift */,
-				F8F289E51BD5427000367249 /* LassoObject.swift */,
-				F8F289E61BD5427000367249 /* LassoObjectHandler.swift */,
-				F8F289E71BD5427000367249 /* LassoServer.swift */,
+				F8F289E41BD5427000367249 /* PerfectError.swift */,
+				F8F289E51BD5427000367249 /* PerfectObject.swift */,
+				F8F289E61BD5427000367249 /* PerfectObjectHandler.swift */,
+				F8F289E71BD5427000367249 /* PerfectServer.swift */,
 				F8F289E81BD5427000367249 /* LibEvent.swift */,
 				F8F289E91BD5427000367249 /* LogManager.swift */,
 				F8F289EA1BD5427000367249 /* MimeReader.swift */,
@@ -448,7 +448,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F8F28A091BD5427000367249 /* LogManager.swift in Sources */,
-				F8F28A071BD5427000367249 /* LassoServer.swift in Sources */,
+				F8F28A071BD5427000367249 /* PerfectServer.swift in Sources */,
 				F8F289FB1BD5427000367249 /* Closeable.swift in Sources */,
 				F8F28A111BD5427000367249 /* SessionManager.swift in Sources */,
 				F8F28A0D1BD5427000367249 /* NetNamedPipe.swift in Sources */,
@@ -461,7 +461,7 @@
 				F8F28A141BD5427000367249 /* util.c in Sources */,
 				F8F28A0A1BD5427000367249 /* MimeReader.swift in Sources */,
 				F8F289F91BD5427000367249 /* AJAXObjectDriver.swift in Sources */,
-				F8F28A061BD5427000367249 /* LassoObjectHandler.swift in Sources */,
+				F8F28A061BD5427000367249 /* PerfectObjectHandler.swift in Sources */,
 				F8F28A151BD5427000367249 /* Utilities.swift in Sources */,
 				F8F28A021BD5427000367249 /* ICU.swift in Sources */,
 				F8F28A0E1BD5427000367249 /* NetTCP.swift in Sources */,
@@ -472,7 +472,7 @@
 				F8F28A121BD5427000367249 /* SQLite.swift in Sources */,
 				F8F289FA1BD5427000367249 /* Bytes.swift in Sources */,
 				F8F289FD1BD5427000367249 /* Dir.swift in Sources */,
-				F8F28A041BD5427000367249 /* LassoError.swift in Sources */,
+				F8F28A041BD5427000367249 /* PerfectError.swift in Sources */,
 				F8F28A181BD5427000367249 /* WebResponse.swift in Sources */,
 				F8F28A4E1BD5720400367249 /* Utilities-Server.swift in Sources */,
 				F8F289FE1BD5427000367249 /* DynamicLoader.swift in Sources */,
@@ -480,7 +480,7 @@
 				F8F28A001BD5427000367249 /* FastCGIServer.swift in Sources */,
 				F8F28A011BD5427000367249 /* File.swift in Sources */,
 				F8F289FC1BD5427000367249 /* cURL.swift in Sources */,
-				F8F28A051BD5427000367249 /* LassoObject.swift in Sources */,
+				F8F28A051BD5427000367249 /* PerfectObject.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -501,10 +501,10 @@
 				F8F28A451BD563AC00367249 /* AJAXObjectDriver.swift in Sources */,
 				F8F28A461BD563B300367249 /* curl_support.cpp in Sources */,
 				F8F28A421BD5638500367249 /* Bytes.swift in Sources */,
-				F8F28A411BD5637D00367249 /* LassoObject.swift in Sources */,
+				F8F28A411BD5637D00367249 /* PerfectObject.swift in Sources */,
 				F8F28A4C1BD566C000367249 /* Utilities.swift in Sources */,
 				F8F28A431BD5638B00367249 /* cURL.swift in Sources */,
-				F8F28A471BD563BB00367249 /* LassoError.swift in Sources */,
+				F8F28A471BD563BB00367249 /* PerfectError.swift in Sources */,
 				F8F28A501BD5733D00367249 /* Utilities-Client.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -68,7 +68,7 @@ public class NetTCP : Closeable {
 	/// Bind the socket on the given port and optional local address
 	/// - parameter port: The port on which to bind
 	/// - parameter address: The the local address, given as a string, on which to bind. Defaults to "0.0.0.0".
-	/// - throws: LassoError.NetworkError
+	/// - throws: PerfectError.NetworkError
 	public func bind(port: UInt16, address: String = "0.0.0.0") throws {
 		
 		initSocket()
@@ -270,7 +270,7 @@ public class NetTCP : Closeable {
 	/// - parameter port: The port on which to connect.
 	/// - parameter timeoutSeconds: The number of seconds to wait for the connection to complete. A timeout of negative one indicates that there is no timeout.
 	/// - parameter callBack: The closure which will be called when the connection completes. If the connection completes successfully then the current NetTCP instance will be passed to the callback, otherwise, a nil object will be passed.
-	/// - returns: `LassoError.NetworkError`
+	/// - returns: `PerfectError.NetworkError`
 	public func connect(address: String, port: UInt16, timeoutSeconds: Double, callBack: (NetTCP?) -> ()) throws {
 		
 		initSocket()
@@ -307,7 +307,7 @@ public class NetTCP : Closeable {
 	/// Accept a new client connection and pass the result to the callback.
 	/// - parameter timeoutSeconds: The number of seconds to wait for a new connection to arrive. A timeout value of negative one indicates that there is no timeout.
 	/// - parameter callBack: The closure which will be called when the accept completes. the parameter will be a newly allocated instance of NetTCP which represents the client.
-	/// - returns: `LassoError.NetworkError`
+	/// - returns: `PerfectError.NetworkError`
 	public func accept(timeoutSeconds: Double, callBack: (NetTCP?) -> ()) throws {
 		let accRes = Foundation.accept(fd.fd, UnsafeMutablePointer<sockaddr>(), UnsafeMutablePointer<socklen_t>())
 		if accRes != -1 {
