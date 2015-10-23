@@ -9,7 +9,7 @@
 import Foundation
 import func ICU.ucal_getNow
 
-let Perfect_SESSION_DB = "Perfect_sessions"
+let Perfect_SESSION_DB = "perfect_sessions"
 let SESSION_NAME_PREFIX = "_PerfectSessionTracker_"
 
 /// This struct is used for configuring the various options available for a session
