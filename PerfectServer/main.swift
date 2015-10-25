@@ -6,6 +6,4 @@
 //  Copyright © 2015 PerfectlySoft. All rights reserved.
 //
 
-import Foundation
-
 try startServer()

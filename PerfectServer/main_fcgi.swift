@@ -16,9 +16,7 @@ func startServer() throws {
 
 	let ls = PerfectServer.staticPerfectServer
 	ls.initializeServices()
-
+	
 	let fastCgiServer = FastCGIServer()
-
 	try fastCgiServer.start("./perfect.fastcgi.sock")
-
 }

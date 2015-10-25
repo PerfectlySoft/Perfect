@@ -172,7 +172,7 @@ public class NetTCP : Closeable {
 				completion(nil) // timeout or error
 			}
 		}
-		event.add()
+		event.add(timeoutSeconds)
 	}
 	
 	/// Read the indicated number of bytes and deliver them on the provided callback.

@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F88B067B1BDD4269001FD0CD /* libevent_pthreads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F88B06791BDD4269001FD0CD /* libevent_pthreads.a */; };
+		F88B067C1BDD4269001FD0CD /* libevent.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F88B067A1BDD4269001FD0CD /* libevent.a */; };
+		F8E752EC1BDA956500BFC36A /* HTTPServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8E752EB1BDA956500BFC36A /* HTTPServer.swift */; };
 		F8F289C91BD53CF000367249 /* PerfectLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F289BE1BD53CF000367249 /* PerfectLib.framework */; };
 		F8F289CE1BD53CF000367249 /* PerfectLibTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289CD1BD53CF000367249 /* PerfectLibTests.swift */; };
 		F8F289F91BD5427000367249 /* AJAXObjectDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289D91BD5427000367249 /* AJAXObjectDriver.swift */; };
@@ -45,13 +48,11 @@
 		F8F28A1E1BD5445B00367249 /* libicudata.55.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A1B1BD5445B00367249 /* libicudata.55.1.dylib */; };
 		F8F28A1F1BD5445B00367249 /* libicui18n.55.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A1C1BD5445B00367249 /* libicui18n.55.1.dylib */; };
 		F8F28A201BD5445B00367249 /* libicuuc.55.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A1D1BD5445B00367249 /* libicuuc.55.1.dylib */; };
-		F8F28A221BD5447400367249 /* libevent-2.0.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A211BD5447400367249 /* libevent-2.0.5.dylib */; };
 		F8F28A251BD5447E00367249 /* libcrypto-x86_64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A231BD5447E00367249 /* libcrypto-x86_64.a */; };
 		F8F28A261BD5447E00367249 /* libssl-x86_64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A241BD5447E00367249 /* libssl-x86_64.a */; };
 		F8F28A281BD544A100367249 /* sqlite.3.8.10.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A271BD544A100367249 /* sqlite.3.8.10.2.dylib */; };
 		F8F28A2B1BD5545000367249 /* curl_support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8F28A2A1BD5545000367249 /* curl_support.cpp */; };
 		F8F28A2D1BD5549800367249 /* sqlite.3.8.10.2.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F28A271BD544A100367249 /* sqlite.3.8.10.2.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		F8F28A2E1BD5549B00367249 /* libevent-2.0.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F28A211BD5447400367249 /* libevent-2.0.5.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		F8F28A2F1BD554A300367249 /* libicudata.55.1.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F28A1B1BD5445B00367249 /* libicudata.55.1.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		F8F28A301BD554A700367249 /* libicui18n.55.1.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F28A1C1BD5445B00367249 /* libicui18n.55.1.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		F8F28A311BD554AB00367249 /* libicuuc.55.1.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F28A1D1BD5445B00367249 /* libicuuc.55.1.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -89,7 +90,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				F8F28A2D1BD5549800367249 /* sqlite.3.8.10.2.dylib in CopyFiles */,
-				F8F28A2E1BD5549B00367249 /* libevent-2.0.5.dylib in CopyFiles */,
 				F8F28A2F1BD554A300367249 /* libicudata.55.1.dylib in CopyFiles */,
 				F8F28A301BD554A700367249 /* libicui18n.55.1.dylib in CopyFiles */,
 				F8F28A311BD554AB00367249 /* libicuuc.55.1.dylib in CopyFiles */,
@@ -99,6 +99,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F88B06791BDD4269001FD0CD /* libevent_pthreads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libevent_pthreads.a; path = linked/LibEvent/osx/libevent_pthreads.a; sourceTree = "<group>"; };
+		F88B067A1BDD4269001FD0CD /* libevent.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libevent.a; path = linked/LibEvent/osx/libevent.a; sourceTree = "<group>"; };
+		F8E752EB1BDA956500BFC36A /* HTTPServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPServer.swift; sourceTree = "<group>"; };
 		F8F289BE1BD53CF000367249 /* PerfectLib.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PerfectLib.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8F289C11BD53CF000367249 /* PerfectLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PerfectLib.h; path = OSX/PerfectLib.h; sourceTree = "<group>"; };
 		F8F289C31BD53CF000367249 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = Info.plist; path = OSX/Info.plist; sourceTree = "<group>"; };
@@ -141,7 +144,6 @@
 		F8F28A1B1BD5445B00367249 /* libicudata.55.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicudata.55.1.dylib; path = linked/ICU/osx/libicudata.55.1.dylib; sourceTree = "<group>"; };
 		F8F28A1C1BD5445B00367249 /* libicui18n.55.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicui18n.55.1.dylib; path = linked/ICU/osx/libicui18n.55.1.dylib; sourceTree = "<group>"; };
 		F8F28A1D1BD5445B00367249 /* libicuuc.55.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicuuc.55.1.dylib; path = linked/ICU/osx/libicuuc.55.1.dylib; sourceTree = "<group>"; };
-		F8F28A211BD5447400367249 /* libevent-2.0.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libevent-2.0.5.dylib"; path = "linked/LibEvent/osx/libevent-2.0.5.dylib"; sourceTree = "<group>"; };
 		F8F28A231BD5447E00367249 /* libcrypto-x86_64.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libcrypto-x86_64.a"; path = "linked/OpenSSL/osx/libcrypto-x86_64.a"; sourceTree = "<group>"; };
 		F8F28A241BD5447E00367249 /* libssl-x86_64.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libssl-x86_64.a"; path = "linked/OpenSSL/osx/libssl-x86_64.a"; sourceTree = "<group>"; };
 		F8F28A271BD544A100367249 /* sqlite.3.8.10.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = sqlite.3.8.10.2.dylib; path = linked/SQLite3/osx/sqlite.3.8.10.2.dylib; sourceTree = "<group>"; };
@@ -166,7 +168,8 @@
 				F8F28A1E1BD5445B00367249 /* libicudata.55.1.dylib in Frameworks */,
 				F8F28A1F1BD5445B00367249 /* libicui18n.55.1.dylib in Frameworks */,
 				F8F28A201BD5445B00367249 /* libicuuc.55.1.dylib in Frameworks */,
-				F8F28A221BD5447400367249 /* libevent-2.0.5.dylib in Frameworks */,
+				F88B067B1BDD4269001FD0CD /* libevent_pthreads.a in Frameworks */,
+				F88B067C1BDD4269001FD0CD /* libevent.a in Frameworks */,
 				F8F28A281BD544A100367249 /* sqlite.3.8.10.2.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -244,6 +247,7 @@
 				F8F289DE1BD5427000367249 /* DynamicLoader.swift */,
 				F8F289DF1BD5427000367249 /* FastCGI.swift */,
 				F8F289E01BD5427000367249 /* FastCGIServer.swift */,
+				F8E752EB1BDA956500BFC36A /* HTTPServer.swift */,
 				F8F289E11BD5427000367249 /* File.swift */,
 				F8F289E21BD5427000367249 /* ICU.swift */,
 				F8F289E31BD5427000367249 /* JSON.swift */,
@@ -282,7 +286,8 @@
 				F8F28A271BD544A100367249 /* sqlite.3.8.10.2.dylib */,
 				F8F28A231BD5447E00367249 /* libcrypto-x86_64.a */,
 				F8F28A241BD5447E00367249 /* libssl-x86_64.a */,
-				F8F28A211BD5447400367249 /* libevent-2.0.5.dylib */,
+				F88B06791BDD4269001FD0CD /* libevent_pthreads.a */,
+				F88B067A1BDD4269001FD0CD /* libevent.a */,
 				F8F28A1B1BD5445B00367249 /* libicudata.55.1.dylib */,
 				F8F28A1C1BD5445B00367249 /* libicui18n.55.1.dylib */,
 				F8F28A1D1BD5445B00367249 /* libicuuc.55.1.dylib */,
@@ -454,6 +459,7 @@
 				F8F28A0D1BD5427000367249 /* NetNamedPipe.swift in Sources */,
 				F8F28A081BD5427000367249 /* LibEvent.swift in Sources */,
 				F8F28A161BD5427000367249 /* WebConnection.swift in Sources */,
+				F8E752EC1BDA956500BFC36A /* HTTPServer.swift in Sources */,
 				F8F28A031BD5427000367249 /* JSON.swift in Sources */,
 				F8F28A2B1BD5545000367249 /* curl_support.cpp in Sources */,
 				F8F289FF1BD5427000367249 /* FastCGI.swift in Sources */,

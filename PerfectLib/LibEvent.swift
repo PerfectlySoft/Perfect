@@ -31,7 +31,7 @@ class LibEvent {
 	private var cb: EventCallBack?
 	private var base: LibEventBase?
 	
-	private static func getEventCallBack() -> PrimEventCallBack {
+	private static var eventCallBack: PrimEventCallBack {
 		
 		let c: PrimEventCallBack = {
 			(a,b,c) in
@@ -60,7 +60,7 @@ class LibEvent {
 		self.userData = userData
 		self.cb = callBack
 		self.base = base
-		event = event_new(base.eventBase, fd, Int16(what), LibEvent.getEventCallBack(), UnsafeMutablePointer(Unmanaged.passRetained(self).toOpaque()))
+		event = event_new(base.eventBase, fd, Int16(what), LibEvent.eventCallBack, UnsafeMutablePointer(Unmanaged.passRetained(self).toOpaque()))
 	}
 	
 	deinit {
@@ -96,6 +96,8 @@ class LibEvent {
 	}
 }
 
+let EVLOOP_NO_EXIT_ON_EMPTY = Int32(0/*0x04*/) // not supported until libevent 2.1
+
 class LibEventBase {
 	
 	var eventBase: COpaquePointer
@@ -103,11 +105,24 @@ class LibEventBase {
 	var eventDispatchQueue: dispatch_queue_t
 	
 	init() {
+		evthread_use_pthreads()
+		
 		baseDispatchQueue = dispatch_queue_create("LibEvent Base", DISPATCH_QUEUE_SERIAL)
 		eventDispatchQueue = dispatch_queue_create("LibEvent Event", DISPATCH_QUEUE_CONCURRENT)
 		eventBase = event_base_new()
 		
+		addDummyEvent()
+		
 		triggerEventBaseLoop()
+	}
+	
+	private func addDummyEvent() {
+		let event = LibEvent(base: self, fd: -1, what: EV_TIMEOUT, userData: nil) {
+			(fd:Int32, w:Int16, ud:AnyObject?) -> () in
+			
+			self.addDummyEvent()
+		}
+		event.add(1_000_000)
 	}
 	
 	private func triggerEventBaseLoop() {
@@ -117,8 +132,12 @@ class LibEventBase {
 	}
 	
 	private func eventBaseLoop() {
-		event_base_loop(self.eventBase, 0)
-		triggerEventBaseLoop()
+		let r = event_base_dispatch(self.eventBase) //event_base_loop(self.eventBase, EVLOOP_NO_EXIT_ON_EMPTY)
+		if r == 1 {
+			triggerEventBaseLoop()
+		} else if r == -1 {
+			print("eventBaseLoop exited because of error")
+		}
 	}
 }
 
