@@ -99,6 +99,10 @@ public class NetTCP : Closeable {
 			Foundation.shutdown(fd.fd, SHUT_RDWR)
 			Foundation.close(fd.fd)
 			fd.fd = INVALID_SOCKET
+			
+			if self.semaphore != nil {
+				dispatch_semaphore_signal(self.semaphore!)
+			}
 		}
 	}
 	
@@ -229,6 +233,60 @@ public class NetTCP : Closeable {
 	/// - parameter completion: The callback which will be called once the write has completed. The callback will be passed the number of bytes which were successfuly written, which may be zero.
 	public func writeBytes(bytes: [UInt8], completion: (Int) -> ()) {
 		writeBytes(bytes, dataPosition: 0, length: bytes.count, completion: completion)
+	}
+	
+	/// Write the indicated bytes and return true if all data was sent.
+	/// - parameter bytes: The array of UInt8 to write.
+	public func writeBytesFully(bytes: [UInt8]) -> Bool {
+		let length = bytes.count
+		var totalSent = 0
+		let ptr = UnsafeMutablePointer<UInt8>(bytes)
+		var s: dispatch_semaphore_t?
+		var what: Int32 = 0
+		
+		let waitFunc = {
+			let event: LibEvent = LibEvent(base: LibEvent.eventBase, fd: self.fd.fd, what: EV_WRITE, userData: nil) {
+				(fd:Int32, w:Int16, ud:AnyObject?) -> () in
+				what = Int32(w)
+				dispatch_semaphore_signal(s!)
+			}
+			event.add()
+		}
+		
+		while length > 0 {
+			
+			let sent = send(ptr.advancedBy(totalSent), count: length - totalSent)
+			if sent == length {
+				return true
+			}
+			
+			if s == nil {
+				s = dispatch_semaphore_create(0)
+			}
+			
+			if sent == -1 {
+				if isEAgain(sent) { // flow
+					waitFunc()
+				} else { // error
+					break
+				}
+			} else {
+				totalSent += sent
+				
+				if totalSent == length {
+					return true
+				}
+				
+				waitFunc()
+			}
+			
+			dispatch_semaphore_wait(s!, DISPATCH_TIME_FOREVER)
+			
+			if what != EV_WRITE {
+				break
+			}
+		}
+		return totalSent == length
 	}
 			 
 	/// Write the indicated bytes and call the callback with the number of bytes which were written.
@@ -375,11 +433,11 @@ public class NetTCP : Closeable {
 				waitAccept()
 				dispatch_semaphore_wait(self.semaphore!, DISPATCH_TIME_FOREVER)
 			} else {
-				let errStr = strerror(errno)
+				let errStr = String.fromCString(strerror(errno)) ?? "NO MESSAGE"
 				print("Unexpected networking error: \(errno) '\(errStr)'")
 				networkFailure = true
 			}
-		} while !networkFailure
+		} while !networkFailure && self.fd.fd != INVALID_SOCKET
 		return
 	}
 	

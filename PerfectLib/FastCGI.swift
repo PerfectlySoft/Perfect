@@ -136,9 +136,7 @@ class FastCGIRequest : WebConnection {
 	}
 	
 	func writeBytes(b: [UInt8]) {
-		self.connection.writeBytes(b) { (Int) -> () in
-			// ...
-		}
+		self.connection.writeBytesFully(b)
 	}
 	
 	func makeEndRequestBody(requestId: Int, appStatus: Int, protocolStatus: Int) -> [UInt8] {
