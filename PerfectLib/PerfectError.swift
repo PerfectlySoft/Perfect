@@ -21,7 +21,7 @@ func ThrowFileError() throws {
 	let err = errno
 	let msg = String.fromCString(strerror(err))!
 	
-	print("FileError: \(err) \(msg)")
+//	print("FileError: \(err) \(msg)")
 	
 	throw PerfectError.FileError(err, msg)
 }
@@ -31,7 +31,7 @@ func ThrowSystemError() throws {
 	let err = errno
 	let msg = String.fromCString(strerror(err))!
 	
-	print("SystemError: \(err) \(msg)")
+//	print("SystemError: \(err) \(msg)")
 	
 	throw PerfectError.SystemError(err, msg)
 }
@@ -41,7 +41,7 @@ func ThrowNetworkError() throws {
 	let err = errno
 	let msg = String.fromCString(strerror(err))!
 	
-	print("NetworkError: \(err) \(msg)")
+//	print("NetworkError: \(err) \(msg)")
 	
 	throw PerfectError.NetworkError(err, msg)
 }

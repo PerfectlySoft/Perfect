@@ -44,8 +44,8 @@ public class PerfectServer {
 					}
 				}
 			}
-		} catch let e {
-			print("Exception \(e)")
+		} catch {
+			//print("Exception \(e)")
 		}
 	}
 	

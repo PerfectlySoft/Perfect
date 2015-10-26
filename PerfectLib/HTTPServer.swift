@@ -64,6 +64,13 @@ public class HTTPServer {
 		}
 	}
 	
+	public func stop() {
+		if let n = self.net {
+			self.net = nil
+			n.close()
+		}
+	}
+	
 	func handleConnection(net: NetTCP) {
 		let req = HTTPWebConnection(net: net)
 		req.readRequest { requestOk in
@@ -77,10 +84,15 @@ public class HTTPServer {
 	
 	func sendFile(req: HTTPWebConnection, file: File) {
 		
+		defer {
+			file.close()
+		}
+		
 		var size = file.size()
 		let readSize = READ_SIZE * 16
 		req.setStatus(200, msg: "OK")
 		req.writeHeaderLine("Content-length: \(size)")
+		req.writeHeaderLine("Content-type: \(MimeType.forExtension(file.path().pathExtension))")
 		// !FIX! Content-type
 		req.pushHeaderBytes()
 		
@@ -96,6 +108,48 @@ public class HTTPServer {
 		}
 	}
 	
+	// returns true if the request pointed to a file which existed
+	// and the request was properly handled
+	func runRequest(req: HTTPWebConnection, withPathInfo: String) -> Bool {
+		let filePath = self.documentRoot + withPathInfo
+		let ext = withPathInfo.pathExtension.lowercaseString
+		if ext == MOUSTACHE_EXTENSION {
+			
+			if !File(filePath).exists() {
+				return false
+			}
+			
+			let request = WebRequest(req)
+			let response = WebResponse(req, request: request)
+			response.respond()
+			return true
+			
+		} else if ext.isEmpty {
+			
+			let pathDir = Dir(filePath)
+			if pathDir.exists() {
+				
+				if self.runRequest(req, withPathInfo: withPathInfo + "/index.\(MOUSTACHE_EXTENSION)") {
+					return true
+				}
+				
+				if self.runRequest(req, withPathInfo: withPathInfo + "/index.html") {
+					return true
+				}
+			}
+			
+		} else {
+			
+			let file = File(filePath)
+			
+			if file.exists() {
+				self.sendFile(req, file: file)
+				return true
+			}
+		}
+		return false
+	}
+	
 	func runRequest(req: HTTPWebConnection) {
 		guard let pathInfo = req.requestParams["PATH_INFO"] else {
 			
@@ -105,25 +159,16 @@ public class HTTPServer {
 			return
 		}
 		
-		if pathInfo.hasSuffix("."+MOUSTACHE_EXTENSION) {
-			
-			let request = WebRequest(req)
-			let response = WebResponse(req, request: request)
-			response.respond()
-			
-		} else {
-			
-			let filePath = self.documentRoot + pathInfo
-			let file = File(filePath)
-			
-			if file.exists() {
-				self.sendFile(req, file: file)
-			} else {
-				req.setStatus(404, msg: "NOT FOUND")
-				req.writeBodyBytes([UInt8]("The file \"\(pathInfo)\" was not found.".utf8))
-			}
+		if !self.runRequest(req, withPathInfo: pathInfo) {
+			req.setStatus(404, msg: "NOT FOUND")
+			req.writeBodyBytes([UInt8]("The file \"\(pathInfo)\" was not found.".utf8))
 		}
-		self.handleConnection(req.connection)
+		
+		if req.httpOneOne {
+			self.handleConnection(req.connection)
+		} else {
+			req.connection.close()
+		}
 	}
 	
 	class HTTPWebConnection : WebConnection {
@@ -147,6 +192,14 @@ public class HTTPServer {
 		
 		var contentType: String? {
 			return self.requestParams["CONTENT_TYPE"]
+		}
+		
+		var httpOneOne: Bool {
+			return (self.requestParams["SERVER_PROTOCOL"] ?? "").containsString("1.1")
+		}
+		
+		var httpVersion: String {
+			return self.requestParams["SERVER_PROTOCOL"] ?? "HTTP/1.0"
 		}
 		
 		init(net: NetTCP) {
@@ -442,7 +495,7 @@ public class HTTPServer {
 			if !wroteHeader {
 				wroteHeader = true
 				
-				let statusLine = "HTTP/1.1 \(statusCode) \(statusMsg)\r\n"
+				let statusLine = "\(self.httpVersion) \(statusCode) \(statusMsg)\r\n"
 				let firstBytes = [UInt8](statusLine.utf8)
 				writeBytes(firstBytes)
 				
@@ -454,27 +507,23 @@ public class HTTPServer {
 		
 		func pushHeaderBytes() {
 			if !wroteHeader {
-				header += "Connection: keep-alive\r\n\r\n" // final CRLF
+				if self.httpOneOne {
+					header += "Connection: keep-alive\r\n\r\n" // final CRLF
+				} else {
+					header += "\r\n" // final CRLF
+				}
 				writeHeaderBytes([UInt8](header.utf8))
 				header = ""
 			}
 		}
 		
 		func writeBodyBytes(b: [UInt8]) {
-			if !wroteHeader {
-				header += "Connection: keep-alive\r\n\r\n" // final CRLF
-				writeHeaderBytes([UInt8](header.utf8))
-				header = ""
-			}
+			pushHeaderBytes()
 			writeBytes(b)
 		}
 		
 		func writeBytes(b: [UInt8]) {
-			self.connection.writeBytes(b) { (wrote:Int) -> () in
-				if wrote < b.count {
-					print("Flow control!")
-				}
-			}
+			self.connection.writeBytesFully(b)
 		}
 		
 	}
