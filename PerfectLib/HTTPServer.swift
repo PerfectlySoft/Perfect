@@ -118,12 +118,19 @@ public class HTTPServer {
 				return false
 			}
 			
+			// PATH_INFO may have been altered. set it to this version
+			req.requestParams["PATH_INFO"] = withPathInfo
+			
 			let request = WebRequest(req)
 			let response = WebResponse(req, request: request)
 			response.respond()
 			return true
 			
 		} else if ext.isEmpty {
+			
+			if !withPathInfo.hasSuffix(".") && self.runRequest(req, withPathInfo: withPathInfo + ".\(MOUSTACHE_EXTENSION)") {
+				return true
+			}
 			
 			let pathDir = Dir(filePath)
 			if pathDir.exists() {
@@ -157,6 +164,8 @@ public class HTTPServer {
 			req.connection.close()
 			return
 		}
+		
+		req.requestParams["PERFECTSERVER_DOCUMENT_ROOT"] = self.documentRoot
 		
 		if !self.runRequest(req, withPathInfo: pathInfo) {
 			req.setStatus(404, msg: "NOT FOUND")
