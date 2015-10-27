@@ -448,6 +448,7 @@
 				F88B068E1BDD48DD001FD0CD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		F8E752E31BDA8A7600BFC36A /* Build configuration list for PBXNativeTarget "PerfectServer HTTP" */ = {
 			isa = XCConfigurationList;

@@ -14,6 +14,7 @@ public class NetTCP : Closeable {
 	
 	private var networkFailure: Bool = false
 	private var semaphore: dispatch_semaphore_t?
+	private var waitAcceptEvent: LibEvent?
 	
 	class ReferenceBuffer {
 		var b: UnsafeMutablePointer<UInt8>
@@ -99,6 +100,11 @@ public class NetTCP : Closeable {
 			Foundation.shutdown(fd.fd, SHUT_RDWR)
 			Foundation.close(fd.fd)
 			fd.fd = INVALID_SOCKET
+			
+			if let event = self.waitAcceptEvent {
+				event.del()
+				self.waitAcceptEvent = nil
+			}
 			
 			if self.semaphore != nil {
 				dispatch_semaphore_signal(self.semaphore!)
@@ -402,12 +408,14 @@ public class NetTCP : Closeable {
 		let event: LibEvent = LibEvent(base: LibEvent.eventBase, fd: fd.fd, what: self.evWhatFor(EV_READ), userData: nil) {
 			(fd:Int32, w:Int16, ud:AnyObject?) -> () in
 			
+			self.waitAcceptEvent = nil
 			if (Int32(w) & EV_TIMEOUT) != 0 {
 				print("huh?")
 			} else {
 				dispatch_semaphore_signal(self.semaphore!)
 			}
 		}
+		self.waitAcceptEvent = event
 		event.add()
 	}
 	
