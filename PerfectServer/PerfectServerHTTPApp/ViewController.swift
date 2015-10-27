@@ -53,8 +53,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
 		} else {
 			do {
 				try appDel.startServer()
-			} catch {
-			}
+			} catch { }
 		}
 		self.updateButtonTitle()
 	}

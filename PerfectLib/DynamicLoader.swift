@@ -30,7 +30,8 @@ class DynamicLoader {
 			let openRes = dlopen(realPath, RTLD_NOW|RTLD_LOCAL)
 			if openRes != nil {
 				// this is fragile
-				let symbolName = "_TF\(moduleName.utf8.count)\(moduleName)\(initFuncName.utf8.count)\(initFuncName)FT_T_"
+				let newModuleName = moduleName.stringByReplacingOccurrencesOfString("-", withString: "_")
+				let symbolName = "_TF\(newModuleName.utf8.count)\(newModuleName)\(initFuncName.utf8.count)\(initFuncName)FT_T_"
 				let sym = dlsym(openRes, symbolName)
 				if sym != nil {
 					let f: InitFunction = unsafeBitCast(sym, InitFunction.self)

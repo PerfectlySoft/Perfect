@@ -8,8 +8,8 @@
 
 //import Foundation
 
-let SQLITE_DBS = "SQliteDBs/"
-let Perfect_LIBRARIES = "PerfectLibraries/"
+public let SQLITE_DBS = "SQliteDBs/"
+public let PERFECT_LIBRARIES = "PerfectLibraries/"
 
 /// Provides access to various system level features for the process.
 /// A static instance of this class is created at startup and all access to this object go through the `PerfectServer.staticPerfectServer` static property.
@@ -32,7 +32,7 @@ public class PerfectServer {
 		
 		// !FIX! OS X only
 		let dl = DynamicLoader()
-		let baseDir = Dir(homeDir() + Perfect_LIBRARIES)
+		let baseDir = Dir(homeDir() + PERFECT_LIBRARIES)
 		do {
 			try baseDir.forEachEntry { (name: String) -> () in
 				if name.hasSuffix(".framework") || name.hasSuffix(".framework/") {
