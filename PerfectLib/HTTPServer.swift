@@ -20,9 +20,9 @@ public class HTTPServer {
 	
 	private var net: NetTCP?
 	
-	let documentRoot: String
-	var serverPort: UInt16 = 0
-	var serverAddress = "0.0.0.0"
+	public let documentRoot: String
+	public var serverPort: UInt16 = 0
+	public var serverAddress = "0.0.0.0"
 	
 	public init(documentRoot: String) {
 		self.documentRoot = documentRoot
@@ -93,7 +93,6 @@ public class HTTPServer {
 		req.setStatus(200, msg: "OK")
 		req.writeHeaderLine("Content-length: \(size)")
 		req.writeHeaderLine("Content-type: \(MimeType.forExtension(file.path().pathExtension))")
-		// !FIX! Content-type
 		req.pushHeaderBytes()
 		
 		do {
@@ -161,7 +160,9 @@ public class HTTPServer {
 		
 		if !self.runRequest(req, withPathInfo: pathInfo) {
 			req.setStatus(404, msg: "NOT FOUND")
-			req.writeBodyBytes([UInt8]("The file \"\(pathInfo)\" was not found.".utf8))
+			let msg = "The file \"\(pathInfo)\" was not found.".utf8
+			req.writeHeaderLine("Content-length: \(msg.count)")
+			req.writeBodyBytes([UInt8](msg))
 		}
 		
 		if req.httpOneOne {

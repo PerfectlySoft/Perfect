@@ -9,6 +9,10 @@
 import Cocoa
 import PerfectLib
 
+let KEY_SERVER_PORT = "server.port"
+let KEY_SERVER_ADDRESS = "server.address"
+let KEY_SERVER_ROOT = "server.root"
+
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
 
@@ -19,9 +23,35 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	var httpServer: HTTPServer?
 	let serverDispatchQueue = dispatch_queue_create("HTTP Server Accept", DISPATCH_QUEUE_SERIAL)
 	
-	var serverPort: UInt16 = 8181
-	var serverAddress: String = "0.0.0.0"
-	var documentRoot: String = "./webroot/"
+	var serverPort: UInt16 = 8181 {
+		didSet {
+			NSUserDefaults.standardUserDefaults().setValue(Int(self.serverPort), forKey: KEY_SERVER_PORT)
+			NSUserDefaults.standardUserDefaults().synchronize()
+		}
+	}
+	var serverAddress: String = "0.0.0.0" {
+		didSet {
+			NSUserDefaults.standardUserDefaults().setValue(self.serverAddress, forKey: KEY_SERVER_ADDRESS)
+			NSUserDefaults.standardUserDefaults().synchronize()
+		}
+	}
+	var documentRoot: String = "./webroot/" {
+		didSet {
+			NSUserDefaults.standardUserDefaults().setValue(self.documentRoot, forKey: KEY_SERVER_ROOT)
+			NSUserDefaults.standardUserDefaults().synchronize()
+		}
+	}
+	
+	override init() {
+		let r = UInt16(NSUserDefaults.standardUserDefaults().integerForKey(KEY_SERVER_PORT))
+		if r == 0 {
+			self.serverPort = 8181
+		} else {
+			self.serverPort = r
+		}
+		self.serverAddress = NSUserDefaults.standardUserDefaults().stringForKey(KEY_SERVER_ADDRESS) ?? "0.0.0.0"
+		self.documentRoot = NSUserDefaults.standardUserDefaults().stringForKey(KEY_SERVER_ROOT) ?? "./webroot/"
+	}
 	
 	func applicationDidFinishLaunching(aNotification: NSNotification) {
 		
@@ -50,13 +80,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	}
 	
 	func serverIsRunning() -> Bool {
+		guard let s = self.httpServer else {
+			return false
+		}
 		let tcp = NetTCP()
 		defer {
 			tcp.close()
 		}
 		
 		do {
-			try tcp.bind(serverPort, address: serverAddress)
+			try tcp.bind(s.serverPort, address: s.serverAddress)
 			return false
 		} catch {
 			
@@ -69,19 +102,27 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	}
 	
 	func startServer(port: UInt16, address: String, documentRoot: String) throws {
+		guard nil == self.httpServer else {
+			print("Server already running")
+			return
+		}
 		dispatch_async(self.serverDispatchQueue) {
 			do {
 				try Dir(documentRoot).create()
 				self.httpServer = HTTPServer(documentRoot: documentRoot)
 				try self.httpServer!.start(port, bindAddress: address)
-			} catch {
-				print("Exiting server run loop")
+			} catch let e {
+				print("Exception in server run loop \(e) \(address):\(port)")
 			}
+			print("Exiting server run loop")
 		}
 	}
 
 	func stopServer() {
-		self.httpServer!.stop()
+		if let _ = self.httpServer {
+			self.httpServer!.stop()
+			self.httpServer = nil
+		}
 	}
 }
 
