@@ -47,6 +47,14 @@ public class MoustacheEvaluationContext {
 	public var parent: MoustacheEvaluationContext? = nil
 	/// Provides access to the current WebResponse object
 	public weak var webResponse: WebResponse?
+	/// Provides access to the current WebRequest object
+	public var webRequest: WebRequest? {
+		if let w = self.webResponse {
+			return w.request
+		}
+		return nil
+	}
+	
 	
 	/// Complete path to the file being processed
 	/// Potentially nil in cases of dynamic file generation(?)
@@ -171,7 +179,7 @@ public class MoustacheTag {
 			if let value = context.getValue(tag) {
 				collector.append(String(value), encoded: false)
 			}
-		case .Pragma:
+		case .Pragma, .Bang:
 			() // ignored
 		default:
 			print("Unhandled moustache tag type \(type)")
