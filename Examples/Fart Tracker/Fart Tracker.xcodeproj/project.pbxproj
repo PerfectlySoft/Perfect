@@ -16,8 +16,6 @@
 		F84242621BD97455001EFF66 /* PerfectLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F84242611BD97455001EFF66 /* PerfectLib.framework */; };
 		F84242641BD9745F001EFF66 /* PerfectLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F84242631BD9745F001EFF66 /* PerfectLib.framework */; };
 		F84242661BD97839001EFF66 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F84242651BD97839001EFF66 /* MapKit.framework */; };
-		F85FB1181BDFCC1900DABFA8 /* FartInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85FB1171BDFCC1900DABFA8 /* FartInstance.swift */; };
-		F85FB1191BDFCC1900DABFA8 /* FartInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85FB1171BDFCC1900DABFA8 /* FartInstance.swift */; };
 		F85FB11D1BDFCDE200DABFA8 /* FartTracker.moustache in CopyFiles */ = {isa = PBXBuildFile; fileRef = F85FB11B1BDFCD5E00DABFA8 /* FartTracker.moustache */; };
 		F85FB1201BDFF93200DABFA8 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85FB11F1BDFF93200DABFA8 /* MapViewController.swift */; };
 		F8E752DA1BDA6B5400BFC36A /* FAHandlers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8E752D91BDA6B5400BFC36A /* FAHandlers.swift */; };
@@ -50,7 +48,6 @@
 		F84242611BD97455001EFF66 /* PerfectLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PerfectLib.framework; path = "../../../PerfectLib/build/Debug-iphoneos/PerfectLib.framework"; sourceTree = "<group>"; };
 		F84242631BD9745F001EFF66 /* PerfectLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PerfectLib.framework; path = ../../../PerfectLib/build/Debug/PerfectLib.framework; sourceTree = "<group>"; };
 		F84242651BD97839001EFF66 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.1.sdk/System/Library/Frameworks/MapKit.framework; sourceTree = DEVELOPER_DIR; };
-		F85FB1171BDFCC1900DABFA8 /* FartInstance.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FartInstance.swift; sourceTree = SOURCE_ROOT; };
 		F85FB11B1BDFCD5E00DABFA8 /* FartTracker.moustache */ = {isa = PBXFileReference; lastKnownFileType = text; path = FartTracker.moustache; sourceTree = SOURCE_ROOT; };
 		F85FB11F1BDFF93200DABFA8 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		F8E752D91BDA6B5400BFC36A /* FAHandlers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FAHandlers.swift; sourceTree = "<group>"; };
@@ -80,7 +77,6 @@
 		F84242361BD9735E001EFF66 = {
 			isa = PBXGroup;
 			children = (
-				F85FB11A1BDFCC3600DABFA8 /* Shared */,
 				F84242431BD973C1001EFF66 /* Fart Tracker */,
 				F842425A1BD97409001EFF66 /* Fart Tracker Server */,
 				F84242421BD973C1001EFF66 /* Products */,
@@ -122,14 +118,6 @@
 				F84242651BD97839001EFF66 /* MapKit.framework */,
 			);
 			path = "Fart Tracker Server";
-			sourceTree = "<group>";
-		};
-		F85FB11A1BDFCC3600DABFA8 /* Shared */ = {
-			isa = PBXGroup;
-			children = (
-				F85FB1171BDFCC1900DABFA8 /* FartInstance.swift */,
-			);
-			name = Shared;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -250,7 +238,6 @@
 			files = (
 				F84242471BD973C1001EFF66 /* ViewController.swift in Sources */,
 				F84242451BD973C1001EFF66 /* AppDelegate.swift in Sources */,
-				F85FB1181BDFCC1900DABFA8 /* FartInstance.swift in Sources */,
 				F85FB1201BDFF93200DABFA8 /* MapViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -260,7 +247,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F8E752DA1BDA6B5400BFC36A /* FAHandlers.swift in Sources */,
-				F85FB1191BDFCC1900DABFA8 /* FartInstance.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
