@@ -110,6 +110,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
 			
 		} else {
 			// no location
+			
+			let alert = UIAlertController(title: "No Location", message: "Ensure that location services are available and try again.", preferredStyle: .Alert)
+			let action = UIAlertAction(title: "OK", style: .Default) {
+				(a:UIAlertAction) -> Void in
+			}
+			alert.addAction(action)
+			self.presentViewController(alert, animated: true) { }
 		}
 	}
 	

@@ -13,11 +13,11 @@
 		F842424C1BD973C1001EFF66 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F842424B1BD973C1001EFF66 /* Assets.xcassets */; };
 		F842424F1BD973C1001EFF66 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F842424D1BD973C1001EFF66 /* LaunchScreen.storyboard */; };
 		F842425C1BD97409001EFF66 /* Fart Tracker Server.h in Headers */ = {isa = PBXBuildFile; fileRef = F842425B1BD97409001EFF66 /* Fart Tracker Server.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F84242621BD97455001EFF66 /* PerfectLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F84242611BD97455001EFF66 /* PerfectLib.framework */; };
 		F84242641BD9745F001EFF66 /* PerfectLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F84242631BD9745F001EFF66 /* PerfectLib.framework */; };
 		F84242661BD97839001EFF66 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F84242651BD97839001EFF66 /* MapKit.framework */; };
 		F85FB11D1BDFCDE200DABFA8 /* FartTracker.moustache in CopyFiles */ = {isa = PBXBuildFile; fileRef = F85FB11B1BDFCD5E00DABFA8 /* FartTracker.moustache */; };
 		F85FB1201BDFF93200DABFA8 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85FB11F1BDFF93200DABFA8 /* MapViewController.swift */; };
+		F85FB1251BE0186400DABFA8 /* PerfectLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F84242611BD97455001EFF66 /* PerfectLib.framework */; };
 		F8E752DA1BDA6B5400BFC36A /* FAHandlers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8E752D91BDA6B5400BFC36A /* FAHandlers.swift */; };
 /* End PBXBuildFile section */
 
@@ -59,7 +59,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F84242661BD97839001EFF66 /* MapKit.framework in Frameworks */,
-				F84242621BD97455001EFF66 /* PerfectLib.framework in Frameworks */,
+				F85FB1251BE0186400DABFA8 /* PerfectLib.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -103,6 +103,7 @@
 				F842424D1BD973C1001EFF66 /* LaunchScreen.storyboard */,
 				F84242501BD973C1001EFF66 /* Info.plist */,
 				F84242611BD97455001EFF66 /* PerfectLib.framework */,
+				F84242651BD97839001EFF66 /* MapKit.framework */,
 			);
 			path = "Fart Tracker";
 			sourceTree = "<group>";
@@ -115,7 +116,6 @@
 				F842425D1BD97409001EFF66 /* Info.plist */,
 				F85FB11B1BDFCD5E00DABFA8 /* FartTracker.moustache */,
 				F84242631BD9745F001EFF66 /* PerfectLib.framework */,
-				F84242651BD97839001EFF66 /* MapKit.framework */,
 			);
 			path = "Fart Tracker Server";
 			sourceTree = "<group>";
@@ -424,7 +424,7 @@
 				INFOPLIST_FILE = "Fart Tracker Server/Info.plist";
 				INSTALL_PATH = /PerfectLibraries;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "ca.perfectlysoft.Fart-Tracker-Server";
@@ -477,7 +477,7 @@
 				INFOPLIST_FILE = "Fart Tracker Server/Info.plist";
 				INSTALL_PATH = /PerfectLibraries;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "ca.perfectlysoft.Fart-Tracker-Server";
 				PRODUCT_NAME = "FartTracker-Server";
