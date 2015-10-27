@@ -7,12 +7,39 @@
 //
 
 import UIKit
+import MapKit
+import PerfectLib
 
-class ViewController: UIViewController {
+let END_POINT_HOST = "localhost"
+let END_POINT_PORT = 8181
 
+let END_POINT = "http://\(END_POINT_HOST):\(END_POINT_PORT)/FartTracker"
+
+class ViewController: UIViewController, CLLocationManagerDelegate {
+
+	var selectedLocation: CLLocation? = nil
+	let locationManager: CLLocationManager
+	
+	var timeStr = ""
+	var lat = 0.0, long = 0.0
+	
+	override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+		self.locationManager = CLLocationManager()
+		super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+	}
+	
+	required init?(coder aDecoder: NSCoder) {
+		self.locationManager = CLLocationManager()
+		super.init(coder: aDecoder)
+	}
+	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		// Do any additional setup after loading the view, typically from a nib.
+		self.locationManager.delegate = self
+		if self.locationManager.respondsToSelector("requestWhenInUseAuthorization") {
+			self.locationManager.requestWhenInUseAuthorization()
+		}
+		self.locationManager.startUpdatingLocation()
 	}
 
 	override func didReceiveMemoryWarning() {
@@ -20,6 +47,79 @@ class ViewController: UIViewController {
 		// Dispose of any resources that can be recreated.
 	}
 
+	func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+		if let loc = locations.first {
+			self.selectedLocation = loc
+		}
+	}
+	
+	@IBAction
+	func buttonPressed(Sender: AnyObject) {
+		if let loc = self.selectedLocation {
+			
+			let lat = loc.coordinate.latitude
+			let long = loc.coordinate.longitude
+			
+			let postBody = "lat=\(lat)&long=\(long)"
+			
+			let req = NSMutableURLRequest(URL: NSURL(string: END_POINT)!)
+			req.HTTPMethod = "POST"
+			req.HTTPBody = postBody.dataUsingEncoding(NSUTF8StringEncoding)
+			
+			let session = NSURLSession.sharedSession()
+			
+			let task = session.dataTaskWithRequest(req, completionHandler: {
+				(d:NSData?, res:NSURLResponse?, e:NSError?) -> Void in
+				if let _ = e {
+					print("Request failed with error \(e!)")
+				} else {
+					
+					let strData =  String(data: d!, encoding: NSUTF8StringEncoding)
+					print("Request succeeded with data \(strData)")
+					do {
+						if let strOk = strData {
+							let jsonDecoded = try JSONDecode().decode(strOk)
+							if let jsonMap = jsonDecoded as? JSONDictionaryType {
+								
+								if let sets = jsonMap.dictionary["resultSets"] as? JSONArrayType {
+									// just one result in this app
+									if let result = sets.array.first as? JSONDictionaryType {
+										if let timeStr = result.dictionary["time"] as? String,
+											let lat = result.dictionary["lat"] as? Double,
+											let long = result.dictionary["long"] as? Double {
+											
+												self.timeStr = timeStr
+												self.lat = lat
+												self.long = long
+												
+												dispatch_async(dispatch_get_main_queue()) {
+													self.performSegueWithIdentifier("showMap", sender: self)
+												}
+										}
+									}
+								}
+							}
+						}
+					} catch let ex {
+						print("JSON decoding failed with exception \(ex)")
+					}
+				}
+			})
+			
+			task.resume()
+			
+		} else {
+			// no location
+		}
+	}
+	
+	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+		if let dest = segue.destinationViewController as? MapViewController {
+			dest.timeStr = self.timeStr
+			dest.lat = self.lat
+			dest.long = self.long
+		}
+	}
 
 }
 

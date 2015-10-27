@@ -273,10 +273,10 @@
 				F8F289F61BD5427000367249 /* WebConnection.swift */,
 				F8F289F71BD5427000367249 /* WebRequest.swift */,
 				F8F289F81BD5427000367249 /* WebResponse.swift */,
-				F8F289F41BD5427000367249 /* util.c */,
-				F8F28A2A1BD5545000367249 /* curl_support.cpp */,
 				F8F28A4D1BD5720400367249 /* Utilities-Server.swift */,
 				F88B06911BDE80F9001FD0CD /* MimeType.swift */,
+				F8F289F41BD5427000367249 /* util.c */,
+				F8F28A2A1BD5545000367249 /* curl_support.cpp */,
 			);
 			name = Source;
 			sourceTree = "<group>";

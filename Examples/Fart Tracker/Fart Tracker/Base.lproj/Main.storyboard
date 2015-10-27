@@ -23,7 +23,7 @@
                                 <animations/>
                                 <state key="normal" title="Button"/>
                                 <connections>
-                                    <segue destination="txT-S6-pqi" kind="show" id="hjK-kB-1fT"/>
+                                    <action selector="buttonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="R6W-Qk-Yke"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -35,6 +35,9 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="CuB-LN-SC8"/>
+                    <connections>
+                        <segue destination="txT-S6-pqi" kind="show" identifier="showMap" id="JYa-XM-JqH"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
@@ -57,10 +60,10 @@
             </objects>
             <point key="canvasLocation" x="-193" y="1032"/>
         </scene>
-        <!--View Controller-->
+        <!--Last Fart-->
         <scene sceneID="Wss-RB-ePL">
             <objects>
-                <viewController id="txT-S6-pqi" sceneMemberID="viewController">
+                <viewController title="Last Fart" id="txT-S6-pqi" customClass="MapViewController" customModule="Fart_Tracker" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="FlU-wQ-xXl"/>
                         <viewControllerLayoutGuide type="bottom" id="zW6-hI-ZCX"/>
@@ -83,6 +86,9 @@
                             <constraint firstItem="zW6-hI-ZCX" firstAttribute="top" secondItem="7az-Da-Oh2" secondAttribute="bottom" id="bu6-jV-enk"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="mapView" destination="7az-Da-Oh2" id="3dw-vZ-LyG"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sDq-4R-jxP" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
