@@ -11,6 +11,7 @@ import MapKit
 
 class MapViewController: UIViewController {
 
+	// These are set before the segue to this view
 	var timeStr = ""
 	var lat = 0.0, long = 0.0
 	
@@ -28,12 +29,6 @@ class MapViewController: UIViewController {
 			self.subtitle = subtitle
 		}
 	}
-	
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-    }
 
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
@@ -44,9 +39,4 @@ class MapViewController: UIViewController {
 		let span = MKCoordinateSpanMake(0.1, 0.1)
 		self.mapView?.region = MKCoordinateRegionMake(coord, span)
 	}
-	
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
 }
