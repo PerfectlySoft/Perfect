@@ -12,9 +12,17 @@ class ViewController: NSViewController, NSTextFieldDelegate {
 	
 	@IBOutlet var startStopButton: NSButton?
 	@IBOutlet var urlButton: NSButton?
+	@IBOutlet var chooseButton: NSButton?
+	
 	@IBOutlet var portTextField: NSTextField?
 	@IBOutlet var addressTextField: NSTextField?
 	@IBOutlet var documentRootTextField: NSTextField?
+	
+	@IBOutlet var startStopButtonBackground: NSView?
+	@IBOutlet var urlButtonBackground: NSView?
+	@IBOutlet var chooseButtonBackground: NSView?
+	
+	var savedFont: NSFont?
 	
 	var serverUrl: String {
 		let appDel = AppDelegate.sharedInstance
@@ -24,8 +32,46 @@ class ViewController: NSViewController, NSTextFieldDelegate {
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		
+		self.view.wantsLayer = true
+		
+		let gradientLayer = CAGradientLayer()
+		gradientLayer.frame = self.view.bounds
+		gradientLayer.colors = [
+			CGColorCreateGenericRGB(0.969, 0.678, 0.251, 1.000),
+			CGColorCreateGenericRGB(0.969, 0.678, 0.251, 1.000),
+			CGColorCreateGenericRGB(0.922, 0.263, 0.188, 1.000)]
+		gradientLayer.startPoint = CGPoint(x: 0, y: 0)
+		gradientLayer.endPoint = CGPoint(x: 0, y: 1)
+		gradientLayer.zPosition = -1
+		self.view.layer!.addSublayer(gradientLayer)
+		
+		for field in [portTextField, addressTextField, documentRootTextField] {
+			let textLayer = field?.layer
+			textLayer?.borderColor = CGColorCreateGenericRGB(0.972, 0.992, 0.984, 1.000)
+			textLayer?.borderWidth = 1.0
+		}
+		
+		if let layer = self.chooseButtonBackground?.layer {
+			layer.borderColor = CGColorCreateGenericRGB(0.972, 0.992, 0.984, 1.000)
+			layer.borderWidth = 1.0
+		}
+		
+		self.startStopButtonBackground?.layer?.backgroundColor = NSColor(red:0.93, green:0.32, blue:0.2, alpha:1).CGColor
+		self.urlButtonBackground?.layer?.backgroundColor = NSColor(red:0.22, green:0.22, blue:0.22, alpha:1).CGColor
+		
+		self.savedFont = self.startStopButton?.cell?.font
+		
+		self.setWhiteTextButton(self.startStopButton!, title: self.startStopButton!.title)
+		self.setWhiteTextButton(self.urlButton!, title: self.urlButton!.title)
+		self.setWhiteTextButton(self.chooseButton!, title: self.chooseButton!.title)
 	}
 
+	func setWhiteTextButton(button: NSButton, title: String) {
+		let attrTitle = NSMutableAttributedString(string: title, attributes: [NSForegroundColorAttributeName: NSColor.whiteColor(), NSFontAttributeName: self.savedFont!])
+		button.attributedTitle = attrTitle
+	}
+	
 	override func viewWillAppear() {
 		super.viewWillAppear()
 		
@@ -76,11 +122,11 @@ class ViewController: NSViewController, NSTextFieldDelegate {
 		dispatch_async(dispatch_get_main_queue()) {
 			let appDel = AppDelegate.sharedInstance
 			if appDel.serverIsRunning() {
-				self.startStopButton?.title = "Stop Server"
+				self.setWhiteTextButton(self.startStopButton!, title: "Stop Server")
 			} else {
-				self.startStopButton?.title = "Start Server"
+				self.setWhiteTextButton(self.startStopButton!, title: "Start Server")
 			}
-			self.urlButton!.title = self.serverUrl
+			self.setWhiteTextButton(self.urlButton!, title: self.serverUrl)
 		}
 	}
 	
@@ -112,7 +158,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
 		} else if control == self.documentRootTextField! {
 			appDel.documentRoot = control.stringValue
 		}
-		self.urlButton!.title = self.serverUrl
+		self.setWhiteTextButton(self.urlButton!, title: self.serverUrl)
 		if wasRunning {
 			self.rebootServer()
 		}
