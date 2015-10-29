@@ -17,7 +17,7 @@
 		F84242661BD97839001EFF66 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F84242651BD97839001EFF66 /* MapKit.framework */; };
 		F85FB11D1BDFCDE200DABFA8 /* FartTracker.moustache in CopyFiles */ = {isa = PBXBuildFile; fileRef = F85FB11B1BDFCD5E00DABFA8 /* FartTracker.moustache */; };
 		F85FB1201BDFF93200DABFA8 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85FB11F1BDFF93200DABFA8 /* MapViewController.swift */; };
-		F85FB1251BE0186400DABFA8 /* PerfectLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F84242611BD97455001EFF66 /* PerfectLib.framework */; };
+		F85FB12C1BE01B7200DABFA8 /* PerfectLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F84242611BD97455001EFF66 /* PerfectLib.framework */; };
 		F8E752DA1BDA6B5400BFC36A /* FAHandlers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8E752D91BDA6B5400BFC36A /* FAHandlers.swift */; };
 /* End PBXBuildFile section */
 
@@ -42,7 +42,7 @@
 		F842424B1BD973C1001EFF66 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F842424E1BD973C1001EFF66 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F84242501BD973C1001EFF66 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F84242591BD97409001EFF66 /* FartTracker-Server.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "FartTracker-Server.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F84242591BD97409001EFF66 /* Fart Tracker Server.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "Fart Tracker Server.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F842425B1BD97409001EFF66 /* Fart Tracker Server.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Fart Tracker Server.h"; sourceTree = "<group>"; };
 		F842425D1BD97409001EFF66 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F84242611BD97455001EFF66 /* PerfectLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PerfectLib.framework; path = "../../../PerfectLib/build/Debug-iphoneos/PerfectLib.framework"; sourceTree = "<group>"; };
@@ -59,7 +59,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F84242661BD97839001EFF66 /* MapKit.framework in Frameworks */,
-				F85FB1251BE0186400DABFA8 /* PerfectLib.framework in Frameworks */,
+				F85FB12C1BE01B7200DABFA8 /* PerfectLib.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,7 +87,7 @@
 			isa = PBXGroup;
 			children = (
 				F84242411BD973C1001EFF66 /* Fart Tracker.app */,
-				F84242591BD97409001EFF66 /* FartTracker-Server.framework */,
+				F84242591BD97409001EFF66 /* Fart Tracker Server.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -167,7 +167,7 @@
 			);
 			name = "Fart Tracker Server";
 			productName = "Fart Tracker Server";
-			productReference = F84242591BD97409001EFF66 /* FartTracker-Server.framework */;
+			productReference = F84242591BD97409001EFF66 /* Fart Tracker Server.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -428,7 +428,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "ca.perfectlysoft.Fart-Tracker-Server";
-				PRODUCT_NAME = "FartTracker-Server";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -480,7 +480,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "ca.perfectlysoft.Fart-Tracker-Server";
-				PRODUCT_NAME = "FartTracker-Server";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";

@@ -10,6 +10,8 @@ import UIKit
 import MapKit
 import PerfectLib
 
+// adjust these to match whatever the server is listening on
+// these are the default values which should work unless the server has been changed
 let END_POINT_HOST = "localhost"
 let END_POINT_PORT = 8181
 
