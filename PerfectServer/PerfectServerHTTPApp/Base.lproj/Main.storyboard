@@ -817,12 +817,12 @@
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Fsh-Xl-7Ln">
                                 <rect key="frame" x="74" y="16" width="323" height="40"/>
                                 <subviews>
-                                    <customView misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uZC-wD-sGy" userLabel="Start Stop Color Background">
-                                        <rect key="frame" x="16" y="5" width="103" height="32"/>
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="uZC-wD-sGy" userLabel="Start Stop Color Background">
+                                        <rect key="frame" x="16" y="4" width="103" height="32"/>
                                         <animations/>
                                     </customView>
-                                    <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="O48-cy-u9A">
-                                        <rect key="frame" x="20" y="5" width="95" height="32"/>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="O48-cy-u9A">
+                                        <rect key="frame" x="20" y="4" width="95" height="32"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="32" id="eBk-HA-7Zq"/>
                                         </constraints>
@@ -835,12 +835,12 @@
                                             <action selector="toggleServer:" target="XfG-lQ-9wD" id="Weh-c5-MrP"/>
                                         </connections>
                                     </button>
-                                    <customView misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MrJ-F2-hS7" userLabel="Url Color Background">
-                                        <rect key="frame" x="149" y="5" width="158" height="32"/>
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="MrJ-F2-hS7" userLabel="Url Color Background">
+                                        <rect key="frame" x="149" y="4" width="158" height="32"/>
                                         <animations/>
                                     </customView>
-                                    <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MYJ-7i-P98">
-                                        <rect key="frame" x="153" y="5" width="150" height="32"/>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="MYJ-7i-P98">
+                                        <rect key="frame" x="153" y="4" width="150" height="32"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="32" id="mDz-px-RhP"/>
                                         </constraints>

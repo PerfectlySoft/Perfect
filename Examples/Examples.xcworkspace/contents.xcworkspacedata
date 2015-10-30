@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Fart Tracker/Fart Tracker.xcodeproj">
+      location = "group:Tap Tracker/Tap Tracker.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:../PerfectLib/PerfectLib.xcodeproj">
