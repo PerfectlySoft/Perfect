@@ -2,7 +2,7 @@
 ==================
 Put logo here
 
-PerfectLib is a Swift module providing a set of core utilities for both server and client development. In many cases the same APIs are utilized on both the client and the server. However, the goal is to leaverage the APIs provided by the platform on the client side, reducing the potential for bloat. The aim is to permit the same domain model code to be used by both client and server while providing the minimum functionality required to support communication and synchronization between the two sides.
+PerfectLib is a Swift module providing a set of core utilities for both server and client development. In many cases the same APIs are utilized on both the client and the server. However, the goal is to leaverage the APIs provided by the platform on the client side, reducing the potential for bloat, while providing a complete server-side solution supporting both Linux and OS X. The aim is to permit the same domain model code to be used by both client and server while providing the minimum functionality required to support communication and synchronization between the two sides.
 
 The client-side module aims to be very light weight, providing support for the following:
 
@@ -31,7 +31,7 @@ The server-side module provides a complete set of tools for server development. 
 * FastCGI based application serving
 * HTTP (stand-alone) based application serving
 * Web request and response API, abstracted to operate over either FastCGI or stand-alone HTTP
-* Multi-part POST parsing and file upload handling
+* Multi-part POST/MIME parsing and file upload handling
 * Dynamic module loading for server extensions
 * Moustache template parsing and processing
 * A web request handler system for associating Swift classes with moustache templates
