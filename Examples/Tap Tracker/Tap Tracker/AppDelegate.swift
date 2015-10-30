@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  Fart Tracker
+//  Tap Tracker
 //
 //  Created by Kyle Jessup on 2015-10-22.
 //

@@ -1,5 +1,5 @@
 {{% handler:FAHandler}}{{!
 
-	This is the moustache template file for the fart tracker example.
+	This is the moustache template file for the tap tracker example.
 	
 }}{"resultSets":[{{#resultSets}}{"time":"{{time}}","lat":{{lat}},"long":{{long}} }{{^last}},{{/last}}{{/resultSets}}]}

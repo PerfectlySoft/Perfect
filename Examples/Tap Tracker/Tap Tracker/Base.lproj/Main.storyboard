@@ -9,7 +9,7 @@
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="Fart_Tracker" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="Tap_Tracker" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -60,10 +60,10 @@
             </objects>
             <point key="canvasLocation" x="-193" y="1032"/>
         </scene>
-        <!--Last Fart-->
+        <!--Last Tap-->
         <scene sceneID="Wss-RB-ePL">
             <objects>
-                <viewController title="Last Fart" id="txT-S6-pqi" customClass="MapViewController" customModule="Fart_Tracker" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Last Tap" id="txT-S6-pqi" customClass="MapViewController" customModule="Tap_Tracker" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="FlU-wQ-xXl"/>
                         <viewControllerLayoutGuide type="bottom" id="zW6-hI-ZCX"/>

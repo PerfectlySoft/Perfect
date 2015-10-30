@@ -1,6 +1,6 @@
 //
 //  MapViewController.swift
-//  Fart Tracker
+//  Tap Tracker
 //
 //  Created by Kyle Jessup on 2015-10-27.
 //
@@ -18,7 +18,7 @@ class MapViewController: UIViewController {
 	@IBOutlet var mapView: MKMapView?
 	
 	@objc
-	class FartLocationViewAnnotation: NSObject, MKAnnotation {
+	class TapLocationViewAnnotation: NSObject, MKAnnotation {
 		var coordinate = CLLocationCoordinate2D()
 		var title: String? = ""
 		var subtitle: String? = ""
@@ -34,7 +34,7 @@ class MapViewController: UIViewController {
 		super.viewWillAppear(animated)
 		
 		let coord = CLLocationCoordinate2D(latitude: lat, longitude: long)
-		let annotation = FartLocationViewAnnotation(coordinate: coord, title: "Last Fart", subtitle: self.timeStr)
+		let annotation = TapLocationViewAnnotation(coordinate: coord, title: "Last Tap", subtitle: self.timeStr)
 		self.mapView?.addAnnotation(annotation)
 		let span = MKCoordinateSpanMake(0.1, 0.1)
 		self.mapView?.region = MKCoordinateRegionMake(coord, span)
