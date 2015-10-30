@@ -6,19 +6,19 @@ Perfect is framework for developing web and other REST services in the Swift pro
 
 It consists of the following components:
 
-* [PerfectLib](PerfectLib/#perfectlib)
+* [PerfectLib](PerfectLib/#perfectlib) - Framework components and utilities for client and server.
 	* OS X / Linux
 	* iOS
-* [Perfect Server](PerfectServer/#perfectserver)
-	* Perfect Server FastCGI
-	* Perfect Server HTTP
-	* Perfect Server HTTP App
-* Connectors
-	* [mod_perfect](Connectors/mod_perfect/#mod_perfect)
-	* [MySQL](Connectors/MySQL/#mysql)
-	* [PostgreSQL](Connectors/PostgreSQL/#postgresql)
-	* [MongoDB](Connectors/MongoDB/#mongodb)
-* [Examples](Examples/#examples)
+* [Perfect Server](PerfectServer/#perfectserver) - Backend server supporting FastCGI or stand-alone HTTP.
+	* Perfect Server FastCGI - Server process which accepts connections over FastCGI.
+	* Perfect Server HTTP - Stand-alone HTTP server.
+	* Perfect Server HTTP App - Development focused stand-alone HTTP server OS X app.
+* Connectors - Server-side connectivity.
+	* [mod_perfect](Connectors/mod_perfect/#mod_perfect) - FastCGI connectivity for Apache 2.4.
+	* [MySQL](Connectors/MySQL/#mysql) - Provides connectivity for MySQL databases.
+	* [PostgreSQL](Connectors/PostgreSQL/#postgresql) - Provides connectivity for PostgreSQL databases.
+	* [MongoDB](Connectors/MongoDB/#mongodb) - Provides connectivity for MongoDB databases.
+* [Examples](Examples/#examples) - A set of examples which show how to utilize Perfect.
 
 
 
