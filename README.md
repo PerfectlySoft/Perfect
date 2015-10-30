@@ -20,5 +20,5 @@ It consists of the following components:
 	* [MongoDB](Connectors/MongoDB/#mongodb) - Provides connectivity for MongoDB databases.
 * [Examples](Examples/#examples) - A set of examples which show how to utilize Perfect.
 
-
-
+## Getting Started
+After cloning the repository or downloading and expanding the zip, navigate to the Examples directory and open the Examples.xcworkspace file.
