@@ -6,10 +6,10 @@
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Tap Tracker-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="Tap_Tracker" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Tap Tracker" id="BYZ-38-t0r" customClass="ViewController" customModule="Tap_Tracker" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -19,9 +19,9 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pIw-jK-0xR">
-                                <rect key="frame" x="277" y="285" width="46" height="30"/>
+                                <rect key="frame" x="262.5" y="285" width="75" height="30"/>
                                 <animations/>
-                                <state key="normal" title="Button"/>
+                                <state key="normal" title="Tap Button"/>
                                 <connections>
                                     <action selector="buttonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="R6W-Qk-Yke"/>
                                 </connections>
