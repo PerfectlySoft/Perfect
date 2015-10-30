@@ -1,6 +1,6 @@
 //
 //  ViewController.swift
-//  Fart Tracker
+//  Tap Tracker
 //
 //  Created by Kyle Jessup on 2015-10-22.
 //
@@ -15,7 +15,7 @@ import PerfectLib
 let END_POINT_HOST = "localhost"
 let END_POINT_PORT = 8181
 
-let END_POINT = "http://\(END_POINT_HOST):\(END_POINT_PORT)/FartTracker"
+let END_POINT = "http://\(END_POINT_HOST):\(END_POINT_PORT)/TapTracker"
 
 class ViewController: UIViewController, CLLocationManagerDelegate {
 
