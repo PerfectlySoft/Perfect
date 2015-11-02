@@ -3,6 +3,22 @@
 ## Getting Started
 After cloning the repository or downloading and expanding the zip file, navigate to the Examples directory and open the Examples.xcworkspace file. Each of the example projects consist of a target for an iOS mobile app and a corresponding server module. Each server module is associated with the **Perfect Server HTTP App** permitting it to be launched directly from within Xcode. By default, the server will listen on localhost on port **8181** and each example iOS app will attempt to contact the local server on that port. If you need to change this port, it can be done in the settings for the HTTP App and in the source code for each iOS app.
 
-##Tap Tracker
+Perfect Server HTTP Settings:
+
+![Dev HTTP Window](../SiteAssets/perfect_dev_http_window.png)
+
+Example end point in source code:
+
+![Dev HTTP Window](../SiteAssets/end_point_edit.png)
+
+##Example Apps
+###Tap Tracker
 
 ![Example Targets](../SiteAssets/example_targets.png)
+
+The simplest example app is called Tap Tracker. The Tap Tracker iOS app presents a button to the user. When tapped, this button will transmit the user's current location to the server. The server will store this location and will return to the iOS app the location of the last user who tapped the button. The app will then show this location in a map view.
+
+To execute this example from within Xcode, run the **Tap Tracker Server** target and then the **Tap Tracker** target using an iPhone device simulator of your choice. Ensure that both targets are running simultaniously and that the **Tap Tracker** iOS app is set to simulate your location. 
+![Simulate Location](../SiteAssets/simulate_location.png)
+Additionally, make sure to choose "Allow" when the app requests that you permit it to use your location.
+
