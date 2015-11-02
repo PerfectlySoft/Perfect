@@ -34,10 +34,10 @@ Additionally, make sure to choose "Allow" when the app requests that you permit 
 
 #### Server Operations
 1. The server module consists of two relevent files:
-	* **TTHandlers.swift**, within which is the `PerfectServerModuleInit` function, which all Perfect Server modules must implement, and the `TTHandler` class, which implements the `PageHander` protocol.
+	* **TTHandlers.swift**, within which is the `PerfectServerModuleInit` function, which all Perfect Server modules must implement, and the `TTHandler` class, which implements the `PageHandler` protocol.
 	* **TapTracker.moustache**, which contains the template for the JSON based response data.
-2. When the **Tap Tracker Server** target is built in Xcode, it places the resulting product in a directory called **PerfectLibraries**. When the Perfect Server is launched, it will look in this directory, based on the current process working directory, and load all the modules it finds, calling the `PerfectServerModuleInit` function in each.
-3. `PerfectServerModuleInit` adds a page handler called "TTHandler", associating with it a closure which will be called to create an instance of the handler on-demand, when it is needed to fulfill a request. This closure simply returns a new `TTHandler` instance.
+2. When the **Tap Tracker Server** target is built in Xcode, it places the resulting product in a directory called **PerfectLibraries**. When the Perfect Server is launched, it will look in this directory, based on the current process working directory, and load all the modules it finds calling the `PerfectServerModuleInit` function in each.
+3. `PerfectServerModuleInit` adds a page handler called "TTHandler", associating with it a closure which will be called to create an instance of the handler on-demand when it is needed to fulfill a request. This closure simply returns a new `TTHandler` instance.
 4. In this example, the `PerfectServerModuleInit` function also creates a SQLite database for use in storing the button tap locations and times. It creates a very simple table storing the time, latitude and longitude of the users' button taps.
 5. When a request comes in targetting the **/TapTracker** (or **/TapTracker.moustache**) URL, the server will parse the moustache file and run any moustache pragmas contained therein. This particular moustache template associates itself with the previously registered "TTHandler" by containing the following pragma at the beginning of the file: ```{{% handler:TTHandler}}```
 6. The server will find "TTHandler" within its internal registry and instantiate the associated handler object; an instance of class `TTHandler`. (Note that the handler name and the class name do not have to match, although they do match for this particular example.)
