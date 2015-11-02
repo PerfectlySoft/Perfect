@@ -37,6 +37,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		self.title = "Tap Tracker"
 		self.locationManager.delegate = self
 		if self.locationManager.respondsToSelector("requestWhenInUseAuthorization") {
 			self.locationManager.requestWhenInUseAuthorization()
@@ -46,7 +47,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
 
 	override func didReceiveMemoryWarning() {
 		super.didReceiveMemoryWarning()
-		// Dispose of any resources that can be recreated.
 	}
 
 	func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {

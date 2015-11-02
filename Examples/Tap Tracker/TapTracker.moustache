@@ -1,4 +1,4 @@
-{{% handler:FAHandler}}{{!
+{{% handler:TTHandler}}{{!
 
 	This is the moustache template file for the tap tracker example.
 	
