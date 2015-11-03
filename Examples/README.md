@@ -22,7 +22,7 @@ To execute this example from within Xcode, run the **Tap Tracker Server** target
 
 ![Simulate Location](../SiteAssets/simulate_location.png)
 
-Additionally, make sure to choose "Allow" when the app requests that you permit it to use your location.
+Additionally, make sure to choose "Allow" when the app requests that you permit it to use your location. If you receive an error stating that location services are not available, ensure that you have selected a location to simulate and restart the iOS Tap Tracker app.
 
 #### Client Operations
 1. `ViewController` starts location services and records the user's current location.
@@ -69,7 +69,7 @@ values["resultSets"] = resultSets
 return values
 ``` 
 
-Above, one can see the server takes the raw time value and formats it as a string using the facilities provided by ICU. This, along with the lat and long values are place in the dictionary which is used to complete the moustache template.
+Above, one can see the server takes the raw time value and formats it as a string using the facilities provided by ICU. This, along with the lat and long values are placed in the dictionary which is used to complete the moustache template.
 
 
 
