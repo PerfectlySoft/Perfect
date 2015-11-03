@@ -1,12 +1,9 @@
 LogManager.swift
 	public class LogManager
-	static func logMessage(msg: String)
-	static func logMessageCode(msg: String, code: Int)
 PerfectServer.swift
 	public let SQLITE_DBS = "SQliteDBs/"
 	public let PERFECT_LIBRARIES = "PerfectLibraries/"
 	public static let staticPerfectServer = PerfectServer()
-	internal init()
 Closeable.swift
 	public protocol Closeable
 	func close()
@@ -14,58 +11,11 @@ Closeable.swift
 	public protocol Closeable
 	public func doWithClose(c: ()->())
 SessionManager.swift
-	let Perfect_SESSION_DB = "perfect_sessions"
-	let SESSION_NAME_PREFIX = "_PerfectSessionTracker_"
-	var id: String
-	let name: String
-	let expires: Int
-	let useCookie: Bool
-	let useLink: Bool
-	let useAuto: Bool
-	let useNone: Bool
-	let domain: String
-	let path: String
-	let cookieExpires: Double
-	let rotate: Bool
-	let secure: Bool
-	let httpOnly: Bool
-	var lastAccess = 0.0 // set after reading data
 	case None
-	static func initializeSessionsDatabase() throws
-	var dictionary: JSONDictionaryType?
-	var configuration: SessionConfiguration
-	var result = SessionResult.None
-	internal init(_ configuration: SessionConfiguration)
-	func getNowSeconds() -> Double
-	func commit() throws
 	static public func generateSessionKey() -> String
 NetNamedPipe.swift
 	public convenience init(fd: Int32)
 	public override func initSocket()
-	override func makeFromFd(fd: Int32) -> NetTCP
-LibEvent.swift
-	class LibEvent
-	internal static let eventBase: LibEventBase = LibEventBase()
-	private var event: COpaquePointer? = nil
-	private var userData: AnyObject?
-	private var cb: EventCallBack?
-	private var base: LibEventBase?
-	private static var eventCallBack: PrimEventCallBack
-	init(base: LibEventBase, fd: Int32, what: Int32, userData: AnyObject?, callBack: EventCallBack)
-	deinit
-	func add(inout tv: timeval)
-	func add(timeout: Double)
-	func add()
-	func del()
-	let EVLOOP_NO_EXIT_ON_EMPTY = Int32(0/*0x04*/) // not supported until libevent 2.1
-	class LibEventBase
-	var eventBase: COpaquePointer
-	private var baseDispatchQueue: dispatch_queue_t
-	var eventDispatchQueue: dispatch_queue_t
-	init()
-	private func addDummyEvent()
-	private func triggerEventBaseLoop()
-	private func eventBaseLoop()
 WebConnection.swift
 	public protocol WebConnection
 	var connection: NetTCP { get }
@@ -78,225 +28,31 @@ WebConnection.swift
 	func writeHeaderBytes(b: [UInt8])
 	func writeBodyBytes(b: [UInt8])
 HTTPServer.swift
-	internal let READ_SIZE = 1024
-	internal let READ_TIMEOUT = 5.0
-	internal let HTTP_LF = UInt8(10)
-	internal let HTTP_CR = UInt8(13)
-	internal let HTTP_COLON = UInt8(58)
-	internal let HTTP_SPACE = UnicodeScalar(32)
-	internal let HTTP_QUESTION = UnicodeScalar(63)
 	public class HTTPServer
-	private var net: NetTCP?
 	public let documentRoot: String
 	public var serverPort: UInt16 = 0
 	public var serverAddress = "0.0.0.0"
 	public init(documentRoot: String)
-	func start()
 	public func stop()
-	func handleConnection(net: NetTCP)
-	func sendFile(req: HTTPWebConnection, file: File)
-	func runRequest(req: HTTPWebConnection, withPathInfo: String) -> Bool
-	func runRequest(req: HTTPWebConnection)
-	class HTTPWebConnection : WebConnection
-	var connection: NetTCP
-	var requestParams: Dictionary<String, String> = Dictionary<String, String>()
-	var stdin: [UInt8]? = nil
-	var mimes: MimeReader? = nil
-	var statusCode: Int
-	var statusMsg: String
-	var header: String = ""
-	var wroteHeader: Bool = false
-	var workingBuffer = [UInt8]()
-	var workingBufferOffset = 0
-	var lastHeaderKey = "" // for handling continuations
-	var contentType: String?
-	var httpOneOne: Bool
-	var httpVersion: String
-	init(net: NetTCP)
-	func setStatus(code: Int, msg: String)
-	func getStatus() -> (Int, String)
-	func transformHeaderName(name: String) -> String
-	func readRequest(callback: OkCallback)
-	func readHeaders(callback: OkCallback)
-	func readBody(callback: OkCallback)
-	func readBody(size: Int, callback: OkCallback)
-	func processRequestLine(h: ArraySlice<UInt8>) -> Bool
-	func processHeaderLine(h: ArraySlice<UInt8>) -> Bool
-	func processHeaderContinuation(h: ArraySlice<UInt8>) -> Bool
-	func scanWorkingBuffer(callback: OkCallback)
-	func didReadHeaderData(b:[UInt8]?, callback: OkCallback)
-	func putStdinData(b: [UInt8])
-	func writeHeaderLine(h: String)
-	func writeHeaderBytes(b: [UInt8])
-	func pushHeaderBytes()
-	func writeBodyBytes(b: [UInt8])
-	func writeBytes(b: [UInt8])
 JSON.swift
-	let json_open_object = UnicodeScalar(UInt32(123))
-	let json_open_array = UnicodeScalar(UInt32(91))
-	let json_close_object = UnicodeScalar(UInt32(125))
-	let json_close_array = UnicodeScalar(UInt32(93))
-	let json_quote_double = UnicodeScalar(UInt32(34))
-	let json_white_space = UnicodeScalar(UInt32(32))
-	let json_colon = UnicodeScalar(UInt32(58))
-	let json_comma = UnicodeScalar(UInt32(44))
-	let json_back_slash = UnicodeScalar(UInt32(92))
-	let json_forward_slash = UnicodeScalar(UInt32(47))
-	let json_negative = UnicodeScalar(UInt32(45))
-	let json_period = UnicodeScalar(UInt32(46))
-	let json_e_upper = UnicodeScalar(UInt32(69))
-	let json_e_lower = UnicodeScalar(UInt32(101))
-	let json_back_space = UnicodeScalar(UInt32(8))
-	let json_form_feed = UnicodeScalar(UInt32(12))
-	let json_f_lower = UnicodeScalar(UInt32(102))
-	let json_t_lower = UnicodeScalar(UInt32(116))
-	let json_n_lower = UnicodeScalar(UInt32(110))
-	let json_lf = UnicodeScalar(UInt32(10))
-	let json_cr = UnicodeScalar(UInt32(13))
-	let json_tab = UnicodeScalar(UInt32(9))
 	case UnhandledType(String)
 	case SyntaxError(String)
-	class KeyPair
-	let key: String
-	var value: AnyObject?
-	init(key: String)
 	public init()
-	func encodeValue(value: AnyObject) throws -> String
-	func encodeString(src: String) -> String
-	func encodeInt(i: Int) -> String
-	func encodeDouble(d: Double) -> String
-	func encodeArray(a: Array<AnyObject>) throws -> String
-	func encodeDictionary(d: Dictionary<String, AnyObject>) throws -> String
 	public init()
 	public var array = Array<AnyObject>()
 	public func append(a: AnyObject)
 	public var dictionary = DictionaryType()
-	var stack = Array<AnyObject>()
-	var exit: AnyObject?
-	var g = String().unicodeScalars.generate()
-	var pushBack: UnicodeScalar?
 	public init()
-	func readObjects() throws
-	func pop() throws -> AnyObject
-	func handleNested(top: AnyObject, obj: AnyObject) throws -> AnyObject
-	func handlePop(a: AnyObject) throws -> AnyObject
-	func handlePop() throws -> AnyObject
-	func readString() throws -> String
-	func readNumber(firstChar: UnicodeScalar) throws -> AnyObject
-	func readTrue() throws -> Bool
-	func readFalse() throws -> Bool
-	func readNull() throws -> JSONNull
-	func next() -> UnicodeScalar?
-FastCGI.swift
-	let FCGI_VERSION_1: UInt8 =		1
-	let FCGI_NULL_REQUEST_ID =		0
-	let FCGI_BEGIN_REQUEST: UInt8 =		1
-	let FCGI_ABORT_REQUEST: UInt8 =		2
-	let FCGI_END_REQUEST: UInt8 =		3
-	let FCGI_PARAMS: UInt8 =			4
-	let FCGI_STDIN: UInt8 =				5
-	let FCGI_STDOUT: UInt8 =			6
-	let FCGI_STDERR: UInt8 =			7
-	let FCGI_DATA: UInt8 =				8
-	let FCGI_GET_VALUES: UInt8 =		9
-	let FCGI_GET_VALUES_RESULT: UInt8 =	10
-	let FCGI_UNKNOWN_TYPE: UInt8 =		11
-	let FCGI_X_STDIN: UInt8 = 		50
-	let FCGI_KEEP_CONN =	1
-	let FCGI_RESPONDER =	1
-	let FCGI_AUTHORIZE =	2
-	let FCGI_FILTER =		3
-	let FCGI_REQUEST_COMPLETE = 	0
-	let FCGI_CANT_MPX_CONN =		1
-	let FCGI_OVERLOADED =			2
-	let FCGI_UNKNOWN_ROLE = 		3
-	let FCGI_MAX_CONNS =	"FCGI_MAX_CONNS"
-	let FCGI_MAX_REQS =		"FCGI_MAX_REQS"
-	let FCGI_MPXS_CONNS =	"FCGI_MPXS_CONNS"
-	let FASTCGI_TIMEOUT_SECONDS = 5.0
-	let FASTCGI_BASE_RECORD_SIZE = 8
-	let FCGI_BODY_CHUNK_SIZE = 0xFFFF
-	class FastCGIRecord
-	var version: UInt8 = 0
-	var recType: UInt8 = 0
-	var requestId: UInt16 = 0
-	var contentLength: UInt16 = 0
-	var paddingLength: UInt8 = 0
-	var reserved: UInt8 = 0
-	var content: [UInt8]? = nil
-	var padding: [UInt8]? = nil
-	class FastCGIRequest : WebConnection
-	var connection: NetTCP
-	var requestId: UInt16 = 0
-	var requestParams: Dictionary<String, String> = Dictionary<String, String>()
-	var stdin: [UInt8]? = nil
-	var mimes: MimeReader? = nil
-	var statusCode: Int
-	var statusMsg: String
-	var header: String = ""
-	var wroteHeader: Bool = false
-	var lastRecordType: UInt8 = 0
-	init(net: NetTCP)
-	func setStatus(code: Int, msg: String)
-	func getStatus() -> (Int, String)
-	func putStdinData(b: [UInt8])
-	func writeHeaderLine(h: String)
-	func writeHeaderBytes(b: [UInt8])
-	func writeBodyBytes(b: [UInt8])
-	func writeBytes(b: [UInt8])
-	func makeEndRequestBody(requestId: Int, appStatus: Int, protocolStatus: Int) -> [UInt8]
-	func makeStdoutBody(requestId: Int, data: [UInt8], firstPos: Int, count: Int) -> [UInt8]
-	func makeStdoutBody(requestId: Int, data: [UInt8]) -> [UInt8]
-	func readRecord(continuation: (FastCGIRecord?) -> ())
-	func readRecordContent(record: FastCGIRecord, continuation: (FastCGIRecord?) -> ())
-	func readRecordPadding(record: FastCGIRecord, continuation: (FastCGIRecord?) -> ())
-PageHandler.swift
-	private let GLOBAL_HANDLER = "%GLOBAL%"
-	private static var generator = Dictionary<String, PageHandlerGenerator>()
-	static func getPageHandler(named: String, forResponse: WebResponse) -> PageHandler?
-	static func getPageHandler(forResponse: WebResponse) -> PageHandler?
 MimeReader.swift
-	enum MimeReadState
-	case StateNone
-	case StateBoundary // next thing to be read will be a boundry
-	case StateHeader // read header lines until data starts
-	case StateFieldValue // read a simple value; name has already been set
-	case StateFile // read file data until boundry
-	case StateDone
-	let kMultiPartForm = "multipart/form-data"
-	let kBoundary = "boundary"
-	let kContentDisposition = "Content-Disposition"
-	let kContentType = "Content-Type"
-	let kPerfectTempPrefix = "perfect_upload_"
-	let mime_cr = UInt8(13)
-	let mime_lf = UInt8(10)
-	let mime_dash = UInt8(45)
 	public var bodySpecs = [BodySpec]()
-	var maxFileSize = -1
-	var (multi, gotFile) = (false, false)
-	var (multi, gotFile) = (false, false)
-	var buffer = [UInt8]()
-	let tempDirectory: String
-	var state: MimeReadState = .StateNone
 	public var boundary = ""
-	var fieldValueTempBytes: [UInt8]?
-	init()
 	public func cleanup()
-	deinit
 	public init(_ contentType: String, tempDir: String = "/tmp/")
 	public func setMaxFileSize(size: Int)
-	func openTempFile(spec: BodySpec)
-	func isBoundaryStart(bytes: [UInt8], start: Array<UInt8>.Index) -> Bool
-	func isField(name: String, bytes: [UInt8], start: Array<UInt8>.Index) -> Array<UInt8>.Index
-	func pullValue(name: String, from: String) -> String
-	func internalAddToBuffer(inout bytes: [UInt8]) -> MimeReadState
 	public func addToBuffer(var bytes: [UInt8])
 	public func isMultiPart() -> Bool
 	public func gotFileupload() -> Bool
 AJAXObjectDriver.swift
-	let ACTION_PARAM_NAME = "_action"
-	let endpointBase: String
-	let fileExtension: String
 	public let curl = CURL()
 	public init(endpointBase: String, fileExtension: String = ".moustache")
 	public func close()
@@ -317,11 +73,7 @@ PerfectObjectHandler.swift
 	public init() {}
 	public func valuesForResponse(context: MoustacheEvaluationContext, collector: MoustacheEvaluationOutputCollector) throws -> MoustacheEvaluationContext.MapType
 Utilities.swift
-	internal func split_thread(closure:()->())
 	public struct GenerateFromPointer<T> : GeneratorType
-	var count = 0
-	var pos = 0
-	var from: UnsafeMutablePointer<T>
 	public init(from: UnsafeMutablePointer<T>, count: Int)
 	mutating public func next() -> Element?
 	public class Encoding
@@ -336,51 +88,9 @@ Utilities.swift
 	public var stringByEncodingURL: String
 	public static func fromUUID(uuid: uuid_t) -> String
 	public func parseAuthentication() -> [String:String]
-	private static func extractField(from: String, named: String) -> String?
 	public func empty_uuid() -> uuid_t
 	public func random_uuid() -> uuid_t
-	var lastPathComponent: String
-	var pathExtension: String
-	var stringByDeletingLastPathComponent: String
-	var stringByDeletingPathExtension: String
-	var pathComponents: [String]
-	func stringByAppendingPathComponent(path: String) -> String
-	func stringByAppendingPathExtension(ext: String) -> String?
-	var stringByResolvingSymlinksInPath: String
-ICU.swift
-	static func U_SUCCESS(status: UErrorCode) -> Bool
-	static func ThrowICUError(code: UErrorCode) throws
-NetTCP.swift
-	private var networkFailure: Bool = false
-	private var semaphore: dispatch_semaphore_t?
-	private var waitAcceptEvent: LibEvent?
-	class ReferenceBuffer
-	var b: UnsafeMutablePointer<UInt8>
-	let size: Int
-	init(size: Int)
-	deinit
-	var fd: SocketFileDescriptor = SocketFileDescriptor(fd: INVALID_SOCKET, family: AF_UNSPEC)
-	func isEAgain(err: Int) -> Bool
-	func evWhatFor(operation: Int32) -> Int32
-	func recv(buf: UnsafeMutablePointer<Void>, count: Int) -> Int
-	func send(buf: UnsafePointer<Void>, count: Int) -> Int
-	private func makeAddress(inout sin: sockaddr_in, host: String, port: UInt16) -> Int
-	private func completeArray(from: ReferenceBuffer, count: Int) -> [UInt8]
-	func readBytesFully(into: ReferenceBuffer, read: Int, remaining: Int, timeoutSeconds: Double, completion: ([UInt8]?) -> ())
-	func readBytesFullyIncomplete(into: ReferenceBuffer, read: Int, remaining: Int, timeoutSeconds: Double, completion: ([UInt8]?) -> ())
-	func writeBytes(ptr: UnsafeMutablePointer<UInt8>, wrote: Int, length: Int, completion: (Int) -> ())
-	func writeBytesIncomplete(nptr: UnsafeMutablePointer<UInt8>, wrote: Int, length: Int, completion: (Int) -> ())
-	private func tryAccept() -> Int32
-	private func waitAccept()
-	func makeFromFd(fd: Int32) -> NetTCP
-MimeType.swift
-	let MIME_MAP = ["123" : "application/vnd.lotus-1-2-3",
-	class MimeType
-	static func forExtension(ext: String) -> String
 WebRequest.swift
-	var connection: WebConnection
-	var documentRoot: String = ""
-	private var cachedHttpAuthorization: [String:String]? = nil
 	public func httpConnection() -> String { return connection.requestParams["HTTP_CONNECTION"] ?? "" }
 	public func httpCookie() -> String { return connection.requestParams["HTTP_COOKIE"] ?? "" }
 	public func httpHost() -> String { return connection.requestParams["HTTP_HOST"] ?? "" }
@@ -418,99 +128,27 @@ WebRequest.swift
 	public func header(named: String) -> String? { return self.headers[named] }
 	public func rawHeader(named: String) -> String? { return self.connection.requestParams[named] }
 	public func raw() -> Dictionary<String, String> { return self.connection.requestParams }
-	internal init(_ c: WebConnection)
-	private func extractField(from: String, named: String) -> String?
 Moustache.swift
-	let MOUSTACHE_EXTENSION = "moustache"
-	enum MoustacheTagType
-	case Plain // plain text
-	case Tag // some tag. not sure which yet
-	case Hash
-	case Slash
-	case Amp
-	case Caret
-	case Bang
-	case Partial
-	case Delims
-	case UnescapedName
-	case Name
-	case UnencodedName
-	case Pragma
-	case None
 	case SyntaxError(String)
 	case EvaluationError(String)
 	public var templateName: String
-	var mapValues: MapType
-	internal init(webResponse: WebResponse?)
-	internal init(webResponse: WebResponse?, map: MapType)
 	public init(map: MapType)
-	internal func newChildContext() -> MoustacheEvaluationContext
-	internal func newChildContext(withMap: MapType) -> MoustacheEvaluationContext
-	func getCurrentFilePath() -> String?
-	var output = [String]()
-	var defaultEncodingFunc: (String) -> String = { $0.stringByEncodingHTML }
 	public init()
-	var type = MoustacheTagType.None
-	var tag = ""
-	weak var parent: MoustacheGroupTag?
-	var openD: [UnicodeScalar]?
-	var closeD: [UnicodeScalar]?
-	func delimOpen() -> String
-	func delimClose() -> String
 	public override func evaluate(context: MoustacheEvaluationContext, collector: MoustacheEvaluationOutputCollector)
 	public func parsePragma() -> Dictionary<String, String>
-	var children = [MoustacheTag]()
-	func evaluatePos(context: MoustacheEvaluationContext, collector: MoustacheEvaluationOutputCollector)
-	func evaluateNeg(context: MoustacheEvaluationContext, collector: MoustacheEvaluationOutputCollector)
 	public override func evaluate(context: MoustacheEvaluationContext, collector: MoustacheEvaluationOutputCollector)
-	func bodyText() -> String
 	override public func description() -> String
-	var pragmas = [MoustachePragmaTag]()
-	var templateName: String = ""
 	override public func description() -> String
-	var activeList: MoustacheGroupTag?
-	var pragmas = [MoustachePragmaTag]()
-	var openDelimiters: [UnicodeScalar] = ["{", "{"]
-	var closeDelimiters: [UnicodeScalar] = ["}", "}"]
-	var handlingUnencodedName = false
-	var testingPutback: String?
-	var g: UGen?
-	var offset = -1
 	public init()
-	func next() -> UnicodeScalar?
-	func consumeLoop() throws
-	func consumeType(t: MoustacheTagType) throws -> MoustacheTagType
-	func addChild(t: MoustacheTag)
-	func consumePlain() -> MoustacheTagType
-	func consumePossibleOpenDelimiter(index: Int) -> Bool
-	func consumePossibleCloseDelimiter(index: Int) -> Bool
-	func consumeTag() throws -> MoustacheTagType
-	func consumeTagName() -> String
-	func consumeTagName(firstChar: UnicodeScalar?) -> String
-	func consumeTagName(var s: String) -> String
-	func skipWhiteSpace() -> UnicodeScalar?
-	func consumeSetDelimiters() throws
-	func setDelimiters(open: [UnicodeScalar], close: [UnicodeScalar])
 NetTCPSSL.swift
 	public class NetTCPSSL : NetTCP
-	static var dispatchOnce: dispatch_once_t = 0
-	var sslCtx: UnsafeMutablePointer<SSL_CTX>?
-	var ssl: UnsafeMutablePointer<SSL>?
-	var keyFilePassword: String = ""
 	public var usingSSL: Bool
 	public override init()
-	func passwordCallback(buf:UnsafeMutablePointer<Int8>, size:Int32, rwflag:Int32, userData:UnsafeMutablePointer<Void>) -> Int32
 	override public func initSocket()
 	public func errorCode() -> UInt
 	public func sslErrorCode(resultCode: Int32) -> Int32
 	public func errorStr(errorCode: Int32) -> String
 	public func reasonErrorStr(errorCode: Int32) -> String
-	override func isEAgain(err: Int) -> Bool
-	override func evWhatFor(operation: Int32) -> Int32
-	override func recv(buf: UnsafeMutablePointer<Void>, count: Int) -> Int
-	override func send(buf: UnsafePointer<Void>, count: Int) -> Int
-	override func readBytesFullyIncomplete(into: ReferenceBuffer, read: Int, remaining: Int, timeoutSeconds: Double, completion: ([UInt8]?) -> ())
-	override func writeBytesIncomplete(nptr: UnsafeMutablePointer<UInt8>, wrote: Int, length: Int, completion: (Int) -> ())
 	public override func close()
 	public func beginSSL(closure: (Bool) -> ())
 	public func beginSSL(timeout: Double, closure: (Bool) -> ())
@@ -521,26 +159,10 @@ NetTCPSSL.swift
 	public func setVerifyLocations(caFilePath: String, caDirPath: String) -> Bool
 	public func useCertificateChainFile(cert: String) -> Bool
 	public func usePrivateKeyFile(cert: String) -> Bool
-Net.swift
-	let isLittleEndian = Int(OSHostByteOrder()) == OSLittleEndian
-	let htons  = isLittleEndian ? _OSSwapInt16 : { $0 }
-	let htonl  = isLittleEndian ? _OSSwapInt32 : { $0 }
-	let htonll = isLittleEndian ? _OSSwapInt64 : { $0 }
-	let ntohs  = isLittleEndian ? _OSSwapInt16 : { $0 }
-	let ntohl  = isLittleEndian ? _OSSwapInt32 : { $0 }
-	let ntohll = isLittleEndian ? _OSSwapInt64 : { $0 }
-	let INVALID_SOCKET = Int32(-1)
-	var fd: Int32, family: Int32
-	var fd: Int32, family: Int32
-	init(fd: Int32, family: Int32 = AF_UNSPEC)
-	func switchToNBIO()
 SQLite.swift
 	case Error(code: Int, msg: String)
-	let path: String
-	var sqlite3: COpaquePointer
 	public init(_ path: String) throws
 	public func close()
-	deinit
 	public func prepare(stat: String) throws -> SQLiteStmt
 	public func lastInsertRowID() -> Int
 	public func totalChanges() -> Int
@@ -553,13 +175,6 @@ SQLite.swift
 	public func doWithTransaction(closure: () throws -> ()) throws
 	public func forEachRow(statement: String, handleRow: (SQLiteStmt, Int) -> ()) throws
 	public func forEachRow(statement: String, doBindings: (SQLiteStmt) throws -> (), handleRow: (SQLiteStmt, Int) -> ()) throws
-	func forEachRowBody(stat: SQLiteStmt, handleRow: (SQLiteStmt, Int) -> ()) throws
-	func miniSleep(millis: Int)
-	func checkRes(res: Int32) throws
-	func checkRes(res: Int) throws
-	let db: COpaquePointer
-	var stat: COpaquePointer?
-	init(db: COpaquePointer, stat: COpaquePointer)
 	public func close()
 	public func finalize()
 	public func step() -> Int32
@@ -592,55 +207,16 @@ SQLite.swift
 	public func columnInt64(position: Int) -> Int64
 	public func columnText(position: Int) -> String
 	public func columnType(position: Int) -> Int32
-	func checkRes(res: Int32) throws
-	func checkRes(res: Int) throws
-	deinit
-Dir.swift
-	var internalPath = ""
-	func exists(path: String) -> Bool
-	func realPath() -> String
 PerfectError.swift
 	case NetworkError(Int32, String)
 	case FileError(Int32, String)
 	case SystemError(Int32, String)
 	case APIError(String)
-	func ThrowFileError() throws
-	func ThrowSystemError() throws
-	func ThrowNetworkError() throws
 WebResponse.swift
-	var name: String?
-	var value: String?
-	var domain: String?
-	var expires: String?
-	var expiresIn: Double = 0.0 // seconds from now. may be negative. 0.0 means no expiry (session cookie)
-	var path: String?
-	var secure: Bool?
-	var httpOnly: Bool?
-	var connection: WebConnection
 	public var request: WebRequest
 	public var outputEncoding = "UTF-8"
-	var headersArray = [(String, String)]()
-	var cookiesArray = [Cookie]()
-	var includeStack = [String]()
-	var appStatus = 0
-	var appMessage = ""
-	var bodyData = [UInt8]()
-	var sessions = Dictionary<String, SessionManager>()
-	internal init(_ c: WebConnection, request: WebRequest)
 	public func setStatus(code: Int, message: String)
 	public func getStatus() -> (Int, String)
-	func respond()
-	private func sendResponse()
-	private func doMainBody()
-	func doSessionHeaders()
-	func commitSessions()
-	func include(path: String, local: Bool = false) throws
-	private func makeNonRelative(path: String, local: Bool = false) -> String
-DynamicLoader.swift
-	class DynamicLoader
-	let initFuncName = "PerfectServerModuleInit"
-	init()
-	func loadFramework(atPath: String) -> Bool
 SysProcess.swift
 	public class SysProcess : Closeable
 	public var stdin: File?
@@ -653,42 +229,16 @@ SysProcess.swift
 	public func wait(hang: Bool = true) throws -> Int32
 	public func kill(signal: Int32 = SIGTERM) throws -> Int32
 FastCGIServer.swift
-	private var net: NetTCP?
 	public init()
-	func start()
-	func handleConnection(net: NetTCP)
-	func readRecord(fcgiReq: FastCGIRequest)
-	func handleRecord(fcgiReq: FastCGIRequest, fcgiRecord: FastCGIRecord)
-	func readXStdin(fcgiReq: FastCGIRequest, size: Int)
-	func runRequest(fcgiReq: FastCGIRequest)
-File.swift
-	let file_copyBufferSize = 16384
-	var openMode = Int(O_RDONLY)
-	var fd = -1
-	var internalPath = ""
-	func sizeOr(value: Int) -> Int
-	private func completeArray(from: UnsafeMutablePointer<UInt8>, count: Int) -> [UInt8]
-	private func completeArray(from: UnsafeMutablePointer<Int8>, count: Int) -> [UInt8]
-	class UnclosableFile : File
-	init(fd: Int32)
-	override func close()
 cURL.swift
 	public class CURL
-	static var sInit:Int =
-	var curl: UnsafeMutablePointer<Void>?
-	var multi: UnsafeMutablePointer<Void>?
-	var slists = [UnsafeMutablePointer<curl_slist>]()
-	var headerBytes = [UInt8]()
-	var bodyBytes = [UInt8]()
 	public var responseCode: Int
 	public var url: String
 	public init()
 	public convenience init(url: String)
 	public init(dupeCurl: CURL)
-	func setCurlOpts()
 	public func reset()
 	public func perform(closure: (Int, [UInt8], [UInt8]) -> ())
-	private func performInner(header: Bytes, body: Bytes, closure: (Int, [UInt8], [UInt8]) -> ())
 	public func multiResult() -> CURLcode
 	public func strError(code: CURLcode) -> String
 	public func getInfo(info: CURLINFO) -> (Int, CURLcode)
@@ -699,7 +249,6 @@ cURL.swift
 	public func setOption(option: CURLoption, f: curl_func) -> CURLcode
 	public func setOption(option: CURLoption, s: String) -> CURLcode
 	public func close()
-	deinit
 PerfectObject.swift
 	public enum HandlerAction
 	case None
@@ -724,13 +273,6 @@ PerfectObject.swift
 	public protocol PerfectObjectDriver : Closeable
 	public func generateUUID() -> uuid_t
 	public class PerfectObject
-	var joinCache = [String:[PerfectObject]]()
-	let driver: PerfectObjectDriver
-	var id: uuid_t = empty_uuid()
-	var pkName = "id"
-	var simpleNameStr = ""
-	var _orderBy: String?
-	var _orderDesc: Bool = false
 	public func setOrderBy(to: String)
 	public func orderBy() -> String?
 	public func setOrderDesc(to: Bool)
