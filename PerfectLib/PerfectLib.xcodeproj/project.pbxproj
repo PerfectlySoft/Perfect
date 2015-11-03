@@ -46,17 +46,9 @@
 		F8F28A171BD5427000367249 /* WebRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289F71BD5427000367249 /* WebRequest.swift */; };
 		F8F28A181BD5427000367249 /* WebResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289F81BD5427000367249 /* WebResponse.swift */; };
 		F8F28A1A1BD5445500367249 /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A191BD5445500367249 /* libcurl.tbd */; };
-		F8F28A1E1BD5445B00367249 /* libicudata.55.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A1B1BD5445B00367249 /* libicudata.55.1.dylib */; };
-		F8F28A1F1BD5445B00367249 /* libicui18n.55.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A1C1BD5445B00367249 /* libicui18n.55.1.dylib */; };
-		F8F28A201BD5445B00367249 /* libicuuc.55.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A1D1BD5445B00367249 /* libicuuc.55.1.dylib */; };
 		F8F28A251BD5447E00367249 /* libcrypto-x86_64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A231BD5447E00367249 /* libcrypto-x86_64.a */; };
 		F8F28A261BD5447E00367249 /* libssl-x86_64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A241BD5447E00367249 /* libssl-x86_64.a */; };
-		F8F28A281BD544A100367249 /* sqlite.3.8.10.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A271BD544A100367249 /* sqlite.3.8.10.2.dylib */; };
 		F8F28A2B1BD5545000367249 /* curl_support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8F28A2A1BD5545000367249 /* curl_support.cpp */; };
-		F8F28A2D1BD5549800367249 /* sqlite.3.8.10.2.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F28A271BD544A100367249 /* sqlite.3.8.10.2.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		F8F28A2F1BD554A300367249 /* libicudata.55.1.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F28A1B1BD5445B00367249 /* libicudata.55.1.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		F8F28A301BD554A700367249 /* libicui18n.55.1.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F28A1C1BD5445B00367249 /* libicui18n.55.1.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		F8F28A311BD554AB00367249 /* libicuuc.55.1.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F28A1D1BD5445B00367249 /* libicuuc.55.1.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		F8F28A3B1BD5633100367249 /* PerfectLib.h in Headers */ = {isa = PBXBuildFile; fileRef = F8F28A3A1BD5633100367249 /* PerfectLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F8F28A401BD5636F00367249 /* Closeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DB1BD5427000367249 /* Closeable.swift */; };
 		F8F28A411BD5637D00367249 /* PerfectObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E51BD5427000367249 /* PerfectObject.swift */; };
@@ -71,6 +63,10 @@
 		F8F28A4C1BD566C000367249 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289F51BD5427000367249 /* Utilities.swift */; };
 		F8F28A4E1BD5720400367249 /* Utilities-Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F28A4D1BD5720400367249 /* Utilities-Server.swift */; };
 		F8F28A501BD5733D00367249 /* Utilities-Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F28A4F1BD5733D00367249 /* Utilities-Client.swift */; };
+		F8F45A851BE8FCD300FDC7BC /* libicudata.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F45A821BE8FCD300FDC7BC /* libicudata.a */; };
+		F8F45A861BE8FCD300FDC7BC /* libicui18n.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F45A831BE8FCD300FDC7BC /* libicui18n.a */; };
+		F8F45A871BE8FCD300FDC7BC /* libicuuc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F45A841BE8FCD300FDC7BC /* libicuuc.a */; };
+		F8F45A891BE8FECE00FDC7BC /* sqlite.3.8.10.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F45A881BE8FECE00FDC7BC /* sqlite.3.8.10.2.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -82,22 +78,6 @@
 			remoteInfo = PerfectLib;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		F8F28A2C1BD5547E00367249 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				F8F28A2D1BD5549800367249 /* sqlite.3.8.10.2.dylib in CopyFiles */,
-				F8F28A2F1BD554A300367249 /* libicudata.55.1.dylib in CopyFiles */,
-				F8F28A301BD554A700367249 /* libicui18n.55.1.dylib in CopyFiles */,
-				F8F28A311BD554AB00367249 /* libicuuc.55.1.dylib in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		F88B06791BDD4269001FD0CD /* libevent_pthreads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libevent_pthreads.a; path = linked/LibEvent/osx/libevent_pthreads.a; sourceTree = "<group>"; };
@@ -157,6 +137,10 @@
 		F8F28A4A1BD563F600367249 /* libcurl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcurl.a; path = linked/cURL/ios/libcurl.a; sourceTree = "<group>"; };
 		F8F28A4D1BD5720400367249 /* Utilities-Server.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Utilities-Server.swift"; sourceTree = "<group>"; };
 		F8F28A4F1BD5733D00367249 /* Utilities-Client.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Utilities-Client.swift"; path = "iOS/Utilities-Client.swift"; sourceTree = SOURCE_ROOT; };
+		F8F45A821BE8FCD300FDC7BC /* libicudata.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libicudata.a; path = linked/ICU/osx/libicudata.a; sourceTree = "<group>"; };
+		F8F45A831BE8FCD300FDC7BC /* libicui18n.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libicui18n.a; path = linked/ICU/osx/libicui18n.a; sourceTree = "<group>"; };
+		F8F45A841BE8FCD300FDC7BC /* libicuuc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libicuuc.a; path = linked/ICU/osx/libicuuc.a; sourceTree = "<group>"; };
+		F8F45A881BE8FECE00FDC7BC /* sqlite.3.8.10.2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = sqlite.3.8.10.2.a; path = linked/SQLite3/osx/sqlite.3.8.10.2.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -167,12 +151,12 @@
 				F8F28A251BD5447E00367249 /* libcrypto-x86_64.a in Frameworks */,
 				F8F28A261BD5447E00367249 /* libssl-x86_64.a in Frameworks */,
 				F8F28A1A1BD5445500367249 /* libcurl.tbd in Frameworks */,
-				F8F28A1E1BD5445B00367249 /* libicudata.55.1.dylib in Frameworks */,
-				F8F28A1F1BD5445B00367249 /* libicui18n.55.1.dylib in Frameworks */,
-				F8F28A201BD5445B00367249 /* libicuuc.55.1.dylib in Frameworks */,
+				F8F45A851BE8FCD300FDC7BC /* libicudata.a in Frameworks */,
+				F8F45A861BE8FCD300FDC7BC /* libicui18n.a in Frameworks */,
+				F8F45A871BE8FCD300FDC7BC /* libicuuc.a in Frameworks */,
 				F88B067B1BDD4269001FD0CD /* libevent_pthreads.a in Frameworks */,
 				F88B067C1BDD4269001FD0CD /* libevent.a in Frameworks */,
-				F8F28A281BD544A100367249 /* sqlite.3.8.10.2.dylib in Frameworks */,
+				F8F45A891BE8FECE00FDC7BC /* sqlite.3.8.10.2.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -199,6 +183,10 @@
 		F8F289B41BD53CF000367249 = {
 			isa = PBXGroup;
 			children = (
+				F8F45A881BE8FECE00FDC7BC /* sqlite.3.8.10.2.a */,
+				F8F45A821BE8FCD300FDC7BC /* libicudata.a */,
+				F8F45A831BE8FCD300FDC7BC /* libicui18n.a */,
+				F8F45A841BE8FCD300FDC7BC /* libicuuc.a */,
 				F8F289D81BD53EC800367249 /* Source */,
 				F8F289C01BD53CF000367249 /* PerfectLibOSX */,
 				F8F28A391BD5633100367249 /* PerfectLibiOS */,
@@ -339,7 +327,6 @@
 				F8F289BA1BD53CF000367249 /* Frameworks */,
 				F8F289BB1BD53CF000367249 /* Headers */,
 				F8F289BC1BD53CF000367249 /* Resources */,
-				F8F28A2C1BD5547E00367249 /* CopyFiles */,
 			);
 			buildRules = (
 			);
