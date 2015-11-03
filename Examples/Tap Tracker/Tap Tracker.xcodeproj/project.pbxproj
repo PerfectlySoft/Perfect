@@ -48,8 +48,8 @@
 		F84242591BD97409001EFF66 /* Tap Tracker Server.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "Tap Tracker Server.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F842425B1BD97409001EFF66 /* Tap Tracker Server.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tap Tracker Server.h"; sourceTree = "<group>"; };
 		F842425D1BD97409001EFF66 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F84242611BD97455001EFF66 /* PerfectLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PerfectLib.framework; path = "../../../PerfectLib/build/Debug-iphoneos/PerfectLib.framework"; sourceTree = "<group>"; };
-		F84242631BD9745F001EFF66 /* PerfectLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PerfectLib.framework; path = ../../../PerfectLib/build/Debug/PerfectLib.framework; sourceTree = "<group>"; };
+		F84242611BD97455001EFF66 /* PerfectLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PerfectLib.framework; path = "../../PerfectLib/build/Debug-iphoneos/PerfectLib.framework"; sourceTree = "<group>"; };
+		F84242631BD9745F001EFF66 /* PerfectLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PerfectLib.framework; path = ../../PerfectLib/build/Debug/PerfectLib.framework; sourceTree = "<group>"; };
 		F84242651BD97839001EFF66 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.1.sdk/System/Library/Frameworks/MapKit.framework; sourceTree = DEVELOPER_DIR; };
 		F85FB11B1BDFCD5E00DABFA8 /* TapTracker.moustache */ = {isa = PBXFileReference; lastKnownFileType = text; path = TapTracker.moustache; sourceTree = SOURCE_ROOT; };
 		F85FB11F1BDFF93200DABFA8 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
@@ -83,6 +83,7 @@
 			children = (
 				F84242431BD973C1001EFF66 /* Tap Tracker */,
 				F842425A1BD97409001EFF66 /* Tap Tracker Server */,
+				F8F45A8A1BE9114500FDC7BC /* Linked */,
 				F84242421BD973C1001EFF66 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -106,8 +107,6 @@
 				F842424B1BD973C1001EFF66 /* Assets.xcassets */,
 				F842424D1BD973C1001EFF66 /* LaunchScreen.storyboard */,
 				F84242501BD973C1001EFF66 /* Info.plist */,
-				F84242611BD97455001EFF66 /* PerfectLib.framework */,
-				F84242651BD97839001EFF66 /* MapKit.framework */,
 			);
 			path = "Tap Tracker";
 			sourceTree = "<group>";
@@ -120,9 +119,18 @@
 				F842425D1BD97409001EFF66 /* Info.plist */,
 				F878F8551BE3F43A008B4F35 /* index.html */,
 				F85FB11B1BDFCD5E00DABFA8 /* TapTracker.moustache */,
-				F84242631BD9745F001EFF66 /* PerfectLib.framework */,
 			);
 			path = "Tap Tracker Server";
+			sourceTree = "<group>";
+		};
+		F8F45A8A1BE9114500FDC7BC /* Linked */ = {
+			isa = PBXGroup;
+			children = (
+				F84242651BD97839001EFF66 /* MapKit.framework */,
+				F84242611BD97455001EFF66 /* PerfectLib.framework */,
+				F84242631BD9745F001EFF66 /* PerfectLib.framework */,
+			);
+			name = Linked;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

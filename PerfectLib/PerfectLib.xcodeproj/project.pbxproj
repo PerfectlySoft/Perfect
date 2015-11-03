@@ -123,12 +123,8 @@
 		F8F289F71BD5427000367249 /* WebRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebRequest.swift; sourceTree = "<group>"; };
 		F8F289F81BD5427000367249 /* WebResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebResponse.swift; sourceTree = "<group>"; };
 		F8F28A191BD5445500367249 /* libcurl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcurl.tbd; path = usr/lib/libcurl.tbd; sourceTree = SDKROOT; };
-		F8F28A1B1BD5445B00367249 /* libicudata.55.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicudata.55.1.dylib; path = linked/ICU/osx/libicudata.55.1.dylib; sourceTree = "<group>"; };
-		F8F28A1C1BD5445B00367249 /* libicui18n.55.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicui18n.55.1.dylib; path = linked/ICU/osx/libicui18n.55.1.dylib; sourceTree = "<group>"; };
-		F8F28A1D1BD5445B00367249 /* libicuuc.55.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicuuc.55.1.dylib; path = linked/ICU/osx/libicuuc.55.1.dylib; sourceTree = "<group>"; };
 		F8F28A231BD5447E00367249 /* libcrypto-x86_64.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libcrypto-x86_64.a"; path = "linked/OpenSSL/osx/libcrypto-x86_64.a"; sourceTree = "<group>"; };
 		F8F28A241BD5447E00367249 /* libssl-x86_64.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libssl-x86_64.a"; path = "linked/OpenSSL/osx/libssl-x86_64.a"; sourceTree = "<group>"; };
-		F8F28A271BD544A100367249 /* sqlite.3.8.10.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = sqlite.3.8.10.2.dylib; path = linked/SQLite3/osx/sqlite.3.8.10.2.dylib; sourceTree = "<group>"; };
 		F8F28A2A1BD5545000367249 /* curl_support.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = curl_support.cpp; path = linked/cURL/curl_support.cpp; sourceTree = "<group>"; };
 		F8F28A381BD5633100367249 /* PerfectLib.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PerfectLib.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8F28A3A1BD5633100367249 /* PerfectLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PerfectLib.h; path = ../iOS/PerfectLib.h; sourceTree = "<group>"; };
@@ -183,10 +179,6 @@
 		F8F289B41BD53CF000367249 = {
 			isa = PBXGroup;
 			children = (
-				F8F45A881BE8FECE00FDC7BC /* sqlite.3.8.10.2.a */,
-				F8F45A821BE8FCD300FDC7BC /* libicudata.a */,
-				F8F45A831BE8FCD300FDC7BC /* libicui18n.a */,
-				F8F45A841BE8FCD300FDC7BC /* libicuuc.a */,
 				F8F289D81BD53EC800367249 /* Source */,
 				F8F289C01BD53CF000367249 /* PerfectLibOSX */,
 				F8F28A391BD5633100367249 /* PerfectLibiOS */,
@@ -274,14 +266,14 @@
 			children = (
 				F8F28A4A1BD563F600367249 /* libcurl.a */,
 				F8F28A481BD563E500367249 /* libz.tbd */,
-				F8F28A271BD544A100367249 /* sqlite.3.8.10.2.dylib */,
 				F8F28A231BD5447E00367249 /* libcrypto-x86_64.a */,
 				F8F28A241BD5447E00367249 /* libssl-x86_64.a */,
 				F88B06791BDD4269001FD0CD /* libevent_pthreads.a */,
 				F88B067A1BDD4269001FD0CD /* libevent.a */,
-				F8F28A1B1BD5445B00367249 /* libicudata.55.1.dylib */,
-				F8F28A1C1BD5445B00367249 /* libicui18n.55.1.dylib */,
-				F8F28A1D1BD5445B00367249 /* libicuuc.55.1.dylib */,
+				F8F45A881BE8FECE00FDC7BC /* sqlite.3.8.10.2.a */,
+				F8F45A821BE8FCD300FDC7BC /* libicudata.a */,
+				F8F45A831BE8FCD300FDC7BC /* libicui18n.a */,
+				F8F45A841BE8FCD300FDC7BC /* libicuuc.a */,
 				F8F28A191BD5445500367249 /* libcurl.tbd */,
 			);
 			name = Linked;
