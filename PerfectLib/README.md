@@ -1,6 +1,5 @@
 # PerfectLib
-==================
-Put logo here
+![Perfect logo](../PerfectServer/PerfectServerHTTPApp/Assets.xcassets/AppIcon.appiconset/icon_128x128.png)
 
 PerfectLib is a Swift module providing a set of core utilities for both server and client development. In many cases the same APIs are utilized on both the client and the server. However, the goal is to leaverage the APIs provided by the platform on the client side, reducing the potential for bloat, while providing a complete server-side solution supporting both Linux and OS X. The aim is to permit the same domain model code to be used by both client and server while providing the minimum functionality required to support communication and synchronization between the two sides.
 
