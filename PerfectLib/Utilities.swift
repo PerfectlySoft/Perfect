@@ -41,6 +41,7 @@ internal func split_thread(closure:()->()) {
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), closure)
 }
 
+/// This class permits an UnsafeMutablePointer to be used as a GeneratorType
 public struct GenerateFromPointer<T> : GeneratorType {
 	
 	public typealias Element = T
@@ -49,11 +50,13 @@ public struct GenerateFromPointer<T> : GeneratorType {
 	var pos = 0
 	var from: UnsafeMutablePointer<T>
 	
+	/// Initialize given an UnsafeMutablePointer and the number of elements pointed to.
 	public init(from: UnsafeMutablePointer<T>, count: Int) {
 		self.from = from
 		self.count = count
 	}
 	
+	/// Return the next element or nil if the sequence has been exhausted.
 	mutating public func next() -> Element? {
 		guard count > 0 else {
 			return nil
@@ -63,7 +66,10 @@ public struct GenerateFromPointer<T> : GeneratorType {
 	}
 }
 
+/// A generalized wrapper around the Unicode codec operations.
 public class Encoding {
+	
+	/// Return a String given a character generator.
 	public static func encode<D : UnicodeCodecType, G : GeneratorType where G.Element == D.CodeUnit>(var decoder : D, var generator: G) -> String {
 		var encodedString = ""
 		var finished: Bool = false
@@ -83,29 +89,36 @@ public class Encoding {
 	}
 }
 
+/// Utility wrapper permitting a UTF-16 character generator to encode a String.
 public class UTF16Encoding {
 	
+	/// Use a UTF-16 character generator to create a String.
 	public static func encode<G : GeneratorType where G.Element == UTF16.CodeUnit>(generator: G) -> String {
 		return Encoding.encode(UTF16(), generator: generator)
 	}
 }
 
+/// Utility wrapper permitting a UTF-8 character generator to encode a String. Also permits a String to be converted into a UTF-8 byte array.
 public class UTF8Encoding {
 	
+	/// Use a character generator to create a String.
 	public static func encode<G : GeneratorType where G.Element == UTF8.CodeUnit>(generator: G) -> String {
 		return Encoding.encode(UTF8(), generator: generator)
 	}
 	
+	/// Use a character sequence to create a String.
 	public static func encode<S : SequenceType where S.Generator.Element == UTF8.CodeUnit>(bytes: S) -> String {
 		return encode(bytes.generate())
 	}
 	
+	/// Decode a String into an array of UInt8.
 	public static func decode(str: String) -> Array<UInt8> {
 		return Array<UInt8>(str.utf8)
 	}
 }
 
 extension String {
+	/// Returns the String with all special HTML characters encoded.
 	public var stringByEncodingHTML: String {
 		var ret = ""
 		var g = self.unicodeScalars.generate()
@@ -133,6 +146,7 @@ extension String {
 		return ret
 	}
 	
+	/// Returns the String with all special URL characters encoded.
 	public var stringByEncodingURL: String {
 		return self.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
 	}
@@ -140,7 +154,7 @@ extension String {
 
 extension String {
 	/// Parse uuid string
-	/// Results undefined if the string is not a valid UUID
+	/// Results are undefined if the string is not a valid UUID
 	public func asUUID() -> uuid_t {
 		let u = UnsafeMutablePointer<UInt8>.alloc(sizeof(uuid_t))
 		defer {
@@ -150,6 +164,7 @@ extension String {
 		return uuid_t(u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15])
 	}
 	
+	/// Unparse a uuid_t into the String representation.
 	public static func fromUUID(uuid: uuid_t) -> String {
 		let u = UnsafeMutablePointer<UInt8>.alloc(sizeof(uuid_t))
 		let unu = UnsafeMutablePointer<Int8>.alloc(37) // as per spec. 36 + null
@@ -165,6 +180,7 @@ extension String {
 		return String.fromCString(unu)!
 	}
 	
+	/// Parse an HTTP Digest authentication header returning a Dictionary containing each part.
 	public func parseAuthentication() -> [String:String] {
 		var ret = [String:String]()
 		if let _ = self.rangeOfString("Digest ") {
@@ -211,10 +227,12 @@ extension String {
 	}
 }
 
+/// Returns a blank uuid_t
 public func empty_uuid() -> uuid_t {
 	return uuid_t(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 }
 
+/// Generate a random uuid_t
 public func random_uuid() -> uuid_t {
 	let u = UnsafeMutablePointer<UInt8>.alloc(sizeof(uuid_t))
 	defer {

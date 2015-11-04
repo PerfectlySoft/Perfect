@@ -1,57 +1,11 @@
 LogManager.swift
 	public class LogManager
-PerfectServer.swift
-	public let SQLITE_DBS = "SQliteDBs/"
-	public let PERFECT_LIBRARIES = "PerfectLibraries/"
-	public static let staticPerfectServer = PerfectServer()
 Closeable.swift
 	public protocol Closeable
 	func close()
 	func doWithClose(c: ()->())
 	public protocol Closeable
 	public func doWithClose(c: ()->())
-SessionManager.swift
-	case None
-	static public func generateSessionKey() -> String
-NetNamedPipe.swift
-	public convenience init(fd: Int32)
-	public override func initSocket()
-WebConnection.swift
-	public protocol WebConnection
-	var connection: NetTCP { get }
-	var requestParams: Dictionary<String, String> { get }
-	var stdin: [UInt8]? { get }
-	var mimes: MimeReader? { get }
-	func setStatus(code: Int, msg: String)
-	func getStatus() -> (Int, String)
-	func writeHeaderLine(h: String)
-	func writeHeaderBytes(b: [UInt8])
-	func writeBodyBytes(b: [UInt8])
-HTTPServer.swift
-	public class HTTPServer
-	public let documentRoot: String
-	public var serverPort: UInt16 = 0
-	public var serverAddress = "0.0.0.0"
-	public init(documentRoot: String)
-	public func stop()
-JSON.swift
-	case UnhandledType(String)
-	case SyntaxError(String)
-	public init()
-	public init()
-	public var array = Array<AnyObject>()
-	public func append(a: AnyObject)
-	public var dictionary = DictionaryType()
-	public init()
-MimeReader.swift
-	public var bodySpecs = [BodySpec]()
-	public var boundary = ""
-	public func cleanup()
-	public init(_ contentType: String, tempDir: String = "/tmp/")
-	public func setMaxFileSize(size: Int)
-	public func addToBuffer(var bytes: [UInt8])
-	public func isMultiPart() -> Bool
-	public func gotFileupload() -> Bool
 AJAXObjectDriver.swift
 	public let curl = CURL()
 	public init(endpointBase: String, fileExtension: String = ".moustache")
@@ -72,74 +26,6 @@ PerfectObjectHandler.swift
 	public var params = [String:String]()
 	public init() {}
 	public func valuesForResponse(context: MoustacheEvaluationContext, collector: MoustacheEvaluationOutputCollector) throws -> MoustacheEvaluationContext.MapType
-Utilities.swift
-	public struct GenerateFromPointer<T> : GeneratorType
-	public init(from: UnsafeMutablePointer<T>, count: Int)
-	mutating public func next() -> Element?
-	public class Encoding
-	public static func encode<D : UnicodeCodecType, G : GeneratorType where G.Element == D.CodeUnit>(var decoder : D, var generator: G) -> String
-	public class UTF16Encoding
-	public static func encode<G : GeneratorType where G.Element == UTF16.CodeUnit>(generator: G) -> String
-	public class UTF8Encoding
-	public static func encode<G : GeneratorType where G.Element == UTF8.CodeUnit>(generator: G) -> String
-	public static func encode<S : SequenceType where S.Generator.Element == UTF8.CodeUnit>(bytes: S) -> String
-	public static func decode(str: String) -> Array<UInt8>
-	public var stringByEncodingHTML: String
-	public var stringByEncodingURL: String
-	public static func fromUUID(uuid: uuid_t) -> String
-	public func parseAuthentication() -> [String:String]
-	public func empty_uuid() -> uuid_t
-	public func random_uuid() -> uuid_t
-WebRequest.swift
-	public func httpConnection() -> String { return connection.requestParams["HTTP_CONNECTION"] ?? "" }
-	public func httpCookie() -> String { return connection.requestParams["HTTP_COOKIE"] ?? "" }
-	public func httpHost() -> String { return connection.requestParams["HTTP_HOST"] ?? "" }
-	public func httpUserAgent() -> String { return connection.requestParams["HTTP_USER_AGENT"] ?? "" }
-	public func httpCacheControl() -> String { return connection.requestParams["HTTP_CACHE_CONTROL"] ?? "" }
-	public func httpReferer() -> String { return connection.requestParams["HTTP_REFERER"] ?? "" }
-	public func httpReferrer() -> String { return connection.requestParams["HTTP_REFERER"] ?? "" }
-	public func httpAccept() -> String { return connection.requestParams["HTTP_ACCEPT"] ?? "" }
-	public func httpAcceptEncoding() -> String { return connection.requestParams["HTTP_ACCEPT_ENCODING"] ?? "" }
-	public func httpAcceptLanguage() -> String { return connection.requestParams["HTTP_ACCEPT_LANGUAGE"] ?? "" }
-	public func httpAuthorization() -> [String:String]
-	public func contentLength() -> Int { return Int(connection.requestParams["CONTENT_LENGTH"] ?? "0") ?? 0 }
-	public func contentType() -> String { return connection.requestParams["CONTENT_TYPE"] ?? "" }
-	public func path() -> String { return connection.requestParams["PATH"] ?? "" }
-	public func pathTranslated() -> String { return connection.requestParams["PATH_TRANSLATED"] ?? "" }
-	public func queryString() -> String { return connection.requestParams["QUERY_STRING"] ?? "" }
-	public func remoteAddr() -> String { return connection.requestParams["REMOTE_ADDR"] ?? "" }
-	public func remotePort() -> Int { return Int(connection.requestParams["REMOTE_PORT"] ?? "0") ?? 0 }
-	public func requestMethod() -> String { return connection.requestParams["REQUEST_METHOD"] ?? "" }
-	public func requestURI() -> String { return connection.requestParams["REQUEST_URI"] ?? "" }
-	public func scriptFilename() -> String { return connection.requestParams["SCRIPT_FILENAME"] ?? "" }
-	public func scriptName() -> String { return connection.requestParams["SCRIPT_NAME"] ?? "" }
-	public func scriptURI() -> String { return connection.requestParams["SCRIPT_URI"] ?? "" }
-	public func scriptURL() -> String { return connection.requestParams["SCRIPT_URL"] ?? "" }
-	public func serverAddr() -> String { return connection.requestParams["SERVER_ADDR"] ?? "" }
-	public func serverAdmin() -> String { return connection.requestParams["SERVER_ADMIN"] ?? "" }
-	public func serverName() -> String { return connection.requestParams["SERVER_NAME"] ?? "" }
-	public func serverPort() -> Int { return Int(connection.requestParams["SERVER_PORT"] ?? "0") ?? 0 }
-	public func serverProtocol() -> String { return connection.requestParams["SERVER_PROTOCOL"] ?? "" }
-	public func serverSignature() -> String { return connection.requestParams["SERVER_SIGNATURE"] ?? "" }
-	public func serverSoftware() -> String { return connection.requestParams["SERVER_SOFTWARE"] ?? "" }
-	public func pathInfo() -> String { return connection.requestParams["PATH_INFO"] ?? connection.requestParams["SCRIPT_NAME"] ?? "" }
-	public func gatewayInterface() -> String { return connection.requestParams["GATEWAY_INTERFACE"] ?? "" }
-	public func isHttps() -> Bool { return connection.requestParams["HTTPS"] ?? "" == "on" }
-	public func header(named: String) -> String? { return self.headers[named] }
-	public func rawHeader(named: String) -> String? { return self.connection.requestParams[named] }
-	public func raw() -> Dictionary<String, String> { return self.connection.requestParams }
-Moustache.swift
-	case SyntaxError(String)
-	case EvaluationError(String)
-	public var templateName: String
-	public init(map: MapType)
-	public init()
-	public override func evaluate(context: MoustacheEvaluationContext, collector: MoustacheEvaluationOutputCollector)
-	public func parsePragma() -> Dictionary<String, String>
-	public override func evaluate(context: MoustacheEvaluationContext, collector: MoustacheEvaluationOutputCollector)
-	override public func description() -> String
-	override public func description() -> String
-	public init()
 NetTCPSSL.swift
 	public class NetTCPSSL : NetTCP
 	public var usingSSL: Bool
@@ -159,96 +45,6 @@ NetTCPSSL.swift
 	public func setVerifyLocations(caFilePath: String, caDirPath: String) -> Bool
 	public func useCertificateChainFile(cert: String) -> Bool
 	public func usePrivateKeyFile(cert: String) -> Bool
-SQLite.swift
-	case Error(code: Int, msg: String)
-	public init(_ path: String) throws
-	public func close()
-	public func prepare(stat: String) throws -> SQLiteStmt
-	public func lastInsertRowID() -> Int
-	public func totalChanges() -> Int
-	public func changes() -> Int
-	public func errCode() -> Int
-	public func errMsg() -> String
-	public func execute(statement: String) throws
-	public func execute(statement: String, doBindings: (SQLiteStmt) throws -> ()) throws
-	public func execute(statement: String, count: Int, doBindings: (SQLiteStmt, Int) throws -> ()) throws
-	public func doWithTransaction(closure: () throws -> ()) throws
-	public func forEachRow(statement: String, handleRow: (SQLiteStmt, Int) -> ()) throws
-	public func forEachRow(statement: String, doBindings: (SQLiteStmt) throws -> (), handleRow: (SQLiteStmt, Int) -> ()) throws
-	public func close()
-	public func finalize()
-	public func step() -> Int32
-	public func bind(position: Int, _ d: Double) throws
-	public func bind(position: Int, _ i: Int32) throws
-	public func bind(position: Int, _ i: Int) throws
-	public func bind(position: Int, _ i: Int64) throws
-	public func bind(position: Int, _ s: String) throws
-	public func bind(position: Int, _ b: [Int8]) throws
-	public func bind(position: Int, _ b: [UInt8]) throws
-	public func bindZeroBlob(position: Int, count: Int) throws
-	public func bindNull(position: Int) throws
-	public func bind(name: String, _ d: Double) throws
-	public func bind(name: String, _ i: Int32) throws
-	public func bind(name: String, _ i: Int) throws
-	public func bind(name: String, _ i: Int64) throws
-	public func bind(name: String, _ s: String) throws
-	public func bind(name: String, _ b: [Int8]) throws
-	public func bindZeroBlob(name: String, count: Int) throws
-	public func bindNull(name: String) throws
-	public func bindParameterIndex(name: String) throws -> Int
-	public func reset() throws -> Int
-	public func columnCount() -> Int
-	public func columnName(position: Int) -> String
-	public func columnDeclType(position: Int) -> String
-	public func columnBlob(position: Int) -> [Int8]
-	public func columnDouble(position: Int) -> Double
-	public func columnInt(position: Int) -> Int
-	public func columnInt32(position: Int) -> Int32
-	public func columnInt64(position: Int) -> Int64
-	public func columnText(position: Int) -> String
-	public func columnType(position: Int) -> Int32
-PerfectError.swift
-	case NetworkError(Int32, String)
-	case FileError(Int32, String)
-	case SystemError(Int32, String)
-	case APIError(String)
-WebResponse.swift
-	public var request: WebRequest
-	public var outputEncoding = "UTF-8"
-	public func setStatus(code: Int, message: String)
-	public func getStatus() -> (Int, String)
-SysProcess.swift
-	public class SysProcess : Closeable
-	public var stdin: File?
-	public var stdout: File?
-	public var stderr: File?
-	public var pid = pid_t(-1)
-	public init(_ cmd: String, args: [String]?, env: [(String,String)]?) throws
-	public func isOpen() -> Bool
-	public func close()
-	public func wait(hang: Bool = true) throws -> Int32
-	public func kill(signal: Int32 = SIGTERM) throws -> Int32
-FastCGIServer.swift
-	public init()
-cURL.swift
-	public class CURL
-	public var responseCode: Int
-	public var url: String
-	public init()
-	public convenience init(url: String)
-	public init(dupeCurl: CURL)
-	public func reset()
-	public func perform(closure: (Int, [UInt8], [UInt8]) -> ())
-	public func multiResult() -> CURLcode
-	public func strError(code: CURLcode) -> String
-	public func getInfo(info: CURLINFO) -> (Int, CURLcode)
-	public func getInfo(info: CURLINFO) -> (String, CURLcode)
-	public func setOption(option: CURLoption, int: Int64) -> CURLcode
-	public func setOption(option: CURLoption, int: Int) -> CURLcode
-	public func setOption(option: CURLoption, v: UnsafeMutablePointer<Void>) -> CURLcode
-	public func setOption(option: CURLoption, f: curl_func) -> CURLcode
-	public func setOption(option: CURLoption, s: String) -> CURLcode
-	public func close()
 PerfectObject.swift
 	public enum HandlerAction
 	case None

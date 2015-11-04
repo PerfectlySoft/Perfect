@@ -86,6 +86,7 @@ public struct SessionConfiguration {
 
 /// This enum is used to indicate the result of initializing the session.
 public enum SessionResult {
+	/// No session initialization result.
 	case None
 	/// The session existed and its values were loaded.
 	case Load
@@ -250,6 +251,7 @@ public class SessionManager {
 		return defaultValue
 	}
 	
+	/// Generate a presumably unique session id
 	static public func generateSessionKey() -> String {
 		let u = UnsafeMutablePointer<UInt8>.alloc(sizeof(uuid_t))
 		let unu = UnsafeMutablePointer<Int8>.alloc(37) // as per spec. 36 + null

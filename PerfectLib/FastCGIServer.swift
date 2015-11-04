@@ -15,6 +15,7 @@ public class FastCGIServer {
 	
 	private var net: NetTCP?
 	
+	/// Empty public initializer
 	public init() {
 		
 	}

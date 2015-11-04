@@ -10,9 +10,13 @@ import Foundation
 
 /// Some but not all of the exception types which may be thrown by the system
 public enum PerfectError : ErrorType {
+	/// A network related error code and message.
 	case NetworkError(Int32, String)
+	/// A file system related error code and message.
 	case FileError(Int32, String)
+	/// A OS level error code and message.
 	case SystemError(Int32, String)
+	/// An API exception error message.
 	case APIError(String)
 }
 

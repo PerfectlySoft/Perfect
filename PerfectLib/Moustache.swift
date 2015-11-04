@@ -32,7 +32,9 @@ enum MoustacheTagType {
 
 /// This enum type represents the parsing and the runtime evaluation exceptions which may be generated.
 public enum MoustacheError : ErrorType {
+	/// The moustache template was malformed.
 	case SyntaxError(String)
+	/// An exception occurred while evaluating the template.
 	case EvaluationError(String)
 }
 
@@ -60,6 +62,7 @@ public class MoustacheEvaluationContext {
 	/// Potentially nil in cases of dynamic file generation(?)
 	public var filePath: String?
 	
+	/// Returns the name of the current template file.
 	public var templateName: String {
 		let nam = filePath?.lastPathComponent ?? ""
 		return nam
@@ -77,6 +80,7 @@ public class MoustacheEvaluationContext {
 		mapValues = map
 	}
 	
+	/// Initialize a new context given the map of values.
 	public init(map: MapType) {
 		self.webResponse = nil
 		mapValues = map
@@ -131,6 +135,7 @@ public class MoustacheEvaluationOutputCollector {
 	
 	var defaultEncodingFunc: (String) -> String = { $0.stringByEncodingHTML }
 	
+	/// Empty public initializer.
 	public init() {
 		
 	}
@@ -240,6 +245,7 @@ public class MoustacheTag {
 /// A sub-class of MoustacheTag which represents a moustache "partial" tag.
 public class MoustachePartialTag : MoustacheTag {
 	
+	/// Override for evaluating the partial tag.
 	public override func evaluate(context: MoustacheEvaluationContext, collector: MoustacheEvaluationOutputCollector) {
 		
 		guard let page = context.getCurrentFilePath() else {
@@ -283,7 +289,8 @@ public class MoustachePartialTag : MoustacheTag {
 /// Pragma tags are "meta" tags which influence template evaluation but likely do not output any data.
 public class MoustachePragmaTag : MoustacheTag {
 	
-	// A:B,C:D,E,F:G
+	/// Parse the pragma. Pragmas should be in the format: A:B,C:D,E,F:G.
+	/// - returns: A Dictionary containing the pragma names and values.
 	public func parsePragma() -> Dictionary<String, String> {
 		var d = Dictionary<String, String>()
 		let commaSplit = tag.characters.split() { $0 == Character(",") }.map { String($0) }
@@ -381,6 +388,7 @@ public class MoustacheGroupTag : MoustacheTag {
 		}
 	}
 	
+	/// Evaluate the tag in the given context.
 	public override func evaluate(context: MoustacheEvaluationContext, collector: MoustacheEvaluationOutputCollector) {
 		if type == .Hash {
 			self.evaluatePos(context, collector: collector)
@@ -400,6 +408,7 @@ public class MoustacheGroupTag : MoustacheTag {
 		return s
 	}
 	
+	/// Returns a String containing the reconstituted tag, including all children.
 	override public func description() -> String {
 		var s = super.description()
 		for child in children {
@@ -460,6 +469,7 @@ public class MoustacheTemplate : MoustacheGroupTag {
 		context.webResponse = nil
 	}
 	
+	/// Returns a String containing the reconstituted template, including all children.
 	override public func description() -> String {
 		var s = ""
 		for child in children {
@@ -485,6 +495,7 @@ public class MoustacheParser {
 	var g: UGen?
 	var offset = -1
 	
+	/// Empty public initializer.
 	public init() {
 		
 	}

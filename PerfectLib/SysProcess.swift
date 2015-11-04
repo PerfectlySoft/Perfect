@@ -7,14 +7,24 @@
 //
 
 import Foundation
-
+/// This class permits an external process to be launched given a set of command line arguments and environment variables.
+/// The standard in, out and err file streams are made available. The process can be terminated or permitted to be run to completion.
 public class SysProcess : Closeable {
 	
+	/// The standard in file stream.
 	public var stdin: File?
+	/// The standard out file stream.
 	public var stdout: File?
+	/// The standard err file stream.
 	public var stderr: File?
+	/// The process identifier.
 	public var pid = pid_t(-1)
 	
+	/// Initialize the object and launch the process.
+	/// - parameter cmd: The path to the process which will be launched.
+	/// - parameter args: An optional array of String arguments which will be given to the process.
+	/// - parameter env: An optional array of environment variable name and value pairs.
+	/// - throws: `LassoError.SystemError`
 	public init(_ cmd: String, args: [String]?, env: [(String,String)]?) throws {
 		let cArgsCount = args != nil ? args!.count : 0
 		let cArgs = UnsafeMutablePointer<UnsafeMutablePointer<CChar>>.alloc(cArgsCount + 2)
@@ -97,10 +107,17 @@ public class SysProcess : Closeable {
 		self.stderr = File(fd: fSTDERR[0], path: "")
 	}
 	
+	deinit {
+		self.close()
+	}
+	
+	/// Returns true if the process was opened and was running at some point.
+	/// Note that the process may not be currently running. Use `wait(false)` to check if the process is currently running.
 	public func isOpen() -> Bool {
 		return self.pid != -1
 	}
 	
+	/// Terminate the process and clean up.
 	public func close() {
 		if self.stdin != nil {
 			self.stdin!.close()
@@ -124,6 +141,12 @@ public class SysProcess : Closeable {
 		self.pid = -1
 	}
 	
+	/// Detach from the process such that it will not be manually terminated when this object is deinitialized.
+	public func detach() {
+		self.pid = -1
+	}
+	
+	/// Determine if the process has completed running and retrieve its result code.
 	public func wait(hang: Bool = true) throws -> Int32 {
 		var code = Int32(0)
 		let status = Foundation.waitpid(self.pid, &code, WUNTRACED | (hang ? 0 : WNOHANG))
@@ -135,6 +158,7 @@ public class SysProcess : Closeable {
 		return code
 	}
 	
+	/// Terminate the process and return its result code.
 	public func kill(signal: Int32 = SIGTERM) throws -> Int32 {
 		let status = Foundation.kill(self.pid, signal)
 		guard status != -1 else {

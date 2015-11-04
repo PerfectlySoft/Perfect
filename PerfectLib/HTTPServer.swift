@@ -16,19 +16,27 @@ internal let HTTP_COLON = UInt8(58)
 internal let HTTP_SPACE = UnicodeScalar(32)
 internal let HTTP_QUESTION = UnicodeScalar(63)
 
+/// Stand-alone HTTP server. Provides the same WebConnection based interface as the FastCGI server.
 public class HTTPServer {
 	
 	private var net: NetTCP?
 	
+	/// The directory in which web documents are sought.
 	public let documentRoot: String
+	/// The port on which the server is listening.
 	public var serverPort: UInt16 = 0
+	/// The local address on which the server is listening. The default of 0.0.0.0 indicates any local address.
 	public var serverAddress = "0.0.0.0"
 	
+	/// Initialize the server with a document root.
+	/// - parameter documentRoot: The document root for the server.
 	public init(documentRoot: String) {
 		self.documentRoot = documentRoot
 	}
 	
-	/// Start the server on the indicated TCP port and optional address
+	/// Start the server on the indicated TCP port and optional address.
+	/// - parameter port: The port on which to bind.
+	/// - parameter bindAddress: The local address on which to bind.
 	public func start(port: UInt16, bindAddress: String = "0.0.0.0") throws {
 		
 		self.serverPort = port
@@ -64,6 +72,7 @@ public class HTTPServer {
 		}
 	}
 	
+	/// Stop the server by closing the accepting TCP socket. Calling this will cause the server to break out of the otherwise blocking `start` function.
 	public func stop() {
 		if let n = self.net {
 			self.net = nil

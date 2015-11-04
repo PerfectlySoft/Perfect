@@ -28,8 +28,10 @@ public class Cookie {
 public class WebResponse {
 	
 	var connection: WebConnection
-	public var request: WebRequest
 	
+	/// The WebRequest for this response
+	public var request: WebRequest
+	/// The output encoding for a textual response. Defaults to UTF-8.
 	public var outputEncoding = "UTF-8"
 	
 	var headersArray = [(String, String)]()
@@ -48,10 +50,12 @@ public class WebResponse {
 		self.request = request
 	}
 	
+	/// Set the response status code and message. For example, 200, "OK".
 	public func setStatus(code: Int, message: String) {
 		self.connection.setStatus(code, msg: message)
 	}
 	
+	/// Get the response status code and message.
 	public func getStatus() -> (Int, String) {
 		return self.connection.getStatus()
 	}

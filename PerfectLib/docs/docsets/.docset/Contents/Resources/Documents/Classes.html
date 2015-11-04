@@ -12,7 +12,7 @@
     <a title="Classes  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html"> Docs</a> (45% documented)</p>
+        <p><a href="index.html"> Docs</a> (83% documented)</p>
       </div>
     </header>
     <div class="content-wrapper">
@@ -401,9 +401,17 @@ Session related variables can be set and retrieved though this object. Any varia
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Stand-alone HTTP server. Provides the same WebConnection based interface as the FastCGI server.</p>
 
                         <a href="Classes/HTTPServer.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="Swift">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">HTTPServer</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -653,7 +661,10 @@ JSON data which is being decoded will have these object as part of the contents 
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>This class is responsible for reading multi-part POST form data, including handling file uploads</p>
+                        <p>This class is responsible for reading multi-part POST form data, including handling file uploads.
+Data can be given for parsing in little bits at a time by calling the <code>addTobuffer</code> function.
+Any file uploads which are encountered will be written to the temporary directory indicated when the <code>MimeReader</code> is created.
+Temporary files will be deleted when this object is deinitialized.</p>
 
                         <a href="Classes/MimeReader.html" class="slightly-smaller">See more</a>
                       </div>
@@ -742,9 +753,17 @@ It provides facilities for setting up the parameters for the raw requests</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>A generalized wrapper around the Unicode codec operations.</p>
 
                         <a href="Classes/Encoding.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="Swift">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">Encoding</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -762,9 +781,17 @@ It provides facilities for setting up the parameters for the raw requests</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Utility wrapper permitting a UTF-16 character generator to encode a String.</p>
 
                         <a href="Classes/UTF16Encoding.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="Swift">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">UTF16Encoding</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -782,9 +809,17 @@ It provides facilities for setting up the parameters for the raw requests</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Utility wrapper permitting a UTF-8 character generator to encode a String. Also permits a String to be converted into a UTF-8 byte array.</p>
 
                         <a href="Classes/UTF8Encoding.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="Swift">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">UTF8Encoding</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -1360,9 +1395,18 @@ It can be used for creating &amp; inspecting directories and enumerating directo
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>This class permits an external process to be launched given a set of command line arguments and environment variables.
+The standard in, out and err file streams are made available. The process can be terminated or permitted to be run to completion.</p>
 
                         <a href="Classes/SysProcess.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="Swift">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">SysProcess</span> <span class="p">:</span> <span class="kt">Closeable</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -1450,9 +1494,17 @@ When a request is received, the server will instantiate a <code>WebRequest</code
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>This class is a wrapper around the CURL library. It permits network operations to be completed using cURL in a block or non-blocking manner.</p>
 
                         <a href="Classes/CURL.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="Swift">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">CURL</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -1486,7 +1538,7 @@ When a request is received, the server will instantiate a <code>WebRequest</code
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2015 <a class="link" href="" target="_blank" rel="external"></a>. All rights reserved. (Last updated: 2015-11-03)</p>
+          <p>&copy; 2015 <a class="link" href="" target="_blank" rel="external"></a>. All rights reserved. (Last updated: 2015-11-04)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.3.2</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
