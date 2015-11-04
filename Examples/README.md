@@ -1,5 +1,5 @@
 # Perfect Examples
-![Perfect logo](../PerfectServer/PerfectServerHTTPApp/Assets.xcassets/AppIcon.appiconset/icon_128x128.png)
+![Perfect logo](http://www.perfect.org/images/icon_128x128.png)
 
 These examples illustrate how Xcode projects which use Perfect are organized and how the clients and servers are run and debugged. Each example aims to show a different aspect of how Perfect operates with the goal of getting developers up to speed and creating their own server solutions.
 
