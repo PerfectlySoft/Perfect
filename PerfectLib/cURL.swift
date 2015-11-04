@@ -52,7 +52,7 @@ public class CURL {
 		self.url = url
 	}
 	
-	/// Duplicate the current request parameters into a new CURL object.
+	/// Duplicate the given request into a new CURL object.
 	public init(dupeCurl: CURL) {
 		if let copyFrom = dupeCurl.curl {
 			self.curl = curl_easy_duphandle(copyFrom)
