@@ -8,13 +8,16 @@
 
 //import Foundation
 
-public let SQLITE_DBS = "SQliteDBs/"
+/// Standard directory for server-side SQLite support databases
+public let SQLITE_DBS = "SQLiteDBs/"
+/// Directory for server-size modules. Modules in this directory are loaded at server startup.
 public let PERFECT_LIBRARIES = "PerfectLibraries/"
 
 /// Provides access to various system level features for the process.
 /// A static instance of this class is created at startup and all access to this object go through the `PerfectServer.staticPerfectServer` static property.
 public class PerfectServer {
 	
+	/// Provides access to the singleton PerfectServer instance.
 	public static let staticPerfectServer = PerfectServer()
 	
 	internal init() {

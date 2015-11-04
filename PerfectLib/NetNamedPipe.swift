@@ -11,6 +11,7 @@ import Foundation
 /// This sub-class of NetTCP handles networking over an AF_UNIX named pipe connection.
 public class NetNamedPipe : NetTCP {
 	
+	/// Initialize the object using an existing file descriptor.
 	public convenience init(fd: Int32) {
 		self.init()
 		self.fd.fd = fd
@@ -18,6 +19,7 @@ public class NetNamedPipe : NetTCP {
 		self.fd.switchToNBIO()
 	}
 	
+	/// Override socket initialization to handle the UNIX socket type.
 	public override func initSocket() {
 		fd.fd = Foundation.socket(AF_UNIX, SOCK_STREAM, 0)
 		fd.family = AF_UNIX

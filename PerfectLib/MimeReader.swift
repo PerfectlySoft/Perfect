@@ -29,15 +29,22 @@ let mime_cr = UInt8(13)
 let mime_lf = UInt8(10)
 let mime_dash = UInt8(45)
 
-/// This class is responsible for reading multi-part POST form data, including handling file uploads
+/// This class is responsible for reading multi-part POST form data, including handling file uploads.
+/// Data can be given for parsing in little bits at a time by calling the `addTobuffer` function.
+/// Any file uploads which are encountered will be written to the temporary directory indicated when the `MimeReader` is created.
+/// Temporary files will be deleted when this object is deinitialized.
 public class MimeReader {
 	
+	/// Array of BodySpecs representing each part that was parsed.
 	public var bodySpecs = [BodySpec]()
+	
 	var maxFileSize = -1
 	var (multi, gotFile) = (false, false)
 	var buffer = [UInt8]()
 	let tempDirectory: String
 	var state: MimeReadState = .StateNone
+	
+	/// The boundary identifier.
 	public var boundary = ""
 	
 	/// This class represents a single part of a multi-part POST submission
@@ -63,6 +70,7 @@ public class MimeReader {
 		
 		}
 		
+		/// Clean up the BodySpec, possibly closing and deleting any associated temporary file.
 		public func cleanup() {
 			if let f = self.file {
 				if f.exists() {
@@ -77,7 +85,9 @@ public class MimeReader {
 		}
 	}
 	
-	// We are given the Content-Type header line as a whole
+	/// Initialize given a Content-type header line.
+	/// - parameter contentType: The Content-type header line.
+	/// - parameter tempDir: The path to the directory in which to store temporary files. Defaults to "/tmp/".
 	public init(_ contentType: String, tempDir: String = "/tmp/") {
 		self.tempDirectory = tempDir
 		if contentType.rangeOfString(kMultiPartForm) != nil {
@@ -98,9 +108,10 @@ public class MimeReader {
 		}
 	}
 	
-	public func setMaxFileSize(size: Int) {
-		self.maxFileSize = size
-	}
+// not implimented
+//	public func setMaxFileSize(size: Int) {
+//		self.maxFileSize = size
+//	}
 	
 	func openTempFile(spec: BodySpec) {
 		spec.file = File(tempFilePrefix: self.tempDirectory + kPerfectTempPrefix)
@@ -379,6 +390,8 @@ public class MimeReader {
 		return self.state
 	}
 	
+	/// Add data to be parsed.
+	/// - parameter bytes: The array of UInt8 to be parsed.
 	public func addToBuffer(var bytes: [UInt8]) {
 		if isMultiPart() {
 			
@@ -392,15 +405,10 @@ public class MimeReader {
 		self.buffer.appendContentsOf(bytes)
 	}
 	
+	/// Returns true of the content type indicated a multi-part form.
 	public func isMultiPart() -> Bool {
 		return self.multi
 	}
-	
-	public func gotFileupload() -> Bool {
-		return false
-	}
-	
-	
 }
 
 

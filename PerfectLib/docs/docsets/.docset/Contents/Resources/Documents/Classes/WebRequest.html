@@ -13,7 +13,7 @@
     <a title="WebRequest Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html"> Docs</a> (45% documented)</p>
+        <p><a href="../index.html"> Docs</a> (83% documented)</p>
       </div>
     </header>
     <div class="content-wrapper">
@@ -485,14 +485,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the HTTP_CONNECTION parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">httpConnection</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"HTTP_CONNECTION"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -512,14 +512,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the HTTP_COOKIE parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">httpCookie</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"HTTP_COOKIE"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -539,14 +539,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the HTTP_HOST parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">httpHost</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"HTTP_HOST"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -566,14 +566,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the HTTP_USER_AGENT parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">httpUserAgent</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"HTTP_USER_AGENT"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -593,14 +593,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the HTTP_CACHE_CONTROL parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">httpCacheControl</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"HTTP_CACHE_CONTROL"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -620,14 +620,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the HTTP_REFERER parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">httpReferer</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"HTTP_REFERER"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -647,14 +647,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the HTTP_REFERER parameter but using the proper <q>referrer</q> spelling for pedants.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">httpReferrer</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"HTTP_REFERER"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -674,14 +674,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the HTTP_ACCEPT parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">httpAccept</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"HTTP_ACCEPT"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -701,14 +701,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the HTTP_ACCEPT_ENCODING parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">httpAcceptEncoding</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"HTTP_ACCEPT_ENCODING"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -728,14 +728,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the HTTP_ACCEPT_LANGUAGE parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">httpAcceptLanguage</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"HTTP_ACCEPT_LANGUAGE"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -755,14 +755,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the HTTP_AUTHORIZATION with all elements having been parsed using the <code>String.parseAuthentication</code> extension function.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">httpAuthorization</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="kt">String</span><span class="p">:</span><span class="kt">String</span><span class="p">]</span></code></pre>
 
                         </div>
                       </div>
@@ -782,14 +782,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the CONTENT_LENGTH parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">contentLength</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Int</span> <span class="p">{</span> <span class="k">return</span> <span class="kt">Int</span><span class="p">(</span><span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"CONTENT_LENGTH"</span><span class="p">]</span> <span class="p">??</span> <span class="s">"0"</span><span class="p">)</span> <span class="p">??</span> <span class="mi">0</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -809,14 +809,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the CONTENT_TYPE parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">contentType</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"CONTENT_TYPE"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -836,14 +836,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the PATH parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">path</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"PATH"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -863,14 +863,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the PATH_TRANSLATED parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">pathTranslated</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"PATH_TRANSLATED"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -890,14 +890,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the QUERY_STRING parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">queryString</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"QUERY_STRING"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -917,14 +917,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the REMOTE_ADDR parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">remoteAddr</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"REMOTE_ADDR"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -944,14 +944,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the REMOTE_PORT parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">remotePort</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Int</span> <span class="p">{</span> <span class="k">return</span> <span class="kt">Int</span><span class="p">(</span><span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"REMOTE_PORT"</span><span class="p">]</span> <span class="p">??</span> <span class="s">"0"</span><span class="p">)</span> <span class="p">??</span> <span class="mi">0</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -971,14 +971,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the REQUEST_METHOD parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">requestMethod</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"REQUEST_METHOD"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -998,14 +998,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the REQUEST_URI parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">requestURI</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"REQUEST_URI"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1025,14 +1025,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the SCRIPT_FILENAME parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">scriptFilename</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"SCRIPT_FILENAME"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1052,14 +1052,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the SCRIPT_NAME parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">scriptName</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"SCRIPT_NAME"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1079,14 +1079,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the SCRIPT_URI parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">scriptURI</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"SCRIPT_URI"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1106,14 +1106,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the SCRIPT_URL parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">scriptURL</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"SCRIPT_URL"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1133,14 +1133,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the SERVER_ADDR parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">serverAddr</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"SERVER_ADDR"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1160,14 +1160,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the SERVER_ADMIN parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">serverAdmin</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"SERVER_ADMIN"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1187,14 +1187,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the SERVER_NAME parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">serverName</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"SERVER_NAME"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1214,14 +1214,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the SERVER_PORT parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">serverPort</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Int</span> <span class="p">{</span> <span class="k">return</span> <span class="kt">Int</span><span class="p">(</span><span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"SERVER_PORT"</span><span class="p">]</span> <span class="p">??</span> <span class="s">"0"</span><span class="p">)</span> <span class="p">??</span> <span class="mi">0</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1241,14 +1241,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the SERVER_PROTOCOL parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">serverProtocol</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"SERVER_PROTOCOL"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1268,14 +1268,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the SERVER_SIGNATURE parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">serverSignature</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"SERVER_SIGNATURE"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1295,14 +1295,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the SERVER_SOFTWARE parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">serverSoftware</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"SERVER_SOFTWARE"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1322,14 +1322,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the PATH_INFO parameter if it exists or else the SCRIPT_NAME parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">pathInfo</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"PATH_INFO"</span><span class="p">]</span> <span class="p">??</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"SCRIPT_NAME"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1349,14 +1349,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Provides access to the GATEWAY_INTERFACE parameter.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">gatewayInterface</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"GATEWAY_INTERFACE"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1376,14 +1376,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Returns true if the request was encrypted over HTTPS.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">isHttps</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="s">"HTTPS"</span><span class="p">]</span> <span class="p">??</span> <span class="s">""</span> <span class="o">==</span> <span class="s">"on"</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1403,14 +1403,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Returns the indicated HTTP header.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">header</span><span class="p">(</span><span class="nv">named</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">?</span> <span class="p">{</span> <span class="k">return</span> <span class="k">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="n">named</span><span class="p">]</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1430,14 +1430,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Returns the raw request parameter header</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">rawHeader</span><span class="p">(</span><span class="nv">named</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">?</span> <span class="p">{</span> <span class="k">return</span> <span class="k">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span><span class="p">[</span><span class="n">named</span><span class="p">]</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1457,14 +1457,14 @@ Returns the supplied default value if the parameter was not found</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Returns a Dictionary containing all raw request parameters.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">WebRequest</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">raw</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Dictionary</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span> <span class="kt">String</span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">return</span> <span class="k">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">requestParams</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1476,7 +1476,7 @@ Returns the supplied default value if the parameter was not found</p>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2015 <a class="link" href="" target="_blank" rel="external"></a>. All rights reserved. (Last updated: 2015-11-03)</p>
+          <p>&copy; 2015 <a class="link" href="" target="_blank" rel="external"></a>. All rights reserved. (Last updated: 2015-11-04)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.3.2</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

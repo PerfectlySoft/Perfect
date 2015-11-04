@@ -36,7 +36,9 @@ let json_tab = UnicodeScalar(UInt32(9))
 
 /// An exception enum type which represents JSON encoding and decoding errors
 public enum JSONError: ErrorType {
+	/// A data type was used which is not JSON encodable.
 	case UnhandledType(String)
+	/// The JSON data was malformed.
 	case SyntaxError(String)
 }
 
@@ -69,6 +71,7 @@ class KeyPair {
 /// - `Dictionary<String, AnyObject>`
 public class JSONEncode {
 	
+	/// Empty public initializer
 	public init() {
 		
 	}
@@ -195,6 +198,7 @@ public class JSONEncode {
 /// An instance of this class can be used in an Array of Dictionary which is to be encoded.
 /// An instance of this class may be found in any decoded Array or Dictionary.
 public class JSONNull {
+	/// Empty public initializer
 	public init() {
 		
 	}
@@ -203,12 +207,15 @@ public class JSONNull {
 /// This class is a reference based wrapper around `Array<AnyObject>`
 /// JSON data which is being decoded will have these object as part of the contents of the resulting data.
 public class JSONArrayType {
+	
+	/// Provides access to the underlying array
 	public var array = Array<AnyObject>()
 	
 	subscript (index: Int) -> Array<AnyObject>.Element {
 		return array[index]
 	}
 	
+	/// Pass-through function which appends to the array.
 	public func append(a: AnyObject) {
 		array.append(a)
 	}
@@ -222,6 +229,7 @@ public class JSONDictionaryType {
 	public typealias Key = DictionaryType.Key
 	public typealias Value = DictionaryType.Value
 	
+	/// Provides access to the underlying Dictionary.
 	public var dictionary = DictionaryType()
 	
 	subscript (key: Key) -> Value? {
@@ -252,6 +260,7 @@ public class JSONDecode {
 	var g = String().unicodeScalars.generate()
 	var pushBack: UnicodeScalar?
 	
+	/// Empty public initializer
 	public init() {
 		
 	}

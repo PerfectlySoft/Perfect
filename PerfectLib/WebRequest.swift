@@ -171,17 +171,27 @@ public class WebRequest {
 		return a.count > 0 ? a : nil
 	}
 	
+	/// Provides access to the HTTP_CONNECTION parameter.
 	public func httpConnection() -> String { return connection.requestParams["HTTP_CONNECTION"] ?? "" }
+	/// Provides access to the HTTP_COOKIE parameter.
 	public func httpCookie() -> String { return connection.requestParams["HTTP_COOKIE"] ?? "" }
+	/// Provides access to the HTTP_HOST parameter.
 	public func httpHost() -> String { return connection.requestParams["HTTP_HOST"] ?? "" }
+	/// Provides access to the HTTP_USER_AGENT parameter.
 	public func httpUserAgent() -> String { return connection.requestParams["HTTP_USER_AGENT"] ?? "" }
+	/// Provides access to the HTTP_CACHE_CONTROL parameter.
 	public func httpCacheControl() -> String { return connection.requestParams["HTTP_CACHE_CONTROL"] ?? "" }
+	/// Provides access to the HTTP_REFERER parameter.
 	public func httpReferer() -> String { return connection.requestParams["HTTP_REFERER"] ?? "" }
+	/// Provides access to the HTTP_REFERER parameter but using the proper "referrer" spelling for pedants.
 	public func httpReferrer() -> String { return connection.requestParams["HTTP_REFERER"] ?? "" }
+	/// Provides access to the HTTP_ACCEPT parameter.
 	public func httpAccept() -> String { return connection.requestParams["HTTP_ACCEPT"] ?? "" }
+	/// Provides access to the HTTP_ACCEPT_ENCODING parameter.
 	public func httpAcceptEncoding() -> String { return connection.requestParams["HTTP_ACCEPT_ENCODING"] ?? "" }
+	/// Provides access to the HTTP_ACCEPT_LANGUAGE parameter.
 	public func httpAcceptLanguage() -> String { return connection.requestParams["HTTP_ACCEPT_LANGUAGE"] ?? "" }
-	
+	/// Provides access to the HTTP_AUTHORIZATION with all elements having been parsed using the `String.parseAuthentication` extension function.
 	public func httpAuthorization() -> [String:String] {
 		guard cachedHttpAuthorization == nil else {
 			return cachedHttpAuthorization!
@@ -194,37 +204,57 @@ public class WebRequest {
 		self.cachedHttpAuthorization = ret
 		return ret
 	}
-	
+	/// Provides access to the CONTENT_LENGTH parameter.
 	public func contentLength() -> Int { return Int(connection.requestParams["CONTENT_LENGTH"] ?? "0") ?? 0 }
+	/// Provides access to the CONTENT_TYPE parameter.
 	public func contentType() -> String { return connection.requestParams["CONTENT_TYPE"] ?? "" }
-	
+	/// Provides access to the PATH parameter.
 	public func path() -> String { return connection.requestParams["PATH"] ?? "" }
+	/// Provides access to the PATH_TRANSLATED parameter.
 	public func pathTranslated() -> String { return connection.requestParams["PATH_TRANSLATED"] ?? "" }
+	/// Provides access to the QUERY_STRING parameter.
 	public func queryString() -> String { return connection.requestParams["QUERY_STRING"] ?? "" }
+	/// Provides access to the REMOTE_ADDR parameter.
 	public func remoteAddr() -> String { return connection.requestParams["REMOTE_ADDR"] ?? "" }
+	/// Provides access to the REMOTE_PORT parameter.
 	public func remotePort() -> Int { return Int(connection.requestParams["REMOTE_PORT"] ?? "0") ?? 0 }
+	/// Provides access to the REQUEST_METHOD parameter.
 	public func requestMethod() -> String { return connection.requestParams["REQUEST_METHOD"] ?? "" }
+	/// Provides access to the REQUEST_URI parameter.
 	public func requestURI() -> String { return connection.requestParams["REQUEST_URI"] ?? "" }
+	/// Provides access to the SCRIPT_FILENAME parameter.
 	public func scriptFilename() -> String { return connection.requestParams["SCRIPT_FILENAME"] ?? "" }
+	/// Provides access to the SCRIPT_NAME parameter.
 	public func scriptName() -> String { return connection.requestParams["SCRIPT_NAME"] ?? "" }
+	/// Provides access to the SCRIPT_URI parameter.
 	public func scriptURI() -> String { return connection.requestParams["SCRIPT_URI"] ?? "" }
+	/// Provides access to the SCRIPT_URL parameter.
 	public func scriptURL() -> String { return connection.requestParams["SCRIPT_URL"] ?? "" }
+	/// Provides access to the SERVER_ADDR parameter.
 	public func serverAddr() -> String { return connection.requestParams["SERVER_ADDR"] ?? "" }
+	/// Provides access to the SERVER_ADMIN parameter.
 	public func serverAdmin() -> String { return connection.requestParams["SERVER_ADMIN"] ?? "" }
+	/// Provides access to the SERVER_NAME parameter.
 	public func serverName() -> String { return connection.requestParams["SERVER_NAME"] ?? "" }
+	/// Provides access to the SERVER_PORT parameter.
 	public func serverPort() -> Int { return Int(connection.requestParams["SERVER_PORT"] ?? "0") ?? 0 }
+	/// Provides access to the SERVER_PROTOCOL parameter.
 	public func serverProtocol() -> String { return connection.requestParams["SERVER_PROTOCOL"] ?? "" }
+	/// Provides access to the SERVER_SIGNATURE parameter.
 	public func serverSignature() -> String { return connection.requestParams["SERVER_SIGNATURE"] ?? "" }
+	/// Provides access to the SERVER_SOFTWARE parameter.
 	public func serverSoftware() -> String { return connection.requestParams["SERVER_SOFTWARE"] ?? "" }
-	
+	/// Provides access to the PATH_INFO parameter if it exists or else the SCRIPT_NAME parameter.
 	public func pathInfo() -> String { return connection.requestParams["PATH_INFO"] ?? connection.requestParams["SCRIPT_NAME"] ?? "" }
+	/// Provides access to the GATEWAY_INTERFACE parameter.
 	public func gatewayInterface() -> String { return connection.requestParams["GATEWAY_INTERFACE"] ?? "" }
-	
+	/// Returns true if the request was encrypted over HTTPS.
 	public func isHttps() -> Bool { return connection.requestParams["HTTPS"] ?? "" == "on" }
-	
+	/// Returns the indicated HTTP header.
 	public func header(named: String) -> String? { return self.headers[named] }
+	/// Returns the raw request parameter header
 	public func rawHeader(named: String) -> String? { return self.connection.requestParams[named] }
-	
+	/// Returns a Dictionary containing all raw request parameters.
 	public func raw() -> Dictionary<String, String> { return self.connection.requestParams }
 	
 	internal init(_ c: WebConnection) {
