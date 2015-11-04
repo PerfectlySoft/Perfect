@@ -1,5 +1,5 @@
 # Perfect
-![Perfect logo](PerfectServer/PerfectServerHTTPApp/Assets.xcassets/AppIcon.appiconset/icon_128x128.png)
+![Perfect logo](http://www.perfect.org/images/icon_128x128.png)
 
 Perfect is a framework for developing web and other REST services in the Swift programming language. Its primary focus is on facilitating mobile apps which require backend server software. It permits you to use one language for both front and back ends.
 
