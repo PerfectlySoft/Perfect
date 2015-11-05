@@ -5,6 +5,9 @@
       location = "group:Tap Tracker/Tap Tracker.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:Upload Enumerator/Upload Enumerator.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:../PerfectLib/PerfectLib.xcodeproj">
    </FileRef>
    <FileRef
