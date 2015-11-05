@@ -18,6 +18,9 @@ It consists of the following components:
 	* [PostgreSQL](Connectors/PostgreSQL/#postgresql) - Provides connectivity for PostgreSQL databases.
 	* [MongoDB](Connectors/MongoDB/#mongodb) - Provides connectivity for MongoDB databases.
 * [Examples](Examples/#examples) - A set of examples which show how to utilize Perfect.
+	* Mobile iOS Examples
+	* Web Site Examples
+	* Game Examples (coming soon!)
 
 ## Getting Started
 Check the [README](Examples/#examples) in the Examples directory for further instructions.
