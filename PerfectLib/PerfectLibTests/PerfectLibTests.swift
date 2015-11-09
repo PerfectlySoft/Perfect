@@ -261,6 +261,93 @@ class PerfectLibTests: XCTestCase {
 			print("Exception while testing MimeReader: \(e)")
 		}
 	}
+
+	func testMimeReaderSimple() {
+		
+		let boundary = "--6"
+		
+		var testData = Array<Dictionary<String, String>>()
+		let numTestFields = 2
+		
+		for idx in 0..<numTestFields {
+			var testDic = Dictionary<String, String>()
+			
+			testDic["name"] = "test_field_\(idx)"
+			
+			var testValue = ""
+			for _ in 1...4 {
+				testValue.appendContentsOf("O")
+			}
+			testDic["value"] = testValue
+			
+			testData.append(testDic)
+		}
+		
+		let file = File("/tmp/mimeReaderTest.txt")
+		do {
+			
+			try file.openTruncate()
+			
+			for testDic in testData {
+				try file.writeString("--" + boundary + "\r\n")
+				
+				let testName = testDic["name"]!
+				let testValue = testDic["value"]!
+					
+				try file.writeString("Content-Disposition: form-data; name=\"\(testName)\"; filename=\"\(testName).txt\"\r\n")
+				try file.writeString("Content-Type: text/plain\r\n\r\n")
+				try file.writeString(testValue)
+				try file.writeString("\r\n")
+			}
+			
+			try file.writeString("--" + boundary + "--")
+			
+			for num in 1...1 {
+				
+				file.close()
+				try file.openRead()
+				
+				print("Test run: \(num) bytes with \(numTestFields) fields")
+				
+				let mimeReader = MimeReader("multipart/form-data; boundary=" + boundary)
+				
+				XCTAssertEqual(mimeReader.boundary, "--" + boundary)
+				
+				var bytes = try file.readSomeBytes(num)
+				while bytes.count > 0 {
+					mimeReader.addToBuffer(bytes)
+					bytes = try file.readSomeBytes(num)
+				}
+				
+				XCTAssertEqual(mimeReader.bodySpecs.count, testData.count)
+				
+				var idx = 0
+				for body in mimeReader.bodySpecs {
+					
+					let testDic = testData[idx++]
+					
+					XCTAssertEqual(testDic["name"]!, body.fieldName)
+					
+					let file = File(body.tmpFileName)
+					try file.openRead()
+					let contents = try file.readSomeBytes(file.size())
+					file.close()
+					
+					let decoded = UTF8Encoding.encode(contents)
+					let v = testDic["value"]!
+					XCTAssertEqual(v, decoded)
+					
+					body.cleanup()
+				}
+			}
+			
+			file.close()
+			file.delete()
+			
+		} catch let e {
+			print("Exception while testing MimeReader: \(e)")
+		}
+	}
 	
 	func testNetSendFile() {
 		
