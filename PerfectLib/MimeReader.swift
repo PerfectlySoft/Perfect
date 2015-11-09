@@ -368,7 +368,8 @@ public class MimeReader {
 						writeEnd = writeEnd.successor()
 					}
 					do {
-						spec.fileSize += try spec.file!.writeBytes(bytes, dataPosition: position, length: position.distanceTo(writeEnd))
+						let length = position.distanceTo(writeEnd)
+						spec.fileSize += try spec.file!.writeBytes(bytes, dataPosition: position, length: length)
 					} catch let e {
 						print("Exception while writing file upload data: \(e)")
 						self.state = .StateNone
@@ -398,11 +399,12 @@ public class MimeReader {
 			if self.buffer.count != 0 {
 				self.buffer.appendContentsOf(bytes)
 				internalAddToBuffer(&self.buffer)
+			} else {
+				internalAddToBuffer(&bytes)
 			}
-			
-			internalAddToBuffer(&bytes)
+		} else {
+			self.buffer.appendContentsOf(bytes)
 		}
-		self.buffer.appendContentsOf(bytes)
 	}
 	
 	/// Returns true of the content type indicated a multi-part form.
