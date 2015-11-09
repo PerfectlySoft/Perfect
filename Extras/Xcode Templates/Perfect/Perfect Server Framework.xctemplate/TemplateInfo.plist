@@ -4,6 +4,7 @@
 <dict>
 	<key>Nodes</key>
 	<array>
+		<string>index.moustache</string>
 		<string>PerfectHandlers.swift</string>
 	</array>
 	<key>Kind</key>
@@ -101,6 +102,16 @@
 	</array>
 	<key>Definitions</key>
 	<dict>
+		<key>index.moustache</key>
+		<dict>
+			<key>Path</key>
+			<string>index.moustache</string>
+		</dict>
+		<key>PerfectHandlers.swift</key>
+		<dict>
+			<key>Path</key>
+			<string>PerfectHandlers.swift</string>
+		</dict>
 		<key>___PACKAGENAME___.h</key>
 		<dict>
 			<key>TargetIdentifiers</key>
