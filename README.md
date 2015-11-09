@@ -6,6 +6,7 @@ Perfect is a framework for developing web and other REST services in the Swift p
 It consists of the following components:
 
 * [PerfectLib](PerfectLib/#perfectlib) - Framework components and utilities for client and server.
+	* [PerfectLib Reference](http://www.perfect.org/docs/)
 	* OS X / Linux
 	* iOS
 * [Perfect Server](PerfectServer/#perfectserver) - Backend server supporting FastCGI or stand-alone HTTP.
