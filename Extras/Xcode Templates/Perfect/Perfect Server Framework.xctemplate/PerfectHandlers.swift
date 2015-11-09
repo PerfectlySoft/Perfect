@@ -41,7 +41,7 @@ class PerfectHandler: PageHandler { // all template handlers must inherit from P
 		// The dictionary which we will return
 		var values = [String:Any]()
 		
-		values["title"] = "Project Template"
+		values["title"] = "Perfect Project Template"
 		
 		// Return the values
 		// These will be used to populate the template
