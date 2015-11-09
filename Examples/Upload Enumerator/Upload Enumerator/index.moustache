@@ -25,6 +25,7 @@ th {
 <body>
 <h1>Upload Enumerator</h1>
 <h2>This example illustrates how to handle file uploads with Perfect Server.</h2>
+<p>
 {{count}}{{^count}}0{{/count}} files were uploaded.<br>
 {{#count}}
 <p>
@@ -47,7 +48,7 @@ th {
 </ul>
 </p>
 {{/paramsCount}}
-
+</p>
 <form method="POST" enctype="multipart/form-data" action="">
 File to upload: <input type="file" name="upfile1"><br>
 Notes about the file: <input type="text" name="note1"><br>
