@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Authenticator Example</title>
+</head>
+<body>
+<h1>Authenticator Example</h1>
+<p>
+<span>Already registered?</span>
+<span>Login Here</span>
+<form method="POST" action="login">
+	<label>Email address: <input type="text" name="email"></label><br>
+	<label>Password: <input type="password" name="password"></label><br>
+	<button type="submit" name="Login">Login</button>
+</form>
+</p>
+<hr>
+<p>
+<span>Not yet registered?</span>
+<span>Register Here</span>
+<form method="POST" action="register">
+	<label>First Name: <input type="text" name="fname"></label><br>
+	<label>Last Name: <input type="text" name="lname"></label><br>
+	<label>Email address: <input type="text" name="email"></label><br>
+	<label>Password: <input type="password" name="password"></label><br>
+	<label>Retype Password: <input type="password" name="password2"></label><br>
+	<button type="submit" name="Login">Register</button>
+</form>
+</p>
+</body>
+</html>

@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "F8BE5DE81BF12F0400FB800A"
-               BuildableName = "Authenticator.framework"
-               BlueprintName = "Authenticator"
+               BuildableName = "Authenticator Server.framework"
+               BlueprintName = "Authenticator Server"
                ReferencedContainer = "container:Authenticator.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -74,8 +74,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F8BE5DE81BF12F0400FB800A"
-            BuildableName = "Authenticator.framework"
-            BlueprintName = "Authenticator"
+            BuildableName = "Authenticator Server.framework"
+            BlueprintName = "Authenticator Server"
             ReferencedContainer = "container:Authenticator.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

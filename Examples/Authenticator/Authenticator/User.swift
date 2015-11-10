@@ -1,5 +1,5 @@
 //
-//  Authenticator.h
+//  User.swift
 //  Authenticator
 //
 //  Created by Kyle Jessup on 2015-11-09.
@@ -20,14 +20,19 @@
 //
 
 
-#import <Cocoa/Cocoa.h>
-
-//! Project version number for Authenticator.
-FOUNDATION_EXPORT double AuthenticatorVersionNumber;
-
-//! Project version string for Authenticator.
-FOUNDATION_EXPORT const unsigned char AuthenticatorVersionString[];
-
-// In this header, you should import all the public headers of your framework using statements like #import <Authenticator/PublicHeader.h>
-
-
+class User {
+	
+	let id: Int
+	let firstName: String
+	let lastName: String
+	let email: String
+	let authKey: String
+	
+	init(id: Int, first: String, last: String, email: String, authKey: String) {
+		self.id = id
+		self.firstName = first
+		self.lastName = last
+		self.email = email
+		self.authKey = authKey
+	}
+}
