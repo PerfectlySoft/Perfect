@@ -33,7 +33,7 @@ class RegistrationHandler: PageHandler { // all template handlers must inherit f
 	func valuesForResponse(context: MoustacheEvaluationContext, collector: MoustacheEvaluationOutputCollector) throws -> MoustacheEvaluationContext.MapType {
 		
 		// This handler is responsible for taking the information a user supplies when registering for a new account and putting it into the database.
-		if let request = context.webRequest, response = context.webResponse {
+		if let request = context.webRequest {
 			
 			// User submits a first name, last name, email address (used as login key) and password.
 			if let fname = request.param("fname"),
@@ -44,25 +44,20 @@ class RegistrationHandler: PageHandler { // all template handlers must inherit f
 					
 					// Ensure that the passwords match, avoiding simple typos
 					guard pass == pass2 else {
-						return ["error": true, "message":"The passwords did not match."]
+						return ["title":"Registration Error", "message":"The passwords did not match."]
 					}
 					
 					// Ensure that the email is not already taken
 					guard nil == User(email: email) else {
-						return ["error": true, "message":"The email address was already taken."]
+						return ["title":"Registration Error", "message":"The email address was already taken."]
 					}
 					
 					guard let _ = User.create(fname, last: lname, email: email, password: pass) else {
-						return ["error": true, "message":"The user was not able to be created."]
+						return ["title":"Registration Error", "message":"The user was not able to be created."]
 					}
-					
 					// All is well
-					// Redirect the user to the login page
-					
-					response.setStatus(302, message: "FOUND")
-					response.addHeader("Location", value: "login")
 			}
 		}
-		return [String:Any]()
+		return ["title":"Registration Successful", "message":"Registration Successful"]
 	}
 }
