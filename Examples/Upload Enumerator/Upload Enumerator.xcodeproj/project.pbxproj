@@ -69,9 +69,9 @@
 			isa = PBXGroup;
 			children = (
 				F883805A1BEBE8D500508D7F /* UploadHandler.swift */,
+				F883805F1BEBEB2A00508D7F /* index.moustache */,
 				F88380521BEBE57A00508D7F /* Upload Enumerator.h */,
 				F88380541BEBE57A00508D7F /* Info.plist */,
-				F883805F1BEBEB2A00508D7F /* index.moustache */,
 			);
 			name = "Upload Enumerator Server";
 			path = "Upload Enumerator";
@@ -320,6 +320,7 @@
 				F88380591BEBE57A00508D7F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

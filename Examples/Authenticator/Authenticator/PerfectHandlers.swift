@@ -45,14 +45,14 @@ public func PerfectServerModuleInit() {
 		return LoginHandler()
 	}
 	
+	// This handler takes the new user information and puts it in the database.
 	PageHandlerRegistry.addPageHandler("RegistrationHandler") {
-		(r:WebResponse) -> PageHandler in
 		return RegistrationHandler()
 	}
 	
-	PageHandlerRegistry.addPageHandler("AccessHandler") {
-		(r:WebResponse) -> PageHandler in
-		return AccessHandler()
+	// This handler does literally nothing.
+	PageHandlerRegistry.addPageHandler("NullHandler") {
+		return NullHandler()
 	}
 	
 	// For example, demo purposes - remove the existing database so that one has to register each time

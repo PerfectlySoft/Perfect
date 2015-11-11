@@ -15,11 +15,11 @@
 		F8BE5E011BF1390800FB800A /* AuthenticatingHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8BE5E001BF1390800FB800A /* AuthenticatingHandler.swift */; };
 		F8BE5E031BF239FE00FB800A /* RegistrationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8BE5E021BF239FE00FB800A /* RegistrationHandler.swift */; };
 		F8BE5E051BF23A0D00FB800A /* LoginHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8BE5E041BF23A0D00FB800A /* LoginHandler.swift */; };
-		F8BE5E071BF23A1900FB800A /* AccessHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8BE5E061BF23A1900FB800A /* AccessHandler.swift */; };
+		F8BE5E071BF23A1900FB800A /* NullHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8BE5E061BF23A1900FB800A /* NullHandler.swift */; };
 		F8BE5E0A1BF244DA00FB800A /* User-Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8BE5E091BF244DA00FB800A /* User-Server.swift */; };
 		F8F2280A1BF2936000750BE6 /* login.moustache in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F228051BF2932F00750BE6 /* login.moustache */; };
 		F8F2280B1BF2936400750BE6 /* register.moustache in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F228061BF2932F00750BE6 /* register.moustache */; };
-		F8F2280E1BF293AC00750BE6 /* index.html in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F2280C1BF2939E00750BE6 /* index.html */; };
+		F8F2280E1BF293AC00750BE6 /* index.moustache in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F2280C1BF2939E00750BE6 /* index.moustache */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -29,7 +29,7 @@
 			dstPath = webroot;
 			dstSubfolderSpec = 16;
 			files = (
-				F8F2280E1BF293AC00750BE6 /* index.html in CopyFiles */,
+				F8F2280E1BF293AC00750BE6 /* index.moustache in CopyFiles */,
 				F8F2280B1BF2936400750BE6 /* register.moustache in CopyFiles */,
 				F8F2280A1BF2936000750BE6 /* login.moustache in CopyFiles */,
 			);
@@ -48,11 +48,11 @@
 		F8BE5E001BF1390800FB800A /* AuthenticatingHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticatingHandler.swift; sourceTree = "<group>"; };
 		F8BE5E021BF239FE00FB800A /* RegistrationHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegistrationHandler.swift; sourceTree = "<group>"; };
 		F8BE5E041BF23A0D00FB800A /* LoginHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginHandler.swift; sourceTree = "<group>"; };
-		F8BE5E061BF23A1900FB800A /* AccessHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccessHandler.swift; sourceTree = "<group>"; };
+		F8BE5E061BF23A1900FB800A /* NullHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NullHandler.swift; sourceTree = "<group>"; };
 		F8BE5E091BF244DA00FB800A /* User-Server.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "User-Server.swift"; sourceTree = "<group>"; };
 		F8F228051BF2932F00750BE6 /* login.moustache */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = login.moustache; sourceTree = "<group>"; };
 		F8F228061BF2932F00750BE6 /* register.moustache */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = register.moustache; sourceTree = "<group>"; };
-		F8F2280C1BF2939E00750BE6 /* index.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
+		F8F2280C1BF2939E00750BE6 /* index.moustache */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = index.moustache; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,8 +91,8 @@
 				F8BE5DF01BF12F0400FB800A /* PerfectHandlers.swift */,
 				F8BE5E021BF239FE00FB800A /* RegistrationHandler.swift */,
 				F8BE5E041BF23A0D00FB800A /* LoginHandler.swift */,
-				F8BE5E061BF23A1900FB800A /* AccessHandler.swift */,
 				F8BE5E001BF1390800FB800A /* AuthenticatingHandler.swift */,
+				F8BE5E061BF23A1900FB800A /* NullHandler.swift */,
 				F8BE5DFE1BF1389500FB800A /* User.swift */,
 				F8BE5E091BF244DA00FB800A /* User-Server.swift */,
 				F892DC3C1BF257B30055CB0D /* Extensions.swift */,
@@ -114,7 +114,7 @@
 		F8F228091BF2933700750BE6 /* Templates */ = {
 			isa = PBXGroup;
 			children = (
-				F8F2280C1BF2939E00750BE6 /* index.html */,
+				F8F2280C1BF2939E00750BE6 /* index.moustache */,
 				F8F228051BF2932F00750BE6 /* login.moustache */,
 				F8F228061BF2932F00750BE6 /* register.moustache */,
 			);
@@ -206,7 +206,7 @@
 				F8BE5DFF1BF1389500FB800A /* User.swift in Sources */,
 				F8BE5E031BF239FE00FB800A /* RegistrationHandler.swift in Sources */,
 				F892DC3D1BF257B30055CB0D /* Extensions.swift in Sources */,
-				F8BE5E071BF23A1900FB800A /* AccessHandler.swift in Sources */,
+				F8BE5E071BF23A1900FB800A /* NullHandler.swift in Sources */,
 				F8BE5E011BF1390800FB800A /* AuthenticatingHandler.swift in Sources */,
 				F8BE5DF11BF12F0400FB800A /* PerfectHandlers.swift in Sources */,
 				F8BE5E051BF23A0D00FB800A /* LoginHandler.swift in Sources */,
