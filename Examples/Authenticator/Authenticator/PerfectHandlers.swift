@@ -55,6 +55,12 @@ public func PerfectServerModuleInit() {
 		return AccessHandler()
 	}
 	
+	// For example, demo purposes - remove the existing database so that one has to register each time
+	let oldFile = File(AUTH_DB_PATH)
+	if oldFile.exists() {
+		oldFile.delete()
+	}
+	
 	// Create our SQLite tracking database.
 	do {
 		let sqlite = try SQLite(AUTH_DB_PATH)
