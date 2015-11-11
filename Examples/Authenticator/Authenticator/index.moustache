@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{{% handler:NullHandler}}<!DOCTYPE html>
 <html lang="en">
 <head>
 <title>Authenticator Example</title>
