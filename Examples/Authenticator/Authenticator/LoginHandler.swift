@@ -34,7 +34,7 @@ class LoginHandler: AuthenticatingHandler { // all template handlers must inheri
 		
 		var values = try super.valuesForResponse(context, collector: collector)
 		
-		guard let _ = self.authenticatedUser else {
+		guard let user = self.authenticatedUser else {
 			// Our parent class will have set the web response code to trigger authentication.
 			values["message"] = "Not authenticated"
 			return values
@@ -43,6 +43,8 @@ class LoginHandler: AuthenticatingHandler { // all template handlers must inheri
 		// This handler is responsible for taking a user supplied username and the associated
 		// digest authentication information and validating it against the information in the database.
 		
+		values["first"] = user.firstName
+		values["last"] = user.lastName
 		values["title"] = "Perfect Project Template"
 		values["message"] = "Logged in successfully!"
 		

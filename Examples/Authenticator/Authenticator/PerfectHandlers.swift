@@ -56,6 +56,7 @@ public func PerfectServerModuleInit() {
 	}
 	
 	// For example, demo purposes - remove the existing database so that one has to register each time
+	// Comment this little section out if you want the database to persist across runs.
 	let oldFile = File(AUTH_DB_PATH)
 	if oldFile.exists() {
 		oldFile.delete()
