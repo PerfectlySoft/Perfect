@@ -32,6 +32,13 @@ class RegistrationHandler: PageHandler { // all template handlers must inherit f
 	// - parameter collector: The MoustacheEvaluationOutputCollector which can be used to adjust the template output. For example a `defaultEncodingFunc` could be installed to change how outgoing values are encoded.
 	func valuesForResponse(context: MoustacheEvaluationContext, collector: MoustacheEvaluationOutputCollector) throws -> MoustacheEvaluationContext.MapType {
 		
+		var json = false
+		if let acceptStr = context.webRequest?.httpAccept() {
+			if acceptStr.containsString("json") {
+				json = true
+			}
+		}
+		
 		// This handler is responsible for taking the information a user supplies when registering for a new account and putting it into the database.
 		if let request = context.webRequest {
 			
@@ -44,20 +51,21 @@ class RegistrationHandler: PageHandler { // all template handlers must inherit f
 					
 					// Ensure that the passwords match, avoiding simple typos
 					guard pass == pass2 else {
-						return ["title":"Registration Error", "message":"The passwords did not match."]
+						return ["title":"Registration Error", "message":"The passwords did not match.", "json":json, "resultCode":500]
 					}
 					
 					// Ensure that the email is not already taken
 					guard nil == User(email: email) else {
-						return ["title":"Registration Error", "message":"The email address was already taken."]
+						return ["title":"Registration Error", "message":"The email address was already taken.", "json":json, "resultCode":500]
 					}
 					
 					guard let _ = User.create(fname, last: lname, email: email, password: pass) else {
-						return ["title":"Registration Error", "message":"The user was not able to be created."]
+						return ["title":"Registration Error", "message":"The user was not able to be created.", "json":json, "resultCode":500]
 					}
 					// All is well
+					return ["title":"Registration Successful", "message":"Registration Successful", "json":json, "resultCode":0, "first":fname, "last":lname, "email":email]
 			}
 		}
-		return ["title":"Registration Successful", "message":"Registration Successful"]
+		return [String:Any]() // unreachable
 	}
 }
