@@ -20,6 +20,7 @@
 //
 
 import PerfectLib
+import Foundation
 
 // Handler class
 // When referenced in a moustache template, this class will be instantiated to handle the request
@@ -34,17 +35,25 @@ class LoginHandler: AuthenticatingHandler { // all template handlers must inheri
 		
 		var values = try super.valuesForResponse(context, collector: collector)
 		
+		if let acceptStr = context.webRequest?.httpAccept() {
+			if acceptStr.containsString("json") {
+				values["json"] = true
+			}
+		}
+		
 		guard let user = self.authenticatedUser else {
 			// Our parent class will have set the web response code to trigger authentication.
 			values["message"] = "Not authenticated"
+			values["resultCode"] = 401
 			return values
 		}
 		
 		// This handler is responsible for taking a user supplied username and the associated
 		// digest authentication information and validating it against the information in the database.
-		
+		values["resultCode"] = 0
 		values["first"] = user.firstName
 		values["last"] = user.lastName
+		values["email"] = user.email
 		values["title"] = "Perfect Project Template"
 		values["message"] = "Logged in successfully!"
 		

@@ -1,9 +1,13 @@
-{{% handler:LoginHandler}}<!DOCTYPE html>
+{{% handler:LoginHandler}}{{^json}}<!DOCTYPE html>
 <html lang="en">
 <head>
 <title>{{title}}</title>
 </head>
 <body>
-<h1>{{first}} {{last}} {{message}}</h1>
+<h1>{{message}}</h1>
 </body>
-</html>
+</html>{{/json}}{{#json}}{
+	"resultCode":{{resultCode}}, 
+	"firstName":"{{first}}",
+	"lastName":"{{last}}", 
+	"email":"{{email}}"}{{/json}}
