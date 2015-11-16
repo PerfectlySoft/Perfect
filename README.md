@@ -26,5 +26,5 @@ It consists of the following components:
 ## Getting Started
 Check the [README](Examples/#examples) in the Examples directory for further instructions.
 
-## For more information
-* [Perfect website](http://perfect.org)
+## More Information
+For more information on the Perfect project, please visit [perfect.org](http://perfect.org).
