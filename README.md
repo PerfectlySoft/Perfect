@@ -1,6 +1,8 @@
 # Perfect
-![Perfect logo](http://www.perfect.org/images/icon_128x128.png)
+![Perfect logo](https://www.perfect.org/images/icon_128x128.png)
 [![Join the chat at https://gitter.im/PerfectlySoft/Perfect](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/PerfectlySoft/Perfect?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+[![Get Involved](https://www.perfect.org/images/github-banner.jpg)](https://perfect.org/get-involved.html)
 
 Perfect is an application server which provides a framework for developing web and other REST services in the Swift programming language. Its primary focus is on facilitating mobile apps which require backend server software. It enables you to use one language for both front and back ends.
 
