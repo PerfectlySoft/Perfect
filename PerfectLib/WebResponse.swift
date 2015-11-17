@@ -23,9 +23,6 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
-
-import Foundation
-
 /// This class bundles together the values which will be used to set a cookie in the outgoing response
 public class Cookie {
 	var name: String?
@@ -159,9 +156,9 @@ public class WebResponse {
 			let now = ICU.getNow()
 			for cookie in self.cookiesArray {
 				var cookieLine = "Set-Cookie: "
-				cookieLine.appendContentsOf(cookie.name!.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
+				cookieLine.appendContentsOf(cookie.name!.stringByEncodingURL)
 				cookieLine.appendContentsOf("=")
-				cookieLine.appendContentsOf(cookie.value!.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
+				cookieLine.appendContentsOf(cookie.value!.stringByEncodingURL)
 				if cookie.expiresIn != 0.0 {
 					let formattedDate = try! ICU.formatDate(now + ICU.secondsToICUDate(Int(cookie.expiresIn)*60),
 						format: standardDateFormat, timezone: "GMT")

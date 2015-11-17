@@ -24,7 +24,7 @@
 //
 
 
-import Foundation
+import Darwin
 
 class DynamicLoader {
 	

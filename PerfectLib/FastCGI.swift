@@ -23,9 +23,6 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
-
-import Foundation
-
 let FCGI_VERSION_1: UInt8 =		1
 
 let FCGI_NULL_REQUEST_ID =		0

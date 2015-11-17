@@ -23,9 +23,6 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
-
-import Foundation
-
 private let GLOBAL_HANDLER = "%GLOBAL%"
 
 /// Use this class to register handlers which supply values for moustache templates.

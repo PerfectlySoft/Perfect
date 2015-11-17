@@ -23,9 +23,6 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
-
-import Foundation
-
 internal let READ_SIZE = 1024
 internal let READ_TIMEOUT = 5.0
 internal let HTTP_LF = UInt8(10)

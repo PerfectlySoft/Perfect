@@ -24,7 +24,7 @@
 //
 
 
-import Foundation
+import Darwin
 
 /// A server for the FastCGI protocol.
 /// Listens for requests on either a named pipe or a TCP socket. Once started, it does not stop or return outside of a catastrophic error.

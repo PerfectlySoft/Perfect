@@ -23,8 +23,7 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
-
-import Foundation
+import Darwin
 
 /// Some but not all of the exception types which may be thrown by the system
 public enum PerfectError : ErrorType {

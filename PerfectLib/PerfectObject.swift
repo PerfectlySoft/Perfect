@@ -24,7 +24,7 @@
 //
 
 
-import Foundation
+import Darwin
 
 public enum HandlerAction {
 	case None

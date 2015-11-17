@@ -23,9 +23,6 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
-
-import Foundation
-
 /// This protocol represents a generalized web server connection.
 public protocol WebConnection {
 	/// The TCP based connection
