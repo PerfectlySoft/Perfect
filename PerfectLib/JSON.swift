@@ -24,7 +24,7 @@
 //
 
 
-import Foundation
+import Darwin
 
 let json_open_object = UnicodeScalar(UInt32(123))
 let json_open_array = UnicodeScalar(UInt32(91))
@@ -164,7 +164,7 @@ public class JSONEncode {
 		case let b as Bool:
 			return b ? "true" : "false"
 		default:
-			throw JSONError.UnhandledType("The type \(value.type!) was not handled")
+			throw JSONError.UnhandledType("The type \(value) was not handled")
 		}
 	}
 	
@@ -437,7 +437,7 @@ public class JSONDecode {
 						}
 						hexStr.append(hexC)
 					}
-					let result = UnicodeScalar(UInt32(strtoul(hexStr, nil, 16)))
+					let result = UnicodeScalar(UInt32(Darwin.strtoul(hexStr, nil, 16)))
 					s.append(result)
 				default:
 					s.append(c)

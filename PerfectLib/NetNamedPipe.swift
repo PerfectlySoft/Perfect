@@ -24,7 +24,7 @@
 //
 
 
-import Foundation
+import Darwin
 
 /// This sub-class of NetTCP handles networking over an AF_UNIX named pipe connection.
 public class NetNamedPipe : NetTCP {
@@ -39,7 +39,7 @@ public class NetNamedPipe : NetTCP {
 	
 	/// Override socket initialization to handle the UNIX socket type.
 	public override func initSocket() {
-		fd.fd = Foundation.socket(AF_UNIX, SOCK_STREAM, 0)
+		fd.fd = Darwin.socket(AF_UNIX, SOCK_STREAM, 0)
 		fd.family = AF_UNIX
 		fd.switchToNBIO()
 	}
@@ -68,7 +68,7 @@ public class NetNamedPipe : NetTCP {
 		
 		addrPtr[memLoc] = 0
 		
-		let bRes = Foundation.bind(fd.fd, UnsafePointer<sockaddr>(addrPtr), socklen_t(addrLen))
+		let bRes = Darwin.bind(fd.fd, UnsafePointer<sockaddr>(addrPtr), socklen_t(addrLen))
 		if bRes == -1 {
 			throw PerfectError.NetworkError(errno, String.fromCString(strerror(errno))!)
 		}
@@ -100,7 +100,7 @@ public class NetNamedPipe : NetTCP {
 		
 		addrPtr[memLoc] = 0
 		
-		let cRes = Foundation.connect(fd.fd, UnsafePointer<sockaddr>(addrPtr), socklen_t(addrLen))
+		let cRes = Darwin.connect(fd.fd, UnsafePointer<sockaddr>(addrPtr), socklen_t(addrLen))
 		if cRes != -1 {
 			callBack(self)
 		} else {
@@ -126,8 +126,8 @@ public class NetNamedPipe : NetTCP {
 	/// - parameter callBack: The callback to call when the send completes. The parameter passed will be `true` if the send completed without error.
 	/// - throws: `PerfectError.NetworkError`
 	public func sendFd(fd: Int32, callBack: (Bool) -> ()) throws {
-		let length = sizeof(Foundation.cmsghdr) + sizeof(Int32)
-		let msghdr = UnsafeMutablePointer<Foundation.msghdr>.alloc(1)
+		let length = sizeof(Darwin.cmsghdr) + sizeof(Int32)
+		let msghdr = UnsafeMutablePointer<Darwin.msghdr>.alloc(1)
 		let nothingPtr = UnsafeMutablePointer<iovec>.alloc(1)
 		let nothing = UnsafeMutablePointer<CChar>.alloc(1)
 		let buffer = UnsafeMutablePointer<CChar>.alloc(length)
@@ -163,7 +163,7 @@ public class NetNamedPipe : NetTCP {
 		msghdr.memory.msg_control = UnsafeMutablePointer<Void>(buffer)
 		msghdr.memory.msg_controllen = socklen_t(length)
 		
-		let res = Foundation.sendmsg(Int32(self.fd.fd), msghdr, 0)
+		let res = Darwin.sendmsg(Int32(self.fd.fd), msghdr, 0)
 		if res > 0 {
 			callBack(true)
 		} else if res == -1 && errno == EAGAIN {
@@ -192,8 +192,8 @@ public class NetNamedPipe : NetTCP {
 	/// - parameter callBack: The callback to call when the receive completes. The parameter passed will be the received file descriptor or INVALID_SOCKET.
 	/// - throws: `PerfectError.NetworkError`
 	public func receiveFd(callBack: (Int32) -> ()) throws {
-		let length = sizeof(Foundation.cmsghdr) + sizeof(Int32)
-		var msghdr = Foundation.msghdr()
+		let length = sizeof(Darwin.cmsghdr) + sizeof(Int32)
+		var msghdr = Darwin.msghdr()
 		let nothingPtr = UnsafeMutablePointer<iovec>.alloc(1)
 		let nothing = UnsafeMutablePointer<CChar>.alloc(1)
 		let buffer = UnsafeMutablePointer<CChar>.alloc(length)
@@ -224,7 +224,7 @@ public class NetNamedPipe : NetTCP {
 		let asInts = UnsafeMutablePointer<Int32>(cmsg.advancedBy(1))
 		asInts.memory = -1
 		
-		let res = Foundation.recvmsg(Int32(self.fd.fd), &msghdr, 0)
+		let res = Darwin.recvmsg(Int32(self.fd.fd), &msghdr, 0)
 		if res > 0 {
 			let receivedInt = asInts.memory
 			callBack(receivedInt)

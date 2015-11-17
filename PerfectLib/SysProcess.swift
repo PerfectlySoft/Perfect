@@ -24,7 +24,8 @@
 //
 
 
-import Foundation
+import Darwin
+
 /// This class permits an external process to be launched given a set of command line arguments and environment variables.
 /// The standard in, out and err file streams are made available. The process can be terminated or permitted to be run to completion.
 public class SysProcess : Closeable {
@@ -77,9 +78,9 @@ public class SysProcess : Closeable {
 			fSTDERR.destroy() ; fSTDERR.dealloc(2)
 		}
 		
-		Foundation.pipe(fSTDIN)
-		Foundation.pipe(fSTDOUT)
-		Foundation.pipe(fSTDERR)
+		Darwin.pipe(fSTDIN)
+		Darwin.pipe(fSTDOUT)
+		Darwin.pipe(fSTDERR)
 		
 		var action = posix_spawn_file_actions_t()
 		
@@ -96,7 +97,7 @@ public class SysProcess : Closeable {
 		posix_spawn_file_actions_addclose(&action, fSTDERR[1]);
   
 		var procPid = pid_t()
-		let spawnRes = Foundation.posix_spawnp(&procPid, cmd, &action, UnsafeMutablePointer<posix_spawnattr_t>(()), cArgs, cEnv)
+		let spawnRes = Darwin.posix_spawnp(&procPid, cmd, &action, UnsafeMutablePointer<posix_spawnattr_t>(()), cArgs, cEnv)
 		posix_spawn_file_actions_destroy(&action)
 		
 		idx = 0
@@ -109,13 +110,13 @@ public class SysProcess : Closeable {
 			free(cEnv[idx])
 		}
 		
-		Foundation.close(fSTDIN[0])
-		Foundation.close(fSTDOUT[1])
-		Foundation.close(fSTDERR[1])
+		Darwin.close(fSTDIN[0])
+		Darwin.close(fSTDOUT[1])
+		Darwin.close(fSTDERR[1])
 		if spawnRes != 0 {
-			Foundation.close(fSTDIN[1])
-			Foundation.close(fSTDOUT[0])
-			Foundation.close(fSTDERR[0])
+			Darwin.close(fSTDIN[1])
+			Darwin.close(fSTDOUT[0])
+			Darwin.close(fSTDERR[0])
 			try ThrowSystemError()
 		}
 		
@@ -167,7 +168,7 @@ public class SysProcess : Closeable {
 	/// Determine if the process has completed running and retrieve its result code.
 	public func wait(hang: Bool = true) throws -> Int32 {
 		var code = Int32(0)
-		let status = Foundation.waitpid(self.pid, &code, WUNTRACED | (hang ? 0 : WNOHANG))
+		let status = Darwin.waitpid(self.pid, &code, WUNTRACED | (hang ? 0 : WNOHANG))
 		if status == -1 {
 			try ThrowSystemError()
 		}
@@ -178,7 +179,7 @@ public class SysProcess : Closeable {
 	
 	/// Terminate the process and return its result code.
 	public func kill(signal: Int32 = SIGTERM) throws -> Int32 {
-		let status = Foundation.kill(self.pid, signal)
+		let status = Darwin.kill(self.pid, signal)
 		guard status != -1 else {
 			try ThrowSystemError()
 		}

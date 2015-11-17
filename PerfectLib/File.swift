@@ -24,7 +24,7 @@
 //
 
 
-import Foundation
+import Darwin
 
 let file_copyBufferSize = 16384
 
@@ -64,7 +64,7 @@ public class File : Closeable {
 		}
 		name[utf8.count] = 0
 		
-		let fd = Foundation.mkstemp(name)
+		let fd = mkstemp(name)
 		let tmpFileName = String.fromCString(name)!
 		
 		name.dealloc(utf8.count + 1)
@@ -81,7 +81,7 @@ public class File : Closeable {
 		if isLink() {
 			let buffer = UnsafeMutablePointer<Int8>.alloc(2048)
 			defer { buffer.destroy() ; buffer.dealloc(2048) }
-			let res = Foundation.readlink(internalPath, buffer, 2048)
+			let res = readlink(internalPath, buffer, 2048)
 			if res != -1 {
 				let ary = completeArray(buffer, count: res)
 				let trailPath = UTF8Encoding.encode(ary)
@@ -102,7 +102,7 @@ public class File : Closeable {
 	/// Closes the file if it had been opened
 	public func close() {
 		if fd != -1 {
-			Foundation.close(CInt(fd))
+			Darwin.close(CInt(fd))
 			fd = -1
 		}
 	}
@@ -115,7 +115,7 @@ public class File : Closeable {
 	/// Opens the file using the default open mode.
 	/// - throws: `PerfectError.FileError`
 	public func open() throws {
-		let openFd = Foundation.open(internalPath, CInt(openMode), mode_t(S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP))
+		let openFd = Darwin.open(internalPath, CInt(openMode), mode_t(S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP))
 		guard openFd != -1 else {
 			try ThrowFileError()
 		}
@@ -206,7 +206,7 @@ public class File : Closeable {
 	/// - returns: The file marker value
 	public func marker() -> Int {
 		if isOpen() {
-			return Int(Foundation.lseek(Int32(self.fd), 0, SEEK_CUR))
+			return Int(lseek(Int32(self.fd), 0, SEEK_CUR))
 		}
 		return 0
 	}
@@ -217,7 +217,7 @@ public class File : Closeable {
 	/// - returns: The new position marker value
 	public func setMarker(to: Int, whence: Int32 = SEEK_CUR) -> Int {
 		if isOpen() {
-			return Int(Foundation.lseek(Int32(self.fd), off_t(to), whence))
+			return Int(lseek(Int32(self.fd), off_t(to), whence))
 		}
 		return 0
 	}
@@ -226,7 +226,7 @@ public class File : Closeable {
 	/// - returns: The date as Int
 	public func modificationTime() -> Int {
 		var st = stat()
-		let res = isOpen() ?  Foundation.fstat(Int32(fd), &st) : Foundation.stat(internalPath, &st)
+		let res = isOpen() ?  fstat(Int32(fd), &st) : stat(internalPath, &st)
 		guard res == 0 else {
 			return Int.max
 		}
@@ -248,7 +248,7 @@ public class File : Closeable {
 			}
 		}
 		close()
-		let res = Foundation.rename(self.path(), path)
+		let res = rename(self.path(), path)
 		if res == 0 {
 			return destFile
 		}
@@ -309,7 +309,7 @@ public class File : Closeable {
 	
 	func sizeOr(value: Int) -> Int {
 		var st = stat()
-		let statRes = isOpen() ?  Foundation.fstat(Int32(fd), &st) : Foundation.stat(internalPath, &st)
+		let statRes = isOpen() ?  fstat(Int32(fd), &st) : stat(internalPath, &st)
 		guard statRes != -1 else {
 			return 0
 		}
@@ -322,7 +322,7 @@ public class File : Closeable {
 	/// Returns the size of the file in bytes
 	public func size() -> Int {
 		var st = stat()
-		let statRes = isOpen() ?  Foundation.fstat(Int32(fd), &st) : Foundation.stat(internalPath, &st)
+		let statRes = isOpen() ?  fstat(Int32(fd), &st) : stat(internalPath, &st)
 		guard statRes != -1 else {
 			return 0
 		}
@@ -337,7 +337,7 @@ public class File : Closeable {
 	/// Returns true if the file is a symbolic link
 	public func isLink() -> Bool {
 		var st = stat()
-		let statRes = Foundation.lstat(internalPath, &st)
+		let statRes = lstat(internalPath, &st)
 		guard statRes != -1 else {
 			return false
 		}
@@ -348,7 +348,7 @@ public class File : Closeable {
 	/// Returns true if the file is actually a directory
 	public func isDir() -> Bool {
 		var st = stat()
-		let statRes = isOpen() ?  Foundation.fstat(Int32(fd), &st) : Foundation.stat(internalPath, &st)
+		let statRes = isOpen() ?  fstat(Int32(fd), &st) : stat(internalPath, &st)
 		guard statRes != -1 else {
 			return false
 		}
@@ -359,7 +359,7 @@ public class File : Closeable {
 	/// Returns the UNIX style permissions for the file
 	public func perms() -> Int {
 		var st = stat()
-		let statRes = isOpen() ?  Foundation.fstat(Int32(fd), &st) : Foundation.stat(internalPath, &st)
+		let statRes = isOpen() ?  fstat(Int32(fd), &st) : stat(internalPath, &st)
 		guard statRes != -1 else {
 			return 0
 		}
@@ -432,7 +432,7 @@ public class File : Closeable {
 		if !isOpen() {
 			try openWrite()
 		}
-		let res = Foundation.lockf(Int32(self.fd), F_LOCK, off_t(byteCount))
+		let res = lockf(Int32(self.fd), F_LOCK, off_t(byteCount))
 		guard res == 0 else {
 			try ThrowFileError()
 		}
@@ -445,7 +445,7 @@ public class File : Closeable {
 		if !isOpen() {
 			try openWrite()
 		}
-		let res = Foundation.lockf(Int32(self.fd), F_ULOCK, off_t(byteCount))
+		let res = lockf(Int32(self.fd), F_ULOCK, off_t(byteCount))
 		guard res == 0 else {
 			try ThrowFileError()
 		}
@@ -458,7 +458,7 @@ public class File : Closeable {
 		if !isOpen() {
 			try openWrite()
 		}
-		let res = Foundation.lockf(Int32(self.fd), F_TLOCK, off_t(byteCount))
+		let res = lockf(Int32(self.fd), F_TLOCK, off_t(byteCount))
 		guard res == 0 else {
 			try ThrowFileError()
 		}
@@ -472,7 +472,7 @@ public class File : Closeable {
 		if !isOpen() {
 			try openWrite()
 		}
-		let res = Foundation.lockf(Int32(self.fd), F_TEST, off_t(byteCount))
+		let res = lockf(Int32(self.fd), F_TEST, off_t(byteCount))
 		guard res == 0 || res == EACCES || res == EAGAIN else {
 			try ThrowFileError()
 		}

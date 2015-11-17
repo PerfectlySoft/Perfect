@@ -24,7 +24,7 @@
 //
 
 
-import Foundation
+import Darwin
 
 /// This class represents a directory on the file system. 
 /// It can be used for creating & inspecting directories and enumerating directory contents.
@@ -62,7 +62,7 @@ public class Dir {
 			if component != "/" {
 				currPath += component
 				if !exists(currPath) {
-					let res = Foundation.mkdir(currPath, mode_t(perms))
+					let res = mkdir(currPath, mode_t(perms))
 					guard res != -1 else {
 						try ThrowFileError()
 					}
@@ -75,7 +75,7 @@ public class Dir {
 	/// Deletes the directory. The directory must be empty in order to be successfuly deleted.
 	/// - throws: `PerfectError.FileError`
 	public func delete() throws {
-		let res = Foundation.rmdir(realPath())
+		let res = rmdir(realPath())
 		guard res != -1 else {
 			try ThrowFileError()
 		}
