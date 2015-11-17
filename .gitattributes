@@ -1,4 +1,5 @@
-PerfectLib/linked/* linguist-vendored=false
-Connectors/MongoDB/linked/* linguist-vendored=false
-Connectors/MySQL/linked/* linguist-vendored=false
-Connectors/PostgreSQL/linked/* linguist-vendored=false
+PerfectLib/linked/* linguist-vendored
+Connectors/MongoDB/linked/* linguist-vendored
+Connectors/MySQL/linked/* linguist-vendored
+Connectors/PostgreSQL/linked/* linguist-vendored
+PerfectLib/docs/* linguist-documentation
