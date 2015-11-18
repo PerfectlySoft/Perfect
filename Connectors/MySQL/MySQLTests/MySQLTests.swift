@@ -26,6 +26,8 @@
 import XCTest
 @testable import MySQL
 
+let HOST = "127.0.0.1"
+
 class MySQLTests: XCTestCase {
     
     override func setUp() {
@@ -46,12 +48,13 @@ class MySQLTests: XCTestCase {
 		XCTAssert(mysql.setOption(.MYSQL_OPT_LOCAL_INFILE) == true)
 		XCTAssert(mysql.setOption(.MYSQL_OPT_CONNECT_TIMEOUT, 5) == true)
 		
-		let res = mysql.connect("localhost")
+		let res = mysql.connect(HOST)
 		
 		XCTAssert(res)
 		
 		if !res {
 			print(mysql.errorMessage())
+			return
 		}
 		
 		let sres = mysql.selectDatabase("test")
@@ -68,7 +71,7 @@ class MySQLTests: XCTestCase {
 	func testListDbs1() {
 		
 		let mysql = MySQL()
-		let res = mysql.connect()
+		let res = mysql.connect(HOST)
 		
 		XCTAssert(res)
 		
@@ -88,7 +91,7 @@ class MySQLTests: XCTestCase {
 	func testListDbs2() {
 		
 		let mysql = MySQL()
-		let res = mysql.connect()
+		let res = mysql.connect(HOST)
 		
 		XCTAssert(res)
 		
@@ -108,7 +111,7 @@ class MySQLTests: XCTestCase {
 	func testListTables1() {
 		
 		let mysql = MySQL()
-		let res = mysql.connect()
+		let res = mysql.connect(HOST)
 		
 		XCTAssert(res)
 		
@@ -132,7 +135,7 @@ class MySQLTests: XCTestCase {
 	func testListTables2() {
 		
 		let mysql = MySQL()
-		let res = mysql.connect()
+		let res = mysql.connect(HOST)
 		
 		XCTAssert(res)
 		
@@ -159,11 +162,12 @@ class MySQLTests: XCTestCase {
 			mysql.close()
 		}
 		
-		let res = mysql.connect()
+		let res = mysql.connect(HOST)
 		XCTAssert(res)
 		
 		if !res {
 			print(mysql.errorMessage())
+			return
 		}
 		
 		let sres = mysql.selectDatabase("test")
@@ -205,7 +209,7 @@ class MySQLTests: XCTestCase {
 			mysql.close()
 		}
 		
-		let res = mysql.connect()
+		let res = mysql.connect(HOST)
 		XCTAssert(res)
 		
 		if !res {
@@ -251,7 +255,7 @@ class MySQLTests: XCTestCase {
 			mysql.close()
 		}
 		
-		let res = mysql.connect()
+		let res = mysql.connect(HOST)
 		XCTAssert(res)
 		
 		if !res {
@@ -323,7 +327,8 @@ class MySQLTests: XCTestCase {
 			mysql.close()
 		}
 		
-		let res = mysql.connect()
+		mysql.setOption(.MYSQL_SET_CHARSET_NAME, "utf8mb4")
+		let res = mysql.connect(HOST)
 		XCTAssert(res)
 		
 		if !res {
@@ -347,7 +352,7 @@ class MySQLTests: XCTestCase {
 			XCTAssert(prepRes, stmt1.errorMessage())
 			XCTAssert(stmt1.paramCount() == 28)
 			
-			stmt1.bindParam("varchar 20 string")
+			stmt1.bindParam("varchar 20 string 👻")
 			stmt1.bindParam(1)
 			stmt1.bindParam("text string")
 			stmt1.bindParam("2015-10-21")
@@ -403,7 +408,9 @@ class MySQLTests: XCTestCase {
 			
 			let ok = results.forEachRow {
 				e in
-				print(e)
+				print(e.flatMap({ (a:Any?) -> Any? in
+					return a!
+				}))
 			}
 			XCTAssert(ok, stmt1.errorMessage())
 			
@@ -412,7 +419,21 @@ class MySQLTests: XCTestCase {
 		}
 	}
 	
-	
+	func testServerVersion() {
+		let mysql = MySQL()
+		defer {
+			mysql.close()
+		}
+		let res = mysql.connect(HOST)
+		XCTAssert(res)
+		
+		if !res {
+			print(mysql.errorMessage())
+		}
+		
+		let vers = mysql.serverVersion()
+		XCTAssert(vers >= 50627) // YMMV
+	}
 	
 	
 	
