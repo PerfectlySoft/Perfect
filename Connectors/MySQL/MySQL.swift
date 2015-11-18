@@ -86,6 +86,10 @@ public class MySQL {
 		return String.fromCString(mysql_error(self.ptr)) ?? ""
 	}
 	
+	public func serverVersion() -> Int {
+		return Int(mysql_get_server_version(self.ptr))
+	}
+	
 	// returns an allocated buffer holding the string's contents and the full size in bytes which was allocated
 	// An empty (but not nil) string would have a count of 1
 	static func convertString(s: String?) -> (UnsafeMutablePointer<Int8>, Int) {
