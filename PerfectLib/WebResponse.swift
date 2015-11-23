@@ -185,17 +185,17 @@ public class WebResponse {
 			self.setStatus(code == 404 ? Int(code) : 500, message: msg)
 			self.bodyData = [UInt8]("File exception \(code) \(msg)".utf8)
 			
-		} catch MoustacheError.SyntaxError(let msg) {
+		} catch MustacheError.SyntaxError(let msg) {
 		
-			print("MoustacheError.SyntaxError \(msg)")
+			print("MustacheError.SyntaxError \(msg)")
 			self.setStatus(500, message: msg)
-			self.bodyData = [UInt8]("Moustache syntax error \(msg)".utf8)
+			self.bodyData = [UInt8]("Mustache syntax error \(msg)".utf8)
 			
-		} catch MoustacheError.EvaluationError(let msg) {
+		} catch MustacheError.EvaluationError(let msg) {
 			
-			print("MoustacheError.EvaluationError exception \(msg)")
+			print("MustacheError.EvaluationError exception \(msg)")
 			self.setStatus(500, message: msg)
-			self.bodyData = [UInt8]("Moustache evaluation error \(msg)".utf8)
+			self.bodyData = [UInt8]("Mustache evaluation error \(msg)".utf8)
 			
 		} catch let e {
 			print("Unexpected exception \(e)")
@@ -220,8 +220,8 @@ public class WebResponse {
 	
 	func include(path: String, local: Bool = false) throws {
 		
-		if !path.hasSuffix("."+MOUSTACHE_EXTENSION) {
-			throw PerfectError.FileError(404, "The file \(path) was not a moustache template file")
+		if !path.hasSuffix("."+MUSTACHE_EXTENSION) {
+			throw PerfectError.FileError(404, "The file \(path) was not a mustache template file")
 		}
 		
 		var fullPath = path
@@ -240,17 +240,17 @@ public class WebResponse {
 			defer { file.close() }
 			let bytes = try file.readSomeBytes(file.size())
 			
-			// !FIX! cache parsed moustache files
+			// !FIX! cache parsed mustache files
 			// check mod dates for recompilation
 			
-			let parser = MoustacheParser()
+			let parser = MustacheParser()
 			let str = UTF8Encoding.encode(bytes)
 			let template = try parser.parse(str)
 			
-			let context = MoustacheEvaluationContext(webResponse: self)
+			let context = MustacheEvaluationContext(webResponse: self)
 			context.filePath = fullPath
 			
-			let collector = MoustacheEvaluationOutputCollector()
+			let collector = MustacheEvaluationOutputCollector()
 			template.templateName = path
 
 			try template.evaluatePragmas(context, collector: collector)

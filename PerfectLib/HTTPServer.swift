@@ -136,7 +136,7 @@ public class HTTPServer {
 	func runRequest(req: HTTPWebConnection, withPathInfo: String) -> Bool {
 		let filePath = self.documentRoot + withPathInfo
 		let ext = withPathInfo.pathExtension.lowercaseString
-		if ext == MOUSTACHE_EXTENSION {
+		if ext == MUSTACHE_EXTENSION {
 			
 			if !File(filePath).exists() {
 				return false
@@ -152,14 +152,14 @@ public class HTTPServer {
 			
 		} else if ext.isEmpty {
 			
-			if !withPathInfo.hasSuffix(".") && self.runRequest(req, withPathInfo: withPathInfo + ".\(MOUSTACHE_EXTENSION)") {
+			if !withPathInfo.hasSuffix(".") && self.runRequest(req, withPathInfo: withPathInfo + ".\(MUSTACHE_EXTENSION)") {
 				return true
 			}
 			
 			let pathDir = Dir(filePath)
 			if pathDir.exists() {
 				
-				if self.runRequest(req, withPathInfo: withPathInfo + "/index.\(MOUSTACHE_EXTENSION)") {
+				if self.runRequest(req, withPathInfo: withPathInfo + "/index.\(MUSTACHE_EXTENSION)") {
 					return true
 				}
 				

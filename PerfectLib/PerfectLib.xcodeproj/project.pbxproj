@@ -31,7 +31,7 @@
 		F8F28A081BD5427000367249 /* LibEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E81BD5427000367249 /* LibEvent.swift */; };
 		F8F28A091BD5427000367249 /* LogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E91BD5427000367249 /* LogManager.swift */; };
 		F8F28A0A1BD5427000367249 /* MimeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289EA1BD5427000367249 /* MimeReader.swift */; };
-		F8F28A0B1BD5427000367249 /* Moustache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289EB1BD5427000367249 /* Moustache.swift */; };
+		F8F28A0B1BD5427000367249 /* Mustache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289EB1BD5427000367249 /* Mustache.swift */; };
 		F8F28A0C1BD5427000367249 /* Net.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289EC1BD5427000367249 /* Net.swift */; };
 		F8F28A0D1BD5427000367249 /* NetNamedPipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289ED1BD5427000367249 /* NetNamedPipe.swift */; };
 		F8F28A0E1BD5427000367249 /* NetTCP.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289EE1BD5427000367249 /* NetTCP.swift */; };
@@ -108,7 +108,7 @@
 		F8F289E81BD5427000367249 /* LibEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibEvent.swift; sourceTree = "<group>"; };
 		F8F289E91BD5427000367249 /* LogManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogManager.swift; sourceTree = "<group>"; };
 		F8F289EA1BD5427000367249 /* MimeReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MimeReader.swift; sourceTree = "<group>"; };
-		F8F289EB1BD5427000367249 /* Moustache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moustache.swift; sourceTree = "<group>"; };
+		F8F289EB1BD5427000367249 /* Mustache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mustache.swift; sourceTree = "<group>"; };
 		F8F289EC1BD5427000367249 /* Net.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Net.swift; sourceTree = "<group>"; };
 		F8F289ED1BD5427000367249 /* NetNamedPipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetNamedPipe.swift; sourceTree = "<group>"; };
 		F8F289EE1BD5427000367249 /* NetTCP.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetTCP.swift; sourceTree = "<group>"; };
@@ -240,7 +240,7 @@
 				F8F289E81BD5427000367249 /* LibEvent.swift */,
 				F8F289E91BD5427000367249 /* LogManager.swift */,
 				F8F289EA1BD5427000367249 /* MimeReader.swift */,
-				F8F289EB1BD5427000367249 /* Moustache.swift */,
+				F8F289EB1BD5427000367249 /* Mustache.swift */,
 				F8F289EC1BD5427000367249 /* Net.swift */,
 				F8F289ED1BD5427000367249 /* NetNamedPipe.swift */,
 				F8F289EE1BD5427000367249 /* NetTCP.swift */,
@@ -455,7 +455,7 @@
 				F8F28A0E1BD5427000367249 /* NetTCP.swift in Sources */,
 				F88B06921BDE80F9001FD0CD /* MimeType.swift in Sources */,
 				F8F28A171BD5427000367249 /* WebRequest.swift in Sources */,
-				F8F28A0B1BD5427000367249 /* Moustache.swift in Sources */,
+				F8F28A0B1BD5427000367249 /* Mustache.swift in Sources */,
 				F8F28A0F1BD5427000367249 /* NetTCPSSL.swift in Sources */,
 				F8F28A0C1BD5427000367249 /* Net.swift in Sources */,
 				F8F28A121BD5427000367249 /* SQLite.swift in Sources */,

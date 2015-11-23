@@ -515,13 +515,13 @@ class PerfectLibTests: XCTestCase {
 		}
 	}
 	
-	func testMoustacheParser1() {
+	func testMustacheParser1() {
 		let usingTemplate = "TOP {\n{{#name}}\n{{name}}{{/name}}\n}\nBOTTOM"
 		do {
-			let template = try MoustacheParser().parse(usingTemplate)
+			let template = try MustacheParser().parse(usingTemplate)
 			let d = ["name":"The name"] as [String:Any]
-			let context = MoustacheEvaluationContext(map: d)
-			let collector = MoustacheEvaluationOutputCollector()
+			let context = MustacheEvaluationContext(map: d)
+			let collector = MustacheEvaluationOutputCollector()
 			template.evaluate(context, collector: collector)
 			
 			XCTAssertEqual(collector.asString(), "TOP {\n\nThe name\n}\nBOTTOM")
