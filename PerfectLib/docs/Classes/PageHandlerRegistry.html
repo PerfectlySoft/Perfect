@@ -81,28 +81,28 @@
                 <a href="../Classes/MimeReader.html">MimeReader</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/MoustacheEvaluationContext.html">MoustacheEvaluationContext</a>
+                <a href="../Classes/MustacheEvaluationContext.html">MustacheEvaluationContext</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/MoustacheEvaluationOutputCollector.html">MoustacheEvaluationOutputCollector</a>
+                <a href="../Classes/MustacheEvaluationOutputCollector.html">MustacheEvaluationOutputCollector</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/MoustacheGroupTag.html">MoustacheGroupTag</a>
+                <a href="../Classes/MustacheGroupTag.html">MustacheGroupTag</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/MoustacheParser.html">MoustacheParser</a>
+                <a href="../Classes/MustacheParser.html">MustacheParser</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/MoustachePartialTag.html">MoustachePartialTag</a>
+                <a href="../Classes/MustachePartialTag.html">MustachePartialTag</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/MoustachePragmaTag.html">MoustachePragmaTag</a>
+                <a href="../Classes/MustachePragmaTag.html">MustachePragmaTag</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/MoustacheTag.html">MoustacheTag</a>
+                <a href="../Classes/MustacheTag.html">MustacheTag</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/MoustacheTemplate.html">MoustacheTemplate</a>
+                <a href="../Classes/MustacheTemplate.html">MustacheTemplate</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/NetNamedPipe.html">NetNamedPipe</a>
@@ -172,7 +172,7 @@
                 <a href="../Enums/JSONError.html">JSONError</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/MoustacheError.html">MoustacheError</a>
+                <a href="../Enums/MustacheError.html">MustacheError</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/PerfectError.html">PerfectError</a>
@@ -268,7 +268,7 @@
 
                 </div>
               </div>
-            <p>Use this class to register handlers which supply values for moustache templates.
+            <p>Use this class to register handlers which supply values for mustache templates.
  This registration would occur in the <code>PerfectServerModuleInit</code> function which every PerfectServer library module should define. PerfectServer will call this method when it loads each module as the server process starts up.</p>
 
 <p>Example:
@@ -281,10 +281,10 @@
     }
 </code></p>
 
-<p>In the example above, the class MyTestHandler is registering to be the handler for moustache templates which include a handler
+<p>In the example above, the class MyTestHandler is registering to be the handler for mustache templates which include a handler
  pragma with the <code>test_page_handler</code> identifier.</p>
 
-<p>The following example shows what such a moustache template file might look like:
+<p>The following example shows what such a mustache template file might look like:
 <code>
     {{% handler:test_page_handler }}
     Top of the page test {{key1}}
@@ -310,7 +310,7 @@
                       <div class="pointer"></div>
                       <div class="abstract">
                         <p>Registers a new handler for the given name
-- parameter named: The name for the handler. This name should be used in a moustache <code>handler</code> pragma tag in order to associate the template with its handler.
+- parameter named: The name for the handler. This name should be used in a mustache <code>handler</code> pragma tag in order to associate the template with its handler.
 - parameter generator: The generator function which will be called to produce a new handler object.</p>
 
                       </div>
@@ -334,7 +334,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>The name for the handler. This name should be used in a moustache <code>handler</code> pragma tag in order to associate the template with its handler.</p>
+                                  <p>The name for the handler. This name should be used in a mustache <code>handler</code> pragma tag in order to associate the template with its handler.</p>
 
                                 </div>
                               </td>
@@ -448,7 +448,7 @@ Templates which do not have a %handler pragma will use this handler.
                       <div class="pointer"></div>
                       <div class="abstract">
                         <p>Registers a new handler for the given name
-- parameter named: The name for the handler. This name should be used in a moustache <code>handler</code> pragma tag in order to associate the template with its handler.
+- parameter named: The name for the handler. This name should be used in a mustache <code>handler</code> pragma tag in order to associate the template with its handler.
 - parameter generator: The generator function which will be called to produce a new handler object.</p>
 
                       </div>
@@ -472,7 +472,7 @@ Templates which do not have a %handler pragma will use this handler.
                               </td>
                               <td>
                                 <div>
-                                  <p>The name for the handler. This name should be used in a moustache <code>handler</code> pragma tag in order to associate the template with its handler.</p>
+                                  <p>The name for the handler. This name should be used in a mustache <code>handler</code> pragma tag in order to associate the template with its handler.</p>
 
                                 </div>
                               </td>
@@ -501,7 +501,7 @@ Templates which do not have a %handler pragma will use this handler.
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2015 <a class="link" href="" target="_blank" rel="external"></a>. All rights reserved. (Last updated: 2015-11-04)</p>
+          <p>&copy; 2015 <a class="link" href="" target="_blank" rel="external"></a>. All rights reserved. (Last updated: 2015-11-23)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.3.2</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

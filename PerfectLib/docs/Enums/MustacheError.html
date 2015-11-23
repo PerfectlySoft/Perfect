@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>MoustachePragmaTag Class Reference</title>
+    <title>MustacheError Enum Reference</title>
     <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
     <meta charset='utf-8'>
@@ -9,8 +9,8 @@
     <script src="../js/jazzy.js" defer></script>
   </head>
   <body>
-    <a name="//apple_ref/swift/Class/MoustachePragmaTag" class="dashAnchor"></a>
-    <a title="MoustachePragmaTag Class Reference"></a>
+    <a name="//apple_ref/swift/Enum/MustacheError" class="dashAnchor"></a>
+    <a title="MustacheError Enum Reference"></a>
     <header>
       <div class="content-wrapper">
         <p><a href="../index.html"> Docs</a> (83% documented)</p>
@@ -20,7 +20,7 @@
       <p id="breadcrumbs">
         <a href="../index.html"> Reference</a>
         <img id="carat" src="../img/carat.png" />
-        MoustachePragmaTag Class Reference
+        MustacheError Enum Reference
       </p>
     </div>
     <div class="content-wrapper">
@@ -81,28 +81,28 @@
                 <a href="../Classes/MimeReader.html">MimeReader</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/MoustacheEvaluationContext.html">MoustacheEvaluationContext</a>
+                <a href="../Classes/MustacheEvaluationContext.html">MustacheEvaluationContext</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/MoustacheEvaluationOutputCollector.html">MoustacheEvaluationOutputCollector</a>
+                <a href="../Classes/MustacheEvaluationOutputCollector.html">MustacheEvaluationOutputCollector</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/MoustacheGroupTag.html">MoustacheGroupTag</a>
+                <a href="../Classes/MustacheGroupTag.html">MustacheGroupTag</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/MoustacheParser.html">MoustacheParser</a>
+                <a href="../Classes/MustacheParser.html">MustacheParser</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/MoustachePartialTag.html">MoustachePartialTag</a>
+                <a href="../Classes/MustachePartialTag.html">MustachePartialTag</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/MoustachePragmaTag.html">MoustachePragmaTag</a>
+                <a href="../Classes/MustachePragmaTag.html">MustachePragmaTag</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/MoustacheTag.html">MoustacheTag</a>
+                <a href="../Classes/MustacheTag.html">MustacheTag</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/MoustacheTemplate.html">MoustacheTemplate</a>
+                <a href="../Classes/MustacheTemplate.html">MustacheTemplate</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/NetNamedPipe.html">NetNamedPipe</a>
@@ -172,7 +172,7 @@
                 <a href="../Enums/JSONError.html">JSONError</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/MoustacheError.html">MoustacheError</a>
+                <a href="../Enums/MustacheError.html">MustacheError</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/PerfectError.html">PerfectError</a>
@@ -261,15 +261,14 @@
       <article class="main-content">
         <section>
           <section class="section">
-            <h1>MoustachePragmaTag</h1>
+            <h1>MustacheError</h1>
               <div class="declaration">
                 <div class="Swift">
-                  <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">MoustachePragmaTag</span> <span class="p">:</span> <span class="kt">MoustacheTag</span></code></pre>
+                  <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">MustacheError</span> <span class="p">:</span> <span class="kt">ErrorType</span></code></pre>
 
                 </div>
               </div>
-            <p>A sub-class of MoustacheTag which represents a pragma tag.
-Pragma tags are <q>meta</q> tags which influence template evaluation but likely do not output any data.</p>
+            <p>This enum type represents the parsing and the runtime evaluation exceptions which may be generated.</p>
 
           </section>
           <section class="section task-group-section">
@@ -278,9 +277,9 @@ Pragma tags are <q>meta</q> tags which influence template evaluation but likely 
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FC10PerfectLib18MoustachePragmaTag11parsePragmaFS0_FT_GVSs10DictionarySSSS_"></a>
-                    <a name="//apple_ref/swift/Method/parsePragma()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FC10PerfectLib18MoustachePragmaTag11parsePragmaFS0_FT_GVSs10DictionarySSSS_">parsePragma()</a>
+                    <a name="/s:FO10PerfectLib13MustacheError11SyntaxErrorFMS0_FSSS0_"></a>
+                    <a name="//apple_ref/swift/Element/SyntaxError" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FO10PerfectLib13MustacheError11SyntaxErrorFMS0_FSSS0_">SyntaxError</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -288,22 +287,47 @@ Pragma tags are <q>meta</q> tags which influence template evaluation but likely 
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Parse the pragma. Pragmas should be in the format: A:B,C:D,E,F:G.
-- returns: A Dictionary containing the pragma names and values.</p>
+                        <p>The mustache template was malformed.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">parsePragma</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Dictionary</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span> <span class="kt">String</span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="kt">SyntaxError</span><span class="p">(</span><span class="kt">String</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>A Dictionary containing the pragma names and values.</p>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FO10PerfectLib13MustacheError15EvaluationErrorFMS0_FSSS0_"></a>
+                    <a name="//apple_ref/swift/Element/EvaluationError" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FO10PerfectLib13MustacheError15EvaluationErrorFMS0_FSSS0_">EvaluationError</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>An exception occurred while evaluating the template.</p>
 
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="Swift">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="kt">EvaluationError</span><span class="p">(</span><span class="kt">String</span><span class="p">)</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -313,7 +337,7 @@ Pragma tags are <q>meta</q> tags which influence template evaluation but likely 
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2015 <a class="link" href="" target="_blank" rel="external"></a>. All rights reserved. (Last updated: 2015-11-04)</p>
+          <p>&copy; 2015 <a class="link" href="" target="_blank" rel="external"></a>. All rights reserved. (Last updated: 2015-11-23)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.3.2</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
