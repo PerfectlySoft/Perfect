@@ -1,0 +1,467 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F8CA67D11BFF6EF700F2C1B5 /* MongoDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8CA67D01BFF6EF700F2C1B5 /* MongoDatabase.swift */; };
+		F8FD0CC01BFD079600F49A96 /* MongoDB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8FD0CB51BFD079600F49A96 /* MongoDB.framework */; };
+		F8FD0CC51BFD079600F49A96 /* MongoDBTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FD0CC41BFD079600F49A96 /* MongoDBTests.swift */; };
+		F8FD0CD21BFD098000F49A96 /* BSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FD0CD11BFD098000F49A96 /* BSON.swift */; };
+		F8FD0CD41BFD0CD200F49A96 /* PerfectLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8FD0CD31BFD0CD200F49A96 /* PerfectLib.framework */; };
+		F8FD0CD71BFD0CE200F49A96 /* libbson-1.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F8FD0CD51BFD0CE200F49A96 /* libbson-1.0.a */; };
+		F8FD0CD81BFD0CE200F49A96 /* libmongoc-1.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F8FD0CD61BFD0CE200F49A96 /* libmongoc-1.0.a */; };
+		F8FD0CDA1BFE1D0900F49A96 /* MongoClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FD0CD91BFE1D0900F49A96 /* MongoClient.swift */; };
+		F8FD0CDC1BFE1DFD00F49A96 /* MongoCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FD0CDB1BFE1DFD00F49A96 /* MongoCollection.swift */; };
+		F8FD0CE01BFE244900F49A96 /* libcrypto.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F8FD0CDF1BFE244900F49A96 /* libcrypto.tbd */; };
+		F8FD0CE11BFE245A00F49A96 /* libssl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F8FD0CDD1BFE243900F49A96 /* libssl.tbd */; };
+		F8FD0CE31BFE246300F49A96 /* libsasl2.2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F8FD0CE21BFE246300F49A96 /* libsasl2.2.tbd */; };
+		F8FD0CE51BFE2F0400F49A96 /* MongoCursor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FD0CE41BFE2F0400F49A96 /* MongoCursor.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F8FD0CC11BFD079600F49A96 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F8FD0CAC1BFD079500F49A96 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F8FD0CB41BFD079600F49A96;
+			remoteInfo = MongoDB;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		F8CA67D01BFF6EF700F2C1B5 /* MongoDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MongoDatabase.swift; sourceTree = "<group>"; };
+		F8FD0CB51BFD079600F49A96 /* MongoDB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MongoDB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F8FD0CB81BFD079600F49A96 /* MongoDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MongoDB.h; sourceTree = "<group>"; };
+		F8FD0CBA1BFD079600F49A96 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F8FD0CBF1BFD079600F49A96 /* MongoDBTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MongoDBTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F8FD0CC41BFD079600F49A96 /* MongoDBTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MongoDBTests.swift; sourceTree = "<group>"; };
+		F8FD0CC61BFD079600F49A96 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F8FD0CD11BFD098000F49A96 /* BSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BSON.swift; sourceTree = "<group>"; };
+		F8FD0CD31BFD0CD200F49A96 /* PerfectLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PerfectLib.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Perfect-bmsnkpplajpulvabysklkvgjzgsj/Build/Products/Debug/PerfectLib.framework"; sourceTree = "<group>"; };
+		F8FD0CD51BFD0CE200F49A96 /* libbson-1.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libbson-1.0.a"; path = "linked/libmongoc/osx/libbson-1.0.a"; sourceTree = "<group>"; };
+		F8FD0CD61BFD0CE200F49A96 /* libmongoc-1.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libmongoc-1.0.a"; path = "linked/libmongoc/osx/libmongoc-1.0.a"; sourceTree = "<group>"; };
+		F8FD0CD91BFE1D0900F49A96 /* MongoClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MongoClient.swift; sourceTree = "<group>"; };
+		F8FD0CDB1BFE1DFD00F49A96 /* MongoCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MongoCollection.swift; sourceTree = "<group>"; };
+		F8FD0CDD1BFE243900F49A96 /* libssl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libssl.tbd; path = usr/lib/libssl.tbd; sourceTree = SDKROOT; };
+		F8FD0CDF1BFE244900F49A96 /* libcrypto.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcrypto.tbd; path = usr/lib/libcrypto.tbd; sourceTree = SDKROOT; };
+		F8FD0CE21BFE246300F49A96 /* libsasl2.2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsasl2.2.tbd; path = usr/lib/libsasl2.2.tbd; sourceTree = SDKROOT; };
+		F8FD0CE41BFE2F0400F49A96 /* MongoCursor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MongoCursor.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F8FD0CB11BFD079600F49A96 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F8FD0CE31BFE246300F49A96 /* libsasl2.2.tbd in Frameworks */,
+				F8FD0CE11BFE245A00F49A96 /* libssl.tbd in Frameworks */,
+				F8FD0CE01BFE244900F49A96 /* libcrypto.tbd in Frameworks */,
+				F8FD0CD41BFD0CD200F49A96 /* PerfectLib.framework in Frameworks */,
+				F8FD0CD71BFD0CE200F49A96 /* libbson-1.0.a in Frameworks */,
+				F8FD0CD81BFD0CE200F49A96 /* libmongoc-1.0.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8FD0CBC1BFD079600F49A96 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F8FD0CC01BFD079600F49A96 /* MongoDB.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F8FD0CAB1BFD079500F49A96 = {
+			isa = PBXGroup;
+			children = (
+				F8FD0CCF1BFD07E600F49A96 /* Source */,
+				F8FD0CB71BFD079600F49A96 /* MongoDB */,
+				F8FD0CC31BFD079600F49A96 /* MongoDBTests */,
+				F8FD0CD01BFD07F000F49A96 /* Linked */,
+				F8FD0CB61BFD079600F49A96 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F8FD0CB61BFD079600F49A96 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F8FD0CB51BFD079600F49A96 /* MongoDB.framework */,
+				F8FD0CBF1BFD079600F49A96 /* MongoDBTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F8FD0CB71BFD079600F49A96 /* MongoDB */ = {
+			isa = PBXGroup;
+			children = (
+				F8FD0CB81BFD079600F49A96 /* MongoDB.h */,
+				F8FD0CBA1BFD079600F49A96 /* Info.plist */,
+			);
+			path = MongoDB;
+			sourceTree = "<group>";
+		};
+		F8FD0CC31BFD079600F49A96 /* MongoDBTests */ = {
+			isa = PBXGroup;
+			children = (
+				F8FD0CC41BFD079600F49A96 /* MongoDBTests.swift */,
+				F8FD0CC61BFD079600F49A96 /* Info.plist */,
+			);
+			path = MongoDBTests;
+			sourceTree = "<group>";
+		};
+		F8FD0CCF1BFD07E600F49A96 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				F8FD0CD11BFD098000F49A96 /* BSON.swift */,
+				F8FD0CD91BFE1D0900F49A96 /* MongoClient.swift */,
+				F8FD0CDB1BFE1DFD00F49A96 /* MongoCollection.swift */,
+				F8FD0CE41BFE2F0400F49A96 /* MongoCursor.swift */,
+				F8CA67D01BFF6EF700F2C1B5 /* MongoDatabase.swift */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		F8FD0CD01BFD07F000F49A96 /* Linked */ = {
+			isa = PBXGroup;
+			children = (
+				F8FD0CE21BFE246300F49A96 /* libsasl2.2.tbd */,
+				F8FD0CDF1BFE244900F49A96 /* libcrypto.tbd */,
+				F8FD0CDD1BFE243900F49A96 /* libssl.tbd */,
+				F8FD0CD31BFD0CD200F49A96 /* PerfectLib.framework */,
+				F8FD0CD51BFD0CE200F49A96 /* libbson-1.0.a */,
+				F8FD0CD61BFD0CE200F49A96 /* libmongoc-1.0.a */,
+			);
+			name = Linked;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		F8FD0CB21BFD079600F49A96 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		F8FD0CB41BFD079600F49A96 /* MongoDB */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F8FD0CC91BFD079600F49A96 /* Build configuration list for PBXNativeTarget "MongoDB" */;
+			buildPhases = (
+				F8FD0CB01BFD079600F49A96 /* Sources */,
+				F8FD0CB11BFD079600F49A96 /* Frameworks */,
+				F8FD0CB21BFD079600F49A96 /* Headers */,
+				F8FD0CB31BFD079600F49A96 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MongoDB;
+			productName = MongoDB;
+			productReference = F8FD0CB51BFD079600F49A96 /* MongoDB.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		F8FD0CBE1BFD079600F49A96 /* MongoDBTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F8FD0CCC1BFD079600F49A96 /* Build configuration list for PBXNativeTarget "MongoDBTests" */;
+			buildPhases = (
+				F8FD0CBB1BFD079600F49A96 /* Sources */,
+				F8FD0CBC1BFD079600F49A96 /* Frameworks */,
+				F8FD0CBD1BFD079600F49A96 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F8FD0CC21BFD079600F49A96 /* PBXTargetDependency */,
+			);
+			name = MongoDBTests;
+			productName = MongoDBTests;
+			productReference = F8FD0CBF1BFD079600F49A96 /* MongoDBTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F8FD0CAC1BFD079500F49A96 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0710;
+				LastUpgradeCheck = 0710;
+				ORGANIZATIONNAME = PerfectlySoft;
+				TargetAttributes = {
+					F8FD0CB41BFD079600F49A96 = {
+						CreatedOnToolsVersion = 7.1.1;
+					};
+					F8FD0CBE1BFD079600F49A96 = {
+						CreatedOnToolsVersion = 7.1.1;
+					};
+				};
+			};
+			buildConfigurationList = F8FD0CAF1BFD079500F49A96 /* Build configuration list for PBXProject "MongoDB" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = F8FD0CAB1BFD079500F49A96;
+			productRefGroup = F8FD0CB61BFD079600F49A96 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F8FD0CB41BFD079600F49A96 /* MongoDB */,
+				F8FD0CBE1BFD079600F49A96 /* MongoDBTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F8FD0CB31BFD079600F49A96 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8FD0CBD1BFD079600F49A96 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F8FD0CB01BFD079600F49A96 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F8FD0CDC1BFE1DFD00F49A96 /* MongoCollection.swift in Sources */,
+				F8FD0CD21BFD098000F49A96 /* BSON.swift in Sources */,
+				F8FD0CE51BFE2F0400F49A96 /* MongoCursor.swift in Sources */,
+				F8FD0CDA1BFE1D0900F49A96 /* MongoClient.swift in Sources */,
+				F8CA67D11BFF6EF700F2C1B5 /* MongoDatabase.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8FD0CBB1BFD079600F49A96 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F8FD0CC51BFD079600F49A96 /* MongoDBTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F8FD0CC21BFD079600F49A96 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F8FD0CB41BFD079600F49A96 /* MongoDB */;
+			targetProxy = F8FD0CC11BFD079600F49A96 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		F8FD0CC71BFD079600F49A96 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		F8FD0CC81BFD079600F49A96 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		F8FD0CCA1BFD079600F49A96 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/linked/libmongoc/include/libbson-1.0";
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/linked/libmongoc/osx";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_BUNDLE_IDENTIFIER = ca.perfectlysoft.MongoDB;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_INCLUDE_PATHS = "${SRCROOT}/linked/libmongoc";
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		F8FD0CCB1BFD079600F49A96 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/linked/libmongoc/include/libbson-1.0";
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/linked/libmongoc/osx";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_BUNDLE_IDENTIFIER = ca.perfectlysoft.MongoDB;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_INCLUDE_PATHS = "${SRCROOT}/linked/libmongoc";
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+			};
+			name = Release;
+		};
+		F8FD0CCD1BFD079600F49A96 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/linked/libmongoc/include/libbson-1.0";
+				INFOPLIST_FILE = MongoDBTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = ca.perfectlysoft.MongoDBTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		F8FD0CCE1BFD079600F49A96 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/linked/libmongoc/include/libbson-1.0";
+				INFOPLIST_FILE = MongoDBTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = ca.perfectlysoft.MongoDBTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F8FD0CAF1BFD079500F49A96 /* Build configuration list for PBXProject "MongoDB" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F8FD0CC71BFD079600F49A96 /* Debug */,
+				F8FD0CC81BFD079600F49A96 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F8FD0CC91BFD079600F49A96 /* Build configuration list for PBXNativeTarget "MongoDB" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F8FD0CCA1BFD079600F49A96 /* Debug */,
+				F8FD0CCB1BFD079600F49A96 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F8FD0CCC1BFD079600F49A96 /* Build configuration list for PBXNativeTarget "MongoDBTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F8FD0CCD1BFD079600F49A96 /* Debug */,
+				F8FD0CCE1BFD079600F49A96 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F8FD0CAC1BFD079500F49A96 /* Project object */;
+}

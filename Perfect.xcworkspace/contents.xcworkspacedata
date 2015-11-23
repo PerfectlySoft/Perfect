@@ -16,4 +16,7 @@
    <FileRef
       location = "group:Connectors/PostgreSQL/PostgreSQL.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:Connectors/MongoDB/MongoDB.xcodeproj">
+   </FileRef>
 </Workspace>
