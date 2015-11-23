@@ -19,7 +19,7 @@ But here is a sample Apache .conf snippet. This uses mod_rewrite in order to pro
 	
 	<Directory "/path/to/my-server/webroot">
 		Require all granted
-		DirectoryIndex index.moustache index.html
+		DirectoryIndex index.mustache index.html
 	</Directory>
 	
 	RewriteEngine on
@@ -28,17 +28,17 @@ But here is a sample Apache .conf snippet. This uses mod_rewrite in order to pro
 	RewriteCond %{DOCUMENT_ROOT}%{REQUEST_FILENAME} !-d
 	RewriteRule ^(.*)/$ $1 [R=301,L]
 	
-	# resolve .moustache file for extensionless moustache urls
+	# resolve .mustache file for extensionless mustache urls
 	RewriteCond %{DOCUMENT_ROOT}%{REQUEST_FILENAME} !-d
 	RewriteCond %{DOCUMENT_ROOT}%{REQUEST_FILENAME} !-f
-	RewriteCond %{DOCUMENT_ROOT}%{REQUEST_FILENAME}\.moustache -f
-	RewriteRule ^(.*)$ $1.moustache [NC,PT,L]
+	RewriteCond %{DOCUMENT_ROOT}%{REQUEST_FILENAME}\.mustache -f
+	RewriteRule ^(.*)$ $1.mustache [NC,PT,L]
 	
-	# redirect external .moustache requests to extensionless url
-	RewriteCond %{THE_REQUEST} ^[A-Z]+\ /([^/]+/)*[^.#?\ ]+\.moustache([#?][^\ ]*)?\ HTTP/
-	RewriteRule ^(([^/]+/)*[^.]+)\.moustache $1 [R=301,L]
+	# redirect external .mustache requests to extensionless url
+	RewriteCond %{THE_REQUEST} ^[A-Z]+\ /([^/]+/)*[^.#?\ ]+\.mustache([#?][^\ ]*)?\ HTTP/
+	RewriteRule ^(([^/]+/)*[^.]+)\.mustache $1 [R=301,L]
 	
-	<Location ~ "^.*\.[Mm][Oo][Uu][Ss][Tt][Aa][Cc][Hh][Ee]$">
+	<Location ~ "^.*\.[Mm][Uu][Ss][Tt][Aa][Cc][Hh][Ee]$">
 		SetHandler perfect-handler
 	</Location>
 
