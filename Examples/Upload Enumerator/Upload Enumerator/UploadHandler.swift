@@ -56,50 +56,48 @@ class UploadHandler: PageHandler { // all template handlers must inherit from Pa
 	// - parameter collector: The MoustacheEvaluationOutputCollector which can be used to adjust the template output. For example a `defaultEncodingFunc` could be installed to change how outgoing values are encoded.
 	func valuesForResponse(context: MoustacheEvaluationContext, collector: MoustacheEvaluationOutputCollector) throws -> MoustacheEvaluationContext.MapType {
 
-		print("UploadHandler got request")
-		
-		var values = [String:Any]()
-		// Grab the WebRequest so we can get information about what was uploaded
-		if let request = context.webRequest {
-			// Grab the fileUploads array and see what's there
-			// If this POST was not multi-part, then this array will be empty
-			let uploads = request.fileUploads
-			if uploads.count > 0 {
-				// Create an array of dictionaries which will show what was uploaded
-				// This array will be used in the corresponding moustache template
-				var ary = [[String:Any]]()
-				
-				for upload in uploads {
-					ary.append([
-						"fieldName": upload.fieldName,
-						"contentType": upload.contentType,
-						"fileName": upload.fileName,
-						"fileSize": upload.fileSize,
-						"tmpFileName": upload.tmpFileName
-						])
-				}
-				values["files"] = ary
-				values["count"] = ary.count
-			}
-			
-			// Grab the regular form parameters
-			let params = request.params()
-			if params?.count > 0 {
-				// Create an array of dictionaries which will show what was posted
-				// This will not include any uploaded files. Those are handled above.
-				var ary = [[String:Any]]()
-				
-				for (name, value) in params! {
-					ary.append([
-						"paramName":name,
-						"paramValue":value
-						])
-				}
-				values["params"] = ary
-				values["paramsCount"] = ary.count
-			}
-		}
-		values["title"] = "Upload Enumerator"
-		return values
+        print("UploadHandler got request")
+        
+        var values:[String:Any] = ["title": "Upload Enumerator"]
+        
+        // Grab the WebRequest so we can get information about what was uploaded
+        guard let request = context.webRequest else {
+            return values
+        }
+        
+        // Grab the fileUploads array and see what's there
+        // If this POST was not multi-part, then this array will be empty
+        let uploads = request.fileUploads
+        // Create an array of dictionaries which will show what was uploaded
+        // This array will be used in the corresponding moustache template
+        let itens:[[String:Any]] = uploads.map {
+            [
+                "fieldName": $0.fieldName,
+                "contentType": $0.contentType,
+                "fileName": $0.fileName,
+                "fileSize": $0.fileSize,
+                "tmpFileName": $0.tmpFileName
+            ]
+        }
+        values["files"] = itens
+        values["count"] = itens.count
+        
+        // Grab the regular form parameters
+        let params = request.params()
+        // Create an array of dictionaries which will show what was posted
+        // This will not include any uploaded files. Those are handled above.
+        let formattedParams:[[String:Any]]? = params?.map {
+            [
+                "paramName":$0.0,
+                "paramValue":$0.1
+            ]
+        }
+        
+        if let formattedParams = formattedParams {
+            values["params"] = formattedParams
+            values["paramsCount"] = formattedParams.count
+        }
+        
+        return values
 	}
 }
