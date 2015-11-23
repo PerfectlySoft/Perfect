@@ -35,7 +35,7 @@ public class AJAXObjectDriver : PerfectObjectDriver {
 	let fileExtension: String
 	public let curl = CURL()
 	
-	public init(endpointBase: String, fileExtension: String = ".moustache") {
+	public init(endpointBase: String, fileExtension: String = ".mustache") {
 		self.endpointBase = endpointBase
 		self.fileExtension = fileExtension
 	}

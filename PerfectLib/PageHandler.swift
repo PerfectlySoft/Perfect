@@ -25,7 +25,7 @@
 
 private let GLOBAL_HANDLER = "%GLOBAL%"
 
-/// Use this class to register handlers which supply values for moustache templates.
+/// Use this class to register handlers which supply values for mustache templates.
 /// This registration would occur in the `PerfectServerModuleInit` function which every PerfectServer library module should define. PerfectServer will call this method when it loads each module as the server process starts up.
 ///
 /// Example:
@@ -38,10 +38,10 @@ private let GLOBAL_HANDLER = "%GLOBAL%"
 ///	}
 ///```
 ///
-/// In the example above, the class MyTestHandler is registering to be the handler for moustache templates which include a handler
+/// In the example above, the class MyTestHandler is registering to be the handler for mustache templates which include a handler
 /// pragma with the `test_page_handler` identifier.
 ///
-/// The following example shows what such a moustache template file might look like:
+/// The following example shows what such a mustache template file might look like:
 ///```
 ///    {{% handler:test_page_handler }}
 ///    Top of the page test {{key1}}
@@ -53,7 +53,7 @@ public class PageHandlerRegistry {
 	public typealias PageHandlerGenerator = (_:WebResponse) -> PageHandler
 	
 	/// Registers a new handler for the given name
-	/// - parameter named: The name for the handler. This name should be used in a moustache `handler` pragma tag in order to associate the template with its handler.
+	/// - parameter named: The name for the handler. This name should be used in a mustache `handler` pragma tag in order to associate the template with its handler.
 	/// - parameter generator: The generator function which will be called to produce a new handler object.
 	public static func addPageHandler(named: String, generator: PageHandlerGenerator) {
 		PageHandlerRegistry.generator[named] = generator
@@ -67,7 +67,7 @@ public class PageHandlerRegistry {
 	}
 	
 	/// Registers a new handler for the given name
-	/// - parameter named: The name for the handler. This name should be used in a moustache `handler` pragma tag in order to associate the template with its handler.
+	/// - parameter named: The name for the handler. This name should be used in a mustache `handler` pragma tag in order to associate the template with its handler.
 	/// - parameter generator: The generator function which will be called to produce a new handler object.
 	public static func addPageHandler(named: String, generator: () -> PageHandler) {
 		addPageHandler(named) {
@@ -95,13 +95,13 @@ public class PageHandlerRegistry {
 	}
 }
 
-/// Classes which intend to supply values for moustache templates should impliment this protocol.
+/// Classes which intend to supply values for mustache templates should impliment this protocol.
 public protocol PageHandler {
-	/// This function is called by the system in order for the handler to generate the values which will be used to complete the moustache template.
+	/// This function is called by the system in order for the handler to generate the values which will be used to complete the mustache template.
 	/// It returns a dictionary of values.
-	/// - parameter context: The MoustacheEvaluationContext object for the current template.
-	/// - parameter collector: The MoustacheEvaluationOutputCollector for the current template.
-	/// - returns: The dictionary of values which will be used when populating the moustache template.
-	func valuesForResponse(context: MoustacheEvaluationContext, collector: MoustacheEvaluationOutputCollector) throws -> MoustacheEvaluationContext.MapType
+	/// - parameter context: The MustacheEvaluationContext object for the current template.
+	/// - parameter collector: The MustacheEvaluationOutputCollector for the current template.
+	/// - returns: The dictionary of values which will be used when populating the mustache template.
+	func valuesForResponse(context: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) throws -> MustacheEvaluationContext.MapType
 	
 }

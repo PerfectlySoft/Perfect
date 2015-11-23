@@ -28,9 +28,9 @@
 		F8E36D2A1BF3F21A001D6106 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F8E36D281BF3F21A001D6106 /* Main.storyboard */; };
 		F8E36D2C1BF3F21A001D6106 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F8E36D2B1BF3F21A001D6106 /* Assets.xcassets */; };
 		F8E36D2F1BF3F21A001D6106 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F8E36D2D1BF3F21A001D6106 /* LaunchScreen.storyboard */; };
-		F8F2280A1BF2936000750BE6 /* login.moustache in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F228051BF2932F00750BE6 /* login.moustache */; };
-		F8F2280B1BF2936400750BE6 /* register.moustache in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F228061BF2932F00750BE6 /* register.moustache */; };
-		F8F2280E1BF293AC00750BE6 /* index.moustache in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F2280C1BF2939E00750BE6 /* index.moustache */; };
+		F8F2280A1BF2936000750BE6 /* login.mustache in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F228051BF2932F00750BE6 /* login.mustache */; };
+		F8F2280B1BF2936400750BE6 /* register.mustache in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F228061BF2932F00750BE6 /* register.mustache */; };
+		F8F2280E1BF293AC00750BE6 /* index.mustache in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F2280C1BF2939E00750BE6 /* index.mustache */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -40,9 +40,9 @@
 			dstPath = webroot;
 			dstSubfolderSpec = 16;
 			files = (
-				F8F2280E1BF293AC00750BE6 /* index.moustache in CopyFiles */,
-				F8F2280B1BF2936400750BE6 /* register.moustache in CopyFiles */,
-				F8F2280A1BF2936000750BE6 /* login.moustache in CopyFiles */,
+				F8F2280E1BF293AC00750BE6 /* index.mustache in CopyFiles */,
+				F8F2280B1BF2936400750BE6 /* register.mustache in CopyFiles */,
+				F8F2280A1BF2936000750BE6 /* login.mustache in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -73,9 +73,9 @@
 		F8E36D2B1BF3F21A001D6106 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F8E36D2E1BF3F21A001D6106 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F8E36D301BF3F21A001D6106 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F8F228051BF2932F00750BE6 /* login.moustache */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = login.moustache; sourceTree = "<group>"; };
-		F8F228061BF2932F00750BE6 /* register.moustache */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = register.moustache; sourceTree = "<group>"; };
-		F8F2280C1BF2939E00750BE6 /* index.moustache */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = index.moustache; sourceTree = "<group>"; };
+		F8F228051BF2932F00750BE6 /* login.mustache */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = login.mustache; sourceTree = "<group>"; };
+		F8F228061BF2932F00750BE6 /* register.mustache */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = register.mustache; sourceTree = "<group>"; };
+		F8F2280C1BF2939E00750BE6 /* index.mustache */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = index.mustache; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -172,9 +172,9 @@
 		F8F228091BF2933700750BE6 /* Templates */ = {
 			isa = PBXGroup;
 			children = (
-				F8F2280C1BF2939E00750BE6 /* index.moustache */,
-				F8F228051BF2932F00750BE6 /* login.moustache */,
-				F8F228061BF2932F00750BE6 /* register.moustache */,
+				F8F2280C1BF2939E00750BE6 /* index.mustache */,
+				F8F228051BF2932F00750BE6 /* login.mustache */,
+				F8F228061BF2932F00750BE6 /* register.mustache */,
 			);
 			name = Templates;
 			path = Authenticator;

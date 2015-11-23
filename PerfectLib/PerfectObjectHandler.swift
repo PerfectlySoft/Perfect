@@ -31,7 +31,7 @@ public class PerfectObjectHandler: PageHandler {
 	
 	public init() {}
 	
-	public func valuesForResponse(context: MoustacheEvaluationContext, collector: MoustacheEvaluationOutputCollector) throws -> MoustacheEvaluationContext.MapType {
+	public func valuesForResponse(context: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) throws -> MustacheEvaluationContext.MapType {
 		// determine the action
 		let param = context.webResponse!.request.param(ACTION_PARAM_NAME) ?? HandlerAction.None.asString()
 		self.action = HandlerAction.fromString(param)
@@ -67,7 +67,7 @@ public class PerfectObjectHandler: PageHandler {
 			
 			return outS
 		}
-		return MoustacheEvaluationContext.MapType()
+		return MustacheEvaluationContext.MapType()
 	}
 }
 

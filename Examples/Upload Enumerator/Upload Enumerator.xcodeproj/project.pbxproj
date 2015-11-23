@@ -10,8 +10,8 @@
 		F88380531BEBE57A00508D7F /* Upload Enumerator.h in Headers */ = {isa = PBXBuildFile; fileRef = F88380521BEBE57A00508D7F /* Upload Enumerator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F883805B1BEBE8D500508D7F /* UploadHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F883805A1BEBE8D500508D7F /* UploadHandler.swift */; };
 		F883805D1BEBEA7F00508D7F /* PerfectLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F883805C1BEBEA7F00508D7F /* PerfectLib.framework */; };
-		F88380601BEBEB2A00508D7F /* index.moustache in Resources */ = {isa = PBXBuildFile; fileRef = F883805F1BEBEB2A00508D7F /* index.moustache */; };
-		F88380621BEBEC6000508D7F /* index.moustache in CopyFiles */ = {isa = PBXBuildFile; fileRef = F883805F1BEBEB2A00508D7F /* index.moustache */; };
+		F88380601BEBEB2A00508D7F /* index.mustache in Resources */ = {isa = PBXBuildFile; fileRef = F883805F1BEBEB2A00508D7F /* index.mustache */; };
+		F88380621BEBEC6000508D7F /* index.mustache in CopyFiles */ = {isa = PBXBuildFile; fileRef = F883805F1BEBEB2A00508D7F /* index.mustache */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -21,7 +21,7 @@
 			dstPath = webroot;
 			dstSubfolderSpec = 16;
 			files = (
-				F88380621BEBEC6000508D7F /* index.moustache in CopyFiles */,
+				F88380621BEBEC6000508D7F /* index.mustache in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -33,7 +33,7 @@
 		F88380541BEBE57A00508D7F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F883805A1BEBE8D500508D7F /* UploadHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadHandler.swift; sourceTree = "<group>"; };
 		F883805C1BEBEA7F00508D7F /* PerfectLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PerfectLib.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Examples-ebfeivyuaxcjnrhcezzfamsblphw/Build/Products/Debug/PerfectLib.framework"; sourceTree = "<group>"; };
-		F883805F1BEBEB2A00508D7F /* index.moustache */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = index.moustache; sourceTree = "<group>"; };
+		F883805F1BEBEB2A00508D7F /* index.mustache */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = index.mustache; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,7 +69,7 @@
 			isa = PBXGroup;
 			children = (
 				F883805A1BEBE8D500508D7F /* UploadHandler.swift */,
-				F883805F1BEBEB2A00508D7F /* index.moustache */,
+				F883805F1BEBEB2A00508D7F /* index.mustache */,
 				F88380521BEBE57A00508D7F /* Upload Enumerator.h */,
 				F88380541BEBE57A00508D7F /* Info.plist */,
 			);
@@ -154,7 +154,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F88380601BEBEB2A00508D7F /* index.moustache in Resources */,
+				F88380601BEBEB2A00508D7F /* index.mustache in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

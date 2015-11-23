@@ -15,7 +15,7 @@
 		F842425C1BD97409001EFF66 /* Tap Tracker Server.h in Headers */ = {isa = PBXBuildFile; fileRef = F842425B1BD97409001EFF66 /* Tap Tracker Server.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F84242641BD9745F001EFF66 /* PerfectLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F84242631BD9745F001EFF66 /* PerfectLib.framework */; };
 		F84242661BD97839001EFF66 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F84242651BD97839001EFF66 /* MapKit.framework */; };
-		F85FB11D1BDFCDE200DABFA8 /* TapTracker.moustache in CopyFiles */ = {isa = PBXBuildFile; fileRef = F85FB11B1BDFCD5E00DABFA8 /* TapTracker.moustache */; };
+		F85FB11D1BDFCDE200DABFA8 /* TapTracker.mustache in CopyFiles */ = {isa = PBXBuildFile; fileRef = F85FB11B1BDFCD5E00DABFA8 /* TapTracker.mustache */; };
 		F85FB1201BDFF93200DABFA8 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85FB11F1BDFF93200DABFA8 /* MapViewController.swift */; };
 		F85FB12C1BE01B7200DABFA8 /* PerfectLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F84242611BD97455001EFF66 /* PerfectLib.framework */; };
 		F878F8561BE3F440008B4F35 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = F878F8551BE3F43A008B4F35 /* index.html */; };
@@ -31,7 +31,7 @@
 			dstSubfolderSpec = 16;
 			files = (
 				F878F8571BE3F451008B4F35 /* index.html in CopyFiles */,
-				F85FB11D1BDFCDE200DABFA8 /* TapTracker.moustache in CopyFiles */,
+				F85FB11D1BDFCDE200DABFA8 /* TapTracker.mustache in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -51,7 +51,7 @@
 		F84242611BD97455001EFF66 /* PerfectLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PerfectLib.framework; path = "../../PerfectLib/build/Debug-iphoneos/PerfectLib.framework"; sourceTree = "<group>"; };
 		F84242631BD9745F001EFF66 /* PerfectLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PerfectLib.framework; path = ../../PerfectLib/build/Debug/PerfectLib.framework; sourceTree = "<group>"; };
 		F84242651BD97839001EFF66 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.1.sdk/System/Library/Frameworks/MapKit.framework; sourceTree = DEVELOPER_DIR; };
-		F85FB11B1BDFCD5E00DABFA8 /* TapTracker.moustache */ = {isa = PBXFileReference; lastKnownFileType = text; path = TapTracker.moustache; sourceTree = SOURCE_ROOT; };
+		F85FB11B1BDFCD5E00DABFA8 /* TapTracker.mustache */ = {isa = PBXFileReference; lastKnownFileType = text; path = TapTracker.mustache; sourceTree = SOURCE_ROOT; };
 		F85FB11F1BDFF93200DABFA8 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		F878F8551BE3F43A008B4F35 /* index.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = index.html; sourceTree = SOURCE_ROOT; };
 		F8E752D91BDA6B5400BFC36A /* TTHandlers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TTHandlers.swift; sourceTree = "<group>"; };
@@ -115,7 +115,7 @@
 			isa = PBXGroup;
 			children = (
 				F8E752D91BDA6B5400BFC36A /* TTHandlers.swift */,
-				F85FB11B1BDFCD5E00DABFA8 /* TapTracker.moustache */,
+				F85FB11B1BDFCD5E00DABFA8 /* TapTracker.mustache */,
 				F842425B1BD97409001EFF66 /* Tap Tracker Server.h */,
 				F842425D1BD97409001EFF66 /* Info.plist */,
 				F878F8551BE3F43A008B4F35 /* index.html */,
