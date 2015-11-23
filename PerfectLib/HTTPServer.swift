@@ -198,7 +198,7 @@ public class HTTPServer {
 			req.writeBodyBytes([UInt8](msg))
 		}
 		
-		if req.httpOneOne {
+		if req.httpKeepAlive {
 			self.handleConnection(req.connection)
 		} else {
 			req.connection.close()
@@ -234,6 +234,10 @@ public class HTTPServer {
 		
 		var httpVersion: String {
 			return self.requestParams["SERVER_PROTOCOL"] ?? "HTTP/1.0"
+		}
+		
+		var httpKeepAlive: Bool {
+			return (self.requestParams["HTTP_CONNECTION"] ?? "").lowercaseString.containsString("keep-alive")
 		}
 		
 		init(net: NetTCP) {
@@ -541,8 +545,8 @@ public class HTTPServer {
 		
 		func pushHeaderBytes() {
 			if !wroteHeader {
-				if self.httpOneOne {
-					header += "Connection: keep-alive\r\n\r\n" // final CRLF
+				if self.httpKeepAlive {
+					header += "Connection: keep-alive\r\nKeep-Alive: timeout=\(Int(READ_TIMEOUT)), max=100\r\n\r\n" // final CRLF
 				} else {
 					header += "\r\n" // final CRLF
 				}
