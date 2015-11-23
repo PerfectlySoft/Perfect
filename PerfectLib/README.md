@@ -32,7 +32,7 @@ The server-side module provides a complete set of tools for server development. 
 * Web request and response APIs, abstracted to operate over either FastCGI or stand-alone HTTP
 * Multi-part POST/MIME parsing and file upload handling
 * Dynamic module loading for server extensions
-* Moustache template parsing and processing
-* A web request handler system for associating Swift classes with moustache templates
+* Mustache template parsing and processing
+* A web request handler system for associating Swift classes with mustache templates
 * Server-side state/session management
 * Database connectors for MySQL, PostgreSQL, SQLite and MongoDB
