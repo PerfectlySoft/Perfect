@@ -8,7 +8,7 @@ Closeable.swift
 	public func doWithClose(c: ()->())
 AJAXObjectDriver.swift
 	public let curl = CURL()
-	public init(endpointBase: String, fileExtension: String = ".moustache")
+	public init(endpointBase: String, fileExtension: String = ".mustache")
 	public func close()
 	public func performRequest(uri: String) -> (Int, String, String)
 	public func load<T : PerfectObject>(type: T, withId: uuid_t) -> T
@@ -25,7 +25,7 @@ PerfectObjectHandler.swift
 	public var action: HandlerAction = .None
 	public var params = [String:String]()
 	public init() {}
-	public func valuesForResponse(context: MoustacheEvaluationContext, collector: MoustacheEvaluationOutputCollector) throws -> MoustacheEvaluationContext.MapType
+	public func valuesForResponse(context: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) throws -> MustacheEvaluationContext.MapType
 NetTCPSSL.swift
 	public class NetTCPSSL : NetTCP
 	public var usingSSL: Bool

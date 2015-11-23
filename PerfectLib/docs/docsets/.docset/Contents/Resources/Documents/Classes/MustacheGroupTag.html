@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>MoustacheTag Class Reference</title>
+    <title>MustacheGroupTag Class Reference</title>
     <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
     <meta charset='utf-8'>
@@ -9,8 +9,8 @@
     <script src="../js/jazzy.js" defer></script>
   </head>
   <body>
-    <a name="//apple_ref/swift/Class/MoustacheTag" class="dashAnchor"></a>
-    <a title="MoustacheTag Class Reference"></a>
+    <a name="//apple_ref/swift/Class/MustacheGroupTag" class="dashAnchor"></a>
+    <a title="MustacheGroupTag Class Reference"></a>
     <header>
       <div class="content-wrapper">
         <p><a href="../index.html"> Docs</a> (83% documented)</p>
@@ -20,7 +20,7 @@
       <p id="breadcrumbs">
         <a href="../index.html"> Reference</a>
         <img id="carat" src="../img/carat.png" />
-        MoustacheTag Class Reference
+        MustacheGroupTag Class Reference
       </p>
     </div>
     <div class="content-wrapper">
@@ -81,28 +81,28 @@
                 <a href="../Classes/MimeReader.html">MimeReader</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/MoustacheEvaluationContext.html">MoustacheEvaluationContext</a>
+                <a href="../Classes/MustacheEvaluationContext.html">MustacheEvaluationContext</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/MoustacheEvaluationOutputCollector.html">MoustacheEvaluationOutputCollector</a>
+                <a href="../Classes/MustacheEvaluationOutputCollector.html">MustacheEvaluationOutputCollector</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/MoustacheGroupTag.html">MoustacheGroupTag</a>
+                <a href="../Classes/MustacheGroupTag.html">MustacheGroupTag</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/MoustacheParser.html">MoustacheParser</a>
+                <a href="../Classes/MustacheParser.html">MustacheParser</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/MoustachePartialTag.html">MoustachePartialTag</a>
+                <a href="../Classes/MustachePartialTag.html">MustachePartialTag</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/MoustachePragmaTag.html">MoustachePragmaTag</a>
+                <a href="../Classes/MustachePragmaTag.html">MustachePragmaTag</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/MoustacheTag.html">MoustacheTag</a>
+                <a href="../Classes/MustacheTag.html">MustacheTag</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/MoustacheTemplate.html">MoustacheTemplate</a>
+                <a href="../Classes/MustacheTemplate.html">MustacheTemplate</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/NetNamedPipe.html">NetNamedPipe</a>
@@ -172,7 +172,7 @@
                 <a href="../Enums/JSONError.html">JSONError</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/MoustacheError.html">MoustacheError</a>
+                <a href="../Enums/MustacheError.html">MustacheError</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/PerfectError.html">PerfectError</a>
@@ -261,14 +261,14 @@
       <article class="main-content">
         <section>
           <section class="section">
-            <h1>MoustacheTag</h1>
+            <h1>MustacheGroupTag</h1>
               <div class="declaration">
                 <div class="Swift">
-                  <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">MoustacheTag</span></code></pre>
+                  <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">MustacheGroupTag</span> <span class="p">:</span> <span class="kt">MustacheTag</span></code></pre>
 
                 </div>
               </div>
-            <p>An individual moustache tag or plain-text section</p>
+            <p>A sub-class of MustacheTag which represents a group of child tags.</p>
 
           </section>
           <section class="section task-group-section">
@@ -277,9 +277,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FC10PerfectLib12MoustacheTag8evaluateFS0_FTCS_26MoustacheEvaluationContext9collectorCS_34MoustacheEvaluationOutputCollector_T_"></a>
+                    <a name="/s:FC10PerfectLib16MustacheGroupTag8evaluateFS0_FTCS_25MustacheEvaluationContext9collectorCS_33MustacheEvaluationOutputCollector_T_"></a>
                     <a name="//apple_ref/swift/Method/evaluate(_:collector:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FC10PerfectLib12MoustacheTag8evaluateFS0_FTCS_26MoustacheEvaluationContext9collectorCS_34MoustacheEvaluationOutputCollector_T_">evaluate(_:collector:)</a>
+                    <a class="token" href="#/s:FC10PerfectLib16MustacheGroupTag8evaluateFS0_FTCS_25MustacheEvaluationContext9collectorCS_33MustacheEvaluationOutputCollector_T_">evaluate(_:collector:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -287,14 +287,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Evaluate the tag within the given context.</p>
+                        <p>Evaluate the tag in the given context.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">evaluate</span><span class="p">(</span><span class="nv">context</span><span class="p">:</span> <span class="kt">MoustacheEvaluationContext</span><span class="p">,</span> <span class="nv">collector</span><span class="p">:</span> <span class="kt">MoustacheEvaluationOutputCollector</span><span class="p">)</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">override</span> <span class="kd">func</span> <span class="nf">evaluate</span><span class="p">(</span><span class="nv">context</span><span class="p">:</span> <span class="kt">MustacheEvaluationContext</span><span class="p">,</span> <span class="nv">collector</span><span class="p">:</span> <span class="kt">MustacheEvaluationOutputCollector</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -304,9 +304,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FC10PerfectLib12MoustacheTag11descriptionFS0_FT_SS"></a>
+                    <a name="/s:FC10PerfectLib16MustacheGroupTag11descriptionFS0_FT_SS"></a>
                     <a name="//apple_ref/swift/Method/description()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FC10PerfectLib12MoustacheTag11descriptionFS0_FT_SS">description()</a>
+                    <a class="token" href="#/s:FC10PerfectLib16MustacheGroupTag11descriptionFS0_FT_SS">description()</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -314,22 +314,16 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Reconstitutes the tag into its original source string form.
-- returns: The resulting string, including the original delimiters and tag-type marker.</p>
+                        <p>Returns a String containing the reconstituted tag, including all children.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">description</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
+                          <pre class="highlight"><code><span class="k">override</span> <span class="kd">public</span> <span class="kd">func</span> <span class="nf">description</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
 
                         </div>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>The resulting string, including the original delimiters and tag-type marker.</p>
-
                       </div>
                     </section>
                   </div>
@@ -339,7 +333,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2015 <a class="link" href="" target="_blank" rel="external"></a>. All rights reserved. (Last updated: 2015-11-04)</p>
+          <p>&copy; 2015 <a class="link" href="" target="_blank" rel="external"></a>. All rights reserved. (Last updated: 2015-11-23)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.3.2</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

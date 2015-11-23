@@ -80,28 +80,28 @@
                 <a href="Classes/MimeReader.html">MimeReader</a>
               </li>
               <li class="nav-group-task">
-                <a href="Classes/MoustacheEvaluationContext.html">MoustacheEvaluationContext</a>
+                <a href="Classes/MustacheEvaluationContext.html">MustacheEvaluationContext</a>
               </li>
               <li class="nav-group-task">
-                <a href="Classes/MoustacheEvaluationOutputCollector.html">MoustacheEvaluationOutputCollector</a>
+                <a href="Classes/MustacheEvaluationOutputCollector.html">MustacheEvaluationOutputCollector</a>
               </li>
               <li class="nav-group-task">
-                <a href="Classes/MoustacheGroupTag.html">MoustacheGroupTag</a>
+                <a href="Classes/MustacheGroupTag.html">MustacheGroupTag</a>
               </li>
               <li class="nav-group-task">
-                <a href="Classes/MoustacheParser.html">MoustacheParser</a>
+                <a href="Classes/MustacheParser.html">MustacheParser</a>
               </li>
               <li class="nav-group-task">
-                <a href="Classes/MoustachePartialTag.html">MoustachePartialTag</a>
+                <a href="Classes/MustachePartialTag.html">MustachePartialTag</a>
               </li>
               <li class="nav-group-task">
-                <a href="Classes/MoustachePragmaTag.html">MoustachePragmaTag</a>
+                <a href="Classes/MustachePragmaTag.html">MustachePragmaTag</a>
               </li>
               <li class="nav-group-task">
-                <a href="Classes/MoustacheTag.html">MoustacheTag</a>
+                <a href="Classes/MustacheTag.html">MustacheTag</a>
               </li>
               <li class="nav-group-task">
-                <a href="Classes/MoustacheTemplate.html">MoustacheTemplate</a>
+                <a href="Classes/MustacheTemplate.html">MustacheTemplate</a>
               </li>
               <li class="nav-group-task">
                 <a href="Classes/NetNamedPipe.html">NetNamedPipe</a>
@@ -171,7 +171,7 @@
                 <a href="Enums/JSONError.html">JSONError</a>
               </li>
               <li class="nav-group-task">
-                <a href="Enums/MoustacheError.html">MoustacheError</a>
+                <a href="Enums/MustacheError.html">MustacheError</a>
               </li>
               <li class="nav-group-task">
                 <a href="Enums/PerfectError.html">PerfectError</a>
@@ -607,7 +607,7 @@ JSON data which is being decoded will have these object as part of the contents 
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Use this class to register handlers which supply values for moustache templates.
+                        <p>Use this class to register handlers which supply values for mustache templates.
  This registration would occur in the <code>PerfectServerModuleInit</code> function which every PerfectServer library module should define. PerfectServer will call this method when it loads each module as the server process starts up.</p>
 
 <p>Example:
@@ -620,10 +620,10 @@ JSON data which is being decoded will have these object as part of the contents 
     }
 </code></p>
 
-<p>In the example above, the class MyTestHandler is registering to be the handler for moustache templates which include a handler
+<p>In the example above, the class MyTestHandler is registering to be the handler for mustache templates which include a handler
  pragma with the <code>test_page_handler</code> identifier.</p>
 
-<p>The following example shows what such a moustache template file might look like:
+<p>The following example shows what such a mustache template file might look like:
 <code>
     {{% handler:test_page_handler }}
     Top of the page test {{key1}}
@@ -937,9 +937,9 @@ Fully realized for TCP socket types but can also serve as a base for sockets fro
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:C10PerfectLib26MoustacheEvaluationContext"></a>
-                    <a name="//apple_ref/swift/Class/MoustacheEvaluationContext" class="dashAnchor"></a>
-                    <a class="token" href="#/s:C10PerfectLib26MoustacheEvaluationContext">MoustacheEvaluationContext</a>
+                    <a name="/s:C10PerfectLib25MustacheEvaluationContext"></a>
+                    <a name="//apple_ref/swift/Class/MustacheEvaluationContext" class="dashAnchor"></a>
+                    <a class="token" href="#/s:C10PerfectLib25MustacheEvaluationContext">MustacheEvaluationContext</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -947,16 +947,16 @@ Fully realized for TCP socket types but can also serve as a base for sockets fro
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>This class represents an individual scope for moustache template values.
-A moustache template handler will return a <code>MoustacheEvaluationContext.MapType</code> object as a result from its <code>PageHandler.valuesForResponse</code> function.</p>
+                        <p>This class represents an individual scope for mustache template values.
+A mustache template handler will return a <code>MustacheEvaluationContext.MapType</code> object as a result from its <code>PageHandler.valuesForResponse</code> function.</p>
 
-                        <a href="Classes/MoustacheEvaluationContext.html" class="slightly-smaller">See more</a>
+                        <a href="Classes/MustacheEvaluationContext.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">MoustacheEvaluationContext</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">MustacheEvaluationContext</span></code></pre>
 
                         </div>
                       </div>
@@ -966,9 +966,9 @@ A moustache template handler will return a <code>MoustacheEvaluationContext.MapT
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:C10PerfectLib34MoustacheEvaluationOutputCollector"></a>
-                    <a name="//apple_ref/swift/Class/MoustacheEvaluationOutputCollector" class="dashAnchor"></a>
-                    <a class="token" href="#/s:C10PerfectLib34MoustacheEvaluationOutputCollector">MoustacheEvaluationOutputCollector</a>
+                    <a name="/s:C10PerfectLib33MustacheEvaluationOutputCollector"></a>
+                    <a name="//apple_ref/swift/Class/MustacheEvaluationOutputCollector" class="dashAnchor"></a>
+                    <a class="token" href="#/s:C10PerfectLib33MustacheEvaluationOutputCollector">MustacheEvaluationOutputCollector</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -976,16 +976,16 @@ A moustache template handler will return a <code>MoustacheEvaluationContext.MapT
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>An instance of this class will collect all output data generated by moustache tags during evaluation.
+                        <p>An instance of this class will collect all output data generated by mustache tags during evaluation.
 Call the <code>asString()</code> function to retreive the resulting data.</p>
 
-                        <a href="Classes/MoustacheEvaluationOutputCollector.html" class="slightly-smaller">See more</a>
+                        <a href="Classes/MustacheEvaluationOutputCollector.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">MoustacheEvaluationOutputCollector</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">MustacheEvaluationOutputCollector</span></code></pre>
 
                         </div>
                       </div>
@@ -995,9 +995,9 @@ Call the <code>asString()</code> function to retreive the resulting data.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:C10PerfectLib12MoustacheTag"></a>
-                    <a name="//apple_ref/swift/Class/MoustacheTag" class="dashAnchor"></a>
-                    <a class="token" href="#/s:C10PerfectLib12MoustacheTag">MoustacheTag</a>
+                    <a name="/s:C10PerfectLib11MustacheTag"></a>
+                    <a name="//apple_ref/swift/Class/MustacheTag" class="dashAnchor"></a>
+                    <a class="token" href="#/s:C10PerfectLib11MustacheTag">MustacheTag</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1005,15 +1005,15 @@ Call the <code>asString()</code> function to retreive the resulting data.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>An individual moustache tag or plain-text section</p>
+                        <p>An individual mustache tag or plain-text section</p>
 
-                        <a href="Classes/MoustacheTag.html" class="slightly-smaller">See more</a>
+                        <a href="Classes/MustacheTag.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">MoustacheTag</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">MustacheTag</span></code></pre>
 
                         </div>
                       </div>
@@ -1023,9 +1023,9 @@ Call the <code>asString()</code> function to retreive the resulting data.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:C10PerfectLib19MoustachePartialTag"></a>
-                    <a name="//apple_ref/swift/Class/MoustachePartialTag" class="dashAnchor"></a>
-                    <a class="token" href="#/s:C10PerfectLib19MoustachePartialTag">MoustachePartialTag</a>
+                    <a name="/s:C10PerfectLib18MustachePartialTag"></a>
+                    <a name="//apple_ref/swift/Class/MustachePartialTag" class="dashAnchor"></a>
+                    <a class="token" href="#/s:C10PerfectLib18MustachePartialTag">MustachePartialTag</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1033,15 +1033,15 @@ Call the <code>asString()</code> function to retreive the resulting data.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A sub-class of MoustacheTag which represents a moustache <q>partial</q> tag.</p>
+                        <p>A sub-class of MustacheTag which represents a mustache <q>partial</q> tag.</p>
 
-                        <a href="Classes/MoustachePartialTag.html" class="slightly-smaller">See more</a>
+                        <a href="Classes/MustachePartialTag.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">MoustachePartialTag</span> <span class="p">:</span> <span class="kt">MoustacheTag</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">MustachePartialTag</span> <span class="p">:</span> <span class="kt">MustacheTag</span></code></pre>
 
                         </div>
                       </div>
@@ -1051,9 +1051,9 @@ Call the <code>asString()</code> function to retreive the resulting data.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:C10PerfectLib18MoustachePragmaTag"></a>
-                    <a name="//apple_ref/swift/Class/MoustachePragmaTag" class="dashAnchor"></a>
-                    <a class="token" href="#/s:C10PerfectLib18MoustachePragmaTag">MoustachePragmaTag</a>
+                    <a name="/s:C10PerfectLib17MustachePragmaTag"></a>
+                    <a name="//apple_ref/swift/Class/MustachePragmaTag" class="dashAnchor"></a>
+                    <a class="token" href="#/s:C10PerfectLib17MustachePragmaTag">MustachePragmaTag</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1061,16 +1061,16 @@ Call the <code>asString()</code> function to retreive the resulting data.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A sub-class of MoustacheTag which represents a pragma tag.
+                        <p>A sub-class of MustacheTag which represents a pragma tag.
 Pragma tags are <q>meta</q> tags which influence template evaluation but likely do not output any data.</p>
 
-                        <a href="Classes/MoustachePragmaTag.html" class="slightly-smaller">See more</a>
+                        <a href="Classes/MustachePragmaTag.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">MoustachePragmaTag</span> <span class="p">:</span> <span class="kt">MoustacheTag</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">MustachePragmaTag</span> <span class="p">:</span> <span class="kt">MustacheTag</span></code></pre>
 
                         </div>
                       </div>
@@ -1080,9 +1080,9 @@ Pragma tags are <q>meta</q> tags which influence template evaluation but likely 
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:C10PerfectLib17MoustacheGroupTag"></a>
-                    <a name="//apple_ref/swift/Class/MoustacheGroupTag" class="dashAnchor"></a>
-                    <a class="token" href="#/s:C10PerfectLib17MoustacheGroupTag">MoustacheGroupTag</a>
+                    <a name="/s:C10PerfectLib16MustacheGroupTag"></a>
+                    <a name="//apple_ref/swift/Class/MustacheGroupTag" class="dashAnchor"></a>
+                    <a class="token" href="#/s:C10PerfectLib16MustacheGroupTag">MustacheGroupTag</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1090,15 +1090,15 @@ Pragma tags are <q>meta</q> tags which influence template evaluation but likely 
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A sub-class of MoustacheTag which represents a group of child tags.</p>
+                        <p>A sub-class of MustacheTag which represents a group of child tags.</p>
 
-                        <a href="Classes/MoustacheGroupTag.html" class="slightly-smaller">See more</a>
+                        <a href="Classes/MustacheGroupTag.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">MoustacheGroupTag</span> <span class="p">:</span> <span class="kt">MoustacheTag</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">MustacheGroupTag</span> <span class="p">:</span> <span class="kt">MustacheTag</span></code></pre>
 
                         </div>
                       </div>
@@ -1108,9 +1108,9 @@ Pragma tags are <q>meta</q> tags which influence template evaluation but likely 
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:C10PerfectLib17MoustacheTemplate"></a>
-                    <a name="//apple_ref/swift/Class/MoustacheTemplate" class="dashAnchor"></a>
-                    <a class="token" href="#/s:C10PerfectLib17MoustacheTemplate">MoustacheTemplate</a>
+                    <a name="/s:C10PerfectLib16MustacheTemplate"></a>
+                    <a name="//apple_ref/swift/Class/MustacheTemplate" class="dashAnchor"></a>
+                    <a class="token" href="#/s:C10PerfectLib16MustacheTemplate">MustacheTemplate</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1118,17 +1118,17 @@ Pragma tags are <q>meta</q> tags which influence template evaluation but likely 
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>This class represents a moustache template which has been parsed and is ready to evaluate.
+                        <p>This class represents a mustache template which has been parsed and is ready to evaluate.
 It contains a series of <q>out of band</q> pragmas which can influence the evaluation, and a 
 series of children which constitute the body of the template itself.</p>
 
-                        <a href="Classes/MoustacheTemplate.html" class="slightly-smaller">See more</a>
+                        <a href="Classes/MustacheTemplate.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">MoustacheTemplate</span> <span class="p">:</span> <span class="kt">MoustacheGroupTag</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">MustacheTemplate</span> <span class="p">:</span> <span class="kt">MustacheGroupTag</span></code></pre>
 
                         </div>
                       </div>
@@ -1138,9 +1138,9 @@ series of children which constitute the body of the template itself.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:C10PerfectLib15MoustacheParser"></a>
-                    <a name="//apple_ref/swift/Class/MoustacheParser" class="dashAnchor"></a>
-                    <a class="token" href="#/s:C10PerfectLib15MoustacheParser">MoustacheParser</a>
+                    <a name="/s:C10PerfectLib14MustacheParser"></a>
+                    <a name="//apple_ref/swift/Class/MustacheParser" class="dashAnchor"></a>
+                    <a class="token" href="#/s:C10PerfectLib14MustacheParser">MustacheParser</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1148,16 +1148,16 @@ series of children which constitute the body of the template itself.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>This object will parse templates written in the moustache markup language.
+                        <p>This object will parse templates written in the mustache markup language.
 Calling <code>parse</code> with the path to a file will return the resulting parsed and ready to evaluate template.</p>
 
-                        <a href="Classes/MoustacheParser.html" class="slightly-smaller">See more</a>
+                        <a href="Classes/MustacheParser.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="Swift">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">MoustacheParser</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">MustacheParser</span></code></pre>
 
                         </div>
                       </div>
@@ -1538,7 +1538,7 @@ When a request is received, the server will instantiate a <code>WebRequest</code
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2015 <a class="link" href="" target="_blank" rel="external"></a>. All rights reserved. (Last updated: 2015-11-04)</p>
+          <p>&copy; 2015 <a class="link" href="" target="_blank" rel="external"></a>. All rights reserved. (Last updated: 2015-11-23)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.3.2</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
