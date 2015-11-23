@@ -4,7 +4,7 @@
 <dict>
 	<key>Nodes</key>
 	<array>
-		<string>index.moustache</string>
+		<string>index.mustache</string>
 		<string>PerfectHandlers.swift</string>
 	</array>
 	<key>Kind</key>
@@ -102,10 +102,10 @@
 	</array>
 	<key>Definitions</key>
 	<dict>
-		<key>index.moustache</key>
+		<key>index.mustache</key>
 		<dict>
 			<key>Path</key>
-			<string>index.moustache</string>
+			<string>index.mustache</string>
 		</dict>
 		<key>PerfectHandlers.swift</key>
 		<dict>
