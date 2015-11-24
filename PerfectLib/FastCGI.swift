@@ -23,43 +23,43 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
-let FCGI_VERSION_1: UInt8 =		1
 
-let FCGI_NULL_REQUEST_ID =		0
+// values which are part of the FastCGI protocol but are unused in this implementation are commented out
+let fcgiVersion1: UInt8 =		1
 
-let FCGI_BEGIN_REQUEST: UInt8 =		1
-let FCGI_ABORT_REQUEST: UInt8 =		2
-let FCGI_END_REQUEST: UInt8 =		3
-let FCGI_PARAMS: UInt8 =			4
-let FCGI_STDIN: UInt8 =				5
-let FCGI_STDOUT: UInt8 =			6
-let FCGI_STDERR: UInt8 =			7
-let FCGI_DATA: UInt8 =				8
-let FCGI_GET_VALUES: UInt8 =		9
-let FCGI_GET_VALUES_RESULT: UInt8 =	10
-let FCGI_UNKNOWN_TYPE: UInt8 =		11
+let fcgiBeginRequest: UInt8 =		1
+//let FCGI_ABORT_REQUEST: UInt8 =		2
+let fcgiEndRequest: UInt8 =		3
+let fcgiParams: UInt8 =			4
+let fcgiStdin: UInt8 =				5
+let fcgiStdout: UInt8 =			6
+//let FCGI_STDERR: UInt8 =			7
+let fcgiData: UInt8 =				8
+//let FCGI_GET_VALUES: UInt8 =		9
+//let FCGI_GET_VALUES_RESULT: UInt8 =	10
+//let FCGI_UNKNOWN_TYPE: UInt8 =		11
 
-let FCGI_X_STDIN: UInt8 = 		50
+let fcgiXStdin: UInt8 = 		50
 
-let FCGI_KEEP_CONN =	1
+//let FCGI_KEEP_CONN =	1
 
-let FCGI_RESPONDER =	1
-let FCGI_AUTHORIZE =	2
-let FCGI_FILTER =		3
+//let FCGI_RESPONDER =	1
+//let FCGI_AUTHORIZE =	2
+//let FCGI_FILTER =		3
 
-let FCGI_REQUEST_COMPLETE = 	0
-let FCGI_CANT_MPX_CONN =		1
-let FCGI_OVERLOADED =			2
-let FCGI_UNKNOWN_ROLE = 		3
+let fcgiRequestComplete = 	0
+//let FCGI_CANT_MPX_CONN =		1
+//let FCGI_OVERLOADED =			2
+//let FCGI_UNKNOWN_ROLE = 		3
 
-let FCGI_MAX_CONNS =	"FCGI_MAX_CONNS"
-let FCGI_MAX_REQS =		"FCGI_MAX_REQS"
-let FCGI_MPXS_CONNS =	"FCGI_MPXS_CONNS"
+//let FCGI_MAX_CONNS =	"FCGI_MAX_CONNS"
+//let FCGI_MAX_REQS =		"FCGI_MAX_REQS"
+//let FCGI_MPXS_CONNS =	"FCGI_MPXS_CONNS"
 
-let FASTCGI_TIMEOUT_SECONDS = 5.0
-let FASTCGI_BASE_RECORD_SIZE = 8
+let fcgiTimeoutSeconds = 5.0
+let fcgiBaseRecordSize = 8
 
-let FCGI_BODY_CHUNK_SIZE = 0xFFFF
+let fcgiBodyChunkSize = 0xFFFF
 
 class FastCGIRecord {
 	
@@ -157,8 +157,8 @@ class FastCGIRequest : WebConnection {
 	func makeEndRequestBody(requestId: Int, appStatus: Int, protocolStatus: Int) -> [UInt8] {
 		
 		let b = Bytes()
-		b.import8Bits(FCGI_VERSION_1)
-			.import8Bits(FCGI_END_REQUEST)
+		b.import8Bits(fcgiVersion1)
+			.import8Bits(fcgiEndRequest)
 			.import16Bits(htons(UInt16(requestId)))
 			.import16Bits(htons(UInt16(8)))
 			.import8Bits(0)
@@ -175,14 +175,14 @@ class FastCGIRequest : WebConnection {
 	func makeStdoutBody(requestId: Int, data: [UInt8], firstPos: Int, count: Int) -> [UInt8] {
 		let b = Bytes()
 		
-		if count > FCGI_BODY_CHUNK_SIZE {
-			b.importBytes(makeStdoutBody(requestId, data: data, firstPos: firstPos, count: FCGI_BODY_CHUNK_SIZE))
-			b.importBytes(makeStdoutBody(requestId, data: data, firstPos: FCGI_BODY_CHUNK_SIZE + firstPos, count: count - FCGI_BODY_CHUNK_SIZE))
+		if count > fcgiBodyChunkSize {
+			b.importBytes(makeStdoutBody(requestId, data: data, firstPos: firstPos, count: fcgiBodyChunkSize))
+			b.importBytes(makeStdoutBody(requestId, data: data, firstPos: fcgiBodyChunkSize + firstPos, count: count - fcgiBodyChunkSize))
 		} else {
 			
 			let padBytes = count % 8
-			b.import8Bits(FCGI_VERSION_1)
-				.import8Bits(FCGI_STDOUT)
+			b.import8Bits(fcgiVersion1)
+				.import8Bits(fcgiStdout)
 				.import16Bits(htons(UInt16(requestId)))
 				.import16Bits(htons(UInt16(count)))
 				.import8Bits(UInt8(padBytes))
@@ -206,7 +206,7 @@ class FastCGIRequest : WebConnection {
 	}
 	
 	func readRecord(continuation: (FastCGIRecord?) -> ()) {
-		self.connection.readBytesFully(FASTCGI_BASE_RECORD_SIZE, timeoutSeconds: FASTCGI_TIMEOUT_SECONDS) {
+		self.connection.readBytesFully(fcgiBaseRecordSize, timeoutSeconds: fcgiTimeoutSeconds) {
 			(b: [UInt8]?) -> () in
 			
 			guard let recBytes = b else {
@@ -229,7 +229,7 @@ class FastCGIRequest : WebConnection {
 	func readRecordContent(record: FastCGIRecord, continuation: (FastCGIRecord?) -> ()) {
 		if record.contentLength > 0 {
 			
-			self.connection.readBytesFully(Int(record.contentLength), timeoutSeconds: FASTCGI_TIMEOUT_SECONDS, completion: {
+			self.connection.readBytesFully(Int(record.contentLength), timeoutSeconds: fcgiTimeoutSeconds, completion: {
 				(b:[UInt8]?) -> () in
 				if let contentBytes = b {
 					
@@ -249,7 +249,7 @@ class FastCGIRequest : WebConnection {
 	func readRecordPadding(record: FastCGIRecord, continuation: (FastCGIRecord?) -> ()) {
 		if record.paddingLength > 0 {
 			
-			self.connection.readBytesFully(Int(record.paddingLength), timeoutSeconds: FASTCGI_TIMEOUT_SECONDS, completion: {
+			self.connection.readBytesFully(Int(record.paddingLength), timeoutSeconds: fcgiTimeoutSeconds, completion: {
 				(b:[UInt8]?) -> () in
 				if let paddingBytes = b {
 					

@@ -33,7 +33,7 @@ public class PerfectObjectHandler: PageHandler {
 	
 	public func valuesForResponse(context: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) throws -> MustacheEvaluationContext.MapType {
 		// determine the action
-		let param = context.webResponse!.request.param(ACTION_PARAM_NAME) ?? HandlerAction.None.asString()
+		let param = context.webResponse!.request.param(actionParamName) ?? HandlerAction.None.asString()
 		self.action = HandlerAction.fromString(param)
 		// pull in the meaningful parameters
 		if let rawParams = context.webResponse!.request.params() {

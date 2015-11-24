@@ -208,7 +208,7 @@ public class NetTCPSSL : NetTCP {
 	}
 	
 	public func beginSSL(timeout: Double, closure: (Bool) -> ()) {
-		guard self.fd.fd != INVALID_SOCKET else {
+		guard self.fd.fd != invalidSocket else {
 			closure(false)
 			return
 		}

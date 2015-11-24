@@ -26,7 +26,7 @@
 
 import Darwin
 
-let file_copyBufferSize = 16384
+let fileCopyBufferSize = 16384
 
 /// Provides access to a file on the local file system
 public class File : Closeable {
@@ -291,10 +291,10 @@ public class File : Closeable {
 		
 		try destFile.openTruncate()
 		
-		var bytes = try self.readSomeBytes(file_copyBufferSize)
+		var bytes = try self.readSomeBytes(fileCopyBufferSize)
 		while bytes.count > 0 {
 			try destFile.writeBytes(bytes)
-			bytes = try self.readSomeBytes(file_copyBufferSize)
+			bytes = try self.readSomeBytes(fileCopyBufferSize)
 		}
 		
 		destFile.close()

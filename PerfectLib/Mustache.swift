@@ -27,7 +27,7 @@
 import Foundation
 import ICU
 
-let MUSTACHE_EXTENSION = "mustache"
+let mustacheExtension = "mustache"
 
 enum MustacheTagType {
 	
@@ -272,7 +272,7 @@ public class MustachePartialTag : MustacheTag {
 		}
 		
 		let pageDir = page.stringByDeletingLastPathComponent
-		let fullPath = pageDir + "/" + self.tag + "." + MUSTACHE_EXTENSION
+		let fullPath = pageDir + "/" + self.tag + "." + mustacheExtension
 		
 		let file = File(fullPath)
 		guard file.exists() else {

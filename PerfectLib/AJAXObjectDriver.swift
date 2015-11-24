@@ -25,7 +25,7 @@
 
 import Foundation
 
-let ACTION_PARAM_NAME = "_action"
+let actionParamName = "_action"
 
 /// This client-side class handles access to the AJAX/XHR API.
 /// It provides facilities for setting up the parameters for the raw requests
@@ -57,7 +57,7 @@ public class AJAXObjectDriver : PerfectObjectDriver {
 	
 	public func load<T : PerfectObject>(type: T, withId: uuid_t) -> T {
 		let fileName = type.simpleName() + self.fileExtension
-		var url = self.endpointBase + fileName + "?" + ACTION_PARAM_NAME + "=" + HandlerAction.Load.asString()
+		var url = self.endpointBase + fileName + "?" + actionParamName + "=" + HandlerAction.Load.asString()
 		url.appendContentsOf("&" + type.primaryKeyName().stringByEncodingURL + "=" + String.fromUUID(withId).stringByEncodingURL)
 		
 		let (code, _, bodyStr) = self.performRequest(url)
@@ -88,7 +88,7 @@ public class AJAXObjectDriver : PerfectObjectDriver {
 	
 	public func load<T : PerfectObject>(type: T, withUniqueField: (String,String)) -> T {
 		let fileName = type.simpleName() + self.fileExtension
-		var url = self.endpointBase + fileName + "?" + ACTION_PARAM_NAME + "=" + HandlerAction.Load.asString()
+		var url = self.endpointBase + fileName + "?" + actionParamName + "=" + HandlerAction.Load.asString()
 		url.appendContentsOf("&" + withUniqueField.0.stringByEncodingURL + "=" + withUniqueField.1.stringByEncodingURL)
 		
 		let (code, _, bodyStr) = self.performRequest(url)
@@ -119,7 +119,7 @@ public class AJAXObjectDriver : PerfectObjectDriver {
 	
 	public func delete(type: PerfectObject) -> (Int, String) {
 		let fileName = type.simpleName() + self.fileExtension
-		var url = self.endpointBase + fileName + "?" + ACTION_PARAM_NAME + "=" + HandlerAction.Delete.asString()
+		var url = self.endpointBase + fileName + "?" + actionParamName + "=" + HandlerAction.Delete.asString()
 		url.appendContentsOf("&" + type.primaryKeyName().stringByEncodingURL + "=" + String.fromUUID(type.objectId()).stringByEncodingURL)
 		
 		let (code, _, bodyStr) = self.performRequest(url)
@@ -140,7 +140,7 @@ public class AJAXObjectDriver : PerfectObjectDriver {
 	
 	public func commitChanges(type: PerfectObject) -> (Int, String) {
 		let fileName = type.simpleName() + self.fileExtension
-		var url = self.endpointBase + fileName + "?" + ACTION_PARAM_NAME + "=" + HandlerAction.Commit.asString()
+		var url = self.endpointBase + fileName + "?" + actionParamName + "=" + HandlerAction.Commit.asString()
 		url.appendContentsOf("&" + type.primaryKeyName().stringByEncodingURL + "=" + String.fromUUID(type.objectId()).stringByEncodingURL)
 		
 		let withFields = type.unloadDirty()
@@ -172,7 +172,7 @@ public class AJAXObjectDriver : PerfectObjectDriver {
 	public func create<T : PerfectObject>(withFields: [(String,String)]) -> T {
 		let t = T(driver: self)
 		let fileName = t.simpleName() + self.fileExtension
-		var url = self.endpointBase + fileName + "?" + ACTION_PARAM_NAME + "=" + HandlerAction.Create.asString()
+		var url = self.endpointBase + fileName + "?" + actionParamName + "=" + HandlerAction.Create.asString()
 		
 		for (n, v) in withFields {
 			url.appendContentsOf("&" + n.stringByEncodingURL + "=" + v.stringByEncodingURL)
@@ -214,7 +214,7 @@ public class AJAXObjectDriver : PerfectObjectDriver {
 		var returning = [T]()
 		var t = T(driver: self)
 		let fileName = t.simpleName() + self.fileExtension
-		let url = self.endpointBase + fileName + "?" + ACTION_PARAM_NAME + "=" + HandlerAction.List.asString()
+		let url = self.endpointBase + fileName + "?" + actionParamName + "=" + HandlerAction.List.asString()
 		
 		let (code, _, bodyStr) = self.performRequest(url)
 		if code == 200 {
@@ -250,7 +250,7 @@ public class AJAXObjectDriver : PerfectObjectDriver {
 		var returning = [T]()
 		var t = T(driver: self)
 		let fileName = t.simpleName() + self.fileExtension
-		let url = self.endpointBase + fileName + "?" + ACTION_PARAM_NAME + "=" + HandlerAction.List.asString() +
+		let url = self.endpointBase + fileName + "?" + actionParamName + "=" + HandlerAction.List.asString() +
 			"&" + withCriterion.0.stringByEncodingURL + "=" + withCriterion.1.stringByEncodingURL
 		
 		let (code, _, bodyStr) = self.performRequest(url)

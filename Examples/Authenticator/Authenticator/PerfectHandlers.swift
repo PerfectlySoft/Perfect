@@ -26,7 +26,7 @@
 import PerfectLib
 
 // Full path to the SQLite database in which we store our data.
-let AUTH_DB_PATH = PerfectServer.staticPerfectServer.homeDir() + SQLITE_DBS + "AuthenticatorDb"
+let AUTH_DB_PATH = PerfectServer.staticPerfectServer.homeDir() + serverSQLiteDBs + "AuthenticatorDb"
 
 // HTTP authentication realm
 let AUTH_REALM = "Authenticator Perfect Example"

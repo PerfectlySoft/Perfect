@@ -27,7 +27,7 @@
 import PerfectLib
 
 // Full path to the SQLite database in which we store our tracking data.
-let TRACKER_DB_PATH = PerfectServer.staticPerfectServer.homeDir() + SQLITE_DBS + "TapTrackerDb"
+let TRACKER_DB_PATH = PerfectServer.staticPerfectServer.homeDir() + serverSQLiteDBs + "TapTrackerDb"
 
 // This is the function which all Perfect Server modules must expose.
 // The system will load the module and call this function.

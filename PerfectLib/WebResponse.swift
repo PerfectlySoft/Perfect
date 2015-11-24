@@ -104,7 +104,7 @@ public class WebResponse {
 		if let s = self.sessions[named] {
 			return s
 		}
-		let s = SessionManager(SessionConfiguration(named, id: getSessionKey(SESSION_NAME_PREFIX + named)))
+		let s = SessionManager(SessionConfiguration(named, id: getSessionKey(perfectSessionNamePrefix + named)))
 		self.sessions[named] = s
 		return s
 	}
@@ -115,7 +115,7 @@ public class WebResponse {
 		guard self.sessions[named] == nil else {
 			throw PerfectError.APIError("WebResponse getSession withConfiguration: session was already initialized")
 		}
-		let s = SessionManager(SessionConfiguration(named, id: getSessionKey(SESSION_NAME_PREFIX + named), copyFrom: withConfiguration))
+		let s = SessionManager(SessionConfiguration(named, id: getSessionKey(perfectSessionNamePrefix + named), copyFrom: withConfiguration))
 		self.sessions[named] = s
 		return s
 	}
@@ -220,7 +220,7 @@ public class WebResponse {
 	
 	func include(path: String, local: Bool = false) throws {
 		
-		if !path.hasSuffix("."+MUSTACHE_EXTENSION) {
+		if !path.hasSuffix("."+mustacheExtension) {
 			throw PerfectError.FileError(404, "The file \(path) was not a mustache template file")
 		}
 		
