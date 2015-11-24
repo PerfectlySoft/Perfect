@@ -23,9 +23,6 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
-
-import Foundation
-
 /// Provides access to all incoming request data. Handles the following tasks:
 /// - Parsing the incoming HTTP request
 /// - Providing access to all HTTP headers & cookies
@@ -61,10 +58,10 @@ public class WebRequest {
 	lazy var cookies: [(String, String)] = {
 		var c = [(String, String)]()
 		let rawCookie = self.httpCookie()
-		let semiSplit = rawCookie.characters.split() { $0 == Character(";") }.map { String($0).stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet()) }
+		let semiSplit = rawCookie.characters.split(";").map { String($0.filter { $0 != " " }) }
 		for cookiePair in semiSplit {
 			
-			let cookieSplit = cookiePair.characters.split() { $0 == Character("=") }.map { String($0).stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet()) }
+			let cookieSplit = cookiePair.characters.split("=").map { String($0.filter { $0 != " " }) }
 			if cookieSplit.count == 2 {
 				let name = cookieSplit[0].stringByRemovingPercentEncoding
 				let value = cookieSplit[1].stringByRemovingPercentEncoding
@@ -80,10 +77,10 @@ public class WebRequest {
 	public lazy var queryParams: [(String, String)] = {
 		var c = [(String, String)]()
 		let qs = self.queryString()
-		let semiSplit = qs.characters.split() { $0 == Character("&") }.map { String($0) }
+		let semiSplit = qs.characters.split("&").map { String($0) }
 		for paramPair in semiSplit {
 			
-			let paramSplit = paramPair.characters.split() { $0 == Character("=") }.map { String($0) }
+			let paramSplit = paramPair.characters.split("=").map { String($0) }
 			if paramSplit.count == 2 {
 				let name = paramSplit[0].stringByRemovingPercentEncoding
 				let value = paramSplit[1].stringByRemovingPercentEncoding
@@ -120,10 +117,10 @@ public class WebRequest {
 			
 		} else if let stdin = self.connection.stdin {
 			let qs = UTF8Encoding.encode(stdin)
-			let semiSplit = qs.characters.split() { $0 == Character("&") }.map { String($0) }
+			let semiSplit = qs.characters.split("&").map { String($0) }
 			for paramPair in semiSplit {
 				
-				let paramSplit = paramPair.characters.split() { $0 == Character("=") }.map { String($0) }
+				let paramSplit = paramPair.characters.split("=").map { String($0) }
 				if paramSplit.count == 2 {
 					let name = paramSplit[0].stringByReplacingOccurrencesOfString("+", withString: " ").stringByRemovingPercentEncoding
 					let value = paramSplit[1].stringByReplacingOccurrencesOfString("+", withString: " ").stringByRemovingPercentEncoding
