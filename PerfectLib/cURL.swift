@@ -24,7 +24,7 @@
 //
 
 
-import Foundation
+import Dispatch
 import cURL
 
 /// This class is a wrapper around the CURL library. It permits network operations to be completed using cURL in a block or non-blocking manner.

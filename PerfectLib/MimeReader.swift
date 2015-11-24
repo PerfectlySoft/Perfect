@@ -23,8 +23,8 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
-
 import Foundation
+import Darwin
 
 enum MimeReadState {
 	case StateNone
@@ -166,7 +166,7 @@ public class MimeReader {
 				break
 			}
 			
-			if tolower(Int32(gened!)) != tolower(Int32(bytes[check])) {
+			if Darwin.tolower(Int32(gened!)) != Darwin.tolower(Int32(bytes[check])) {
 				break
 			}
 			
@@ -348,7 +348,7 @@ public class MimeReader {
 								
 								// end of file data
 								spec.file!.close()
-								Foundation.chmod(spec.file!.path(), S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH)
+								Darwin.chmod(spec.file!.path(), S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH)
 								break
 								
 							} else if position.distanceTo(end) - 2 < self.boundary.characters.count {
