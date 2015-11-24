@@ -23,34 +23,24 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
-
 import Darwin
 
-let json_open_object = UnicodeScalar(UInt32(123))
-let json_open_array = UnicodeScalar(UInt32(91))
-let json_close_object = UnicodeScalar(UInt32(125))
-let json_close_array = UnicodeScalar(UInt32(93))
-let json_quote_double = UnicodeScalar(UInt32(34))
-let json_white_space = UnicodeScalar(UInt32(32))
-let json_colon = UnicodeScalar(UInt32(58))
-let json_comma = UnicodeScalar(UInt32(44))
-let json_back_slash = UnicodeScalar(UInt32(92))
-let json_forward_slash = UnicodeScalar(UInt32(47))
-let json_negative = UnicodeScalar(UInt32(45))
-let json_period = UnicodeScalar(UInt32(46))
-let json_e_upper = UnicodeScalar(UInt32(69))
-let json_e_lower = UnicodeScalar(UInt32(101))
+let jsonOpenObject = UnicodeScalar(UInt32(123))
+let jsonOpenArray = UnicodeScalar(UInt32(91))
+let jsonCloseObject = UnicodeScalar(UInt32(125))
+let jsonCloseArray = UnicodeScalar(UInt32(93))
+let jsonQuoteDouble = UnicodeScalar(UInt32(34))
+let jsonWhiteSpace = UnicodeScalar(UInt32(32))
+let jsonColon = UnicodeScalar(UInt32(58))
+let jsonComma = UnicodeScalar(UInt32(44))
+let jsonBackSlash = UnicodeScalar(UInt32(92))
 
-let json_back_space = UnicodeScalar(UInt32(8))
-let json_form_feed = UnicodeScalar(UInt32(12))
+let jsonBackSpace = UnicodeScalar(UInt32(8))
+let jsonFormFeed = UnicodeScalar(UInt32(12))
 
-let json_f_lower = UnicodeScalar(UInt32(102))
-let json_t_lower = UnicodeScalar(UInt32(116))
-let json_n_lower = UnicodeScalar(UInt32(110))
-
-let json_lf = UnicodeScalar(UInt32(10))
-let json_cr = UnicodeScalar(UInt32(13))
-let json_tab = UnicodeScalar(UInt32(9))
+let jsonLF = UnicodeScalar(UInt32(10))
+let jsonCR = UnicodeScalar(UInt32(13))
+let jsonTab = UnicodeScalar(UInt32(9))
 
 /// An exception enum type which represents JSON encoding and decoding errors
 public enum JSONError: ErrorType {
@@ -172,19 +162,19 @@ public class JSONEncode {
 		var s = "\""
 		for uchar in src.unicodeScalars {
 			switch(uchar) {
-			case json_back_slash:
+			case jsonBackSlash:
 				s.appendContentsOf("\\\\")
-			case json_quote_double:
+			case jsonQuoteDouble:
 				s.appendContentsOf("\"")
-			case json_back_space:
+			case jsonBackSpace:
 				s.appendContentsOf("\\b")
-			case json_form_feed:
+			case jsonFormFeed:
 				s.appendContentsOf("\\f")
-			case json_lf:
+			case jsonLF:
 				s.appendContentsOf("\\n")
-			case json_cr:
+			case jsonCR:
 				s.appendContentsOf("\\r")
-			case json_tab:
+			case jsonTab:
 				s.appendContentsOf("\\t")
 			default:
 				s.append(uchar)
@@ -308,23 +298,23 @@ public class JSONDecode {
 		while let c = next {
 			
 			switch(c) {
-			case json_open_array:
+			case jsonOpenArray:
 				stack.append(JSONArrayType())
-			case json_open_object:
+			case jsonOpenObject:
 				stack.append(JSONDictionaryType())
-			case json_close_array:
+			case jsonCloseArray:
 				try handlePop()
-			case json_close_object:
+			case jsonCloseObject:
 				try handlePop()
-			case json_colon:
+			case jsonColon:
 				guard stack.count > 0 && stack.last! is KeyPair && (stack.last! as! KeyPair).value == nil else {
 					throw JSONError.SyntaxError("Malformed JSON string")
 				}
-			case json_comma:
+			case jsonComma:
 				guard stack.count > 0 && !(stack.last! is KeyPair) else {
 					throw JSONError.SyntaxError("Malformed JSON string")
 				}
-			case json_quote_double:
+			case jsonQuoteDouble:
 				try handlePop(try readString())
 			default:
 				if c.isWhiteSpace() {
@@ -411,20 +401,20 @@ public class JSONDecode {
 			
 			if esc {
 				switch(c) {
-				case json_back_slash:
-					s.append(json_back_slash)
-				case json_quote_double:
-					s.append(json_quote_double)
+				case jsonBackSlash:
+					s.append(jsonBackSlash)
+				case jsonQuoteDouble:
+					s.append(jsonQuoteDouble)
 				case "b":
-					s.append(json_back_space)
+					s.append(jsonBackSpace)
 				case "f":
-					s.append(json_form_feed)
+					s.append(jsonFormFeed)
 				case "n":
-					s.append(json_lf)
+					s.append(jsonLF)
 				case "r":
-					s.append(json_cr)
+					s.append(jsonCR)
 				case "t":
-					s.append(json_tab)
+					s.append(jsonTab)
 				case "u":
 					var hexStr = ""
 					for _ in 1...4 {
@@ -443,9 +433,9 @@ public class JSONDecode {
 					s.append(c)
 				}
 				esc = false
-			} else if c == json_back_slash {
+			} else if c == jsonBackSlash {
 				esc = true
-			} else if c == json_quote_double {
+			} else if c == jsonQuoteDouble {
 				return s
 			} else {
 				s.append(c)

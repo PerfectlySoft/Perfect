@@ -34,7 +34,7 @@ let ntohs  = isLittleEndian ? _OSSwapInt16 : { $0 }
 let ntohl  = isLittleEndian ? _OSSwapInt32 : { $0 }
 let ntohll = isLittleEndian ? _OSSwapInt64 : { $0 }
 
-let INVALID_SOCKET = Int32(-1)
+let invalidSocket = Int32(-1)
 
 /// Combines a socket with its family type & provides some utilities required by the LibEvent sub-system.
 public struct SocketFileDescriptor {
@@ -47,7 +47,7 @@ public struct SocketFileDescriptor {
 	}
 	
 	func switchToNBIO() {
-		if self.fd != INVALID_SOCKET {
+		if self.fd != invalidSocket {
 			evutil_make_socket_nonblocking(fd)
 			evutil_make_listen_socket_reuseable(fd)
 		}

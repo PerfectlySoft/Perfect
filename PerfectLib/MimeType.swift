@@ -24,7 +24,7 @@
 //
 
 
-let MIME_MAP = ["123" : "application/vnd.lotus-1-2-3",
+let mimeMap = ["123" : "application/vnd.lotus-1-2-3",
 	"3dml" : "text/vnd.in3d.3dml",
 	"3g2" : "video/3gpp2",
 	"3gp" : "video/3gpp",
@@ -846,7 +846,7 @@ let MIME_MAP = ["123" : "application/vnd.lotus-1-2-3",
 class MimeType {
 	
 	static func forExtension(ext: String) -> String {
-		return MIME_MAP[ext.lowercaseString] ?? "application/octet-stream"
+		return mimeMap[ext.lowercaseString] ?? "application/octet-stream"
 	}
 	
 }

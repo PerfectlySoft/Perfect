@@ -24,6 +24,8 @@
 //
 
 
+import Dispatch
+import Darwin
 import Foundation
 
 /// Provides an asynchronous IO wrapper around a file descriptor.
@@ -48,7 +50,7 @@ public class NetTCP : Closeable {
 		}
 	}
 	
-	var fd: SocketFileDescriptor = SocketFileDescriptor(fd: INVALID_SOCKET, family: AF_UNSPEC)
+	var fd: SocketFileDescriptor = SocketFileDescriptor(fd: invalidSocket, family: AF_UNSPEC)
 	
 	/// Create a new object with an initially invalid socket file descriptor.
 	public init() {
@@ -69,8 +71,8 @@ public class NetTCP : Closeable {
 	/// Sub-classes should override this function in order to create their specialized socket.
 	/// All sub-class sockets should be switched to utilize non-blocking IO by calling `SocketFileDescriptor.switchToNBIO()`.
 	public func initSocket() {
-		if fd.fd == INVALID_SOCKET {
-			fd.fd = Foundation.socket(AF_INET, SOCK_STREAM, 0)
+		if fd.fd == invalidSocket {
+			fd.fd = socket(AF_INET, SOCK_STREAM, 0)
 			fd.family = AF_INET
 			fd.switchToNBIO()
 		}
@@ -100,7 +102,7 @@ public class NetTCP : Closeable {
 		var sock_addr = sockaddr(sa_len: 0, sa_family: 0, sa_data: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
 		memcpy(&sock_addr, &addr, Int(sizeof(sockaddr_in)))
 		
-		let bRes = Foundation.bind(fd.fd, &sock_addr, socklen_t(sizeof(sockaddr_in)))
+		let bRes = Darwin.bind(fd.fd, &sock_addr, socklen_t(sizeof(sockaddr_in)))
 		if bRes == -1 {
 			try ThrowNetworkError()
 		}
@@ -108,16 +110,16 @@ public class NetTCP : Closeable {
 	
 	/// Switches the socket to server mode. Socket should have been previously bound using the `bind` function.
 	public func listen(backlog: Int32 = 128) {
-		Foundation.listen(fd.fd, backlog)
+		Darwin.listen(fd.fd, backlog)
 	}
 	
 	/// Shuts down and closes the socket.
 	/// The object may be reused.
 	public func close() {
-		if fd.fd != INVALID_SOCKET {
-			Foundation.shutdown(fd.fd, SHUT_RDWR)
-			Foundation.close(fd.fd)
-			fd.fd = INVALID_SOCKET
+		if fd.fd != invalidSocket {
+			Darwin.shutdown(fd.fd, SHUT_RDWR)
+			Darwin.close(fd.fd)
+			fd.fd = invalidSocket
 			
 			if let event = self.waitAcceptEvent {
 				event.del()
@@ -131,11 +133,11 @@ public class NetTCP : Closeable {
 	}
 	
 	func recv(buf: UnsafeMutablePointer<Void>, count: Int) -> Int {
-		return Foundation.recv(self.fd.fd, buf, count, 0)
+		return Darwin.recv(self.fd.fd, buf, count, 0)
 	}
 	
 	func send(buf: UnsafePointer<Void>, count: Int) -> Int {
-		return Foundation.send(self.fd.fd, buf, count, 0)
+		return Darwin.send(self.fd.fd, buf, count, 0)
 	}
 	
 	private func makeAddress(inout sin: sockaddr_in, host: String, port: UInt16) -> Int {
@@ -365,7 +367,7 @@ public class NetTCP : Closeable {
 		var sock_addr = sockaddr(sa_len: 0, sa_family: 0, sa_data: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
 		memcpy(&sock_addr, &addr, Int(sizeof(sockaddr_in)))
 		
-		let cRes = Foundation.connect(fd.fd, &sock_addr, socklen_t(sizeof(sockaddr_in)))
+		let cRes = Darwin.connect(fd.fd, &sock_addr, socklen_t(sizeof(sockaddr_in)))
 		if cRes != -1 {
 			callBack(self)
 		} else {
@@ -391,7 +393,7 @@ public class NetTCP : Closeable {
 	/// - parameter callBack: The closure which will be called when the accept completes. the parameter will be a newly allocated instance of NetTCP which represents the client.
 	/// - returns: `PerfectError.NetworkError`
 	public func accept(timeoutSeconds: Double, callBack: (NetTCP?) -> ()) throws {
-		let accRes = Foundation.accept(fd.fd, UnsafeMutablePointer<sockaddr>(), UnsafeMutablePointer<socklen_t>())
+		let accRes = Darwin.accept(fd.fd, UnsafeMutablePointer<sockaddr>(), UnsafeMutablePointer<socklen_t>())
 		if accRes != -1 {
 			let newTcp = self.makeFromFd(accRes)
 			callBack(newTcp)
@@ -418,7 +420,7 @@ public class NetTCP : Closeable {
 	}
 	
 	private func tryAccept() -> Int32 {
-		let accRes = Foundation.accept(fd.fd, UnsafeMutablePointer<sockaddr>(), UnsafeMutablePointer<socklen_t>())
+		let accRes = Darwin.accept(fd.fd, UnsafeMutablePointer<sockaddr>(), UnsafeMutablePointer<socklen_t>())
 		return accRes
 	}
 	
@@ -463,7 +465,7 @@ public class NetTCP : Closeable {
 				print("Unexpected networking error: \(errno) '\(errStr)'")
 				networkFailure = true
 			}
-		} while !networkFailure && self.fd.fd != INVALID_SOCKET
+		} while !networkFailure && self.fd.fd != invalidSocket
 		return
 	}
 	

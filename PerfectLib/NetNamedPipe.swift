@@ -189,7 +189,7 @@ public class NetNamedPipe : NetTCP {
 	}
 	
 	/// Receive an existing opened file descriptor from the sender
-	/// - parameter callBack: The callback to call when the receive completes. The parameter passed will be the received file descriptor or INVALID_SOCKET.
+	/// - parameter callBack: The callback to call when the receive completes. The parameter passed will be the received file descriptor or invalidSocket.
 	/// - throws: `PerfectError.NetworkError`
 	public func receiveFd(callBack: (Int32) -> ()) throws {
 		let length = sizeof(Darwin.cmsghdr) + sizeof(Int32)
@@ -234,12 +234,12 @@ public class NetNamedPipe : NetTCP {
 				(fd:Int32, w:Int16, ud:AnyObject?) -> () in
 				
 				if (Int32(w) & EV_TIMEOUT) != 0 {
-					callBack(INVALID_SOCKET)
+					callBack(invalidSocket)
 				} else {
 					do {
 						try self.receiveFd(callBack)
 					} catch {
-						callBack(INVALID_SOCKET)
+						callBack(invalidSocket)
 					}
 				}
 			}
@@ -274,7 +274,7 @@ public class NetNamedPipe : NetTCP {
 		try self.receiveFd {
 			(fd: Int32) -> () in
 			
-			if fd == INVALID_SOCKET {
+			if fd == invalidSocket {
 				callBack(nil)
 			} else {
 				callBack(File(fd: fd, path: ""))
@@ -289,7 +289,7 @@ public class NetNamedPipe : NetTCP {
 		try self.receiveFd {
 			(fd: Int32) -> () in
 			
-			if fd == INVALID_SOCKET {
+			if fd == invalidSocket {
 				callBack(nil)
 			} else {
 				callBack(NetTCP(fd: fd))
@@ -304,7 +304,7 @@ public class NetNamedPipe : NetTCP {
 		try self.receiveFd {
 			(fd: Int32) -> () in
 			
-			if fd == INVALID_SOCKET {
+			if fd == invalidSocket {
 				callBack(nil)
 			} else {
 				callBack(NetNamedPipe(fd: fd))

@@ -112,14 +112,14 @@ public class FastCGIServer {
 	func handleRecord(fcgiReq: FastCGIRequest, fcgiRecord: FastCGIRecord) {
 		switch fcgiRecord.recType {
 		
-		case FCGI_BEGIN_REQUEST:
+		case fcgiBeginRequest:
 			// FastCGIBeginRequestBody UInt16 role, UInt8 flags
 			let role: UInt16 = ntohs((UInt16(fcgiRecord.content![1]) << 8) | UInt16(fcgiRecord.content![0]))
 			let flags: UInt8 = fcgiRecord.content![2]
 			fcgiReq.requestParams["L_FCGI_ROLE"] = String(role)
 			fcgiReq.requestParams["L_FCGI_FLAGS"] = String(flags)
 			fcgiReq.requestId = fcgiRecord.requestId
-		case FCGI_PARAMS:
+		case fcgiParams:
 			if fcgiRecord.contentLength > 0 {
 				
 				let bytes = fcgiRecord.content!
@@ -154,7 +154,7 @@ public class FastCGIServer {
 				} while idx < bytes.count
 				
 			}
-		case FCGI_STDIN:
+		case fcgiStdin:
 			if fcgiRecord.contentLength > 0 {
 				fcgiReq.putStdinData(fcgiRecord.content!)
 			} else { // done initiating the request. run with it
@@ -162,12 +162,12 @@ public class FastCGIServer {
 				return
 			}
 			
-		case FCGI_DATA:
+		case fcgiData:
 			if fcgiRecord.contentLength > 0 {
 				fcgiReq.requestParams["L_FCGI_DATA"] = UTF8Encoding.encode(fcgiRecord.content!)
 			}
 			
-		case FCGI_X_STDIN:
+		case fcgiXStdin:
 			
 			if Int(fcgiRecord.contentLength) == sizeof(UInt32) {
 				
@@ -204,7 +204,7 @@ public class FastCGIServer {
 			
 			let remaining = size - bytes.count
 			if  remaining == 0 {
-				fcgiReq.lastRecordType = FCGI_STDIN
+				fcgiReq.lastRecordType = fcgiStdin
 				self.readRecord(fcgiReq)
 			} else {
 				self.readXStdin(fcgiReq, size: remaining)
@@ -221,7 +221,7 @@ public class FastCGIServer {
 		
 		let status = response.appStatus
 		
-		let finalBytes = fcgiReq.makeEndRequestBody(Int(fcgiReq.requestId), appStatus: status, protocolStatus: FCGI_REQUEST_COMPLETE)
+		let finalBytes = fcgiReq.makeEndRequestBody(Int(fcgiReq.requestId), appStatus: status, protocolStatus: fcgiRequestComplete)
 		fcgiReq.writeBytes(finalBytes)
 		fcgiReq.connection.close()
 	}

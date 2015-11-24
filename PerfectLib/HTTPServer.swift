@@ -23,13 +23,13 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
-internal let READ_SIZE = 1024
-internal let READ_TIMEOUT = 5.0
-internal let HTTP_LF = UInt8(10)
-internal let HTTP_CR = UInt8(13)
-internal let HTTP_COLON = UInt8(58)
-internal let HTTP_SPACE = UnicodeScalar(32)
-internal let HTTP_QUESTION = UnicodeScalar(63)
+internal let httpReadSize = 1024
+internal let httpReadTimeout = 5.0
+internal let httpLF = UInt8(10)
+internal let httpCR = UInt8(13)
+internal let httpColon = UInt8(58)
+internal let httpSpace = UnicodeScalar(32)
+internal let httpQuestion = UnicodeScalar(63)
 
 /// Stand-alone HTTP server. Provides the same WebConnection based interface as the FastCGI server.
 public class HTTPServer {
@@ -113,7 +113,7 @@ public class HTTPServer {
 		}
 		
 		var size = file.size()
-		let readSize = READ_SIZE * 16
+		let readSize = httpReadSize * 16
 		req.setStatus(200, msg: "OK")
 		req.writeHeaderLine("Content-length: \(size)")
 		req.writeHeaderLine("Content-type: \(MimeType.forExtension(file.path().pathExtension))")
@@ -136,7 +136,7 @@ public class HTTPServer {
 	func runRequest(req: HTTPWebConnection, withPathInfo: String) -> Bool {
 		let filePath = self.documentRoot + withPathInfo
 		let ext = withPathInfo.pathExtension.lowercaseString
-		if ext == MUSTACHE_EXTENSION {
+		if ext == mustacheExtension {
 			
 			if !File(filePath).exists() {
 				return false
@@ -152,14 +152,14 @@ public class HTTPServer {
 			
 		} else if ext.isEmpty {
 			
-			if !withPathInfo.hasSuffix(".") && self.runRequest(req, withPathInfo: withPathInfo + ".\(MUSTACHE_EXTENSION)") {
+			if !withPathInfo.hasSuffix(".") && self.runRequest(req, withPathInfo: withPathInfo + ".\(mustacheExtension)") {
 				return true
 			}
 			
 			let pathDir = Dir(filePath)
 			if pathDir.exists() {
 				
-				if self.runRequest(req, withPathInfo: withPathInfo + "/index.\(MUSTACHE_EXTENSION)") {
+				if self.runRequest(req, withPathInfo: withPathInfo + "/index.\(mustacheExtension)") {
 					return true
 				}
 				
@@ -302,7 +302,7 @@ public class HTTPServer {
 		}
 		
 		func readHeaders(callback: OkCallback) {
-			self.connection.readSomeBytes(READ_SIZE) {
+			self.connection.readSomeBytes(httpReadSize) {
 				(b:[UInt8]?) in
 				self.didReadHeaderData(b, callback: callback)
 			}
@@ -333,7 +333,7 @@ public class HTTPServer {
 				(b:[UInt8]?) in
 				
 				if b == nil {
-					self.connection.readBytesFully(1, timeoutSeconds: READ_TIMEOUT) {
+					self.connection.readBytesFully(1, timeoutSeconds: httpReadTimeout) {
 						(b:[UInt8]?) in
 						
 						guard b != nil else {
@@ -359,19 +359,19 @@ public class HTTPServer {
 			
 			// METHOD PATH_INFO[?QUERY] HVERS
 			while let c = gen.next() {
-				if HTTP_SPACE == c {
+				if httpSpace == c {
 					break
 				}
 				method.append(c)
 			}
 			var gotQuest = false
 			while let c = gen.next() {
-				if HTTP_SPACE == c {
+				if httpSpace == c {
 					break
 				}
 				if gotQuest {
 					queryString.append(c)
-				} else if HTTP_QUESTION == c {
+				} else if httpQuestion == c {
 					gotQuest = true
 				} else {
 					pathInfo.append(c)
@@ -395,7 +395,7 @@ public class HTTPServer {
 		
 		func processHeaderLine(h: ArraySlice<UInt8>) -> Bool {
 			for i in h.startIndex..<h.endIndex {
-				if HTTP_COLON == h[i] {
+				if httpColon == h[i] {
 					let headerKey = transformHeaderName(UTF8Encoding.encode(h[h.startIndex..<i]))
 					var i2 = i + 1
 					while i2 < h.endIndex {
@@ -434,7 +434,7 @@ public class HTTPServer {
 			// data was just added to workingBuffer
 			// look for header end or possible end of headers
 			// handle case of buffer break in between CR-LF pair. first new byte will be LF. skip it
-			if self.workingBuffer[self.workingBufferOffset] == HTTP_LF {
+			if self.workingBuffer[self.workingBufferOffset] == httpLF {
 				self.workingBufferOffset += 1
 			}
 			var lastWasCr = false
@@ -443,7 +443,7 @@ public class HTTPServer {
 				
 				let c = self.workingBuffer[i]
 				
-				guard false == lastWasCr || HTTP_LF == c else { // malformed header
+				guard false == lastWasCr || httpLF == c else { // malformed header
 					callback(false)
 					return
 				}
@@ -481,7 +481,7 @@ public class HTTPServer {
 						}
 					}
 				} else {
-					lastWasCr = c == HTTP_CR
+					lastWasCr = c == httpCR
 				}
 			}
 			// not done yet
@@ -494,7 +494,7 @@ public class HTTPServer {
 				return
 			}
 			if b!.count == 0 { // no data was available for immediate consumption. try reading with timeout
-				self.connection.readBytesFully(1, timeoutSeconds: READ_TIMEOUT) {
+				self.connection.readBytesFully(1, timeoutSeconds: httpReadTimeout) {
 					(b2:[UInt8]?) in
 					
 					if b2 == nil { // timeout. request dead
@@ -546,7 +546,7 @@ public class HTTPServer {
 		func pushHeaderBytes() {
 			if !wroteHeader {
 				if self.httpKeepAlive {
-					header += "Connection: keep-alive\r\nKeep-Alive: timeout=\(Int(READ_TIMEOUT)), max=100\r\n\r\n" // final CRLF
+					header += "Connection: keep-alive\r\nKeep-Alive: timeout=\(Int(httpReadTimeout)), max=100\r\n\r\n" // final CRLF
 				} else {
 					header += "\r\n" // final CRLF
 				}

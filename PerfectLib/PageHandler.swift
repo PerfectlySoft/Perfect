@@ -23,7 +23,7 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
-private let GLOBAL_HANDLER = "%GLOBAL%"
+private let globalPageHandler = "%GLOBAL%"
 
 /// Use this class to register handlers which supply values for mustache templates.
 /// This registration would occur in the `PerfectServerModuleInit` function which every PerfectServer library module should define. PerfectServer will call this method when it loads each module as the server process starts up.
@@ -63,7 +63,7 @@ public class PageHandlerRegistry {
 	/// Templates which do not have a %handler pragma will use this handler.
 	/// - parameter generator: The generator function which will be called to produce a new handler object.
 	public static func addPageHandler(generator: PageHandlerGenerator) {
-		PageHandlerRegistry.generator[GLOBAL_HANDLER] = generator
+		PageHandlerRegistry.generator[globalPageHandler] = generator
 	}
 	
 	/// Registers a new handler for the given name
@@ -87,7 +87,7 @@ public class PageHandlerRegistry {
 	}
 	
 	static func getPageHandler(forResponse: WebResponse) -> PageHandler? {
-		let h = PageHandlerRegistry.generator[GLOBAL_HANDLER]
+		let h = PageHandlerRegistry.generator[globalPageHandler]
 		if let fnd = h {
 			return fnd(forResponse)
 		}
