@@ -53,8 +53,6 @@ dispatch_barrier_async(_queue, ^{
 
 */
 
-//import Foundation
-
 import Dispatch
 
 internal func split_thread(closure:()->()) {
