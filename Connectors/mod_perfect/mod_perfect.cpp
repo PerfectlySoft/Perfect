@@ -415,7 +415,7 @@ int perfect_handler(request_rec *r)
 {
 //	AP_LOG_FAIL_2("%s %s", "got request", r->handler);
 
-	if (strncmp(r->handler,"perfect", 10) != 0 && strcmp(r->handler, "application/x-httpd-perfect") != 0)
+	if (strncmp(r->handler,"perfect", 7) != 0 && strcmp(r->handler, "application/x-httpd-perfect") != 0)
 		return DECLINED;
 #ifdef WIN32
 	std::string matchHome,
