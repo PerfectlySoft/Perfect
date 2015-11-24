@@ -26,7 +26,6 @@
 
 import Dispatch
 import Darwin
-import Foundation
 
 /// Provides an asynchronous IO wrapper around a file descriptor.
 /// Fully realized for TCP socket types but can also serve as a base for sockets from other families, such as with `NetNamedPipe`/AF_UNIX.
@@ -141,10 +140,9 @@ public class NetTCP : Closeable {
 	}
 	
 	private func makeAddress(inout sin: sockaddr_in, host: String, port: UInt16) -> Int {
-		let hostStr = host.cStringUsingEncoding(NSUTF8StringEncoding)
-		let theHost: UnsafeMutablePointer<hostent> = gethostbyname(hostStr!)
+		let theHost: UnsafeMutablePointer<hostent> = gethostbyname(host)
 		if theHost == nil {
-			if inet_addr(hostStr!) == INADDR_NONE {
+			if inet_addr(host) == INADDR_NONE {
 				endhostent()
 				return -1
 			}
@@ -155,7 +153,7 @@ public class NetTCP : Closeable {
 		if theHost != nil {
 			sin.sin_addr.s_addr = UnsafeMutablePointer<UInt32>(theHost.memory.h_addr_list.memory).memory
 		} else {
-			sin.sin_addr.s_addr = inet_addr(hostStr!)
+			sin.sin_addr.s_addr = inet_addr(host)
 		}
 		endhostent()
 		return 0
