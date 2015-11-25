@@ -10,6 +10,7 @@
 		F88B067B1BDD4269001FD0CD /* libevent_pthreads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F88B06791BDD4269001FD0CD /* libevent_pthreads.a */; };
 		F88B067C1BDD4269001FD0CD /* libevent.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F88B067A1BDD4269001FD0CD /* libevent.a */; };
 		F88B06921BDE80F9001FD0CD /* MimeType.swift in Sources */ = {isa = PBXBuildFile; fileRef = F88B06911BDE80F9001FD0CD /* MimeType.swift */; };
+		F8A03D601C06035100FE7F2F /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E11BD5427000367249 /* File.swift */; };
 		F8E752EC1BDA956500BFC36A /* HTTPServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8E752EB1BDA956500BFC36A /* HTTPServer.swift */; };
 		F8F289C91BD53CF000367249 /* PerfectLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F289BE1BD53CF000367249 /* PerfectLib.framework */; };
 		F8F289CE1BD53CF000367249 /* PerfectLibTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289CD1BD53CF000367249 /* PerfectLibTests.swift */; };
@@ -494,6 +495,7 @@
 				F8F28A4C1BD566C000367249 /* Utilities.swift in Sources */,
 				F8F28A431BD5638B00367249 /* cURL.swift in Sources */,
 				F8F28A471BD563BB00367249 /* PerfectError.swift in Sources */,
+				F8A03D601C06035100FE7F2F /* File.swift in Sources */,
 				F8F28A501BD5733D00367249 /* Utilities-Client.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
