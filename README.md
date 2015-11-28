@@ -8,7 +8,6 @@
 [![Platforms OS X | iOS | tvos](https://img.shields.io/badge/Platforms-OS%20X%20%7C%20iOS-lightgray.svg?style=flat)](https://developer.apple.com/swift/)
 [![License AGPL](https://img.shields.io/badge/License-AGPL-blue.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![issues](https://img.shields.io/github/issues-raw/badges/shields.svg?style=flat)](https://github.com/PerfectlySoft/Perfect/issues)
-[![NPM Status](http://img.shields.io/npm/dm/react-toolbox.svg?style=flat)](https://www.npmjs.org/package/react-toolbox)
 [![doc](http://mrn.js.org/badge.svg)](http://mrn.js.org)
 [![Donate](https://img.shields.io/badge/donate-paypal-blue.svg?style=flat)](https://paypal.me/perfectlysoft/50)
 [![Twitter](https://img.shields.io/badge/twitter-@perfectlysoft-blue.svg?style=flat)](http://twitter.com/PerfectlySoft)
