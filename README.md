@@ -7,7 +7,7 @@
 [![Platforms OS X | iOS | tvos](https://img.shields.io/badge/Platforms-OS%20X%20%7C%20iOS-lightgray.svg?style=flat)](https://developer.apple.com/swift/)
 [![License AGPL](https://img.shields.io/badge/License-AGPL-lightgrey.svg?style=flat)](http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt)
 [![Docs](https://img.shields.io/badge/Docs-83%-lightgrey.svg?style=flat)](http://www.perfect.org/docs/)
-[![Docs](https://img.shields.io/github/issues-raw/PerfectlySoft/Perfect-lightgrey.svg?style=flat)](https://github.com/PerfectlySoft/Perfect/issues)
+[![Docs](https://img.shields.io/github/issues-raw/PerfectlySoft/Perfect.svg?style=flat)](https://github.com/PerfectlySoft/Perfect/issues)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg?style=flat)](https://paypal.me/perfectlysoft)
 [![Twitter](https://img.shields.io/badge/Twitter-@perfectlysoft-brightgreen.svg?style=flat)](http://twitter.com/PerfectlySoft)
 [![Join the chat at https://gitter.im/PerfectlySoft/Perfect](https://img.shields.io/badge/Gitter-Join%20Chat-brightgreen.svg)](https://gitter.im/PerfectlySoft/Perfect?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
