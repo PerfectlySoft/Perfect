@@ -6,12 +6,11 @@
 [![Platforms OS X | iOS | tvos](https://img.shields.io/badge/Platforms-OS%20X%20%7C%20iOS-lightgray.svg?style=flat)](https://developer.apple.com/swift/)
 [![License AGPL](https://img.shields.io/badge/License-AGPL-blue.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![issues](https://img.shields.io/github/issues-raw/badges/shields.svg?style=flat)](https://github.com/PerfectlySoft/Perfect/issues)
-DOCS
-TWITTER
 [![NPM Status](http://img.shields.io/npm/dm/react-toolbox.svg?style=flat-square)](https://www.npmjs.org/package/react-toolbox)
 [![doc](http://mrn.js.org/badge.svg)](http://mrn.js.org)
-[![Join the chat at https://gitter.im/PerfectlySoft/Perfect](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/PerfectlySoft/Perfect?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Donate](https://img.shields.io/badge/donate-paypal-blue.svg?style=flat-square)](https://paypal.me/perfectlysoft/50)
+[![Twitter](https://img.shields.io/badge/twitter-@perfectlysoft-blue.svg?style=flat-square)](http://twitter.com/PerfectlySoft)
+[![Join the chat at https://gitter.im/PerfectlySoft/Perfect](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/PerfectlySoft/Perfect?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Perfect is an application server which provides a framework for developing web and other REST services in the Swift programming language. Its primary focus is on facilitating mobile apps which require backend server software. It enables you to use one language for both front and back ends.
 
