@@ -1,6 +1,3 @@
-[![Get Involved](https://www.perfect.org/images/github-banner.jpg)](https://perfect.org/get-involved.html)
-
-# ![Perfect logo](https://www.perfect.org/images/icon_128x128.png) Perfect 
 [![Swift 2.0](https://img.shields.io/badge/Swift-2.0-orange.svg?style=flat)](https://developer.apple.com/swift/)
 [![Platforms OS X | iOS | tvos](https://img.shields.io/badge/Platforms-OS%20X%20%7C%20iOS-lightgray.svg?style=flat)](https://developer.apple.com/swift/)
 [![License AGPL](https://img.shields.io/badge/License-AGPL-blue.svg?style=flat)](http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt)
@@ -8,8 +5,10 @@
 [![Twitter](https://img.shields.io/badge/twitter-@perfectlysoft-blue.svg?style=flat)](http://twitter.com/PerfectlySoft)
 [![Join the chat at https://gitter.im/PerfectlySoft/Perfect](https://badges.gitter.im/Join%20Chat.svg?style=flat)](https://gitter.im/PerfectlySoft/Perfect?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+[![Get Involved](https://www.perfect.org/images/github-banner.jpg)](https://perfect.org/get-involved.html)
 
-
+# Perfect 
+![Perfect logo](https://www.perfect.org/images/icon_128x128.png) 
 
 
 Perfect is an application server which provides a framework for developing web and other REST services in the Swift programming language. Its primary focus is on facilitating mobile apps which require backend server software. It enables you to use one language for both front and back ends.
