@@ -8,6 +8,7 @@
 [![issues](https://img.shields.io/github/issues-raw/badges/shields.svg?style=flat)](https://github.com/PerfectlySoft/Perfect/issues)
 DOCS
 TWITTER
+[![NPM Status](http://img.shields.io/npm/dm/react-toolbox.svg?style=flat-square)](https://www.npmjs.org/package/react-toolbox)
 [![doc](http://mrn.js.org/badge.svg)](http://mrn.js.org)
 [![Join the chat at https://gitter.im/PerfectlySoft/Perfect](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/PerfectlySoft/Perfect?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
