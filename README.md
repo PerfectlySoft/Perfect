@@ -1,6 +1,7 @@
 [![Get Involved](https://www.perfect.org/images/github-banner.jpg)](https://perfect.org/get-involved.html)
 
-# Perfect [![Swift 2.0](https://img.shields.io/badge/Swift-2.0-orange.svg?style=flat)](https://developer.apple.com/swift/)
+# Perfect 
+[![Swift 2.0](https://img.shields.io/badge/Swift-2.0-orange.svg?style=flat)](https://developer.apple.com/swift/)
 [![Platforms OS X | iOS | tvos](https://img.shields.io/badge/Platforms-OS%20X%20%7C%20iOS-lightgray.svg?style=flat)](https://developer.apple.com/swift/)
 [![License AGPL](https://img.shields.io/badge/License-AGPL-blue.svg?style=flat)](http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt)
 [![Donate](https://img.shields.io/badge/donate-paypal-blue.svg?style=flat)](https://paypal.me/perfectlysoft)
