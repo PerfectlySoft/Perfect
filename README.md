@@ -6,7 +6,7 @@
 
 [![Swift 2.0](https://img.shields.io/badge/Swift-2.0-orange.svg?style=flat)](https://developer.apple.com/swift/)
 [![Platforms OS X | iOS | tvos](https://img.shields.io/badge/Platforms-OS%20X%20%7C%20iOS-lightgray.svg?style=flat)](https://developer.apple.com/swift/)
-[![License AGPL](https://img.shields.io/badge/License-AGPL-blue.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![License AGPL](https://img.shields.io/badge/License-AGPL-blue.svg?style=flat)](http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt)
 [![doc](http://mrn.js.org/badge.svg)](http://mrn.js.org)
 [![Donate](https://img.shields.io/badge/donate-paypal-blue.svg?style=flat)](https://paypal.me/perfectlysoft/50)
 [![Twitter](https://img.shields.io/badge/twitter-@perfectlysoft-blue.svg?style=flat)](http://twitter.com/PerfectlySoft)
