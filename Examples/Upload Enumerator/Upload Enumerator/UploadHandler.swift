@@ -70,7 +70,7 @@ class UploadHandler: PageHandler { // all template handlers must inherit from Pa
         let uploads = request.fileUploads
         // Create an array of dictionaries which will show what was uploaded
         // This array will be used in the corresponding moustache template
-        let itens:[[String:Any]] = uploads.map {
+        let files:[[String:Any]] = uploads.map {
             [
                 "fieldName": $0.fieldName,
                 "contentType": $0.contentType,
@@ -79,8 +79,8 @@ class UploadHandler: PageHandler { // all template handlers must inherit from Pa
                 "tmpFileName": $0.tmpFileName
             ]
         }
-        values["files"] = itens
-        values["count"] = itens.count
+        values["files"] = files
+        values["count"] = files.count
         
         // Grab the regular form parameters
         let params = request.params()
