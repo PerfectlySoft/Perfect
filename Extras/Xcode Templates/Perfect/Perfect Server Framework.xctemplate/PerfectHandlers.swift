@@ -14,7 +14,7 @@ import PerfectLib
 public func PerfectServerModuleInit() {
 	
 	// Register our handler class with the PageHandlerRegistry.
-	// The name "TTHandler", which we supply here, is used within a moustache template to associate the template with the handler.
+	// The name "TTHandler", which we supply here, is used within a mustache template to associate the template with the handler.
 	PageHandlerRegistry.addPageHandler("PerfectHandler") {
 		
 		// This closure is called in order to create the handler object.
@@ -28,15 +28,15 @@ public func PerfectServerModuleInit() {
 }
 
 // Handler class
-// When referenced in a moustache template, this class will be instantiated to handle the request
+// When referenced in a mustache template, this class will be instantiated to handle the request
 // and provide a set of values which will be used to complete the template.
 class PerfectHandler: PageHandler { // all template handlers must inherit from PageHandler
 	
 	// This is the function which all handlers must impliment.
 	// It is called by the system to allow the handler to return the set of values which will be used when populating the template.
-	// - parameter context: The MoustacheEvaluationContext which provides access to the WebRequest containing all the information pertaining to the request
-	// - parameter collector: The MoustacheEvaluationOutputCollector which can be used to adjust the template output. For example a `defaultEncodingFunc` could be installed to change how outgoing values are encoded.
-	func valuesForResponse(context: MoustacheEvaluationContext, collector: MoustacheEvaluationOutputCollector) throws -> MoustacheEvaluationContext.MapType {
+	// - parameter context: The MustacheEvaluationContext which provides access to the WebRequest containing all the information pertaining to the request
+	// - parameter collector: The MustacheEvaluationOutputCollector which can be used to adjust the template output. For example a `defaultEncodingFunc` could be installed to change how outgoing values are encoded.
+	func valuesForResponse(context: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) throws -> MustacheEvaluationContext.MapType {
 		
 		// The dictionary which we will return
 		var values = [String:Any]()

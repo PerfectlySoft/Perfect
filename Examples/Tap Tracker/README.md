@@ -20,28 +20,28 @@ Additionally, make sure to choose "Allow" when the app requests that you permit 
 ## Server Operations
 1. The server module consists of two relevent files:
 	* **TTHandlers.swift**, within which is the `PerfectServerModuleInit` function, which all Perfect Server modules must implement, and the `TTHandler` class, which implements the `PageHandler` protocol.
-	* **TapTracker.moustache**, which contains the template for the JSON based response data.
+	* **TapTracker.mustache**, which contains the template for the JSON based response data.
 2. When the **Tap Tracker Server** target is built in Xcode, it places the resulting product in a directory called **PerfectLibraries**. When the Perfect Server is launched, it will look in this directory, based on the current process working directory, and load all the modules it finds calling the `PerfectServerModuleInit` function in each.
 3. `PerfectServerModuleInit` adds a page handler called "TTHandler", associating with it a closure which will be called to create an instance of the handler on-demand when it is needed to fulfill a request. This closure simply returns a new `TTHandler` instance.
 4. In this example, the `PerfectServerModuleInit` function also creates a SQLite database for use in storing the button tap locations and times. It creates a very simple table storing the time, latitude and longitude of the users' button taps.
-5. When a request comes in targetting the **/TapTracker** (or **/TapTracker.moustache**) URL, the server will parse the moustache file and run any moustache pragmas contained therein. This particular moustache template associates itself with the previously registered "TTHandler" by containing the following pragma at the beginning of the file: ```{{% handler:TTHandler}}```
+5. When a request comes in targetting the **/TapTracker** (or **/TapTracker.mustache**) URL, the server will parse the mustache file and run any mustache pragmas contained therein. This particular mustache template associates itself with the previously registered "TTHandler" by containing the following pragma at the beginning of the file: ```{{% handler:TTHandler}}```
 6. The server will find "TTHandler" within its internal registry and instantiate the associated handler object; an instance of class `TTHandler`. (Note that the handler name and the class name do not have to match, although they do match for this particular example.)
-7. The server calls the handler's `valuesForResponse` function, which is part of the `PageHandler` protocol, passing to it the request's `MoustacheEvaluationContext` and `MoustacheEvaluationOutputCollector` objects which contain all the information pertaining to the request. The return value of the `valuesForResponse` function is a Dictionary object populated with the keys and values used when processing the moustache template. The result of the template processing is the resulting data which will be sent back to the client.
+7. The server calls the handler's `valuesForResponse` function, which is part of the `PageHandler` protocol, passing to it the request's `MustacheEvaluationContext` and `MustacheEvaluationOutputCollector` objects which contain all the information pertaining to the request. The return value of the `valuesForResponse` function is a Dictionary object populated with the keys and values used when processing the mustache template. The result of the template processing is the resulting data which will be sent back to the client.
 8. The `TTHandler` handler searches in the SQLite database for the previous button tap data and, if available, will use it as the response to the client. If there are no existing tap data rows, the current tap location data will be returned.
 9. The `TTHandler` handler pulls the POSTed `lat` and `long` values sent by the client and stores them, along with the current time, into the SQLite database.
-10. Finally, the `TTHandler` handler uses the previously retrieved `lat`, `long` and `time` values to populate the Dictionary which will be used when completing the moustache template. It does this by storing the values into a Dictionary and storing that Dictionary into an Array which is then placed into the returned Dictionary under the "resultSets" key. This particular methodology of storing the results Dictionary into an Array is more convoluted than is required for this simple example, but it illustrates how a multi-row result would be returned to the moustache template. This is further explored in the following.
+10. Finally, the `TTHandler` handler uses the previously retrieved `lat`, `long` and `time` values to populate the Dictionary which will be used when completing the mustache template. It does this by storing the values into a Dictionary and storing that Dictionary into an Array which is then placed into the returned Dictionary under the "resultSets" key. This particular methodology of storing the results Dictionary into an Array is more convoluted than is required for this simple example, but it illustrates how a multi-row result would be returned to the mustache template. This is further explored in the following.
 
-The content of the **TapTracker.moustache** file is as follows:
+The content of the **TapTracker.mustache** file is as follows:
 
 ```
 {{% handler:TTHandler}}{{!
 
-	This is the moustache template file for the tap tracker example.
+	This is the mustache template file for the tap tracker example.
 	
 }}{"resultSets":[{{#resultSets}}{"time":"{{time}}","lat":{{lat}},"long":{{long}} }{{^last}},{{/last}}{{/resultSets}}]}
 ```
 
-This template produces JSON data. The data is structured as an array of objects found under the "resultSets" key. Each object in the array has a "time", "lat" and "long" key. The final row (even though there is only one row in this example) in the array has a "last" key which permits the array of objects to be properly comma delimited whilst adhering to the "stateless" methodology of moustache templating.
+This template produces JSON data. The data is structured as an array of objects found under the "resultSets" key. Each object in the array has a "time", "lat" and "long" key. The final row (even though there is only one row in this example) in the array has a "last" key which permits the array of objects to be properly comma delimited whilst adhering to the "stateless" methodology of mustache templating.
 
 Inside the handler, the data is placed into the resulting dictionary using the following code:
 
@@ -54,4 +54,5 @@ values["resultSets"] = resultSets
 return values
 ``` 
 
-Above, one can see the server takes the raw time value and formats it as a string using the facilities provided by ICU. This, along with the lat and long values are placed in the dictionary which is used to complete the moustache template.
+Above, one can see the server takes the raw time value and formats it as a string using the facilities provided by ICU. This, along with the lat and long values are placed in the dictionary which is used to complete the mustache template.
+
