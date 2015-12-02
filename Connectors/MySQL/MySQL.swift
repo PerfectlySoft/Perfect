@@ -48,11 +48,11 @@ public enum MySQLOpt {
 		MYSQL_OPT_CAN_HANDLE_EXPIRED_PASSWORDS
 }
 
-public class MySQL {
+public final class MySQL {
 	
-	static var dispatchOnce: dispatch_once_t = 0
+	static private var dispatchOnce: dispatch_once_t = 0
 	
-	var ptr: UnsafeMutablePointer<MYSQL>
+	private var ptr: UnsafeMutablePointer<MYSQL>
 	
 	public static func clientInfo() -> String {
 		return String.fromCString(mysql_get_client_info()) ?? ""
@@ -309,7 +309,7 @@ public class MySQL {
 		return b
 	}
 	
-	public class Results: GeneratorType {
+	public final class Results: GeneratorType {
 		var ptr: UnsafeMutablePointer<MYSQL_RES>
 		
 		public typealias Element = [String]
@@ -381,10 +381,10 @@ public class MySQL {
 	}
 }
 
-public class MySQLStmt {
-	var ptr: UnsafeMutablePointer<MYSQL_STMT>
-	var paramBinds = UnsafeMutablePointer<MYSQL_BIND>()
-	var paramBindsOffset = 0
+public final class MySQLStmt {
+	private var ptr: UnsafeMutablePointer<MYSQL_STMT>
+	private var paramBinds = UnsafeMutablePointer<MYSQL_BIND>()
+	private var paramBindsOffset = 0
 	
 	public enum FetchResult {
 		case OK, Error, NoData, DataTruncated
@@ -605,7 +605,7 @@ public class MySQLStmt {
 		return true
 	}
 	
-	public class Results: GeneratorType {
+	public final class Results: GeneratorType {
 		public typealias Element = [Any?]
 		
 		let stmt: MySQLStmt
