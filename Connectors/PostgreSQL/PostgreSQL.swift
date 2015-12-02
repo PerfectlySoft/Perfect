@@ -26,7 +26,7 @@
 
 import libpq
 
-public class PGResult {
+public final class PGResult {
 	
 	public enum StatusType {
 		case EmptyQuery
@@ -174,7 +174,7 @@ public class PGResult {
 	}
 }
 
-public class PGConnection {
+public final class PGConnection {
 	
 	public enum StatusType {
 		case OK
