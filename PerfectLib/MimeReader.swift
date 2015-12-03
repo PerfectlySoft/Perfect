@@ -24,7 +24,6 @@
 //
 
 import Foundation
-import Darwin
 
 enum MimeReadState {
 	case StateNone

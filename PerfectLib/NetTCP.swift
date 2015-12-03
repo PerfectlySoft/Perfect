@@ -24,8 +24,7 @@
 //
 
 
-import Dispatch
-import Darwin
+import Foundation
 
 /// Provides an asynchronous IO wrapper around a file descriptor.
 /// Fully realized for TCP socket types but can also serve as a base for sockets from other families, such as with `NetNamedPipe`/AF_UNIX.

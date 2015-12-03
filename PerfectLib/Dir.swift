@@ -24,7 +24,7 @@
 //
 
 
-import Darwin
+import Foundation
 
 /// This class represents a directory on the file system. 
 /// It can be used for creating & inspecting directories and enumerating directory contents.

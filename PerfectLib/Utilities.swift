@@ -53,7 +53,7 @@ dispatch_barrier_async(_queue, ^{
 
 */
 
-import Dispatch
+import Foundation
 
 internal func split_thread(closure:()->()) {
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), closure)

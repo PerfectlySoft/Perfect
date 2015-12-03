@@ -24,7 +24,7 @@
 //
 
 
-import Darwin
+import Foundation
 
 /// This sub-class of NetTCP handles networking over an AF_UNIX named pipe connection.
 public class NetNamedPipe : NetTCP {

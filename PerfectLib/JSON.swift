@@ -23,7 +23,7 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
-import Darwin
+import Foundation
 
 let jsonOpenObject = UnicodeScalar(UInt32(123))
 let jsonOpenArray = UnicodeScalar(UInt32(91))

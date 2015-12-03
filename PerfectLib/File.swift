@@ -24,7 +24,7 @@
 //
 
 
-import Darwin
+import Foundation
 
 let fileCopyBufferSize = 16384
 
