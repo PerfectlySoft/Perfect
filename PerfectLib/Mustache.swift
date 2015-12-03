@@ -702,8 +702,8 @@ public class MustacheParser {
 	// reads until closing delimiters
 	// read and discard closing delimiters leaving us things at .Plain
 	func consumeTagName() -> String {
-		let s = ""
-		return consumeTagName(s)
+		var s = ""
+		return consumeTagName(&s)
 	}
 	
 	// reads until closing delimiters
@@ -714,11 +714,11 @@ public class MustacheParser {
 			return ""
 		}
 		
-		let s = String(f)
-		return consumeTagName(s)
+		var s = String(f)
+		return consumeTagName(&s)
 	}
 	
-	func consumeTagName(var s: String) -> String {
+	func consumeTagName(inout s: String) -> String {
 		
 		while let e = next() {
 			
