@@ -271,18 +271,8 @@ public class SessionManager {
 	
 	/// Generate a presumably unique session id
 	static public func generateSessionKey() -> String {
-		let u = UnsafeMutablePointer<UInt8>.alloc(sizeof(uuid_t))
-		let unu = UnsafeMutablePointer<Int8>.alloc(37) // as per spec. 36 + null
 		
-		defer {
-			u.destroy() ; u.dealloc(sizeof(uuid_t))
-			unu.destroy() ; unu.dealloc(37)
-		}
-		
-		uuid_generate_random(u)
-		uuid_unparse(u, unu)
-		
-		return String.fromCString(unu)!
+		return NSUUID().UUIDString
 	}
 }
 

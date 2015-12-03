@@ -23,36 +23,6 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
-
-/*
-read/write lock cache code
-This can easily be done using a custom concurrent queue and barriers. First, we'll create the dictionary and the queue:
-
-_cache = [[NSMutableDictionary alloc] init];
-_queue = dispatch_queue_create("com.mikeash.cachequeue", DISPATCH_QUEUE_CONCURRENT);
-To read from the cache, we can just use a dispatch_sync:
-
-- (id)cacheObjectForKey: (id)key
-{
-__block obj;
-dispatch_sync(_queue, ^{
-obj = [[_cache objectForKey: key] retain];
-});
-return [obj autorelease];
-}
-Because the queue is concurrent, this allows for concurrent access to the cache, and therefore no contention between multiple threads in the common case.
-
-To write to the cache, we need a barrier:
-
-- (void)setCacheObject: (id)obj forKey: (id)key
-{
-dispatch_barrier_async(_queue, ^{
-[_cache setObject: obj forKey: key];
-});
-}
-
-*/
-
 import Foundation
 
 internal func split_thread(closure:()->()) {
@@ -202,32 +172,6 @@ extension String {
 }
 
 extension String {
-	/// Parse uuid string
-	/// Results are undefined if the string is not a valid UUID
-	public func asUUID() -> uuid_t {
-		let u = UnsafeMutablePointer<UInt8>.alloc(sizeof(uuid_t))
-		defer {
-			u.destroy() ; u.dealloc(sizeof(uuid_t))
-		}
-		uuid_parse(self, u)
-		return uuid_t(u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15])
-	}
-	
-	/// Unparse a uuid_t into the String representation.
-	public static func fromUUID(uuid: uuid_t) -> String {
-		let u = UnsafeMutablePointer<UInt8>.alloc(sizeof(uuid_t))
-		let unu = UnsafeMutablePointer<Int8>.alloc(37) // as per spec. 36 + null
-		
-		defer {
-			u.destroy() ; u.dealloc(sizeof(uuid_t))
-			unu.destroy() ; unu.dealloc(37)
-		}
-		u[0] = uuid.0;u[1] = uuid.1;u[2] = uuid.2;u[3] = uuid.3;u[4] = uuid.4;u[5] = uuid.5;u[6] = uuid.6;u[7] = uuid.7
-		u[8] = uuid.8;u[9] = uuid.9;u[10] = uuid.10;u[11] = uuid.11;u[12] = uuid.12;u[13] = uuid.13;u[14] = uuid.14;u[15] = uuid.15
-		uuid_unparse_lower(u, unu)
-		
-		return String.fromCString(unu)!
-	}
 	
 	/// Parse an HTTP Digest authentication header returning a Dictionary containing each part.
 	public func parseAuthentication() -> [String:String] {
@@ -274,22 +218,6 @@ extension String {
 		}
 		return ret
 	}
-}
-
-/// Returns a blank uuid_t
-public func empty_uuid() -> uuid_t {
-	return uuid_t(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-}
-
-/// Generate a random uuid_t
-public func random_uuid() -> uuid_t {
-	let u = UnsafeMutablePointer<UInt8>.alloc(sizeof(uuid_t))
-	defer {
-		u.destroy() ; u.dealloc(sizeof(uuid_t))
-	}
-	uuid_generate_random(u)
-	// is there a better way?
-	return uuid_t(u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15])
 }
 
 extension String {

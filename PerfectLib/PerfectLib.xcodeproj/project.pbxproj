@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F82AADE81C0E2CBB00749854 /* RWLockCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F82AADE71C0E2CBB00749854 /* RWLockCache.swift */; };
 		F88B067B1BDD4269001FD0CD /* libevent_pthreads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F88B06791BDD4269001FD0CD /* libevent_pthreads.a */; };
 		F88B067C1BDD4269001FD0CD /* libevent.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F88B067A1BDD4269001FD0CD /* libevent.a */; };
 		F88B06921BDE80F9001FD0CD /* MimeType.swift in Sources */ = {isa = PBXBuildFile; fileRef = F88B06911BDE80F9001FD0CD /* MimeType.swift */; };
@@ -14,7 +15,6 @@
 		F8E752EC1BDA956500BFC36A /* HTTPServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8E752EB1BDA956500BFC36A /* HTTPServer.swift */; };
 		F8F289C91BD53CF000367249 /* PerfectLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F289BE1BD53CF000367249 /* PerfectLib.framework */; };
 		F8F289CE1BD53CF000367249 /* PerfectLibTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289CD1BD53CF000367249 /* PerfectLibTests.swift */; };
-		F8F289F91BD5427000367249 /* AJAXObjectDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289D91BD5427000367249 /* AJAXObjectDriver.swift */; };
 		F8F289FA1BD5427000367249 /* Bytes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DA1BD5427000367249 /* Bytes.swift */; };
 		F8F289FB1BD5427000367249 /* Closeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DB1BD5427000367249 /* Closeable.swift */; };
 		F8F289FC1BD5427000367249 /* cURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DC1BD5427000367249 /* cURL.swift */; };
@@ -26,8 +26,6 @@
 		F8F28A021BD5427000367249 /* ICU.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E21BD5427000367249 /* ICU.swift */; };
 		F8F28A031BD5427000367249 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E31BD5427000367249 /* JSON.swift */; };
 		F8F28A041BD5427000367249 /* PerfectError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E41BD5427000367249 /* PerfectError.swift */; };
-		F8F28A051BD5427000367249 /* PerfectObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E51BD5427000367249 /* PerfectObject.swift */; };
-		F8F28A061BD5427000367249 /* PerfectObjectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E61BD5427000367249 /* PerfectObjectHandler.swift */; };
 		F8F28A071BD5427000367249 /* PerfectServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E71BD5427000367249 /* PerfectServer.swift */; };
 		F8F28A081BD5427000367249 /* LibEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E81BD5427000367249 /* LibEvent.swift */; };
 		F8F28A091BD5427000367249 /* LogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E91BD5427000367249 /* LogManager.swift */; };
@@ -52,11 +50,9 @@
 		F8F28A2B1BD5545000367249 /* curl_support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8F28A2A1BD5545000367249 /* curl_support.cpp */; };
 		F8F28A3B1BD5633100367249 /* PerfectLib.h in Headers */ = {isa = PBXBuildFile; fileRef = F8F28A3A1BD5633100367249 /* PerfectLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F8F28A401BD5636F00367249 /* Closeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DB1BD5427000367249 /* Closeable.swift */; };
-		F8F28A411BD5637D00367249 /* PerfectObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E51BD5427000367249 /* PerfectObject.swift */; };
 		F8F28A421BD5638500367249 /* Bytes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DA1BD5427000367249 /* Bytes.swift */; };
 		F8F28A431BD5638B00367249 /* cURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DC1BD5427000367249 /* cURL.swift */; };
 		F8F28A441BD5639400367249 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E31BD5427000367249 /* JSON.swift */; };
-		F8F28A451BD563AC00367249 /* AJAXObjectDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289D91BD5427000367249 /* AJAXObjectDriver.swift */; };
 		F8F28A461BD563B300367249 /* curl_support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8F28A2A1BD5545000367249 /* curl_support.cpp */; };
 		F8F28A471BD563BB00367249 /* PerfectError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E41BD5427000367249 /* PerfectError.swift */; };
 		F8F28A491BD563E500367249 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A481BD563E500367249 /* libz.tbd */; };
@@ -81,6 +77,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F82AADE71C0E2CBB00749854 /* RWLockCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RWLockCache.swift; sourceTree = "<group>"; };
 		F88B06791BDD4269001FD0CD /* libevent_pthreads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libevent_pthreads.a; path = linked/LibEvent/osx/libevent_pthreads.a; sourceTree = "<group>"; };
 		F88B067A1BDD4269001FD0CD /* libevent.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libevent.a; path = linked/LibEvent/osx/libevent.a; sourceTree = "<group>"; };
 		F88B06911BDE80F9001FD0CD /* MimeType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MimeType.swift; sourceTree = "<group>"; };
@@ -91,7 +88,6 @@
 		F8F289C81BD53CF000367249 /* PerfectLibOSXTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PerfectLibOSXTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8F289CD1BD53CF000367249 /* PerfectLibTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerfectLibTests.swift; sourceTree = "<group>"; };
 		F8F289CF1BD53CF000367249 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F8F289D91BD5427000367249 /* AJAXObjectDriver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AJAXObjectDriver.swift; sourceTree = "<group>"; };
 		F8F289DA1BD5427000367249 /* Bytes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bytes.swift; sourceTree = "<group>"; };
 		F8F289DB1BD5427000367249 /* Closeable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Closeable.swift; sourceTree = "<group>"; };
 		F8F289DC1BD5427000367249 /* cURL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = cURL.swift; sourceTree = "<group>"; };
@@ -103,8 +99,6 @@
 		F8F289E21BD5427000367249 /* ICU.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ICU.swift; sourceTree = "<group>"; };
 		F8F289E31BD5427000367249 /* JSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
 		F8F289E41BD5427000367249 /* PerfectError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PerfectError.swift; sourceTree = "<group>"; };
-		F8F289E51BD5427000367249 /* PerfectObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PerfectObject.swift; sourceTree = "<group>"; };
-		F8F289E61BD5427000367249 /* PerfectObjectHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PerfectObjectHandler.swift; sourceTree = "<group>"; };
 		F8F289E71BD5427000367249 /* PerfectServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PerfectServer.swift; sourceTree = "<group>"; };
 		F8F289E81BD5427000367249 /* LibEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibEvent.swift; sourceTree = "<group>"; };
 		F8F289E91BD5427000367249 /* LogManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogManager.swift; sourceTree = "<group>"; };
@@ -222,7 +216,6 @@
 		F8F289D81BD53EC800367249 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				F8F289D91BD5427000367249 /* AJAXObjectDriver.swift */,
 				F8F289DA1BD5427000367249 /* Bytes.swift */,
 				F8F289DB1BD5427000367249 /* Closeable.swift */,
 				F8F289DC1BD5427000367249 /* cURL.swift */,
@@ -235,8 +228,6 @@
 				F8F289E21BD5427000367249 /* ICU.swift */,
 				F8F289E31BD5427000367249 /* JSON.swift */,
 				F8F289E41BD5427000367249 /* PerfectError.swift */,
-				F8F289E51BD5427000367249 /* PerfectObject.swift */,
-				F8F289E61BD5427000367249 /* PerfectObjectHandler.swift */,
 				F8F289E71BD5427000367249 /* PerfectServer.swift */,
 				F8F289E81BD5427000367249 /* LibEvent.swift */,
 				F8F289E91BD5427000367249 /* LogManager.swift */,
@@ -256,6 +247,7 @@
 				F8F289F81BD5427000367249 /* WebResponse.swift */,
 				F8F28A4D1BD5720400367249 /* Utilities-Server.swift */,
 				F88B06911BDE80F9001FD0CD /* MimeType.swift */,
+				F82AADE71C0E2CBB00749854 /* RWLockCache.swift */,
 				F8F289F41BD5427000367249 /* util.c */,
 				F8F28A2A1BD5545000367249 /* curl_support.cpp */,
 			);
@@ -446,11 +438,10 @@
 				F8F28A031BD5427000367249 /* JSON.swift in Sources */,
 				F8F28A2B1BD5545000367249 /* curl_support.cpp in Sources */,
 				F8F289FF1BD5427000367249 /* FastCGI.swift in Sources */,
+				F82AADE81C0E2CBB00749854 /* RWLockCache.swift in Sources */,
 				F8F28A101BD5427000367249 /* PageHandler.swift in Sources */,
 				F8F28A141BD5427000367249 /* util.c in Sources */,
 				F8F28A0A1BD5427000367249 /* MimeReader.swift in Sources */,
-				F8F289F91BD5427000367249 /* AJAXObjectDriver.swift in Sources */,
-				F8F28A061BD5427000367249 /* PerfectObjectHandler.swift in Sources */,
 				F8F28A151BD5427000367249 /* Utilities.swift in Sources */,
 				F8F28A021BD5427000367249 /* ICU.swift in Sources */,
 				F8F28A0E1BD5427000367249 /* NetTCP.swift in Sources */,
@@ -470,7 +461,6 @@
 				F8F28A001BD5427000367249 /* FastCGIServer.swift in Sources */,
 				F8F28A011BD5427000367249 /* File.swift in Sources */,
 				F8F289FC1BD5427000367249 /* cURL.swift in Sources */,
-				F8F28A051BD5427000367249 /* PerfectObject.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -488,10 +478,8 @@
 			files = (
 				F8F28A401BD5636F00367249 /* Closeable.swift in Sources */,
 				F8F28A441BD5639400367249 /* JSON.swift in Sources */,
-				F8F28A451BD563AC00367249 /* AJAXObjectDriver.swift in Sources */,
 				F8F28A461BD563B300367249 /* curl_support.cpp in Sources */,
 				F8F28A421BD5638500367249 /* Bytes.swift in Sources */,
-				F8F28A411BD5637D00367249 /* PerfectObject.swift in Sources */,
 				F8F28A4C1BD566C000367249 /* Utilities.swift in Sources */,
 				F8F28A431BD5638B00367249 /* cURL.swift in Sources */,
 				F8F28A471BD563BB00367249 /* PerfectError.swift in Sources */,

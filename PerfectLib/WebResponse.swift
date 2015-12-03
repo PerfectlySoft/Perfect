@@ -35,6 +35,18 @@ public class Cookie {
 	var httpOnly: Bool?
 }
 
+class MustacheCacheItem {
+	let modificationDate: Int
+	let template: MustacheTemplate
+	
+	init(modificationDate: Int, template: MustacheTemplate) {
+		self.modificationDate = modificationDate
+		self.template = template
+	}
+}
+
+let mustacheTemplateCache = RWLockCache<String, MustacheCacheItem>()
+
 /// Represents an outgoing web response. Handles the following tasks:
 /// - Management of sessions
 /// - Collecting HTTP response headers & cookies.
@@ -177,6 +189,7 @@ public class WebResponse {
 		
 		do {
 		
+//			try includeCached(request.pathInfo())
 			try include(request.pathInfo())
 			
 		} catch PerfectError.FileError(let code, let msg) {
@@ -215,6 +228,59 @@ public class WebResponse {
 			} catch let e {
 				LogManager.logMessage("Exception while committing session \(name) \(e)")
 			}
+		}
+	}
+	
+	// WARNING NOTE Using the RWLockCache, even just for read access seems to bring out some sort of bug in the 
+	// ARC system. Therefore, this function is not currently called.
+	// !FIX! track this problem down
+	func includeCached(path: String, local: Bool = false) throws {
+		
+		if !path.hasSuffix("."+mustacheExtension) {
+			throw PerfectError.FileError(404, "The file \(path) was not a mustache template file")
+		}
+		
+		var fullPath = path
+		if !path.hasPrefix("/") {
+			fullPath = makeNonRelative(path, local: local)
+		}
+		fullPath = request.documentRoot + fullPath
+		
+		do {
+			let file = File(fullPath)
+			guard file.exists() else {
+				throw PerfectError.FileError(404, "Not Found")
+			}
+			let diskModTime = file.modificationTime()
+			var cacheItem = mustacheTemplateCache.valueForKey(fullPath)//, validatorCallback: { (value) -> Bool in
+//				return diskModTime == value.modificationDate
+//			})
+			
+			if cacheItem == nil {
+				print("REPLACING")
+				try file.openRead()
+				defer { file.close() }
+				let bytes = try file.readSomeBytes(file.size())
+				
+				let parser = MustacheParser()
+				let str = UTF8Encoding.encode(bytes)
+				let template = try parser.parse(str)
+				cacheItem = MustacheCacheItem(modificationDate: diskModTime, template: template)
+				mustacheTemplateCache.setValueForKey(fullPath, value: cacheItem!)
+			}
+			
+			let template = cacheItem!.template
+			let context = MustacheEvaluationContext(webResponse: self)
+			context.filePath = fullPath
+			
+			let collector = MustacheEvaluationOutputCollector()
+			template.templateName = path
+			
+			try template.evaluatePragmas(context, collector: collector)
+			template.evaluate(context, collector: collector)
+			
+			let fullString = collector.asString()
+			self.bodyData += Array(fullString.utf8)
 		}
 	}
 	
@@ -257,7 +323,6 @@ public class WebResponse {
 			template.evaluate(context, collector: collector)
 			
 			let fullString = collector.asString()
-//			print(fullString)
 			self.bodyData += Array(fullString.utf8)
 		}
 	}
