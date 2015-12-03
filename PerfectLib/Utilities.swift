@@ -58,7 +58,7 @@ public struct GenerateFromPointer<T> : GeneratorType {
 public class Encoding {
 	
 	/// Return a String given a character generator.
-	public static func encode<D : UnicodeCodecType, G : GeneratorType where G.Element == D.CodeUnit>(let decoder : D, let generator: G) -> String {
+	public static func encode<D : UnicodeCodecType, G : GeneratorType where G.Element == D.CodeUnit>(decoder : D, generator: G) -> String {
 		var encodedString = ""
 		var finished: Bool = false
 		var mutableDecoder = decoder
