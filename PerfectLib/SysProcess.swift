@@ -24,7 +24,7 @@
 //
 
 
-import Darwin
+import Foundation
 
 /// This class permits an external process to be launched given a set of command line arguments and environment variables.
 /// The standard in, out and err file streams are made available. The process can be terminated or permitted to be run to completion.

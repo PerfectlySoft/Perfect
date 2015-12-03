@@ -24,7 +24,7 @@
 //
 
 import OpenSSL
-import Dispatch
+import Foundation
 
 public class NetTCPSSL : NetTCP {
 	

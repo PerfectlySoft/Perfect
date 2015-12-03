@@ -24,7 +24,7 @@
 //
 
 
-import Dispatch
+import Foundation
 import LibEvent
 
 // I'm unsure why these aren't coming through
