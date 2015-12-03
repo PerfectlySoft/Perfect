@@ -8,10 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		F87A61781BD57FED0062FF2B /* PerfectLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F87A61771BD57FED0062FF2B /* PerfectLib.framework */; };
-		F8F28A791BD57D8A00367249 /* PostgreSQL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A6E1BD57D8900367249 /* PostgreSQL.framework */; settings = {ASSET_TAGS = (); }; };
+		F8F28A791BD57D8A00367249 /* PostgreSQL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A6E1BD57D8900367249 /* PostgreSQL.framework */; };
 		F8F28A7E1BD57D8A00367249 /* PostgreSQLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F28A7D1BD57D8A00367249 /* PostgreSQLTests.swift */; };
-		F8F28A8A1BD57E2200367249 /* PostgreSQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F28A891BD57E2200367249 /* PostgreSQL.swift */; settings = {ASSET_TAGS = (); }; };
-		F8F28A8C1BD57E4000367249 /* PGLassoObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F28A8B1BD57E4000367249 /* PGLassoObject.swift */; settings = {ASSET_TAGS = (); }; };
+		F8F28A8A1BD57E2200367249 /* PostgreSQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F28A891BD57E2200367249 /* PostgreSQL.swift */; };
 		F8F28A8E1BD57E7800367249 /* libpq.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A8D1BD57E7800367249 /* libpq.a */; };
 		F8F28A911BD57EEC00367249 /* libgssapi_krb5.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A901BD57EEC00367249 /* libgssapi_krb5.tbd */; };
 		F8F28A931BD57EF600367249 /* libldap.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A921BD57EF600367249 /* libldap.tbd */; };
@@ -238,7 +237,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F8F28A8C1BD57E4000367249 /* PGLassoObject.swift in Sources */,
 				F8F28A8A1BD57E2200367249 /* PostgreSQL.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -24,6 +24,7 @@
 //
 
 import PerfectLib
+import Foundation
 
 // Handler class
 // When referenced in a mustache template, this class will be instantiated to handle the request
@@ -71,7 +72,7 @@ class AuthenticatingHandler: PageHandler {
 			
 			if self.authenticatedUser == nil {
 				
-				let nonce = String.fromUUID(random_uuid())
+				let nonce = NSUUID().UUIDString
 				let headerValue = "Digest realm=\"\(AUTH_REALM)\", qop=\"auth\", nonce=\"\(nonce)\", uri=\"\(request.requestURI())\", algorithm=\"md5\""
 								
 				response.setStatus(401, message: "Unauthorized")

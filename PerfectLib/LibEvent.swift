@@ -43,7 +43,6 @@ class LibEvent {
 	
 	internal static let eventBase: LibEventBase = LibEventBase()
 	
-	
 	private var event: COpaquePointer? = nil
 	private var userData: AnyObject?
 	private var cb: EventCallBack?
@@ -78,7 +77,7 @@ class LibEvent {
 		self.userData = userData
 		self.cb = callBack
 		self.base = base
-		event = event_new(base.eventBase, fd, Int16(what), LibEvent.eventCallBack, UnsafeMutablePointer(Unmanaged.passRetained(self).toOpaque()))
+		self.event = event_new(base.eventBase, fd, Int16(what), LibEvent.eventCallBack, UnsafeMutablePointer(Unmanaged.passRetained(self).toOpaque()))
 	}
 	
 	deinit {

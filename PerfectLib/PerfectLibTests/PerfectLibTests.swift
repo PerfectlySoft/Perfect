@@ -650,6 +650,36 @@ class PerfectLibTests: XCTestCase {
 		let path = "/tmp/".stringByResolvingSymlinksInPath
 		XCTAssert(path == "/private/tmp")
 	}
+	
+	func testRWLockCache() {
+		
+		let cache = RWLockCache<String, String>()
+		let queue = dispatch_queue_create("Test Queue", DISPATCH_QUEUE_CONCURRENT)
+		let threadCount = 10
+		
+		for i in 0..<threadCount {
+			
+			let threadId = "Thread \(i)"
+			let clientExpectation = self.expectationWithDescription(threadId)
+			
+			dispatch_async(queue) {
+				
+				cache.setValueForKey("thekey", value: threadId)
+				
+				let value = cache.valueForKey("thekey")
+				
+				print("\(threadId) got value \(value)")
+				
+				clientExpectation.fulfill()
+			}
+		}
+		
+		self.waitForExpectationsWithTimeout(10000) {
+			(_: NSError?) in
+			
+			XCTAssert(true)
+		}
+	}
 }
 
 
