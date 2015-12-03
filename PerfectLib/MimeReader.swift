@@ -197,7 +197,7 @@ public class MimeReader {
 		return accum
 	}
 	
-	func internalAddToBuffer(inout bytes: [UInt8]) -> MimeReadState {
+	func internalAddToBuffer(bytes: [UInt8]) -> MimeReadState {
 		
 		var clearBuffer = true
 		var position = bytes.startIndex
@@ -410,14 +410,14 @@ public class MimeReader {
 	
 	/// Add data to be parsed.
 	/// - parameter bytes: The array of UInt8 to be parsed.
-	public func addToBuffer(var bytes: [UInt8]) {
+	public func addToBuffer(bytes: [UInt8]) {
 		if isMultiPart() {
 			
 			if self.buffer.count != 0 {
 				self.buffer.appendContentsOf(bytes)
-				internalAddToBuffer(&self.buffer)
+				internalAddToBuffer(self.buffer)
 			} else {
-				internalAddToBuffer(&bytes)
+				internalAddToBuffer(bytes)
 			}
 		} else {
 			self.buffer.appendContentsOf(bytes)
