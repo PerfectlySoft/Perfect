@@ -1,5 +1,3 @@
-[![Get Involved](https://www.perfect.org/images/github-banner.jpg)](https://perfect.org/get-involved.html)
-
 # Perfect 
 ![Perfect logo](https://www.perfect.org/images/icon_128x128.png) 
 
