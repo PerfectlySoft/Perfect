@@ -498,6 +498,23 @@ class PerfectLibTests: XCTestCase {
 		XCTAssertEqual(res, "This%20has%20%22weird%22%20characters%20&%20%C3%9Ftuff")
 	}
 	
+	func testStringByDecodingURL() {
+		let src = "This has \"weird\" characters & ßtuff"
+		let mid = src.stringByEncodingURL
+		guard let res = mid.stringByDecodingURL else {
+			XCTAssert(false, "Got nil String")
+			return
+		}
+		XCTAssert(res == src, "Bad URL decoding")
+	}
+	
+	func testStringByDecodingURL2() {
+		let src = "This is badly%PWencoded"
+		let res = src.stringByDecodingURL
+		
+		XCTAssert(res == nil, "Bad URL decoding")
+	}
+	
 	func testICUFormatDate() {
 		let dateThen = 0.0
 		let formatStr = "E, dd-MMM-yyyy HH:mm:ss 'GMT'"
