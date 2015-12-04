@@ -348,7 +348,7 @@ public class File : Closeable {
 		guard statRes != -1 else {
 			return 0
 		}
-		if (Int32(st.st_mode) & S_IFMT) == S_IFREG {
+		if (Int32(st.st_mode) & Int32(S_IFMT)) == Int32(S_IFREG) {
 			return Int(st.st_size)
 		}
 		return value
@@ -377,7 +377,7 @@ public class File : Closeable {
 			return false
 		}
 		let mode = st.st_mode
-		return (Int32(mode) & S_IFMT) == S_IFLNK
+		return (Int32(mode) & Int32(S_IFMT)) == Int32(S_IFLNK)
 	}
 	
 	/// Returns true if the file is actually a directory
@@ -508,7 +508,7 @@ public class File : Closeable {
 			try openWrite()
 		}
 		let res = Int(lockf(Int32(self.fd), F_TEST, off_t(byteCount)))
-		guard res == 0 || res == EACCES || res == EAGAIN else {
+		guard res == 0 || res == Int(EACCES) || res == Int(EAGAIN) else {
 			try ThrowFileError()
 		}
 		return res != 0
