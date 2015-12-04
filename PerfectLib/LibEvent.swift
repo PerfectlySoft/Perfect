@@ -100,7 +100,11 @@ class LibEvent {
 			let i = floor(timeout)
 			let f = timeout - i
 			tv.tv_sec = Int(i)
+#if os(Linux)
 			tv.tv_usec = Int(f * 100000)
+#else
+			tv.tv_usec = Int32(f * 100000)
+#endif
 			event_add(event!, &tv)
 		}
 	}
