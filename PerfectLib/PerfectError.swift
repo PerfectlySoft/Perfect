@@ -24,6 +24,13 @@
 //
 
 import Foundation
+#if os(Linux)
+import LinuxBridge
+
+var errno: Int {
+	return linux_errno()
+}
+#endif
 
 /// Some but not all of the exception types which may be thrown by the system
 public enum PerfectError : ErrorType {
