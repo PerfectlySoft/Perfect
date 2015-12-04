@@ -233,7 +233,7 @@ extension String {
 	/// Parse an HTTP Digest authentication header returning a Dictionary containing each part.
 	public func parseAuthentication() -> [String:String] {
 		var ret = [String:String]()
-		if let _ = self.rangeOfString("Digest ") {
+		if let _ = self.rangeOf("Digest ") {
 			ret["type"] = "Digest"
 			let wantFields = ["username", "nonce", "nc", "cnonce", "response", "uri", "realm", "qop", "algorithm"]
 			for field in wantFields {
@@ -246,7 +246,7 @@ extension String {
 	}
 	
 	private static func extractField(from: String, named: String) -> String? {
-		guard let range = from.rangeOfString(named + "=") else {
+		guard let range = from.rangeOf(named + "=") else {
 			return nil
 		}
 		
@@ -314,6 +314,54 @@ extension String {
 		}
 		
 		return ret
+	}
+	
+	func substringTo(index: String.Index) -> String {
+		var s = ""
+		var idx = self.startIndex
+		let endIdx = self.endIndex
+		while idx != endIdx && idx != index {
+			s.append(self[idx])
+			idx = idx.successor()
+		}
+		return s
+	}
+	
+	func substringWith(range: Range<String.Index>) -> String {
+		var s = ""
+		var idx = range.startIndex
+		let endIdx = self.endIndex
+		
+		while idx < endIdx && idx < range.endIndex {
+			s.append(self[idx])
+			idx = idx.successor()
+		}
+		
+		return s
+	}
+	
+	func rangeOf(string: String, ignoreCase: Bool = false) -> Range<String.Index>? {
+		var idx = self.startIndex
+		let endIdx = self.endIndex
+		
+		while idx != endIdx {
+			if ignoreCase ? (String(self[idx]).lowercaseString == String(string[string.startIndex]).lowercaseString) : (self[idx] == string[string.startIndex]) {
+				var newIdx = idx.advancedBy(1)
+				var findIdx = string.startIndex.advancedBy(1)
+				let findEndIdx = string.endIndex
+				
+				while newIdx != endIndex && findIdx != findEndIdx && (ignoreCase ? (String(self[newIdx]).lowercaseString == String(string[findIdx]).lowercaseString) : (self[newIdx] == string[findIdx])) {
+					newIdx = newIdx.advancedBy(1)
+					findIdx = findIdx.advancedBy(1)
+				}
+				
+				if findIdx == findEndIdx { // match
+					return Range(start: idx, end: newIdx)
+				}
+			}
+			idx = idx.advancedBy(1)
+		}
+		return nil
 	}
 }
 
@@ -411,9 +459,9 @@ extension String {
 			if noTrailsIndex == startIndex {
 				return self
 			}
-			return self.substringToIndex(noTrailsIndex)
+			return self.substringTo(noTrailsIndex)
 		}
-		return self.substringToIndex(endIndex)
+		return self.substringTo(endIndex)
 	}
 	
 	var pathExtension: String {
@@ -436,7 +484,7 @@ extension String {
 		guard endIndex != startIndex else {
 			return ""
 		}
-		return self.substringWithRange(Range(start:endIndex.successor(), end:noTrailsIndex))
+		return self.substringWith(Range(start:endIndex.successor(), end:noTrailsIndex))
 	}
 
 	var stringByResolvingSymlinksInPath: String {
