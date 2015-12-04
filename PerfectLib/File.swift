@@ -23,7 +23,6 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
-
 #if os(Linux)
 import SwiftGlibc
 #else
@@ -106,7 +105,12 @@ public class File : Closeable {
 	/// Closes the file if it had been opened
 	public func close() {
 		if fd != -1 {
+		#if os(Linux)
+			SwiftGlibc.close(CInt(fd))
+		#else
 			Darwin.close(CInt(fd))
+		#endif
+			
 			fd = -1
 		}
 	}
@@ -119,7 +123,13 @@ public class File : Closeable {
 	/// Opens the file using the default open mode.
 	/// - throws: `PerfectError.FileError`
 	public func open() throws {
+		
+	#if os(Linux)
+		let openFd = SwiftGlibc.open(internalPath, CInt(openMode), mode_t(S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP))
+	#else
 		let openFd = Darwin.open(internalPath, CInt(openMode), mode_t(S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP))
+	#endif
+		
 		guard openFd != -1 else {
 			try ThrowFileError()
 		}
