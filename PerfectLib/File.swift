@@ -24,7 +24,11 @@
 //
 
 
-import Foundation
+#if os(Linux)
+import SwiftGlibc
+#else
+import Darwin
+#endif
 
 let fileCopyBufferSize = 16384
 

@@ -25,14 +25,17 @@
 
 import LibEvent
 
-let isLittleEndian = Int(OSHostByteOrder()) == OSLittleEndian
+#if os(Linux)
 
+#else
+let isLittleEndian = Int(OSHostByteOrder()) == OSLittleEndian
 let htons  = isLittleEndian ? _OSSwapInt16 : { $0 }
 let htonl  = isLittleEndian ? _OSSwapInt32 : { $0 }
 let htonll = isLittleEndian ? _OSSwapInt64 : { $0 }
 let ntohs  = isLittleEndian ? _OSSwapInt16 : { $0 }
 let ntohl  = isLittleEndian ? _OSSwapInt32 : { $0 }
 let ntohll = isLittleEndian ? _OSSwapInt64 : { $0 }
+#endif
 
 let invalidSocket = Int32(-1)
 

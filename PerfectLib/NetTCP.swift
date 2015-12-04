@@ -23,8 +23,10 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
-
 import Foundation
+#if os(Linux)
+import SwiftGlibc
+#endif
 
 /// Provides an asynchronous IO wrapper around a file descriptor.
 /// Fully realized for TCP socket types but can also serve as a base for sockets from other families, such as with `NetNamedPipe`/AF_UNIX.

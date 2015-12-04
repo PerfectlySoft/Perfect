@@ -27,6 +27,10 @@
 import Foundation
 import LibEvent
 
+#if os(Linux)
+import SwiftGlibc
+#endif
+
 // I'm unsure why these aren't coming through
 /** Indicates that a timeout has occurred.  It's not necessary to pass
 	this flag to event_for new()/event_assign() to get a timeout. */
@@ -95,8 +99,8 @@ class LibEvent {
 			var tv: timeval = timeval()
 			let i = floor(timeout)
 			let f = timeout - i
-			tv.tv_sec = __darwin_time_t(i)
-			tv.tv_usec = __darwin_suseconds_t(f * 100000)
+			tv.tv_sec = Int(i)
+			tv.tv_usec = Int(f * 100000)
 			event_add(event!, &tv)
 		}
 	}
