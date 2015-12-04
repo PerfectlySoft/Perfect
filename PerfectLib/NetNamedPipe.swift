@@ -23,8 +23,12 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
-
 import Foundation
+#if os(Linux)
+	import SwiftGlibc
+	#else
+	import Darwin
+#endif
 
 /// This sub-class of NetTCP handles networking over an AF_UNIX named pipe connection.
 public class NetNamedPipe : NetTCP {
@@ -39,7 +43,7 @@ public class NetNamedPipe : NetTCP {
 	
 	/// Override socket initialization to handle the UNIX socket type.
 	public override func initSocket() {
-		fd.fd = Darwin.socket(AF_UNIX, SOCK_STREAM, 0)
+		fd.fd = socket(AF_UNIX, SOCK_STREAM, 0)
 		fd.family = AF_UNIX
 		fd.switchToNBIO()
 	}
@@ -67,8 +71,11 @@ public class NetNamedPipe : NetTCP {
 		}
 		
 		addrPtr[memLoc] = 0
-		
+	#if os(Linux)
+		let bRes = SwiftGlibc.bind(fd.fd, UnsafePointer<sockaddr>(addrPtr), socklen_t(addrLen))
+		#else
 		let bRes = Darwin.bind(fd.fd, UnsafePointer<sockaddr>(addrPtr), socklen_t(addrLen))
+	#endif
 		if bRes == -1 {
 			throw PerfectError.NetworkError(errno, String.fromCString(strerror(errno))!)
 		}
@@ -99,8 +106,11 @@ public class NetNamedPipe : NetTCP {
 		}
 		
 		addrPtr[memLoc] = 0
-		
+	#if os(Linux)
+		let cRes = SwiftGlibc.connect(fd.fd, UnsafePointer<sockaddr>(addrPtr), socklen_t(addrLen))
+	#else
 		let cRes = Darwin.connect(fd.fd, UnsafePointer<sockaddr>(addrPtr), socklen_t(addrLen))
+	#endif
 		if cRes != -1 {
 			callBack(self)
 		} else {
@@ -126,8 +136,12 @@ public class NetNamedPipe : NetTCP {
 	/// - parameter callBack: The callback to call when the send completes. The parameter passed will be `true` if the send completed without error.
 	/// - throws: `PerfectError.NetworkError`
 	public func sendFd(fd: Int32, callBack: (Bool) -> ()) throws {
-		let length = sizeof(Darwin.cmsghdr) + sizeof(Int32)
+		let length = sizeof(cmsghdr) + sizeof(Int32)
+	#if os(Linux)
+		let msghdr = UnsafeMutablePointer<SwiftGlibc.msghdr>.alloc(1)
+	#else
 		let msghdr = UnsafeMutablePointer<Darwin.msghdr>.alloc(1)
+	#endif
 		let nothingPtr = UnsafeMutablePointer<iovec>.alloc(1)
 		let nothing = UnsafeMutablePointer<CChar>.alloc(1)
 		let buffer = UnsafeMutablePointer<CChar>.alloc(length)
@@ -163,7 +177,7 @@ public class NetNamedPipe : NetTCP {
 		msghdr.memory.msg_control = UnsafeMutablePointer<Void>(buffer)
 		msghdr.memory.msg_controllen = socklen_t(length)
 		
-		let res = Darwin.sendmsg(Int32(self.fd.fd), msghdr, 0)
+		let res = sendmsg(Int32(self.fd.fd), msghdr, 0)
 		if res > 0 {
 			callBack(true)
 		} else if res == -1 && errno == EAGAIN {
@@ -192,8 +206,8 @@ public class NetNamedPipe : NetTCP {
 	/// - parameter callBack: The callback to call when the receive completes. The parameter passed will be the received file descriptor or invalidSocket.
 	/// - throws: `PerfectError.NetworkError`
 	public func receiveFd(callBack: (Int32) -> ()) throws {
-		let length = sizeof(Darwin.cmsghdr) + sizeof(Int32)
-		var msghdr = Darwin.msghdr()
+		let length = sizeof(cmsghdr) + sizeof(Int32)
+		var msghdrr = msghdr()
 		let nothingPtr = UnsafeMutablePointer<iovec>.alloc(1)
 		let nothing = UnsafeMutablePointer<CChar>.alloc(1)
 		let buffer = UnsafeMutablePointer<CChar>.alloc(length)
@@ -211,10 +225,10 @@ public class NetNamedPipe : NetTCP {
 		nothingPtr.memory.iov_base = UnsafeMutablePointer<Void>(nothing)
 		nothingPtr.memory.iov_len = 1
 		
-		msghdr.msg_iov = UnsafeMutablePointer<iovec>(nothingPtr)
-		msghdr.msg_iovlen = 1
-		msghdr.msg_control = UnsafeMutablePointer<Void>(buffer)
-		msghdr.msg_controllen = socklen_t(length)
+		msghdrr.msg_iov = UnsafeMutablePointer<iovec>(nothingPtr)
+		msghdrr.msg_iovlen = 1
+		msghdrr.msg_control = UnsafeMutablePointer<Void>(buffer)
+		msghdrr.msg_controllen = socklen_t(length)
 		
 		let cmsg = UnsafeMutablePointer<cmsghdr>(buffer)
 		cmsg.memory.cmsg_len = socklen_t(length)
@@ -224,7 +238,7 @@ public class NetNamedPipe : NetTCP {
 		let asInts = UnsafeMutablePointer<Int32>(cmsg.advancedBy(1))
 		asInts.memory = -1
 		
-		let res = Darwin.recvmsg(Int32(self.fd.fd), &msghdr, 0)
+		let res = recvmsg(Int32(self.fd.fd), &msghdrr, 0)
 		if res > 0 {
 			let receivedInt = asInts.memory
 			callBack(receivedInt)

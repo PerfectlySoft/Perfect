@@ -101,8 +101,11 @@ public class NetTCP : Closeable {
 		}
 		var sock_addr = sockaddr(sa_len: 0, sa_family: 0, sa_data: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
 		memcpy(&sock_addr, &addr, Int(sizeof(sockaddr_in)))
-		
+	#if os(Linux)
+		let bRes = SwiftGlibc.bind(fd.fd, &sock_addr, socklen_t(sizeof(sockaddr_in)))
+	#else
 		let bRes = Darwin.bind(fd.fd, &sock_addr, socklen_t(sizeof(sockaddr_in)))
+	#endif
 		if bRes == -1 {
 			try ThrowNetworkError()
 		}
@@ -110,15 +113,23 @@ public class NetTCP : Closeable {
 	
 	/// Switches the socket to server mode. Socket should have been previously bound using the `bind` function.
 	public func listen(backlog: Int32 = 128) {
+	#if os(Linux)
+		SwiftGlibc.listen(fd.fd, backlog)
+	#else
 		Darwin.listen(fd.fd, backlog)
+	#endif
 	}
 	
 	/// Shuts down and closes the socket.
 	/// The object may be reused.
 	public func close() {
 		if fd.fd != invalidSocket {
-			Darwin.shutdown(fd.fd, SHUT_RDWR)
+			shutdown(fd.fd, SHUT_RDWR)
+		#if os(Linux)
+			SwiftGlibc.close(fd.fd)
+		#else
 			Darwin.close(fd.fd)
+		#endif
 			fd.fd = invalidSocket
 			
 			if let event = self.waitAcceptEvent {
@@ -133,11 +144,19 @@ public class NetTCP : Closeable {
 	}
 	
 	func recv(buf: UnsafeMutablePointer<Void>, count: Int) -> Int {
+	#if os(Linux)
+		return SwiftGlibc.recv(self.fd.fd, buf, count, 0)
+	#else
 		return Darwin.recv(self.fd.fd, buf, count, 0)
+	#endif
 	}
 	
 	func send(buf: UnsafePointer<Void>, count: Int) -> Int {
+	#if os(Linux)
+		return SwidftGlibc.send(self.fd.fd, buf, count, 0)
+	#else
 		return Darwin.send(self.fd.fd, buf, count, 0)
+	#endif
 	}
 	
 	private func makeAddress(inout sin: sockaddr_in, host: String, port: UInt16) -> Int {
@@ -366,7 +385,11 @@ public class NetTCP : Closeable {
 		var sock_addr = sockaddr(sa_len: 0, sa_family: 0, sa_data: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
 		memcpy(&sock_addr, &addr, Int(sizeof(sockaddr_in)))
 		
+	#if os(Linux)
+		let cRes = SwiftGlibc.connect(fd.fd, &sock_addr, socklen_t(sizeof(sockaddr_in)))
+	#else
 		let cRes = Darwin.connect(fd.fd, &sock_addr, socklen_t(sizeof(sockaddr_in)))
+	#endif
 		if cRes != -1 {
 			callBack(self)
 		} else {
@@ -392,7 +415,11 @@ public class NetTCP : Closeable {
 	/// - parameter callBack: The closure which will be called when the accept completes. the parameter will be a newly allocated instance of NetTCP which represents the client.
 	/// - returns: `PerfectError.NetworkError`
 	public func accept(timeoutSeconds: Double, callBack: (NetTCP?) -> ()) throws {
+	#if os(Linux)
+		let accRes = SwiftGlibc.accept(fd.fd, UnsafeMutablePointer<sockaddr>(), UnsafeMutablePointer<socklen_t>())
+	#else
 		let accRes = Darwin.accept(fd.fd, UnsafeMutablePointer<sockaddr>(), UnsafeMutablePointer<socklen_t>())
+	#endif
 		if accRes != -1 {
 			let newTcp = self.makeFromFd(accRes)
 			callBack(newTcp)
@@ -419,7 +446,12 @@ public class NetTCP : Closeable {
 	}
 	
 	private func tryAccept() -> Int32 {
-		let accRes = Darwin.accept(fd.fd, UnsafeMutablePointer<sockaddr>(), UnsafeMutablePointer<socklen_t>())
+		#if os(Linux)
+			let accRes = SwiftGlibc.accept(fd.fd, UnsafeMutablePointer<sockaddr>(), UnsafeMutablePointer<socklen_t>())
+		#else
+			let accRes = Darwin.accept(fd.fd, UnsafeMutablePointer<sockaddr>(), UnsafeMutablePointer<socklen_t>())
+		#endif
+
 		return accRes
 	}
 	

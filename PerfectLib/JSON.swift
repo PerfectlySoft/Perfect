@@ -427,7 +427,7 @@ public class JSONDecode {
 						}
 						hexStr.append(hexC)
 					}
-					let result = UnicodeScalar(UInt32(Darwin.strtoul(hexStr, nil, 16)))
+					let result = UnicodeScalar(UInt32(strtoul(hexStr, nil, 16)))
 					s.append(result)
 				default:
 					s.append(c)
