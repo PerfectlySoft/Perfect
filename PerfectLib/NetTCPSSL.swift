@@ -28,7 +28,7 @@ import Foundation
 
 public class NetTCPSSL : NetTCP {
 	
-	static var dispatchOnce: dispatch_once_t = 0
+	static var dispatchOnce: Threading.ThreadOnce = 0
 	
 	var sslCtx: UnsafeMutablePointer<SSL_CTX>?
 	var ssl: UnsafeMutablePointer<SSL>?
@@ -52,7 +52,7 @@ public class NetTCPSSL : NetTCP {
 	public override init() {
 		super.init()
 		
-		dispatch_once(&NetTCPSSL.dispatchOnce) {
+		Threading.once(&NetTCPSSL.dispatchOnce) {
 			SSL_library_init()
 			ERR_load_crypto_strings()
 			SSL_load_error_strings()

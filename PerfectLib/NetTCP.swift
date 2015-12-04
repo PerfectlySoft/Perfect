@@ -31,7 +31,7 @@ import Foundation
 public class NetTCP : Closeable {
 	
 	private var networkFailure: Bool = false
-	private var semaphore: dispatch_semaphore_t?
+	private var semaphore: Threading.ThreadSemaphore?
 	private var waitAcceptEvent: LibEvent?
 	
 	class ReferenceBuffer {
@@ -125,7 +125,7 @@ public class NetTCP : Closeable {
 			}
 			
 			if self.semaphore != nil {
-				dispatch_semaphore_signal(self.semaphore!)
+				Threading.signalSemaphore(self.semaphore!)
 			}
 		}
 	}
@@ -264,14 +264,14 @@ public class NetTCP : Closeable {
 		let length = bytes.count
 		var totalSent = 0
 		let ptr = UnsafeMutablePointer<UInt8>(bytes)
-		var s: dispatch_semaphore_t?
+		var s: Threading.ThreadSemaphore?
 		var what: Int32 = 0
 		
 		let waitFunc = {
 			let event: LibEvent = LibEvent(base: LibEvent.eventBase, fd: self.fd.fd, what: EV_WRITE, userData: nil) {
 				(fd:Int32, w:Int16, ud:AnyObject?) -> () in
 				what = Int32(w)
-				dispatch_semaphore_signal(s!)
+				Threading.signalSemaphore(s!)
 			}
 			event.add()
 		}
@@ -284,7 +284,7 @@ public class NetTCP : Closeable {
 			}
 			
 			if s == nil {
-				s = dispatch_semaphore_create(0)
+				s = Threading.createSemaphore()
 			}
 			
 			if sent == -1 {
@@ -303,7 +303,7 @@ public class NetTCP : Closeable {
 				waitFunc()
 			}
 			
-			dispatch_semaphore_wait(s!, DISPATCH_TIME_FOREVER)
+			Threading.waitSemaphore(s!, waitMillis: -1)
 			
 			if what != EV_WRITE {
 				break
@@ -429,7 +429,7 @@ public class NetTCP : Closeable {
 			if (Int32(w) & EV_TIMEOUT) != 0 {
 				print("huh?")
 			} else {
-				dispatch_semaphore_signal(self.semaphore!)
+				Threading.signalSemaphore(self.semaphore!)
 			}
 		}
 		self.waitAcceptEvent = event
@@ -444,19 +444,19 @@ public class NetTCP : Closeable {
 			return
 		}
 		
-		self.semaphore = dispatch_semaphore_create(0)
+		self.semaphore = Threading.createSemaphore()
 		defer { self.semaphore = nil }
 		
 		repeat {
 		
 			let accRes = tryAccept()
 			if accRes != -1 {
-				split_thread {
+				Threading.dispatchBlock {
 					callBack(self.makeFromFd(accRes))
 				}
 			} else if self.isEAgain(Int(accRes)) {
 				waitAccept()
-				dispatch_semaphore_wait(self.semaphore!, DISPATCH_TIME_FOREVER)
+				Threading.waitSemaphore(self.semaphore!, waitMillis: -1)
 			} else {
 				let errStr = String.fromCString(strerror(errno)) ?? "NO MESSAGE"
 				print("Unexpected networking error: \(errno) '\(errStr)'")
