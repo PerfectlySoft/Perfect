@@ -167,6 +167,65 @@ extension String {
 		}
 		return ret
 	}
+	
+	public var stringByDecodingURL: String? {
+		
+		let percent: UInt8 = 37
+		let plus: UInt8 = 43
+		let capA: UInt8 = 65
+		let capF: UInt8 = 70
+		let lowA: UInt8 = 97
+		let lowF: UInt8 = 102
+		let zero: UInt8 = 48
+		let nine: UInt8 = 57
+		let space: UInt8 = 32
+		
+		var bytesArray = [UInt8]()
+		
+		var g = self.utf8.generate()
+		while let c = g.next() {
+			if c == percent {
+				var newChar = UInt8(0)
+				
+				guard let c1v = g.next() else {
+					return nil
+				}
+				guard let c2v = g.next() else {
+					return nil
+				}
+				
+				if c1v >= capA && c1v <= capF {
+					newChar = c1v - capA + 10
+				} else if c1v >= lowA && c1v <= lowF {
+					newChar = c1v - lowA + 10
+				} else if c1v >= zero && c1v <= nine {
+					newChar = c1v - zero
+				} else {
+					return nil
+				}
+				
+				newChar *= 16
+				
+				if c2v >= capA && c2v <= capF {
+					newChar += c2v - capA + 10
+				} else if c2v >= lowA && c2v <= lowF {
+					newChar += c2v - lowA + 10
+				} else if c2v >= zero && c2v <= nine {
+					newChar += c2v - zero
+				} else {
+					return nil
+				}
+				
+				bytesArray.append(newChar)
+			} else if c == plus {
+				bytesArray.append(space)
+			} else {
+				bytesArray.append(c)
+			}
+		}
+		
+		return UTF8Encoding.encode(bytesArray)
+	}
 }
 
 extension String {
@@ -357,6 +416,8 @@ extension String {
 		let ary = s.pathComponents(false) // get rid of slash runs
 		return absolute ? "/" + ary.joinWithSeparator(String(pathSeparator)) : ary.joinWithSeparator(String(pathSeparator))
 	}
+	
+	
 }
 
 

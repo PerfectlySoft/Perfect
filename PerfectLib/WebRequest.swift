@@ -49,8 +49,9 @@ public class WebRequest {
 		var d = Dictionary<String, String>()
 		for (key, value) in self.connection.requestParams {
 			if key.hasPrefix("HTTP_") {
-				let index = key.startIndex.advancedBy(5)
-				let nKey = key.substringFromIndex(index)
+				let utf16 = key.utf16
+				let index = key.utf16.startIndex.advancedBy(5)
+				let nKey = String(key.utf16.suffixFrom(index))!
 				d[nKey.stringByReplacingOccurrencesOfString("_", withString: "-")] = value
 			}
 		}
