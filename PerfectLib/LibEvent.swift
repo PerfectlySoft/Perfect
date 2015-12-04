@@ -64,7 +64,7 @@ class LibEvent {
 			
 			evt.del()
 			
-			dispatch_async(queue) {
+			Threading.dispatchBlock(queue) {
 				callBack(a, b, userData)
 			}
 		}
@@ -118,14 +118,14 @@ let EVLOOP_NO_EXIT_ON_EMPTY = Int32(0/*0x04*/) // not supported until libevent 2
 class LibEventBase {
 	
 	var eventBase: COpaquePointer
-	private var baseDispatchQueue: dispatch_queue_t
-	var eventDispatchQueue: dispatch_queue_t
+	private var baseDispatchQueue: Threading.ThreadQueue
+	var eventDispatchQueue: Threading.ThreadQueue
 	
 	init() {
 		evthread_use_pthreads()
 		
-		baseDispatchQueue = dispatch_queue_create("LibEvent Base", DISPATCH_QUEUE_SERIAL)
-		eventDispatchQueue = dispatch_queue_create("LibEvent Event", DISPATCH_QUEUE_CONCURRENT)
+		baseDispatchQueue = Threading.createSerialQueue("LibEvent Base")
+		eventDispatchQueue = Threading.createConcurrentQueue("LibEvent Event")
 		eventBase = event_base_new()
 		
 		addDummyEvent()
@@ -143,7 +143,7 @@ class LibEventBase {
 	}
 	
 	private func triggerEventBaseLoop() {
-		dispatch_async(baseDispatchQueue) {
+		Threading.dispatchBlock(baseDispatchQueue) {
 			self.eventBaseLoop()
 		}
 	}

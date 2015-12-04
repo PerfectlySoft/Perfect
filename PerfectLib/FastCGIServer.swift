@@ -81,7 +81,7 @@ public class FastCGIServer {
 				(net: NetTCP?) -> () in
 				
 				if let n = net {
-					split_thread {
+					Threading.dispatchBlock {
 						self.handleConnection(n)
 					}
 				}

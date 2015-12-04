@@ -25,10 +25,6 @@
 
 import Foundation
 
-internal func split_thread(closure:()->()) {
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), closure)
-}
-
 /// This class permits an UnsafeMutablePointer to be used as a GeneratorType
 public struct GenerateFromPointer<T> : GeneratorType {
 	
