@@ -67,8 +67,8 @@ public class WebRequest {
 			
 			let cookieSplit = cookiePair.characters.split("=").map { String($0.filter { $0 != " " }) }
 			if cookieSplit.count == 2 {
-				let name = cookieSplit[0].stringByRemovingPercentEncoding
-				let value = cookieSplit[1].stringByRemovingPercentEncoding
+				let name = cookieSplit[0].stringByDecodingURL
+				let value = cookieSplit[1].stringByDecodingURL
 				if let n = name {
 					c.append((n, value ?? ""))
 				}
@@ -86,8 +86,8 @@ public class WebRequest {
 			
 			let paramSplit = paramPair.characters.split("=").map { String($0) }
 			if paramSplit.count == 2 {
-				let name = paramSplit[0].stringByRemovingPercentEncoding
-				let value = paramSplit[1].stringByRemovingPercentEncoding
+				let name = paramSplit[0].stringByDecodingURL
+				let value = paramSplit[1].stringByDecodingURL
 				if let n = name {
 					c.append((n, value ?? ""))
 				}
@@ -126,8 +126,8 @@ public class WebRequest {
 				
 				let paramSplit = paramPair.characters.split("=").map { String($0) }
 				if paramSplit.count == 2 {
-					let name = paramSplit[0].stringByReplacingOccurrencesOfString("+", withString: " ").stringByRemovingPercentEncoding
-					let value = paramSplit[1].stringByReplacingOccurrencesOfString("+", withString: " ").stringByRemovingPercentEncoding
+					let name = paramSplit[0].stringByReplacingOccurrencesOfString("+", withString: " ").stringByDecodingURL
+					let value = paramSplit[1].stringByReplacingOccurrencesOfString("+", withString: " ").stringByDecodingURL
 					if let n = name {
 						c.append((n, value ?? ""))
 					}
