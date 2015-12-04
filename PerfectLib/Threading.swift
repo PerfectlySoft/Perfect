@@ -9,8 +9,11 @@
 #if USE_LIBDISPATCH
 import Dispatch
 #else
-//import SwiftGlibc
-import Darwin // tmp testing
+#if os(Linux)
+import SwiftGlibc
+#else
+import Darwin
+#endif
 #endif
 
 class Threading {
@@ -32,13 +35,13 @@ class Threading {
 		init() {
 			var attr = pthread_mutexattr_t()
 			pthread_mutexattr_init(&attr)
-			pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE)
+			pthread_mutexattr_settype(&attr, Int32(PTHREAD_MUTEX_RECURSIVE))
 			pthread_mutex_init(&mutex, &attr)
 			
 			var __c_attr = pthread_condattr_t()
 			pthread_condattr_init(&__c_attr)
 #if os (Linux)
-			pthread_condattr_setclock(&__c_attr, CLOCK_REALTIME)
+//			pthread_condattr_setclock(&__c_attr, CLOCK_REALTIME)
 #endif
 			pthread_cond_init(&cond, &__c_attr)
 			pthread_condattr_destroy(&__c_attr)
@@ -70,7 +73,7 @@ class Threading {
 		var thrdSlf = pthread_t()
 		var attr = pthread_attr_t()
 		pthread_attr_init(&attr)
-		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED)
+		pthread_attr_setdetachstate(&attr, Int32(PTHREAD_CREATE_DETACHED))
 		
 		let holderObject = IsThisRequired(closure: closure)
 		

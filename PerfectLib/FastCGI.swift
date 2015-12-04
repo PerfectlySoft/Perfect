@@ -23,8 +23,12 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
-
 // values which are part of the FastCGI protocol but are unused in this implementation are commented out
+
+#if os(Linux)
+import SwiftGlibc
+#endif
+
 let fcgiVersion1: UInt8 =		1
 
 let fcgiBeginRequest: UInt8 =		1
