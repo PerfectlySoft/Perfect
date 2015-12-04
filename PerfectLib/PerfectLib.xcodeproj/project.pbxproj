@@ -249,10 +249,10 @@
 				F8F289F81BD5427000367249 /* WebResponse.swift */,
 				F8F28A4D1BD5720400367249 /* Utilities-Server.swift */,
 				F88B06911BDE80F9001FD0CD /* MimeType.swift */,
+				F877D5471C110CA700CC100D /* Threading.swift */,
 				F82AADE71C0E2CBB00749854 /* RWLockCache.swift */,
 				F8F289F41BD5427000367249 /* util.c */,
 				F8F28A2A1BD5545000367249 /* curl_support.cpp */,
-				F877D5471C110CA700CC100D /* Threading.swift */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -597,6 +597,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				FRAMEWORK_VERSION = A;
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				INFOPLIST_FILE = "$(SRCROOT)/OSX/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
@@ -609,6 +610,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MODULEMAP_PRIVATE_FILE = "${SRCROOT}/OSX/module.modulemap";
+				OTHER_SWIFT_FLAGS = "-DTMP_NOT_USE_LIBDISPATCH";
 				PRODUCT_BUNDLE_IDENTIFIER = ca.perfectlysoft.PerfectLib;
 				PRODUCT_NAME = PerfectLib;
 				SKIP_INSTALL = YES;
@@ -629,6 +631,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				FRAMEWORK_VERSION = A;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				INFOPLIST_FILE = "$(SRCROOT)/OSX/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
@@ -641,6 +644,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MODULEMAP_PRIVATE_FILE = "${SRCROOT}/OSX/module.modulemap";
+				OTHER_SWIFT_FLAGS = "-DTMP_NOT_USE_LIBDISPATCH";
 				PRODUCT_BUNDLE_IDENTIFIER = ca.perfectlysoft.PerfectLib;
 				PRODUCT_NAME = PerfectLib;
 				SKIP_INSTALL = YES;
