@@ -541,12 +541,42 @@ class PerfectLibTests: XCTestCase {
 	func testStringByReplacingString3() {
 		
 		let src = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ"
-s		let find = ""
+		let find = ""
 		let rep = "FED"
 		
 		let res = src.stringByReplacingString(find, withString: rep)
 		
 		XCTAssert(res == src)
+	}
+	
+	func testSubstringTo() {
+		
+		let src = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ"
+		let res = src.substringTo(src.startIndex.advancedBy(5))
+		
+		XCTAssert(res == "ABCDE")
+	}
+	
+	func testRangeTo() {
+		
+		let src = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+		
+		let res = src.rangeOf("DEF")
+		XCTAssert(res == Range(start: src.startIndex.advancedBy(3), end: src.startIndex.advancedBy(6)))
+		
+		let res2 = src.rangeOf("FED")
+		XCTAssert(res2 == nil)
+		
+		
+		let res3 = src.rangeOf("def", ignoreCase: true)
+		XCTAssert(res3 == Range(start: src.startIndex.advancedBy(3), end: src.startIndex.advancedBy(6)))
+	}
+	
+	func testSubstringWith() {
+		
+		let src = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+		let range = Range(start: src.startIndex.advancedBy(3), end: src.startIndex.advancedBy(6))
+		XCTAssert("DEF" == src.substringWith(range))
 	}
 	
 	func testICUFormatDate() {

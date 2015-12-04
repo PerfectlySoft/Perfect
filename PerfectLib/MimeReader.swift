@@ -107,9 +107,9 @@ public class MimeReader {
 	/// - parameter tempDir: The path to the directory in which to store temporary files. Defaults to "/tmp/".
 	public init(_ contentType: String, tempDir: String = "/tmp/") {
 		self.tempDirectory = tempDir
-		if contentType.rangeOfString(kMultiPartForm) != nil {
+		if contentType.rangeOf(kMultiPartForm) != nil {
 			self.multi = true
-			if let range = contentType.rangeOfString(kBoundary) {
+			if let range = contentType.rangeOf(kBoundary) {
 				
 				var startIndex = range.startIndex.successor()
 				for _ in 1...kBoundary.characters.count {
@@ -117,7 +117,7 @@ public class MimeReader {
 				}
 				let endIndex = contentType.endIndex
 				
-				let boundaryString = contentType.substringWithRange(Range(start: startIndex, end: endIndex))
+				let boundaryString = contentType.substringWith(Range(start: startIndex, end: endIndex))
 				self.boundary.appendContentsOf("--")
 				self.boundary.appendContentsOf(boundaryString)
 				self.state = .StateBoundary
@@ -178,7 +178,7 @@ public class MimeReader {
 		
 		var accum = ""
 		
-		if let nameRange = from.rangeOfString(name + "=", options: NSStringCompareOptions.CaseInsensitiveSearch) {
+		if let nameRange = from.rangeOf(name + "=", ignoreCase: true) {
 			var start = nameRange.endIndex
 			let end = from.endIndex
 			
