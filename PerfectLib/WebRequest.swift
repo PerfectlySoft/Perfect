@@ -52,7 +52,7 @@ public class WebRequest {
 				let utf16 = key.utf16
 				let index = key.utf16.startIndex.advancedBy(5)
 				let nKey = String(key.utf16.suffixFrom(index))!
-				d[nKey.stringByReplacingOccurrencesOfString("_", withString: "-")] = value
+				d[nKey.stringByReplacingString("_", withString: "-")] = value
 			}
 		}
 		return d
@@ -126,8 +126,8 @@ public class WebRequest {
 				
 				let paramSplit = paramPair.characters.split("=").map { String($0) }
 				if paramSplit.count == 2 {
-					let name = paramSplit[0].stringByReplacingOccurrencesOfString("+", withString: " ").stringByDecodingURL
-					let value = paramSplit[1].stringByReplacingOccurrencesOfString("+", withString: " ").stringByDecodingURL
+					let name = paramSplit[0].stringByReplacingString("+", withString: " ").stringByDecodingURL
+					let value = paramSplit[1].stringByReplacingString("+", withString: " ").stringByDecodingURL
 					if let n = name {
 						c.append((n, value ?? ""))
 					}

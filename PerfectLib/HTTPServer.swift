@@ -284,7 +284,7 @@ public class HTTPServer {
 			case "Authorization":
 				return "HTTP_AUTHORIZATION"
 			default:
-				return "HTTP_" + name.uppercaseString.stringByReplacingOccurrencesOfString("-", withString: "_")
+				return "HTTP_" + name.uppercaseString.stringByReplacingString("-", withString: "_")
 			}
 		}
 		

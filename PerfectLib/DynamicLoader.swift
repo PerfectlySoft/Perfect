@@ -48,7 +48,7 @@ class DynamicLoader {
 			let openRes = dlopen(realPath, RTLD_NOW|RTLD_LOCAL)
 			if openRes != nil {
 				// this is fragile
-				let newModuleName = moduleName.stringByReplacingOccurrencesOfString("-", withString: "_").stringByReplacingOccurrencesOfString(" ", withString: "_")
+				let newModuleName = moduleName.stringByReplacingString("-", withString: "_").stringByReplacingString(" ", withString: "_")
 				let symbolName = "_TF\(newModuleName.utf8.count)\(newModuleName)\(initFuncName.utf8.count)\(initFuncName)FT_T_"
 				let sym = dlsym(openRes, symbolName)
 				if sym != nil {

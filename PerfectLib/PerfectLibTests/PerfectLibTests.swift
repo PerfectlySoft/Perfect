@@ -515,6 +515,40 @@ class PerfectLibTests: XCTestCase {
 		XCTAssert(res == nil, "Bad URL decoding")
 	}
 	
+	func testStringByReplacingString() {
+		
+		let src = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ"
+		let test = "ABCFEDGHIJKLMNOPQRSTUVWXYZABCFEDGHIJKLMNOPQRSTUVWXYZABCFEDGHIJKLMNOPQRSTUVWXYZ"
+		let find = "DEF"
+		let rep = "FED"
+		
+		let res = src.stringByReplacingString(find, withString: rep)
+		
+		XCTAssert(res == test)
+	}
+	
+	func testStringByReplacingString2() {
+		
+		let src = ""
+		let find = "DEF"
+		let rep = "FED"
+		
+		let res = src.stringByReplacingString(find, withString: rep)
+		
+		XCTAssert(res == src)
+	}
+	
+	func testStringByReplacingString3() {
+		
+		let src = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ"
+s		let find = ""
+		let rep = "FED"
+		
+		let res = src.stringByReplacingString(find, withString: rep)
+		
+		XCTAssert(res == src)
+	}
+	
 	func testICUFormatDate() {
 		let dateThen = 0.0
 		let formatStr = "E, dd-MMM-yyyy HH:mm:ss 'GMT'"
