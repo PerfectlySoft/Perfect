@@ -28,7 +28,7 @@ import Foundation
 
 public class NetTCPSSL : NetTCP {
 	
-	static var dispatchOnce: Threading.ThreadOnce = 0
+	static var dispatchOnce = Threading.ThreadOnce()
 	
 	var sslCtx: UnsafeMutablePointer<SSL_CTX>?
 	var ssl: UnsafeMutablePointer<SSL>?

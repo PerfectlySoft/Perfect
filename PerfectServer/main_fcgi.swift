@@ -23,9 +23,12 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
-
-import Darwin
 import PerfectLib
+#if os(Linux)
+	import SwiftGlibc
+#else
+	import Darwin
+#endif
 
 func startServer() throws {
 
