@@ -23,8 +23,10 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
-
 import Foundation
+#if os(Linux)
+import SwiftGlibc
+#endif
 
 /// This class represents a directory on the file system. 
 /// It can be used for creating & inspecting directories and enumerating directory contents.
