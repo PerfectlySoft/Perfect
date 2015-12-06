@@ -774,7 +774,7 @@
                                         </connections>
                                     </textField>
                                     <textField focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="b81-uc-1hK">
-                                        <rect key="frame" x="314" y="14" width="96" height="22"/>
+                                        <rect key="frame" x="314" y="12" width="96" height="22"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="96" id="phZ-t4-Ri4"/>
                                         </constraints>
@@ -802,7 +802,7 @@
                                     <constraint firstAttribute="height" constant="44" id="5WI-Qk-7dQ"/>
                                     <constraint firstItem="LWG-AW-bl5" firstAttribute="centerY" secondItem="r1k-mV-28a" secondAttribute="centerY" id="ING-DB-2tS"/>
                                     <constraint firstItem="Xsg-Tc-BAy" firstAttribute="centerY" secondItem="UdY-lZ-nuY" secondAttribute="centerY" id="ae6-Bf-Ck8"/>
-                                    <constraint firstItem="b81-uc-1hK" firstAttribute="centerY" secondItem="LWG-AW-bl5" secondAttribute="centerY" constant="-2.5" id="fza-jn-Z6h"/>
+                                    <constraint firstItem="b81-uc-1hK" firstAttribute="centerY" secondItem="LWG-AW-bl5" secondAttribute="centerY" constant="-0.5" id="fza-jn-Z6h"/>
                                     <constraint firstItem="Xsg-Tc-BAy" firstAttribute="leading" secondItem="UdY-lZ-nuY" secondAttribute="leading" constant="20" id="mHZ-lQ-wcQ"/>
                                     <constraint firstItem="r1k-mV-28a" firstAttribute="centerY" secondItem="Xsg-Tc-BAy" secondAttribute="centerY" id="pxu-tn-62s"/>
                                     <constraint firstItem="r1k-mV-28a" firstAttribute="leading" secondItem="Xsg-Tc-BAy" secondAttribute="trailing" constant="4" id="sx2-t8-Xas"/>
