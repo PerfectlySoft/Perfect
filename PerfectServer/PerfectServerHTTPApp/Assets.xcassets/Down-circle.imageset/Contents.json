@@ -2,12 +2,11 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "188_v-circle-1.png",
+      "filename" : "Down-circle.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "188_v-circle.png",
       "scale" : "2x"
     },
     {
