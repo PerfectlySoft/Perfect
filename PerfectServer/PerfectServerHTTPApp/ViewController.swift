@@ -127,8 +127,10 @@ class ViewController: NSViewController, NSTextFieldDelegate {
 			let appDel = AppDelegate.sharedInstance
 			if appDel.serverIsRunning() {
 				self.setWhiteTextButton(self.startStopButton!, title: "Stop Server")
+                self.startStopButtonBackground?.layer?.backgroundColor = NSColor(red:0.93, green:0.32, blue:0.2, alpha:1).CGColor
 			} else {
 				self.setWhiteTextButton(self.startStopButton!, title: "Start Server")
+                self.startStopButtonBackground?.layer?.backgroundColor = NSColor(red:0.12, green:0.81, blue:0.43, alpha:1).CGColor
 			}
 			self.setWhiteTextButton(self.urlButton!, title: self.serverUrl)
 		}
