@@ -193,7 +193,11 @@ public class SQLite : Closeable {
 	func miniSleep(millis: Int) {
 		var tv = timeval()
 		tv.tv_sec = millis / 1000
+	#if os(Linux)
 		tv.tv_usec = Int((millis % 1000) * 1000)
+	#else
+		tv.tv_usec = Int32((millis % 1000) * 1000)
+	#endif
 		select(0, nil, nil, nil, &tv)
 	}
 	

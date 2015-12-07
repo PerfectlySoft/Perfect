@@ -46,7 +46,11 @@ public class NetNamedPipe : NetTCP {
 	
 	/// Override socket initialization to handle the UNIX socket type.
 	public override func initSocket() {
+	#if os(Linux)
 		fd.fd = socket(AF_UNIX, Int32(SOCK_STREAM.rawValue), 0)
+	#else
+		fd.fd = socket(AF_UNIX, SOCK_STREAM, 0)
+	#endif
 		fd.family = AF_UNIX
 		fd.switchToNBIO()
 	}
@@ -160,7 +164,11 @@ public class NetNamedPipe : NetTCP {
 		}
 		
 		let cmsg = UnsafeMutablePointer<cmsghdr>(buffer)
+	#if os(Linux)
 		cmsg.memory.cmsg_len = Int(socklen_t(length))
+	#else
+		cmsg.memory.cmsg_len = socklen_t(length)
+	#endif
 		cmsg.memory.cmsg_level = SOL_SOCKET
 		cmsg.memory.cmsg_type = SCM_RIGHTS
 		
@@ -178,7 +186,11 @@ public class NetNamedPipe : NetTCP {
 		msghdr.memory.msg_iov = nothingPtr
 		msghdr.memory.msg_iovlen = 1
 		msghdr.memory.msg_control = UnsafeMutablePointer<Void>(buffer)
+	#if os(Linux)
 		msghdr.memory.msg_controllen = Int(socklen_t(length))
+	#else
+		msghdr.memory.msg_controllen = socklen_t(length)
+	#endif
 		
 		let res = sendmsg(Int32(self.fd.fd), msghdr, 0)
 		if res > 0 {
@@ -231,10 +243,18 @@ public class NetNamedPipe : NetTCP {
 		msghdrr.msg_iov = UnsafeMutablePointer<iovec>(nothingPtr)
 		msghdrr.msg_iovlen = 1
 		msghdrr.msg_control = UnsafeMutablePointer<Void>(buffer)
+	#if os(Linux)
 		msghdrr.msg_controllen = Int(socklen_t(length))
+	#else
+		msghdrr.msg_controllen = socklen_t(length)
+	#endif
 		
 		let cmsg = UnsafeMutablePointer<cmsghdr>(buffer)
+	#if os(Linux)
 		cmsg.memory.cmsg_len = Int(socklen_t(length))
+	#else
+		cmsg.memory.cmsg_len = socklen_t(length)
+	#endif
 		cmsg.memory.cmsg_level = SOL_SOCKET
 		cmsg.memory.cmsg_type = SCM_RIGHTS
 		

@@ -76,7 +76,11 @@ public class NetTCP : Closeable {
 	/// All sub-class sockets should be switched to utilize non-blocking IO by calling `SocketFileDescriptor.switchToNBIO()`.
 	public func initSocket() {
 		if fd.fd == invalidSocket {
+		#if os(Linux)
 			fd.fd = socket(AF_INET, Int32(SOCK_STREAM.rawValue), 0)
+		#else
+			fd.fd = socket(AF_INET, SOCK_STREAM, 0)
+		#endif
 			fd.family = AF_INET
 			fd.switchToNBIO()
 		}
@@ -107,7 +111,7 @@ public class NetTCP : Closeable {
 	#if os(Linux)
 		var sock_addr = sockaddr(sa_family: 0, sa_data: (i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0))
 	#else
-		var sock_addr = sockaddr(sa_family: 0, sa_len: 0, sa_data: (i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0))
+		var sock_addr = sockaddr(sa_len: 0, sa_family: 0, sa_data: (i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0))
 	#endif
 		memcpy(&sock_addr, &addr, Int(sizeof(sockaddr_in)))
 	#if os(Linux)
@@ -392,11 +396,11 @@ public class NetTCP : Closeable {
 		guard res != -1 else {
 			try ThrowNetworkError()
 		}
-	#if os(Linux)
 		let i0 = Int8(0)
+	#if os(Linux)
 		var sock_addr = sockaddr(sa_family: 0, sa_data: (i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0))
 	#else
-		var sock_addr = sockaddr(sa_family: 0, sa_len: 0, sa_data: (i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0))
+		var sock_addr = sockaddr(sa_len: 0, sa_family: 0, sa_data: (i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0))
 	#endif
 		memcpy(&sock_addr, &addr, Int(sizeof(sockaddr_in)))
 		
