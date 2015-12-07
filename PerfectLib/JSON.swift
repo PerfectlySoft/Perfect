@@ -24,6 +24,9 @@
 //
 
 import Foundation
+#if os(Linux)
+import SwiftGlibc
+#endif
 
 let jsonOpenObject = UnicodeScalar(UInt32(123))
 let jsonOpenArray = UnicodeScalar(UInt32(91))

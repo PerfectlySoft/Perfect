@@ -26,6 +26,9 @@
 import Foundation
 #if os(Linux)
 	import SwiftGlibc
+	let AF_UNIX: Int32 = 1
+	let SOL_SOCKET: Int32 = 1
+	let SCM_RIGHTS: Int32 = 0x01
 	#else
 	import Darwin
 #endif
@@ -43,7 +46,7 @@ public class NetNamedPipe : NetTCP {
 	
 	/// Override socket initialization to handle the UNIX socket type.
 	public override func initSocket() {
-		fd.fd = socket(AF_UNIX, SOCK_STREAM, 0)
+		fd.fd = socket(AF_UNIX, Int32(SOCK_STREAM.rawValue), 0)
 		fd.family = AF_UNIX
 		fd.switchToNBIO()
 	}
@@ -157,7 +160,7 @@ public class NetNamedPipe : NetTCP {
 		}
 		
 		let cmsg = UnsafeMutablePointer<cmsghdr>(buffer)
-		cmsg.memory.cmsg_len = socklen_t(length)
+		cmsg.memory.cmsg_len = Int(socklen_t(length))
 		cmsg.memory.cmsg_level = SOL_SOCKET
 		cmsg.memory.cmsg_type = SCM_RIGHTS
 		
@@ -175,7 +178,7 @@ public class NetNamedPipe : NetTCP {
 		msghdr.memory.msg_iov = nothingPtr
 		msghdr.memory.msg_iovlen = 1
 		msghdr.memory.msg_control = UnsafeMutablePointer<Void>(buffer)
-		msghdr.memory.msg_controllen = socklen_t(length)
+		msghdr.memory.msg_controllen = Int(socklen_t(length))
 		
 		let res = sendmsg(Int32(self.fd.fd), msghdr, 0)
 		if res > 0 {
@@ -228,10 +231,10 @@ public class NetNamedPipe : NetTCP {
 		msghdrr.msg_iov = UnsafeMutablePointer<iovec>(nothingPtr)
 		msghdrr.msg_iovlen = 1
 		msghdrr.msg_control = UnsafeMutablePointer<Void>(buffer)
-		msghdrr.msg_controllen = socklen_t(length)
+		msghdrr.msg_controllen = Int(socklen_t(length))
 		
 		let cmsg = UnsafeMutablePointer<cmsghdr>(buffer)
-		cmsg.memory.cmsg_len = socklen_t(length)
+		cmsg.memory.cmsg_len = Int(socklen_t(length))
 		cmsg.memory.cmsg_level = SOL_SOCKET
 		cmsg.memory.cmsg_type = SCM_RIGHTS
 		

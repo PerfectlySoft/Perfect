@@ -25,6 +25,9 @@
 
 
 import Foundation
+#if os(Linux)
+import SwiftGlibc
+#endif
 
 class DynamicLoader {
 	

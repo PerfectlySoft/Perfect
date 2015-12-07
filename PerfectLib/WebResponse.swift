@@ -34,7 +34,7 @@ public class Cookie {
 	var secure: Bool?
 	var httpOnly: Bool?
 }
-
+/*
 class MustacheCacheItem {
 	let modificationDate: Int
 	let template: MustacheTemplate
@@ -46,7 +46,7 @@ class MustacheCacheItem {
 }
 
 let mustacheTemplateCache = RWLockCache<String, MustacheCacheItem>()
-
+*/
 /// Represents an outgoing web response. Handles the following tasks:
 /// - Management of sessions
 /// - Collecting HTTP response headers & cookies.
@@ -234,6 +234,7 @@ public class WebResponse {
 	// WARNING NOTE Using the RWLockCache, even just for read access seems to bring out some sort of bug in the 
 	// ARC system. Therefore, this function is not currently called.
 	// !FIX! track this problem down
+	/*
 	func includeCached(path: String, local: Bool = false) throws {
 		
 		if !path.hasSuffix("."+mustacheExtension) {
@@ -283,6 +284,7 @@ public class WebResponse {
 			self.bodyData += Array(fullString.utf8)
 		}
 	}
+	*/
 	
 	func include(path: String, local: Bool = false) throws {
 		
