@@ -25,7 +25,11 @@
 
 import Foundation
 #if os(Linux)
-	import SwiftGlibs
+	import SwiftGlibc
+	import LinuxBridge
+	let S_IRUSR = __S_IREAD
+	let S_IROTH = (S_IRGRP >> 3)
+	let S_IWOTH = (S_IWGRP >> 3)
 #endif
 
 enum MimeReadState {
@@ -350,7 +354,7 @@ public class MimeReader {
 								
 								// end of file data
 								spec.file!.close()
-								chmod(spec.file!.path(), S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH)
+								chmod(spec.file!.path(), mode_t(S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH))
 								break
 								
 							} else if position.distanceTo(end) - 2 < self.boundary.characters.count {

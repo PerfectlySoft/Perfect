@@ -25,9 +25,10 @@
 
 import Foundation
 #if os(Linux)
+import SwiftGlibc
 import LinuxBridge
 
-var errno: Int {
+var errno: Int32 {
 	return linux_errno()
 }
 #endif

@@ -121,7 +121,11 @@ public class Dir {
 		
 		while readdir_r(dir, &ent, entPtr) == 0 && entPtr.memory != nil {
 			let name = ent.d_name
+		#if os(Linux)
+			let nameLen = 1024
+		#else
 			let nameLen = ent.d_namlen
+		#endif
 			let type = ent.d_type
 			
 			var nameBuf = [CChar]()
@@ -129,12 +133,15 @@ public class Dir {
 			let childGen = mirror.children.generate()
 			for _ in 0..<nameLen {
 				let (_, elem) = childGen.next()!
+				if (elem as! Int8) == 0 {
+					break
+				}
 				nameBuf.append(elem as! Int8)
 			}
 			nameBuf.append(0)
 			if let name = String.fromCString(nameBuf) {
 				if !(name == "." || name == "..") {
-					if Int32(type) == DT_DIR {
+					if Int32(type) == Int32(DT_DIR) {
 						closure(name: name + "/")
 					} else {
 						closure(name: name)

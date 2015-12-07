@@ -24,7 +24,9 @@
 //
 
 import SQLite3
-
+#if os(Linux)
+import SwiftGlibc
+#endif
 /// This enum type indicates an exception when dealing with a SQLite database
 public enum SQLiteError : ErrorType {
 	/// A SQLite error code and message.
@@ -191,7 +193,7 @@ public class SQLite : Closeable {
 	func miniSleep(millis: Int) {
 		var tv = timeval()
 		tv.tv_sec = millis / 1000
-		tv.tv_usec = __darwin_suseconds_t((millis % 1000) * 1000)
+		tv.tv_usec = Int((millis % 1000) * 1000)
 		select(0, nil, nil, nil, &tv)
 	}
 	

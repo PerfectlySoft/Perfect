@@ -37,9 +37,9 @@ let S_IRWXG = (S_IRWXU >> 3)
 let S_IRWXO = (S_IRWXG >> 3)
 
 let SEEK_CUR: Int32 = 1
-let EXDEV = 18
-let EACCES = 13
-let EAGAIN = 11
+let EXDEV = Int32(18)
+let EACCES = Int32(13)
+let EAGAIN = Int32(11)
 let F_OK: Int32 = 0
 
 #else

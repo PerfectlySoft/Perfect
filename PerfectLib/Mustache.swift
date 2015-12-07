@@ -338,11 +338,11 @@ public class MustacheGroupTag : MustacheTag {
 				for child in children {
 					child.evaluate(newContext, collector: collector)
 				}
-			case let v as [String:String]:
-				let newContext = context.newChildContext(v)
-				for child in children {
-					child.evaluate(newContext, collector: collector)
-				}
+			// case let v as [String:String]:
+			// 	let newContext = context.newChildContext(v)
+			// 	for child in children {
+			// 		child.evaluate(newContext, collector: collector)
+			// 	}
 			case let sequence as MustacheEvaluationContext.SequenceType:
 				for item in sequence {
 					let newContext = context.newChildContext(item)

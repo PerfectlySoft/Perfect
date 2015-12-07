@@ -26,6 +26,9 @@
 import Foundation
 #if os(Linux)
 	import SwiftGlibc
+	let WUNTRACED = Int32(2)
+	let WNOHANG = Int32(1)
+	let SIGTERM = Int32(15)
 #endif
 
 /// This class permits an external process to be launched given a set of command line arguments and environment variables.

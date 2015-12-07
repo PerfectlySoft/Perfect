@@ -26,6 +26,10 @@
 import Foundation
 #if os(Linux)
 import SwiftGlibc
+let AF_UNSPEC: Int32 = 0
+let AF_INET: Int32 = 2
+let INADDR_NONE = UInt32(0xffffffff)
+let EINPROGRESS = Int32(115)
 #endif
 
 /// Provides an asynchronous IO wrapper around a file descriptor.
@@ -72,7 +76,7 @@ public class NetTCP : Closeable {
 	/// All sub-class sockets should be switched to utilize non-blocking IO by calling `SocketFileDescriptor.switchToNBIO()`.
 	public func initSocket() {
 		if fd.fd == invalidSocket {
-			fd.fd = socket(AF_INET, SOCK_STREAM, 0)
+			fd.fd = socket(AF_INET, Int32(SOCK_STREAM.rawValue), 0)
 			fd.family = AF_INET
 			fd.switchToNBIO()
 		}
@@ -99,7 +103,12 @@ public class NetTCP : Closeable {
 		guard res != -1 else {
 			try ThrowNetworkError()
 		}
-		var sock_addr = sockaddr(sa_len: 0, sa_family: 0, sa_data: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+		let i0 = Int8(0)
+	#if os(Linux)
+		var sock_addr = sockaddr(sa_family: 0, sa_data: (i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0))
+	#else
+		var sock_addr = sockaddr(sa_family: 0, sa_len: 0, sa_data: (i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0))
+	#endif
 		memcpy(&sock_addr, &addr, Int(sizeof(sockaddr_in)))
 	#if os(Linux)
 		let bRes = SwiftGlibc.bind(fd.fd, &sock_addr, socklen_t(sizeof(sockaddr_in)))
@@ -124,10 +133,11 @@ public class NetTCP : Closeable {
 	/// The object may be reused.
 	public func close() {
 		if fd.fd != invalidSocket {
-			shutdown(fd.fd, SHUT_RDWR)
 		#if os(Linux)
+			shutdown(fd.fd, 2) // !FIX!
 			SwiftGlibc.close(fd.fd)
 		#else
+			shutdown(fd.fd, SHUT_RDWR)
 			Darwin.close(fd.fd)
 		#endif
 			fd.fd = invalidSocket
@@ -153,7 +163,7 @@ public class NetTCP : Closeable {
 	
 	func send(buf: UnsafePointer<Void>, count: Int) -> Int {
 	#if os(Linux)
-		return SwidftGlibc.send(self.fd.fd, buf, count, 0)
+		return SwiftGlibc.send(self.fd.fd, buf, count, 0)
 	#else
 		return Darwin.send(self.fd.fd, buf, count, 0)
 	#endif
@@ -382,7 +392,12 @@ public class NetTCP : Closeable {
 		guard res != -1 else {
 			try ThrowNetworkError()
 		}
-		var sock_addr = sockaddr(sa_len: 0, sa_family: 0, sa_data: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+	#if os(Linux)
+		let i0 = Int8(0)
+		var sock_addr = sockaddr(sa_family: 0, sa_data: (i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0))
+	#else
+		var sock_addr = sockaddr(sa_family: 0, sa_len: 0, sa_data: (i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0, i0))
+	#endif
 		memcpy(&sock_addr, &addr, Int(sizeof(sockaddr_in)))
 		
 	#if os(Linux)
@@ -492,7 +507,7 @@ public class NetTCP : Closeable {
 				waitAccept()
 				Threading.waitSemaphore(self.semaphore!, waitMillis: -1)
 			} else {
-				let errStr = String.fromCString(strerror(errno)) ?? "NO MESSAGE"
+				let errStr = String.fromCString(strerror(Int32(errno))) ?? "NO MESSAGE"
 				print("Unexpected networking error: \(errno) '\(errStr)'")
 				networkFailure = true
 			}
