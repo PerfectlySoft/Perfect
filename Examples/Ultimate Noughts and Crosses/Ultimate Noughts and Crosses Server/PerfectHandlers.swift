@@ -34,7 +34,7 @@ let GAME_DB_PATH = PerfectServer.staticPerfectServer.homeDir() + serverSQLiteDBs
 public func PerfectServerModuleInit() {
 	
 	// Register our handler class with the PageHandlerRegistry.
-	// The name "FAHandler", which we supply here, is used within a moustache template to associate the template with the handler.
+	// The name "FAHandler", which we supply here, is used within a mustache template to associate the template with the handler.
 	PageHandlerRegistry.addPageHandler("UNCHandler") {
 		
 		// This closure is called in order to create the handler object.
