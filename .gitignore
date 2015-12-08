@@ -41,3 +41,5 @@ Carthage/Build
 *.swiftdoc
 
 *.swiftmodule
+
+*.so
