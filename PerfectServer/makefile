@@ -1,10 +1,13 @@
 # Makefile for Perfect Server
 
+OS = $(shell uname)
 SWIFTC = swift
-SWIFTC_FLAGS = -frontend -c -module-cache-path $(MODULE_CACHE_PATH) -emit-module -I ../PerfectLib/PerfectLib -I ../PerfectLib/linked/LibEvent -I ../PerfectLib/linked/OpenSSL -I ../PerfectLib/linked/ICU -I ../PerfectLib/linked/SQLite3 -I ../PerfectLib/linked/LinuxBridge
+SWIFTC_FLAGS = -frontend -c -module-cache-path $(MODULE_CACHE_PATH) -emit-module -I /usr/local/lib -I ../PerfectLib/linked/LibEvent \
+	-I ../PerfectLib/linked/OpenSSL -I ../PerfectLib/linked/ICU -I ../PerfectLib/linked/SQLite3 -I ../PerfectLib/linked/LinuxBridge
 MODULE_CACHE_PATH = /tmp/modulecache
-SHLIB_PATH = /swift/usr/lib/swift/linux/
-LFLAGS = -L$(SHLIB_PATH) -lFoundation -lswiftCore -lswiftGlibc ../PerfectLib/PerfectLib/PerfectLib.so
+Linux_SHLIB_PATH = $(shell dirname $(shell dirname $(shell which swiftc)))/lib/swift/linux
+SHLIB_PATH = -L$($(OS)_SHLIB_PATH)
+LFLAGS = $(SHLIB_PATH) -lFoundation -lswiftCore -lswiftGlibc /usr/local/lib/PerfectLib.so -Xlinker -rpath -Xlinker $($(OS)_SHLIB_PATH)
 
 all: perfectserverfcgi perfectserverhttp
 	
