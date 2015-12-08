@@ -330,7 +330,7 @@ static int socket_write(request_rec *r, SOCKET sock, const char * data, size_t l
 		len -= wrote;
 		data += wrote;
 #else
-		size_t res = send(sock, data, (int)len, 0);
+		ssize_t res = send(sock, data, (int)len, 0);
 		if (res == -1)
 			return -1;
 		len -= res;

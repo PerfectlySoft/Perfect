@@ -22,7 +22,7 @@ PERFECT_OBJ = $(addsuffix .o, $(basename $(PERFECT_SRC))) LinuxBridge.o util.o
 PERFECT_MODULES = $(addsuffix ~partial.swiftmodule, $(basename $(PERFECT_SRC)))
 
 Darwin_SHLIB_PATH = -L./linked/ICU/osx -L./linked/LibEvent/osx -L./linked/OpenSSL/osx -L./linked/SQLite3/osx
-Linux_SHLIB_PATH = -L$(SWIFT_LIBS_LOC)  #-L/swift/usr/lib/swift/linux/
+Linux_SHLIB_PATH = -L$(SWIFT_LIBS_LOC)
 SHLIB_PATH = $($(OS)_SHLIB_PATH)
 
 Darwin_LFLAGS = $(SHLIB_PATH) -arch x86_64 -dynamiclib \
