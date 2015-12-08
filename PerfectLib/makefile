@@ -2,6 +2,7 @@
 
 OS = $(shell uname)
 SWIFTC = swift
+SWIFT_LIBS_LOC = $(shell dirname $(shell dirname $(shell which swiftc)))/lib/swift/linux
 MODULE_NAME = PerfectLib
 
 Darwin_SWIFTC_FLAGS = -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk
@@ -21,7 +22,7 @@ PERFECT_OBJ = $(addsuffix .o, $(basename $(PERFECT_SRC))) LinuxBridge.o util.o
 PERFECT_MODULES = $(addsuffix ~partial.swiftmodule, $(basename $(PERFECT_SRC)))
 
 Darwin_SHLIB_PATH = -L./linked/ICU/osx -L./linked/LibEvent/osx -L./linked/OpenSSL/osx -L./linked/SQLite3/osx
-Linux_SHLIB_PATH = -L/swift/usr/lib/swift/linux/
+Linux_SHLIB_PATH = -L$(SWIFT_LIBS_LOC)  #-L/swift/usr/lib/swift/linux/
 SHLIB_PATH = $($(OS)_SHLIB_PATH)
 
 Darwin_LFLAGS = $(SHLIB_PATH) -arch x86_64 -dynamiclib \
