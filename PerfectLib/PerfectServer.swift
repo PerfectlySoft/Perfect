@@ -48,7 +48,6 @@ public class PerfectServer {
 			LogManager.logMessage("Exception while initializing SQLite sessions database \(e)")
 		}
 		
-		// !FIX! OS X only
 		let dl = DynamicLoader()
 		let baseDir = Dir(homeDir() + serverPerfectLibraries)
 		do {
@@ -56,6 +55,13 @@ public class PerfectServer {
 				if name.hasSuffix(".framework") || name.hasSuffix(".framework/") {
 					let fileName = baseDir.realPath() + "/" + name
 					if dl.loadFramework(fileName) {
+						print("Loaded "+name)
+					} else {
+						print("FAILED to load "+name)
+					}
+				} else if name.hasSuffix(".so") || name.hasSuffix(".dylib") {
+					let fileName = baseDir.realPath() + "/" + name
+					if dl.loadLibrary(fileName) {
 						print("Loaded "+name)
 					} else {
 						print("FAILED to load "+name)
