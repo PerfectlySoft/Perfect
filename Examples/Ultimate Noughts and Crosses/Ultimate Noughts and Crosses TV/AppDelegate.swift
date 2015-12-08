@@ -1,8 +1,8 @@
 //
 //  AppDelegate.swift
-//  Ultimate Noughts and Crosses
+//  Ultimate Noughts and Crosses TV
 //
-//  Created by Kyle Jessup on 2015-10-28.
+//  Created by Kyle Jessup on 2015-11-12.
 //  Copyright © 2015 PerfectlySoft. All rights reserved.
 //
 //	This program is free software: you can redistribute it and/or modify
