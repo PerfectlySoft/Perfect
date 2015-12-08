@@ -48,25 +48,48 @@ class DynamicLoader {
 		let file = File(resolvedPath + "/" + moduleName)
 		if file.exists() {
 			let realPath = file.realPath()
-			let openRes = dlopen(realPath, RTLD_NOW|RTLD_LOCAL)
-			if openRes != nil {
-				// this is fragile
-				let newModuleName = moduleName.stringByReplacingString("-", withString: "_").stringByReplacingString(" ", withString: "_")
-				let symbolName = "_TF\(newModuleName.utf8.count)\(newModuleName)\(initFuncName.utf8.count)\(initFuncName)FT_T_"
-				let sym = dlsym(openRes, symbolName)
-				if sym != nil {
-					let f: InitFunction = unsafeBitCast(sym, InitFunction.self)
-					f()
-					return true
-				} else {
-					print("Error loading \(atPath). Symbol \(symbolName) not found.")
-					dlclose(openRes)
-				}
-			} else {
-				print("Errno \(String.fromCString(dlerror())!)")
-			}
+			return self.loadRealPath(realPath, moduleName: moduleName)
 		}
 		return false
 	}
+	
+	func loadLibrary(atPath: String) -> Bool {
+		let resolvedPath = atPath.stringByResolvingSymlinksInPath
+		let moduleName = resolvedPath.lastPathComponent.stringByDeletingPathExtension
+		let file = File(resolvedPath)
+		if file.exists() {
+			let realPath = file.realPath()
+			return self.loadRealPath(realPath, moduleName: moduleName)
+		}
+		return false
+	}
+	
+	private func loadRealPath(realPath: String, moduleName: String) -> Bool {
+		let openRes = dlopen(realPath, RTLD_NOW|RTLD_LOCAL)
+		if openRes != nil {
+			// this is fragile
+			let newModuleName = moduleName.stringByReplacingString("-", withString: "_").stringByReplacingString(" ", withString: "_")
+			let symbolName = "_TF\(newModuleName.utf8.count)\(newModuleName)\(initFuncName.utf8.count)\(initFuncName)FT_T_"
+			let sym = dlsym(openRes, symbolName)
+			if sym != nil {
+				let f: InitFunction = unsafeBitCast(sym, InitFunction.self)
+				f()
+				return true
+			} else {
+				print("Error loading \(realPath). Symbol \(symbolName) not found.")
+				dlclose(openRes)
+			}
+		} else {
+			print("Errno \(String.fromCString(dlerror())!)")
+		}
+		return false
+	}
+	
 }
+
+
+
+
+
+
 
