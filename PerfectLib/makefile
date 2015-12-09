@@ -12,7 +12,7 @@ INSTALL_PATH = $($(OS)_INSTALL_PATH)
 Darwin_SWIFTC_FLAGS = -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk
 Linux_SWIFTC_FLAGS = -I linked/LinuxBridge
 
-SWIFTC_FLAGS = -emit-module -I linked/LibEvent -I linked/OpenSSL -I linked/ICU -I linked/SQLite3 \
+SWIFTC_FLAGS = -emit-module -I linked/LibEvent -I linked/OpenSSL_Linux -I linked/ICU -I linked/SQLite3 \
 	-module-cache-path $(MODULE_CACHE_PATH) -module-name $(MODULE_NAME) $($(OS)_SWIFTC_FLAGS)
 
 PERFECT_SRC = ICU.swift NetNamedPipe.swift File.swift Threading.swift LibEvent.swift Bytes.swift FastCGI.swift \

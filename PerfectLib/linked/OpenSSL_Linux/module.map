@@ -1,0 +1,6 @@
+module OpenSSL [system] {
+    header "openssl/ssl.h"
+    header "openssl/err.h"
+    header "openssl/md5.h"
+    export *
+}

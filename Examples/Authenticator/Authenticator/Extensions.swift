@@ -23,11 +23,25 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
+#if os(OSX)
 import CommonCrypto
+#else
+import OpenSSL
+#endif
 
 extension String {
 	public var md5: [UInt8] {
+#if os(Linux)
+		let bytes = UnsafeMutablePointer<UInt8>.alloc(Int(MD5_DIGEST_LENGTH))
+		defer { bytes.destroy() ; bytes.dealloc(Int(MD5_DIGEST_LENGTH)) }
 		
+		MD5(Array<UInt8>(self.utf8), (self.utf8.count), bytes)
+		
+		var r = [UInt8]()
+		for idx in 0..<Int(MD5_DIGEST_LENGTH) {
+			r.append(bytes[idx])
+		}
+#else
 		let bytes = UnsafeMutablePointer<UInt8>.alloc(Int(CC_MD5_DIGEST_LENGTH))
 		defer { bytes.destroy() ; bytes.dealloc(Int(CC_MD5_DIGEST_LENGTH)) }
 		
@@ -37,6 +51,7 @@ extension String {
 		for idx in 0..<Int(CC_MD5_DIGEST_LENGTH) {
 			r.append(bytes[idx])
 		}
+#endif
 		return r
 	}
 }
