@@ -16,18 +16,18 @@ import Darwin
 #endif
 #endif
 
-class Threading {
+public class Threading {
 	
-	typealias ThreadOnceFunction = @convention(c) () -> ()
+	public typealias ThreadOnceFunction = @convention(c) () -> ()
 	
 #if USE_LIBDISPATCH
-	typealias ThreadClosure = () -> ()
-	typealias ThreadQueue = dispatch_queue_t
-	typealias ThreadSemaphore = dispatch_semaphore_t
-	typealias ThreadOnce = dispatch_once_t
+	public typealias ThreadClosure = () -> ()
+	public typealias ThreadQueue = dispatch_queue_t
+	public typealias ThreadSemaphore = dispatch_semaphore_t
+	public typealias ThreadOnce = dispatch_once_t
 #else
 	
-	class ThreadSemaphore {
+	public class ThreadSemaphore {
 		
 		var mutex = pthread_mutex_t()
 		var cond = pthread_cond_t()
@@ -53,10 +53,10 @@ class Threading {
 		}
 	}
 	
-	typealias ThreadClosure = () -> ()
-	typealias ThreadQueue = Int // bogus
-	typealias ThreadOnce = pthread_once_t
-	typealias ThreadFunction = @convention(c) (UnsafeMutablePointer<Void>) -> UnsafeMutablePointer<Void>
+	public typealias ThreadClosure = () -> ()
+	public typealias ThreadQueue = Int // bogus
+	public typealias ThreadOnce = pthread_once_t
+	public typealias ThreadFunction = @convention(c) (UnsafeMutablePointer<Void>) -> UnsafeMutablePointer<Void>
 	
 	class IsThisRequired {
 		let closure: ThreadClosure
@@ -66,7 +66,7 @@ class Threading {
 	}
 #endif
 	
-	static func dispatchBlock(closure: ThreadClosure) {
+	public static func dispatchBlock(closure: ThreadClosure) {
 #if USE_LIBDISPATCH
 		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), closure)
 #else
@@ -92,7 +92,7 @@ class Threading {
 #endif
 	}
 	
-	static func dispatchBlock(queue: ThreadQueue, closure: ThreadClosure) {
+	public static func dispatchBlock(queue: ThreadQueue, closure: ThreadClosure) {
 #if USE_LIBDISPATCH
 		dispatch_async(queue, closure)
 #else
@@ -100,7 +100,7 @@ class Threading {
 #endif
 	}
 	
-	static func createSerialQueue(named: String) -> ThreadQueue {
+	public static func createSerialQueue(named: String) -> ThreadQueue {
 #if USE_LIBDISPATCH
 		return dispatch_queue_create(named, DISPATCH_QUEUE_SERIAL)
 #else
@@ -108,7 +108,7 @@ class Threading {
 #endif
 	}
 	
-	static func createConcurrentQueue(named: String) -> ThreadQueue {
+	public static func createConcurrentQueue(named: String) -> ThreadQueue {
 #if USE_LIBDISPATCH
 		return dispatch_queue_create(named, DISPATCH_QUEUE_CONCURRENT)
 #else
@@ -116,7 +116,7 @@ class Threading {
 #endif
 	}
 	
-	static func createSemaphore() -> ThreadSemaphore {
+	public static func createSemaphore() -> ThreadSemaphore {
 #if USE_LIBDISPATCH
 		return dispatch_semaphore_create(0)
 #else
@@ -124,7 +124,7 @@ class Threading {
 #endif
 	}
 	
-	static func signalSemaphore(semaphore: ThreadSemaphore) {
+	public static func signalSemaphore(semaphore: ThreadSemaphore) {
 #if USE_LIBDISPATCH
 		dispatch_semaphore_signal(semaphore)
 #else
@@ -134,7 +134,7 @@ class Threading {
 #endif
 	}
 	
-	static func waitSemaphore(semaphore: ThreadSemaphore, waitMillis: Int) {
+	public static func waitSemaphore(semaphore: ThreadSemaphore, waitMillis: Int) {
 		if waitMillis == -1 {
 #if USE_LIBDISPATCH
 			dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER)
@@ -148,7 +148,7 @@ class Threading {
 		}
 	}
 	
-	static func once(inout threadOnce: ThreadOnce, onceFunc: ThreadOnceFunction) {
+	public static func once(inout threadOnce: ThreadOnce, onceFunc: ThreadOnceFunction) {
 #if USE_LIBDISPATCH
 		dispatch_once(&threadOnce, onceFunc)
 #else
