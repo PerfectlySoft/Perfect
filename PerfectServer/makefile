@@ -1,5 +1,8 @@
 # Makefile for Perfect Server
 
+TARGET_FCGI = perfectserverfcgi
+TARGET_HTTP = perfectserverhttp
+
 OS = $(shell uname)
 SWIFTC = swift
 SWIFTC_FLAGS = -frontend -c -module-cache-path $(MODULE_CACHE_PATH) -emit-module -I /usr/local/lib -I ../PerfectLib/linked/LibEvent \
@@ -9,19 +12,27 @@ Linux_SHLIB_PATH = $(shell dirname $(shell dirname $(shell which swiftc)))/lib/s
 SHLIB_PATH = -L$($(OS)_SHLIB_PATH)
 LFLAGS = $(SHLIB_PATH) -lFoundation -lswiftCore -lswiftGlibc /usr/local/lib/PerfectLib.so -Xlinker -rpath -Xlinker $($(OS)_SHLIB_PATH)
 
-all: perfectserverfcgi perfectserverhttp
+all: modulecache $(TARGET_FCGI) $(TARGET_HTTP)
 	
+
+install: all
+	ln -sf `pwd`/$(TARGET_FCGI) /usr/local/bin/
+	ln -sf `pwd`/$(TARGET_HTTP) /usr/local/bin/
+
 modulecache:
 	@mkdir -p $(MODULE_CACHE_PATH)
 
-perfectserverfcgi: modulecache
-	$(SWIFTC) $(SWIFTC_FLAGS) main.swift main_fcgi.swift -o $@.o -module-name $@ -emit-module-path $@.swiftmodule
+$(TARGET_FCGI): $(TARGET_FCGI).o
 	clang++ $(LFLAGS) $@.o -o $@
 
-perfectserverhttp: modulecache
-	$(SWIFTC) $(SWIFTC_FLAGS) main.swift main_http.swift -o $@.o -module-name $@ -emit-module-path $@.swiftmodule
+$(TARGET_HTTP): $(TARGET_HTTP).o
 	clang++ $(LFLAGS) $@.o -o $@
+
+$(TARGET_FCGI).o: main_fcgi.swift
+	$(SWIFTC) $(SWIFTC_FLAGS) main.swift $< -o $@ -module-name $(subst .o,,$@) -emit-module-path $(subst .o,,$@).swiftmodule
+
+$(TARGET_HTTP).o: main_http.swift
+	$(SWIFTC) $(SWIFTC_FLAGS) main.swift $< -o $@ -module-name $(subst .o,,$@) -emit-module-path $(subst .o,,$@).swiftmodule
 
 clean:
 	@rm *.o
-

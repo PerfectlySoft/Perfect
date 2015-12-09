@@ -340,7 +340,7 @@ extension String {
 		return s
 	}
 	
-	func rangeOf(string: String, ignoreCase: Bool = false) -> Range<String.Index>? {
+	public func rangeOf(string: String, ignoreCase: Bool = false) -> Range<String.Index>? {
 		var idx = self.startIndex
 		let endIdx = self.endIndex
 		
@@ -364,7 +364,7 @@ extension String {
 		return nil
 	}
 
-	func containsString(string: String) -> Bool {
+	public func containsString(string: String) -> Bool {
 		return nil != self.rangeOf(string)
 	}
 }
