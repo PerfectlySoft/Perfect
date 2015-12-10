@@ -32,7 +32,9 @@ import Darwin
 
 func startServer() throws {
 	
-	let dir = String.fromCString(getcwd(nil, 0)) ?? ""
+	let buf = getcwd(nil, 0)
+	let dir = String.fromCString(buf) ?? ""
+	free(buf)
 	print("Current working directory: \(dir)")
 
 	let ls = PerfectServer.staticPerfectServer
