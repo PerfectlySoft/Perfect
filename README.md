@@ -1,8 +1,8 @@
 # Perfect 
 ![Perfect logo](https://www.perfect.org/images/icon_128x128.png) 
 
-[![Swift 2.0](https://img.shields.io/badge/Swift-2.0-orange.svg?style=flat)](https://developer.apple.com/swift/)
-[![Platforms OS X | iOS | tvos](https://img.shields.io/badge/Platforms-OS%20X%20%7C%20iOS-lightgray.svg?style=flat)](https://developer.apple.com/swift/)
+[![Swift 2.2](https://img.shields.io/badge/Swift-2.2-orange.svg?style=flat)](https://developer.apple.com/swift/)
+[![Platforms OS X | iOS | Linux](https://img.shields.io/badge/Platforms-OS%20X%20%7C%20iOS%20%7C%20Linux%20-lightgray.svg?style=flat)](https://developer.apple.com/swift/)
 [![License AGPL](https://img.shields.io/badge/License-AGPL-lightgrey.svg?style=flat)](http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt)
 [![Docs](https://img.shields.io/badge/docs-83%-yellow.svg?style=flat)](http://www.perfect.org/docs/)
 [![Issues](https://img.shields.io/github/issues-raw/PerfectlySoft/Perfect.svg?style=flat)](https://github.com/PerfectlySoft/Perfect/issues)
@@ -10,10 +10,12 @@
 [![Twitter](https://img.shields.io/badge/Twitter-@PerfectlySoft-brightgreen.svg?style=flat)](http://twitter.com/PerfectlySoft)
 [![Join the chat at https://gitter.im/PerfectlySoft/Perfect](https://img.shields.io/badge/Gitter-Join%20Chat-brightgreen.svg)](https://gitter.im/PerfectlySoft/Perfect?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+**Perfect now runs on Linux!**
+Perfect now builds and runs on Linux with the [open source release of Swift](https://github.com/apple/swift). We've currently been working only with Ubuntu 15.10. Consult the readmes for the individual components for build instructions.
+
 Perfect is an application server which provides a framework for developing web and other REST services in the Swift programming language. Its primary focus is on facilitating mobile apps which require backend server software. It enables you to use one language for both front and back ends.
 
 Perfect operates using either its own stand-alone HTTP server or through FastCGI with Apache 2.4. It provides a system for loading your own Swift based modules at startup and for interfacing those modules with its built-in mustache template processing system.
-
 
 Perfect consists of the following components:
 
@@ -29,7 +31,7 @@ Perfect consists of the following components:
 	* [mod_perfect](Connectors/mod_perfect/#mod_perfect) - FastCGI connectivity for Apache 2.4.
 	* [MySQL](Connectors/MySQL/#mysql) - Provides connectivity for MySQL databases.
 	* [PostgreSQL](Connectors/PostgreSQL/#postgresql) - Provides connectivity for PostgreSQL databases.
-	* [MongoDB](Connectors/MongoDB/#mongodb) - Provides connectivity for MongoDB databases (*in progress*).
+	* [MongoDB](Connectors/MongoDB/#mongodb) - Provides connectivity for MongoDB databases.
 * [Examples](Examples/#examples) - A set of examples which show how to utilize Perfect.
 	* Mobile iOS Examples
 	* Web Site Examples

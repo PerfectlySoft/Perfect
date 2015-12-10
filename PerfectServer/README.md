@@ -12,6 +12,14 @@ Both server variants are implimented as their own classes, making it very easy t
 
 ![Perfect Server Targets](../SiteAssets/perfect_server_targets.png)
 
+## Linux Build Notes
+First, ensure you have built [PerfectLib](../PerfectLib/#perfectlib).
+
+* cd Perfect/PerfectServer
+* make
+
+This above will produce the *perfectserverfcgi* and *perfectserverhttp* executables. For ease of use you can symlink these into /usr/local/bin, if you like.
+
 ## Operations
 When **Perfect Server** launches, it looks for various resources in particularly named directories located in the processes' current working directory. These directories are as follows:
 
