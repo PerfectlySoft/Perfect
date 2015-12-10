@@ -38,7 +38,7 @@ class RegistrationHandler: PageHandler { // all template handlers must inherit f
 		
 		var json = false
 		if let acceptStr = context.webRequest?.httpAccept() {
-			if acceptStr.containsString("json") {
+			if acceptStr.contains("json") {
 				json = true
 			}
 		}
