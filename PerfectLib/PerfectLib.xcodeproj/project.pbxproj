@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F804E2B61C1A0F9C00B0F393 /* Threading.swift in Sources */ = {isa = PBXBuildFile; fileRef = F877D5471C110CA700CC100D /* Threading.swift */; };
 		F82AADE81C0E2CBB00749854 /* RWLockCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F82AADE71C0E2CBB00749854 /* RWLockCache.swift */; };
 		F877D5481C110CA700CC100D /* Threading.swift in Sources */ = {isa = PBXBuildFile; fileRef = F877D5471C110CA700CC100D /* Threading.swift */; };
 		F88B067B1BDD4269001FD0CD /* libevent_pthreads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F88B06791BDD4269001FD0CD /* libevent_pthreads.a */; };
@@ -480,6 +481,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F804E2B61C1A0F9C00B0F393 /* Threading.swift in Sources */,
 				F8F28A401BD5636F00367249 /* Closeable.swift in Sources */,
 				F8F28A441BD5639400367249 /* JSON.swift in Sources */,
 				F8F28A461BD563B300367249 /* curl_support.cpp in Sources */,
