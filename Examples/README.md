@@ -19,6 +19,13 @@ Example end point in source code:
 
 ![End Point Edit](../SiteAssets/end_point_edit.png)
 
+## Linux Build Notes
+First, ensure you have built [PerfectLib](../PerfectLib/#perfectlib) and [Perfect Server](../PerfectServer/#perfectserver).
+
+* cd into the desired example directory
+* make
+* This will produce a .so library which should be copied or linked into the PerfectLibraries directory in whatever location you are running the Perfect Server from.
+
 ## Example Apps
 * [Tap Tracker](Tap%20Tracker/#tap-tracker)
 * [Upload Enumerator](Upload%20Enumerator/#upload-enumerator)

@@ -1,6 +1,15 @@
 # Perfect - mod_perfect - Apache 2.4 Connector
 Write me!
-But here is a sample Apache .conf snippet. This uses mod_rewrite in order to provide extension-less URLs.
+
+## Linux Build Notes
+* cd into mod_perfect
+* make
+
+This will automatically install the appropriate Apache development resources if required, potentially prompting you for your sudo password. You must then install the produced mod_perfect.so as you would any other Apache module.
+
+## Configuration
+
+Here is a sample Apache .conf snippet. This uses mod_rewrite in order to provide extension-less URLs.
 
 ```
 <IfModule !perfect_module>
