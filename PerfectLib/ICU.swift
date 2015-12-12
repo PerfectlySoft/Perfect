@@ -31,15 +31,15 @@ public class ICU {
 	
 	/// Returns true if the UnicodeScalar is a white space character
 	public static func isWhiteSpace(e: UnicodeScalar) -> Bool {
-		return 1 == u_isWhitespace_55(UChar32(e.value))
+		return 1 == u_isWhitespace_wrapper(UChar32(e.value))
 	}
 	/// Returns true if the UnicodeScalar is a digit character
 	public static func isDigit(e: UnicodeScalar) -> Bool {
-		return 1 == u_isdigit_55(UChar32(e.value))
+		return 1 == u_isdigit_wrapper(UChar32(e.value))
 	}
 	/// Returns true if the UnicodeScalar is an alpha-numeric character
 	public static func isAlphaNum(e: UnicodeScalar) -> Bool {
-		return 1 == u_isalnum_55(UChar32(e.value))
+		return 1 == u_isalnum_wrapper(UChar32(e.value))
 	}
 	/// Returns true if the UnicodeScalar is a hexadecimal character
 	public static func isHexDigit(e: UnicodeScalar) -> Bool {
@@ -56,7 +56,7 @@ public class ICU {
 	/// Returns the current time according to ICU
 	/// ICU dates are the number of milliseconds since the reference date of Thu, 01-Jan-1970 00:00:00 GMT
 	public static func getNow() -> Double {
-		return ucal_getNow_55()
+		return ucal_getNow_wrapper()
 	}
 	/// Converts the milliseconds based ICU date to seconds since the epoch
 	public static func icuDateToSeconds(icuDate: Double) -> Int {
@@ -73,7 +73,7 @@ public class ICU {
 	
 	@noreturn
 	static func ThrowICUError(code: UErrorCode) throws {
-		let msg = String.fromCString(u_errorName_55(code))!
+		let msg = String.fromCString(u_errorName_wrapper(code))!
 		
 		print("ICUError: \(code.rawValue) \(msg)")
 		
@@ -106,16 +106,16 @@ public class ICU {
 			locale = UnsafePointer<Int8>(Array<UInt8>(utf8Chars))
 		}
 		
-		let dateFormat = udat_open_55(UDAT_PATTERN, UDAT_PATTERN, locale, timezone, timeZoneLength, Array<UInt16>(utf16Chars), Int32(utf16Chars.count), &status)
+		let dateFormat = udat_open_wrapper(UDAT_PATTERN, UDAT_PATTERN, locale, timezone, timeZoneLength, Array<UInt16>(utf16Chars), Int32(utf16Chars.count), &status)
 		
 		guard U_SUCCESS(status) else {
 			try ThrowICUError(status)
 		}
 		
-		defer { udat_close_55(dateFormat) }
+		defer { udat_close_wrapper(dateFormat) }
 		
 		let srcUtf16Chars = dateStr.utf16
-		let date = udat_parse_55(dateFormat, Array<UInt16>(srcUtf16Chars), Int32(srcUtf16Chars.count), nil, &status)
+		let date = udat_parse_wrapper(dateFormat, Array<UInt16>(srcUtf16Chars), Int32(srcUtf16Chars.count), nil, &status)
 		
 		guard U_SUCCESS(status) else {
 			try ThrowICUError(status)
@@ -150,17 +150,17 @@ public class ICU {
 			locale = UnsafePointer<Int8>(Array<UInt8>(utf8Chars))
 		}
 		
-		let dateFormat = udat_open_55(UDAT_PATTERN, UDAT_PATTERN, locale, timezone, timeZoneLength, Array<UInt16>(utf16Chars), Int32(utf16Chars.count), &status)
+		let dateFormat = udat_open_wrapper(UDAT_PATTERN, UDAT_PATTERN, locale, timezone, timeZoneLength, Array<UInt16>(utf16Chars), Int32(utf16Chars.count), &status)
 		
 		guard U_SUCCESS(status) else {
 			try ThrowICUError(status)
 		}
 		
-		defer { udat_close_55(dateFormat) }
+		defer { udat_close_wrapper(dateFormat) }
 		
 		let buffer = UnsafeMutablePointer<UInt16>.alloc(1024)
 		defer { buffer.destroy() ; buffer.dealloc(1024) }
-		let formatResult = udat_format_55(dateFormat, date, buffer, 1024, nil, &status)
+		let formatResult = udat_format_wrapper(dateFormat, date, buffer, 1024, nil, &status)
 		
 		guard formatResult > 0 && U_SUCCESS(status) else {
 			try ThrowICUError(status)
