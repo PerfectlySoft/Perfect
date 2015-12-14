@@ -25,7 +25,6 @@
 
 
 import Foundation
-import func ICU.ucal_getNow_55
 
 let perfectSessionDB = "perfect_sessions"
 let perfectSessionNamePrefix = "_PerfectSessionTracker_"
