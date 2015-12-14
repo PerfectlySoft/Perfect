@@ -23,35 +23,8 @@ public class Threading {
 #if USE_LIBDISPATCH
 	public typealias ThreadClosure = () -> ()
 	public typealias ThreadQueue = dispatch_queue_t
-	public typealias ThreadSemaphore = dispatch_semaphore_t
 	public typealias ThreadOnce = dispatch_once_t
 #else
-	
-	public class ThreadSemaphore {
-		
-		var mutex = pthread_mutex_t()
-		var cond = pthread_cond_t()
-		
-		init() {
-			var attr = pthread_mutexattr_t()
-			pthread_mutexattr_init(&attr)
-			pthread_mutexattr_settype(&attr, Int32(PTHREAD_MUTEX_RECURSIVE))
-			pthread_mutex_init(&mutex, &attr)
-			
-			var __c_attr = pthread_condattr_t()
-			pthread_condattr_init(&__c_attr)
-#if os (Linux)
-//			pthread_condattr_setclock(&__c_attr, CLOCK_REALTIME)
-#endif
-			pthread_cond_init(&cond, &__c_attr)
-			pthread_condattr_destroy(&__c_attr)
-		}
-		
-		deinit {
-			pthread_cond_destroy(&cond)
-			pthread_mutex_destroy(&mutex)
-		}
-	}
 	
 	public typealias ThreadClosure = () -> ()
 	public typealias ThreadQueue = Int // bogus
@@ -65,6 +38,68 @@ public class Threading {
 		}
 	}
 #endif
+	
+	public class Lock {
+		
+		var mutex = pthread_mutex_t()
+		
+		public init() {
+			var attr = pthread_mutexattr_t()
+			pthread_mutexattr_init(&attr)
+			pthread_mutexattr_settype(&attr, Int32(PTHREAD_MUTEX_RECURSIVE))
+			pthread_mutex_init(&mutex, &attr)
+		}
+		
+		deinit {
+			pthread_mutex_destroy(&mutex)
+		}
+		
+		public func lock() {
+			pthread_mutex_lock(&self.mutex)
+		}
+		
+		public func unlock() {
+			pthread_mutex_unlock(&self.mutex)
+		}
+		
+	}
+	
+	public class Event: Lock {
+		
+		var cond = pthread_cond_t()
+		
+		override init() {
+			super.init()
+			
+			var __c_attr = pthread_condattr_t()
+			pthread_condattr_init(&__c_attr)
+			#if os (Linux)
+				//			pthread_condattr_setclock(&__c_attr, CLOCK_REALTIME)
+			#endif
+			pthread_cond_init(&cond, &__c_attr)
+			pthread_condattr_destroy(&__c_attr)
+		}
+		
+		deinit {
+			pthread_cond_destroy(&cond)
+		}
+		
+		public func signal() {
+			pthread_cond_signal(&self.cond)
+		}
+		
+		public func wait(waitMillis: Int = -1) -> Bool {
+			if waitMillis == -1 {
+				return 0 == pthread_cond_wait(&self.cond, &self.mutex)
+			}
+			var tm = timespec()
+			tm.tv_sec = waitMillis / 1000;
+			tm.tv_nsec = (waitMillis - (tm.tv_sec * 1000)) * 1000000;
+			
+			let ret = pthread_cond_timedwait_relative_np(&self.cond, &self.mutex, &tm);
+			return ret == 0;
+		}
+	}
 	
 	public static func dispatchBlock(closure: ThreadClosure) {
 #if USE_LIBDISPATCH
@@ -115,39 +150,7 @@ public class Threading {
 		return 1
 #endif
 	}
-	
-	public static func createSemaphore() -> ThreadSemaphore {
-#if USE_LIBDISPATCH
-		return dispatch_semaphore_create(0)
-#else
-		return ThreadSemaphore()
-#endif
-	}
-	
-	public static func signalSemaphore(semaphore: ThreadSemaphore) {
-#if USE_LIBDISPATCH
-		dispatch_semaphore_signal(semaphore)
-#else
-		pthread_mutex_lock(&semaphore.mutex)
-		pthread_cond_signal(&semaphore.cond)
-		pthread_mutex_unlock(&semaphore.mutex)
-#endif
-	}
-	
-	public static func waitSemaphore(semaphore: ThreadSemaphore, waitMillis: Int) {
-		if waitMillis == -1 {
-#if USE_LIBDISPATCH
-			dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER)
-#else
-			pthread_mutex_lock(&semaphore.mutex)
-			pthread_cond_wait(&semaphore.cond, &semaphore.mutex)
-			pthread_mutex_unlock(&semaphore.mutex)
-#endif
-		} else {
-			// !FIX!
-		}
-	}
-	
+		
 	public static func once(inout threadOnce: ThreadOnce, onceFunc: ThreadOnceFunction) {
 #if USE_LIBDISPATCH
 		dispatch_once(&threadOnce, onceFunc)
