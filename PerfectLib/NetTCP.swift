@@ -37,7 +37,7 @@ let EINPROGRESS = Int32(115)
 public class NetTCP : Closeable {
 	
 	private var networkFailure: Bool = false
-	private var semaphore: Threading.ThreadSemaphore?
+	private var semaphore: Threading.Event?
 	private var waitAcceptEvent: LibEvent?
 	
 	class ReferenceBuffer {
@@ -152,7 +152,7 @@ public class NetTCP : Closeable {
 			}
 			
 			if self.semaphore != nil {
-				Threading.signalSemaphore(self.semaphore!)
+				self.semaphore!.signal()
 			}
 		}
 	}
@@ -299,14 +299,16 @@ public class NetTCP : Closeable {
 		let length = bytes.count
 		var totalSent = 0
 		let ptr = UnsafeMutablePointer<UInt8>(bytes)
-		var s: Threading.ThreadSemaphore?
+		var s: Threading.Event?
 		var what: Int32 = 0
 		
 		let waitFunc = {
 			let event: LibEvent = LibEvent(base: LibEvent.eventBase, fd: self.fd.fd, what: EV_WRITE, userData: nil) {
 				(fd:Int32, w:Int16, ud:AnyObject?) -> () in
 				what = Int32(w)
-				Threading.signalSemaphore(s!)
+				s!.lock()
+				s!.signal()
+				s!.unlock()
 			}
 			event.add()
 		}
@@ -319,11 +321,12 @@ public class NetTCP : Closeable {
 			}
 			
 			if s == nil {
-				s = Threading.createSemaphore()
+				s = Threading.Event()
 			}
 			
 			if sent == -1 {
 				if isEAgain(sent) { // flow
+					s!.lock()
 					waitFunc()
 				} else { // error
 					break
@@ -334,12 +337,12 @@ public class NetTCP : Closeable {
 				if totalSent == length {
 					return true
 				}
-				
+				s!.lock()
 				waitFunc()
 			}
 			
-			Threading.waitSemaphore(s!, waitMillis: -1)
-			
+			s!.wait()
+			s!.unlock()
 			if what != EV_WRITE {
 				break
 			}
@@ -482,7 +485,9 @@ public class NetTCP : Closeable {
 			if (Int32(w) & EV_TIMEOUT) != 0 {
 				print("huh?")
 			} else {
-				Threading.signalSemaphore(self.semaphore!)
+				self.semaphore!.lock()
+				self.semaphore!.signal()
+				self.semaphore!.unlock()
 			}
 		}
 		self.waitAcceptEvent = event
@@ -497,7 +502,7 @@ public class NetTCP : Closeable {
 			return
 		}
 		
-		self.semaphore = Threading.createSemaphore()
+		self.semaphore = Threading.Event()
 		defer { self.semaphore = nil }
 		
 		repeat {
@@ -508,8 +513,10 @@ public class NetTCP : Closeable {
 					callBack(self.makeFromFd(accRes))
 				}
 			} else if self.isEAgain(Int(accRes)) {
+				self.semaphore!.lock()
 				waitAccept()
-				Threading.waitSemaphore(self.semaphore!, waitMillis: -1)
+				self.semaphore!.wait()
+				self.semaphore!.unlock()
 			} else {
 				let errStr = String.fromCString(strerror(Int32(errno))) ?? "NO MESSAGE"
 				print("Unexpected networking error: \(errno) '\(errStr)'")
