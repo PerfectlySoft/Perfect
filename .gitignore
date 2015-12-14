@@ -43,3 +43,7 @@ Carthage/Build
 *.swiftmodule
 
 *.so
+
+# Perfect binaries
+PerfectServer/perfectserverfcgi
+PerfectServer/perfectserverhttp
