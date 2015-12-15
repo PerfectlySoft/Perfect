@@ -37,7 +37,7 @@ let AUTH_REALM = "Authenticator Perfect Example"
 public func PerfectServerModuleInit() {
 	
 	// Register our handler class with the PageHandlerRegistry.
-	// The name "TTHandler", which we supply here, is used within a mustache template to associate the template with the handler.
+	// The name "LoginHandler", which we supply here, is used within a mustache template to associate the template with the handler.
 	PageHandlerRegistry.addPageHandler("LoginHandler") {
 		
 		// This closure is called in order to create the handler object.
