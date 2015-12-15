@@ -93,10 +93,18 @@ public class Threading {
 				return 0 == pthread_cond_wait(&self.cond, &self.mutex)
 			}
 			var tm = timespec()
-			tm.tv_sec = waitMillis / 1000;
-			tm.tv_nsec = (waitMillis - (tm.tv_sec * 1000)) * 1000000;
+		#if os(Linux)
+			var tv = timeval()
+			gettimeofday(&tv, nil)
+			tm.tv_sec = tv.tv_sec + waitMillis / 1000;
+			tm.tv_nsec = (tv.tv_usec + 1000 * waitMillis) * 1000
+			let ret = pthread_cond_timedwait(&self.cond, &self.mutex, &tm)
+		#else
+			tm.tv_sec = waitMillis / 1000
+			tm.tv_nsec = (waitMillis - (tm.tv_sec * 1000)) * 1000000
 			
-			let ret = pthread_cond_timedwait_relative_np(&self.cond, &self.mutex, &tm);
+			let ret = pthread_cond_timedwait_relative_np(&self.cond, &self.mutex, &tm)
+		#endif
 			return ret == 0;
 		}
 	}
