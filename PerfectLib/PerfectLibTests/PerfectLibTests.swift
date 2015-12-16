@@ -801,6 +801,88 @@ class PerfectLibTests: XCTestCase {
 			XCTAssert(true)
 		}
 	}
+	
+//	func testStringBeginsWithSeparator() {
+//		XCTAssert(true == "/foo/bar".beginsWithPathSeparator)
+//		XCTAssert(true == "/".beginsWithPathSeparator)
+//		XCTAssert(false == "foo/bar".beginsWithPathSeparator)
+//	}
+//	
+//	func testStringEndsWithSeparator() {
+//		XCTAssert(true == "/foo/bar/".endsWithPathSeparator)
+//		XCTAssert(true == "/".endsWithPathSeparator)
+//		XCTAssert(false == "foo/bar".endsWithPathSeparator)
+//	}
+//	
+//	func testStringPathComponents() {
+//		do {
+//			let s = "user/{id}/do////*//it"
+//			let a = ["user","{id}","do","*","it"]
+//			
+//			let comps = s.pathComponents
+//			
+//			for n in 0..<a.count {
+//				XCTAssert(a[n] == comps[n])
+//			}
+//		}
+//		
+//		do {
+//			let s = "/user/{id}/do////*//it/"
+//			let a = ["/", "user","{id}","do","*","it", "/"]
+//			
+//			let comps = s.pathComponents(true)
+//			
+//			for n in 0..<a.count {
+//				XCTAssert(a[n] == comps[n])
+//			}
+//		}
+//		
+//	}
+	
+	func testStringLastComponent() {
+		XCTAssert("/a/".lastPathComponent == "a")
+		XCTAssert("/b/a".lastPathComponent == "a")
+		XCTAssert("/".lastPathComponent == "/")
+	}
+	
+	func testStringByDeletingLastPathComponent() {
+		XCTAssert("/a/".stringByDeletingLastPathComponent == "/")
+		XCTAssert("/b/a".stringByDeletingLastPathComponent == "/b/")
+		XCTAssert("/".stringByDeletingLastPathComponent == "/")
+	}
+	
+	func testPathComponentsExPerformance() {
+		let s = "/foo/bar/baz/bilbo/bucket/salami"
+		self.measureBlock {
+			
+			for _ in 0..<100000 {
+				s.pathComponents.count
+			}
+			
+		}
+	}
+	
+	func testPathComponentsNatPerformance() {
+		let s = "/foo/bar/baz/bilbo/bucket/salami" as NSString
+		self.measureBlock {
+			
+			for _ in 0..<100000 {
+				s.pathComponents.count
+			}
+			
+		}
+	}
+	
+	func testPathComponentsSplitPerformance() {
+		let s = "/foo/bar/baz/bilbo/bucket/salami"
+		self.measureBlock {
+			
+			for _ in 0..<100000 {
+				s.characters.split(Character("/")).map { String($0) } .count
+			}
+			
+		}
+	}
 }
 
 

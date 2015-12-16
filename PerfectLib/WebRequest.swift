@@ -43,6 +43,9 @@ public class WebRequest {
 	
 	private var cachedHttpAuthorization: [String:String]? = nil
 	
+	/// Variables set by the URL routing process
+	public lazy var urlVariables = [String:String]()
+	
 	/// A `Dictionary` containing all HTTP header names and values
 	/// Only HTTP headers are included in the result. Any "meta" headers, i.e. those provided by the web server, are discarded.
 	lazy var headers: Dictionary<String, String> = {

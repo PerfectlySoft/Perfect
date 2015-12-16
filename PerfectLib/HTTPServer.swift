@@ -133,13 +133,24 @@ public class HTTPServer {
 	
 	// returns true if the request pointed to a file which existed
 	// and the request was properly handled
-	func runRequest(req: HTTPWebConnection, withPathInfo: String) -> Bool {
+	func runRequest(req: HTTPWebConnection, withPathInfo: String, completion: (Bool) -> ()) {
+		
+		if PageHandlerRegistry.hasGlobalHandler() {
+			req.requestParams["PATH_INFO"] = withPathInfo
+			
+			let request = WebRequest(req)
+			let response = WebResponse(req, request: request)
+			return response.respond() {
+				return completion(true)
+			}
+		}
+		
 		let filePath = self.documentRoot + withPathInfo
 		let ext = withPathInfo.pathExtension.lowercaseString
 		if ext == mustacheExtension {
 			
 			if !File(filePath).exists() {
-				return false
+				return completion(false)
 			}
 			
 			// PATH_INFO may have been altered. set it to this version
@@ -147,37 +158,46 @@ public class HTTPServer {
 			
 			let request = WebRequest(req)
 			let response = WebResponse(req, request: request)
-			response.respond()
-			return true
+			return response.respond() {
+				return completion(true)
+			}
 			
 		} else if ext.isEmpty {
 			
-			if !withPathInfo.hasSuffix(".") && self.runRequest(req, withPathInfo: withPathInfo + ".\(mustacheExtension)") {
-				return true
-			}
-			
-			let pathDir = Dir(filePath)
-			if pathDir.exists() {
-				
-				if self.runRequest(req, withPathInfo: withPathInfo + "/index.\(mustacheExtension)") {
-					return true
-				}
-				
-				if self.runRequest(req, withPathInfo: withPathInfo + "/index.html") {
-					return true
+			if !withPathInfo.hasSuffix(".") {
+				return self.runRequest(req, withPathInfo: withPathInfo + ".\(mustacheExtension)") {
+					b in
+					if b {
+						return completion(true)
+					}
+					let pathDir = Dir(filePath)
+					if pathDir.exists() {
+						
+						self.runRequest(req, withPathInfo: withPathInfo + "/index.\(mustacheExtension)") {
+							b in
+							if b {
+								return completion(true)
+							}
+							self.runRequest(req, withPathInfo: withPathInfo + "/index.html") {
+								b in
+								return completion(b)
+							}
+						}
+					} else {
+						return completion(false)
+					}
 				}
 			}
 			
 		} else {
 			
 			let file = File(filePath)
-			
 			if file.exists() {
 				self.sendFile(req, file: file)
-				return true
+				return completion(true)
 			}
 		}
-		return false
+		return completion(false)
 	}
 	
 	func runRequest(req: HTTPWebConnection) {
@@ -191,17 +211,19 @@ public class HTTPServer {
 		
 		req.requestParams["PERFECTSERVER_DOCUMENT_ROOT"] = self.documentRoot
 		
-		if !self.runRequest(req, withPathInfo: pathInfo) {
-			req.setStatus(404, msg: "NOT FOUND")
-			let msg = "The file \"\(pathInfo)\" was not found.".utf8
-			req.writeHeaderLine("Content-length: \(msg.count)")
-			req.writeBodyBytes([UInt8](msg))
-		}
-		
-		if req.httpKeepAlive {
-			self.handleConnection(req.connection)
-		} else {
-			req.connection.close()
+		self.runRequest(req, withPathInfo: pathInfo) {
+			b in
+			if !b {
+				req.setStatus(404, msg: "NOT FOUND")
+				let msg = "The file \"\(pathInfo)\" was not found.".utf8
+				req.writeHeaderLine("Content-length: \(msg.count)")
+				req.writeBodyBytes([UInt8](msg))
+			}
+			if req.httpKeepAlive {
+				self.handleConnection(req.connection)
+			} else {
+				req.connection.close()
+			}
 		}
 	}
 	

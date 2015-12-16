@@ -95,6 +95,8 @@ public class Threading {
 			var tm = timespec()
 		#if os(Linux)
 			var tv = timeval()
+			// !FIX! use clock_gettime
+			// CLOCK_MONOTONIC isn't exported by Glibc
 			gettimeofday(&tv, nil)
 			tm.tv_sec = tv.tv_sec + waitMillis / 1000;
 			tm.tv_nsec = (tv.tv_usec + 1000 * waitMillis) * 1000

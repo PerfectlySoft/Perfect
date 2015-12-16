@@ -220,13 +220,14 @@ public class FastCGIServer {
 		let request = WebRequest(fcgiReq)
 		let response = WebResponse(fcgiReq, request: request)
 		
-		response.respond()
-		
-		let status = response.appStatus
-		
-		let finalBytes = fcgiReq.makeEndRequestBody(Int(fcgiReq.requestId), appStatus: status, protocolStatus: fcgiRequestComplete)
-		fcgiReq.writeBytes(finalBytes)
-		fcgiReq.connection.close()
+		response.respond {
+			
+			let status = response.appStatus
+			
+			let finalBytes = fcgiReq.makeEndRequestBody(Int(fcgiReq.requestId), appStatus: status, protocolStatus: fcgiRequestComplete)
+			fcgiReq.writeBytes(finalBytes)
+			fcgiReq.connection.close()
+		}
 	}
 }
 

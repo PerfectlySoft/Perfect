@@ -409,7 +409,9 @@ extension String {
 		r.appendContentsOf(self.characters.split(Character(pathSeparator)).map { String($0) })
 		
 		if addFirstLast && self.endsWithSeparator {
-			r.append(String(pathSeparator))
+			if !self.beginsWithSeparator || r.count > 1 {
+				r.append(String(pathSeparator))
+			}
 		}
 		return r
 	}
