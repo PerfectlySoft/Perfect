@@ -40,10 +40,11 @@ public func PerfectServerModuleInit() {
 	Routing.Routes["GET", "/user/{id}/baz"] = { _ in return Echo2Handler() }
 	Routing.Routes["POST", "/user/{id}/baz"] = { _ in return Echo3Handler() }
 	
+	// Check the console to see the logical structure of what was installed.
 	print("\(Routing.Routes)")
 }
 
-class IndexHandler: RequestHandler { // all template handlers must inherit from PageHandler
+class IndexHandler: RequestHandler {
 	
 	func handleRequest(request: WebRequest, response: WebResponse) {
 		response.appendBodyString("Index handler: You accessed path \(request.pathInfo())")
@@ -51,7 +52,7 @@ class IndexHandler: RequestHandler { // all template handlers must inherit from 
 	}
 }
 
-class EchoHandler: RequestHandler { // all template handlers must inherit from PageHandler
+class EchoHandler: RequestHandler {
 	
 	func handleRequest(request: WebRequest, response: WebResponse) {
 		response.appendBodyString("Echo handler: You accessed path \(request.pathInfo()) with variables \(request.urlVariables)")
@@ -59,7 +60,7 @@ class EchoHandler: RequestHandler { // all template handlers must inherit from P
 	}
 }
 
-class Echo2Handler: RequestHandler { // all template handlers must inherit from PageHandler
+class Echo2Handler: RequestHandler {
 	
 	func handleRequest(request: WebRequest, response: WebResponse) {
 		response.appendBodyString("<html><body>Echo 2 handler: You GET accessed path \(request.pathInfo()) with variables \(request.urlVariables)<br>")
@@ -68,10 +69,11 @@ class Echo2Handler: RequestHandler { // all template handlers must inherit from 
 	}
 }
 
-class Echo3Handler: RequestHandler { // all template handlers must inherit from PageHandler
+class Echo3Handler: RequestHandler {
 	
 	func handleRequest(request: WebRequest, response: WebResponse) {
 		response.appendBodyString("<html><body>Echo 3 handler: You POSTED to path \(request.pathInfo()) with variables \(request.urlVariables)</body></html>")
 		response.requestCompletedCallback()
 	}
 }
+
