@@ -134,7 +134,7 @@ class RouteNode: CustomStringConvertible {
 			return self.wildCard
 		}
 		if component.characters.count >= 3 && component[component.startIndex] == "{" && component[component.endIndex.predecessor()] == "}" {
-			let node = RouteVariable(name: component.substringWithRange(Range(start: component.startIndex.successor(), end: component.endIndex.predecessor())))
+			let node = RouteVariable(name: component.substringWith(Range(start: component.startIndex.successor(), end: component.endIndex.predecessor())))
 			self.variables.append(node)
 			return node
 		}
