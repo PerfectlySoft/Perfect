@@ -23,8 +23,6 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
-private let globalPageHandler = "%GLOBAL%"
-
 /// Use this class to register handlers which supply values for mustache templates.
 /// This registration would occur in the `PerfectServerModuleInit` function which every PerfectServer library module should define. PerfectServer will call this method when it loads each module as the server process starts up.
 ///
@@ -49,8 +47,15 @@ private let globalPageHandler = "%GLOBAL%"
 ///    That's all
 ///```
 public class PageHandlerRegistry {
+	
+	private static var generator = [String: PageHandlerGenerator]()
+	
+	private static var globalRequestHandler: RequestHandlerGenerator?
+	
 	/// A function which returns a new PageHandler object given a WebRequest
-	public typealias PageHandlerGenerator = (_:WebResponse) -> PageHandler
+	public typealias PageHandlerGenerator = WebResponse -> PageHandler
+	
+	public typealias RequestHandlerGenerator = WebResponse -> RequestHandler
 	
 	/// Registers a new handler for the given name
 	/// - parameter named: The name for the handler. This name should be used in a mustache `handler` pragma tag in order to associate the template with its handler.
@@ -59,11 +64,8 @@ public class PageHandlerRegistry {
 		PageHandlerRegistry.generator[named] = generator
 	}
 	
-	/// Registers a new handler as a fallback for any response template.
-	/// Templates which do not have a %handler pragma will use this handler.
-	/// - parameter generator: The generator function which will be called to produce a new handler object.
-	public static func addPageHandler(generator: PageHandlerGenerator) {
-		PageHandlerRegistry.generator[globalPageHandler] = generator
+	public static func addRequestHandler(generator: RequestHandlerGenerator) {
+		PageHandlerRegistry.globalRequestHandler = generator
 	}
 	
 	/// Registers a new handler for the given name
@@ -76,8 +78,6 @@ public class PageHandlerRegistry {
 		}
 	}
 	
-	private static var generator = Dictionary<String, PageHandlerGenerator>()
-	
 	static func getPageHandler(named: String, forResponse: WebResponse) -> PageHandler? {
 		let h = PageHandlerRegistry.generator[named]
 		if let fnd = h {
@@ -86,9 +86,12 @@ public class PageHandlerRegistry {
 		return nil
 	}
 	
-	static func getPageHandler(forResponse: WebResponse) -> PageHandler? {
-		let h = PageHandlerRegistry.generator[globalPageHandler]
-		if let fnd = h {
+	static func hasGlobalHandler() -> Bool {
+		return PageHandlerRegistry.globalRequestHandler != nil
+	}
+	
+	static func getRequestHandler(forResponse: WebResponse) -> RequestHandler? {
+		if let fnd = PageHandlerRegistry.globalRequestHandler {
 			return fnd(forResponse)
 		}
 		return nil
@@ -105,3 +108,9 @@ public protocol PageHandler {
 	func valuesForResponse(context: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) throws -> MustacheEvaluationContext.MapType
 	
 }
+
+public protocol RequestHandler {
+	func handleRequest(request: WebRequest, response: WebResponse)
+}
+
+

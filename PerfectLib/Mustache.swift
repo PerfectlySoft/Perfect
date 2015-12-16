@@ -462,13 +462,13 @@ public class MustacheTemplate : MustacheGroupTag {
 			}
 		}
 		
-		if requireHandler && !foundHandler {
-			if let handler = PageHandlerRegistry.getPageHandler(context.webResponse!) {
-				foundHandler = true
-				let values = try handler.valuesForResponse(context, collector: collector)
-				context.extendValues(values)
-			}
-		}
+//		if requireHandler && !foundHandler {
+//			if let handler = PageHandlerRegistry.getPageHandler(context.webResponse!) {
+//				foundHandler = true
+//				let values = try handler.valuesForResponse(context, collector: collector)
+//				context.extendValues(values)
+//			}
+//		}
 		
 		if requireHandler && !foundHandler {
 			throw MustacheError.EvaluationError("No valid PageHandler was specified in the template's pragmas.")
