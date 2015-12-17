@@ -9,7 +9,17 @@ This will automatically install the appropriate Apache development resources if 
 
 ## Configuration
 
-Here is a sample Apache .conf snippet. This uses mod_rewrite in order to provide extension-less URLs.
+Here is an Apache conf snippet which pipes files/directories which do not exist through to Perfect Server. This is handy if you are using Perfect's URL routing system (or your own system).
+
+```
+	RewriteEngine on
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteRule (.*) - [L,NS,H=perfect-handler]
+
+```
+
+Here is a sample Apache .conf snippet. This uses mod_rewrite in order to provide extension-less URLs for mustache templates.
 
 ```
 <IfModule !perfect_module>
