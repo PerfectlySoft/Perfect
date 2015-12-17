@@ -41,7 +41,7 @@ public func PerfectServerModuleInit() {
 	Routing.Routes["POST", "/user/{id}/baz"] = { _ in return Echo3Handler() }
 	
 	// Check the console to see the logical structure of what was installed.
-	print("\(Routing.Routes)")
+	print("\(Routing.Routes.description)")
 }
 
 class IndexHandler: RequestHandler {
