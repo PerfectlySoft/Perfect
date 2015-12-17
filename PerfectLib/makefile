@@ -57,10 +57,10 @@ modulecache:
 perfectlib: modulecache $(MODULE_NAME).so
 
 
-$(MODULE_NAME).so: $(MODULE_NAME).swiftmodule LinuxBridge.o util.o
+$(MODULE_NAME).so: $(PERFECT_OBJ) $(MODULE_NAME).swiftmodule LinuxBridge.o util.o
 	clang++ $(PERFECT_OBJ) $(LFLAGS) -o $(MODULE_NAME).so
 
-$(MODULE_NAME).swiftmodule: $(PERFECT_OBJ)
+$(MODULE_NAME).swiftmodule:
 	$(SWIFTC) -frontend $(SWIFTC_FLAGS) $(PERFECT_MODULES) -parse-as-library -emit-module-doc-path $(MODULE_NAME).swiftdoc -o $(MODULE_NAME).swiftmodule
 
 clean:
