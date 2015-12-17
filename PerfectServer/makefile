@@ -2,18 +2,18 @@
 
 TARGET_FCGI = perfectserverfcgi
 TARGET_HTTP = perfectserverhttp
-
+DEBUG = -g -Onone -Xcc -DDEBUG=1
 OS = $(shell uname)
 SWIFTC = swift
-SWIFTC_FLAGS = -frontend -c -module-cache-path $(MODULE_CACHE_PATH) -emit-module -I /usr/local/lib -I ../PerfectLib/linked/LibEvent \
+SWIFTC_FLAGS = -frontend $(DEBUG) -c -module-cache-path $(MODULE_CACHE_PATH) -emit-module -I /usr/local/lib -I ../PerfectLib/linked/LibEvent \
 	-I ../PerfectLib/linked/OpenSSL -I ../PerfectLib/linked/ICU -I ../PerfectLib/linked/SQLite3 -I ../PerfectLib/linked/LinuxBridge
 MODULE_CACHE_PATH = /tmp/modulecache
 Linux_SHLIB_PATH = $(shell dirname $(shell dirname $(shell which swiftc)))/lib/swift/linux
 SHLIB_PATH = -L$($(OS)_SHLIB_PATH)
-LFLAGS = $(SHLIB_PATH) -lFoundation -lswiftCore -lswiftGlibc /usr/local/lib/PerfectLib.so -Xlinker -rpath -Xlinker $($(OS)_SHLIB_PATH)
+LFLAGS = $(SHLIB_PATH) -g -lFoundation -lswiftCore -lswiftGlibc /usr/local/lib/PerfectLib.so -Xlinker -rpath -Xlinker $($(OS)_SHLIB_PATH)
 
 all: modulecache $(TARGET_FCGI) $(TARGET_HTTP)
-	
+
 
 install: all
 	ln -sf `pwd`/$(TARGET_FCGI) /usr/local/bin/
