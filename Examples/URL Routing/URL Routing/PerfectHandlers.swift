@@ -47,7 +47,7 @@ public func PerfectServerModuleInit() {
 class IndexHandler: RequestHandler {
 	
 	func handleRequest(request: WebRequest, response: WebResponse) {
-		response.appendBodyString("Index handler: You accessed path \(request.pathInfo())")
+		response.appendBodyString("Index handler: You accessed path \(request.requestURI())")
 		response.requestCompletedCallback()
 	}
 }
@@ -55,7 +55,7 @@ class IndexHandler: RequestHandler {
 class EchoHandler: RequestHandler {
 	
 	func handleRequest(request: WebRequest, response: WebResponse) {
-		response.appendBodyString("Echo handler: You accessed path \(request.pathInfo()) with variables \(request.urlVariables)")
+		response.appendBodyString("Echo handler: You accessed path \(request.requestURI()) with variables \(request.urlVariables)")
 		response.requestCompletedCallback()
 	}
 }
@@ -63,7 +63,7 @@ class EchoHandler: RequestHandler {
 class Echo2Handler: RequestHandler {
 	
 	func handleRequest(request: WebRequest, response: WebResponse) {
-		response.appendBodyString("<html><body>Echo 2 handler: You GET accessed path \(request.pathInfo()) with variables \(request.urlVariables)<br>")
+		response.appendBodyString("<html><body>Echo 2 handler: You GET accessed path \(request.requestURI()) with variables \(request.urlVariables)<br>")
 		response.appendBodyString("<form method=\"POST\" action=\"/user/\(request.urlVariables["id"] ?? "error")/baz\"><button type=\"submit\">POST</button></form></body></html>")
 		response.requestCompletedCallback()
 	}
@@ -72,7 +72,7 @@ class Echo2Handler: RequestHandler {
 class Echo3Handler: RequestHandler {
 	
 	func handleRequest(request: WebRequest, response: WebResponse) {
-		response.appendBodyString("<html><body>Echo 3 handler: You POSTED to path \(request.pathInfo()) with variables \(request.urlVariables)</body></html>")
+		response.appendBodyString("<html><body>Echo 3 handler: You POSTED to path \(request.requestURI()) with variables \(request.urlVariables)</body></html>")
 		response.requestCompletedCallback()
 	}
 }
