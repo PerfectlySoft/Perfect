@@ -494,21 +494,23 @@ extension String {
 	}
 
 	var stringByResolvingSymlinksInPath: String {
-		let absolute = self.beginsWithSeparator
-		let components = self.pathComponents(false)
-		var s = absolute ? "/" : ""
-		for component in components {
-			if component == "." {
-				s.appendContentsOf(".")
-			} else if component == ".." {
-				s.appendContentsOf("..")
-			} else {
-				let file = File(s + "/" + component)
-				s = file.realPath()
-			}
-		}
-		let ary = s.pathComponents(false) // get rid of slash runs
-		return absolute ? "/" + ary.joinWithSeparator(String(pathSeparator)) : ary.joinWithSeparator(String(pathSeparator))
+		return File(self).realPath()
+		
+//		let absolute = self.beginsWithSeparator
+//		let components = self.pathComponents(false)
+//		var s = absolute ? "/" : ""
+//		for component in components {
+//			if component == "." {
+//				s.appendContentsOf(".")
+//			} else if component == ".." {
+//				s.appendContentsOf("..")
+//			} else {
+//				let file = File(s + "/" + component)
+//				s = file.realPath()
+//			}
+//		}
+//		let ary = s.pathComponents(false) // get rid of slash runs
+//		return absolute ? "/" + ary.joinWithSeparator(String(pathSeparator)) : ary.joinWithSeparator(String(pathSeparator))
 	}
 	
 	
