@@ -105,7 +105,7 @@ public class File : Closeable {
 			if res != -1 {
 				let ary = completeArray(buffer, count: res)
 				let trailPath = UTF8Encoding.encode(ary)
-				return internalPath.stringByDeletingLastPathComponent + "/" + trailPath
+				return trailPath
 			}
 		}
 		return internalPath
