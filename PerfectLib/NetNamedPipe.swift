@@ -64,7 +64,7 @@ public class NetNamedPipe : NetTCP {
 
 		let utf8 = address.utf8
 #if os(Linux) // BSDs have a size identifier in front, Linux does not
-		let addrLen = sizeof(sockaddr_un)//sizeof(sa_family_t) + utf8.count + 1
+		let addrLen = sizeof(sockaddr_un)
 #else
 		let addrLen = sizeof(UInt8) + sizeof(sa_family_t) + utf8.count + 1
 #endif
