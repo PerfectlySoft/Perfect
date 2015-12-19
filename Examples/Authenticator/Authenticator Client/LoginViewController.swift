@@ -27,7 +27,7 @@ import UIKit
 
 let LOGIN_SEGUE_ID = "loginSegue"
 
-class LoginViewController: UIViewController, NSURLSessionDelegate {
+class LoginViewController: UIViewController, NSURLSessionDelegate, UITextFieldDelegate {
 
 	@IBOutlet var emailAddressText: UITextField?
 	@IBOutlet var passwordText: UITextField?
@@ -38,6 +38,8 @@ class LoginViewController: UIViewController, NSURLSessionDelegate {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        self.emailAddressText?.delegate = self
+        self.passwordText?.delegate = self
     }
 
     override func didReceiveMemoryWarning() {
@@ -93,4 +95,9 @@ class LoginViewController: UIViewController, NSURLSessionDelegate {
 		
 		task.resume()
 	}
+
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
 }

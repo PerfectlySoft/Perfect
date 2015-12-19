@@ -33,7 +33,7 @@ extension String {
 	}
 }
 
-class RegisterViewController: UIViewController {
+class RegisterViewController: UIViewController, UITextFieldDelegate {
 
 	@IBOutlet var firstNameText: UITextField?
 	@IBOutlet var lastNameText: UITextField?
@@ -47,6 +47,11 @@ class RegisterViewController: UIViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        self.firstNameText?.delegate = self
+        self.lastNameText?.delegate = self
+        self.emailAddressText?.delegate = self
+        self.password1Text?.delegate = self
+        self.password2Text?.delegate = self
     }
 
     override func didReceiveMemoryWarning() {
@@ -100,4 +105,8 @@ class RegisterViewController: UIViewController {
 		task.resume()
 	}
 
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
 }
