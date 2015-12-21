@@ -41,6 +41,10 @@ public func PerfectServerModuleInit() {
 	Routing.Routes["GET", "/user/{id}"] = { _ in return Echo2Handler() }
 	Routing.Routes["POST", "/user/{id}/baz"] = { _ in return Echo3Handler() }
 	
+	// Test this one via command line with curl:
+	// curl --data "{\"id\":123}" http://0.0.0.0:8181/raw --header "Content-Type:application/json"
+	Routing.Routes["POST", "/raw"] = { _ in return RawPOSTHandler() }
+	
 	// Check the console to see the logical structure of what was installed.
 	print("\(Routing.Routes.description)")
 }
@@ -74,6 +78,14 @@ class Echo3Handler: RequestHandler {
 	
 	func handleRequest(request: WebRequest, response: WebResponse) {
 		response.appendBodyString("<html><body>Echo 3 handler: You POSTED to path \(request.requestURI()) with variables \(request.urlVariables)</body></html>")
+		response.requestCompletedCallback()
+	}
+}
+
+class RawPOSTHandler: RequestHandler {
+	
+	func handleRequest(request: WebRequest, response: WebResponse) {
+		response.appendBodyString("<html><body>Raw POST handler: You POSTED to path \(request.requestURI()) with content-type \(request.contentType()) and POST body \(request.postBodyString)</body></html>")
 		response.requestCompletedCallback()
 	}
 }
