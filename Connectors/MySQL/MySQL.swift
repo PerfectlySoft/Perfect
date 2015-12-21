@@ -50,7 +50,7 @@ public enum MySQLOpt {
 
 public final class MySQL {
 	
-	static private var dispatchOnce: Threading.ThreadOnce = 0
+	static private var dispatchOnce = Threading.ThreadOnce()
 	
 	private var ptr: UnsafeMutablePointer<MYSQL>
 	
