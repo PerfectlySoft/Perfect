@@ -217,26 +217,26 @@ class RouteNode: CustomStringConvertible {
 	
 	func findHandler(currentComponent: String, generator: ComponentGenerator, webResponse: WebResponse) -> RequestHandlerGenerator? {
 		var m = generator
-		if let p = m.next() {
+		if let p = m.next() where p != "/" {
 			
 			// variables
 			for node in self.variables {
 				if let h = node.findHandler(p, generator: m, webResponse: webResponse) {
-					return self.successfulRoute(currentComponent, handler: h, webResponse: webResponse)
+					return self.successfulRoute(currentComponent, handler: node.successfulRoute(p, handler: h, webResponse: webResponse), webResponse: webResponse)
 				}
 			}
 			
 			// paths
 			if let node = self.subNodes[p] {
 				if let h = node.findHandler(p, generator: m, webResponse: webResponse) {
-					return self.successfulRoute(currentComponent, handler: h, webResponse: webResponse)
+					return self.successfulRoute(currentComponent, handler: node.successfulRoute(p, handler: h, webResponse: webResponse), webResponse: webResponse)
 				}
 			}
 			
 			// wildcards
 			if let node = self.wildCard {
 				if let h = node.findHandler(p, generator: m, webResponse: webResponse) {
-					return self.successfulRoute(currentComponent, handler: h, webResponse: webResponse)
+					return self.successfulRoute(currentComponent, handler: node.successfulRoute(p, handler: h, webResponse: webResponse), webResponse: webResponse)
 				}
 			}
 			
@@ -246,7 +246,7 @@ class RouteNode: CustomStringConvertible {
 		return nil
 	}
 	
-	func successfulRoute(currentComponent: String, handler: RequestHandlerGenerator, webResponse: WebResponse) -> RequestHandlerGenerator? {
+	func successfulRoute(currentComponent: String, handler: RequestHandlerGenerator, webResponse: WebResponse) -> RequestHandlerGenerator {
 		return handler
 	}
 	
@@ -352,7 +352,7 @@ class RouteVariable: RouteNode {
 		self.name = name
 	}
 	
-	override func successfulRoute(currentComponent: String, handler: RequestHandlerGenerator, webResponse: WebResponse) -> RequestHandlerGenerator? {
+	override func successfulRoute(currentComponent: String, handler: RequestHandlerGenerator, webResponse: WebResponse) -> RequestHandlerGenerator {
 		webResponse.request.urlVariables[self.name] = currentComponent
 		return handler
 	}
