@@ -38,6 +38,7 @@ public func PerfectServerModuleInit() {
 	Routing.Routes["/foo/*/baz"] = { _ in return EchoHandler() }
 	Routing.Routes["/foo/bar/baz"] = { _ in return EchoHandler() }
 	Routing.Routes["GET", "/user/{id}/baz"] = { _ in return Echo2Handler() }
+	Routing.Routes["GET", "/user/{id}"] = { _ in return Echo2Handler() }
 	Routing.Routes["POST", "/user/{id}/baz"] = { _ in return Echo3Handler() }
 	
 	// Check the console to see the logical structure of what was installed.
