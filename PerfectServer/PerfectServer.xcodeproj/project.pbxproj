@@ -365,6 +365,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				DEFINES_MODULE = YES;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_NAME = perfectserverfcgi;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -375,6 +376,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				DEFINES_MODULE = YES;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_NAME = perfectserverfcgi;
 			};
@@ -409,6 +411,7 @@
 		F8E752E41BDA8A7600BFC36A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEFINES_MODULE = YES;
 				PRODUCT_NAME = perfectserverhttp;
 			};
 			name = Debug;
@@ -416,6 +419,7 @@
 		F8E752E51BDA8A7600BFC36A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEFINES_MODULE = YES;
 				PRODUCT_NAME = perfectserverhttp;
 			};
 			name = Release;
