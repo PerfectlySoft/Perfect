@@ -64,8 +64,8 @@ class AuthenticatingHandler: PageHandler {
 						let compareResponse = toHex((ha1+":"+nonce!+":"+nc!+":"+cnonce!+":"+qop+":"+ha2).md5)
 						if authResponse! == compareResponse {
 							response.setStatus(200, message: "OK")
+							self.authenticatedUser = userTest
 						}
-						self.authenticatedUser = userTest
 					}
 				}
 			}
