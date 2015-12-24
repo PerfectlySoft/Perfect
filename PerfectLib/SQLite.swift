@@ -40,14 +40,14 @@ public class SQLite : Closeable {
 	var sqlite3: COpaquePointer
 	
 	/// Create or open a SQLite database given a file path.
-	public init(_ path: String) throws {
+	public init(_ path: String, readOnly: Bool = false) throws {
 		self.path = path
 		self.sqlite3 = COpaquePointer()
-		let res = sqlite3_open(path, &self.sqlite3)
+		let flags = readOnly ? SQLITE_OPEN_READONLY : SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE
+		let res = sqlite3_open_v2(path, &self.sqlite3, flags, nil)
 		if res != SQLITE_OK {
 			throw SQLiteError.Error(code: Int(res), msg: "Unable to open database "+path)
 		}
-		
 	}
 	
 	/// Close the SQLite database.
