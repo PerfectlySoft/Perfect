@@ -225,7 +225,7 @@ public class JSONArrayType {
 	/// Provides access to the underlying array
 	public var array = Array<JSONValue>()
 	
-	subscript (index: Int) -> Array<JSONValue>.Element {
+	public subscript (index: Int) -> Array<JSONValue>.Element {
 		return array[index]
 	}
 	
@@ -246,7 +246,7 @@ public class JSONDictionaryType {
 	/// Provides access to the underlying Dictionary.
 	public var dictionary = DictionaryType()
 	
-	subscript (key: Key) -> Value? {
+	public subscript (key: Key) -> Value? {
 		get {
 			return dictionary[key]
 		}
