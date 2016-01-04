@@ -663,71 +663,73 @@ class PerfectLibTests: XCTestCase {
 		print(bodyStr)
 	}
 	
-	// This test fails!
-	// Need a better way to handle certs. Should auto generate self signed as part of test
-//	func testTCPSSL() {
-//		
-//		let address = "www.treefrog.ca"
-//		let requestString = [UInt8](("GET / HTTP/1.0\r\nHost: \(address)\r\n\r\n").utf8)
-//		let requestCount = requestString.count
-//		let net = NetTCPSSL()
-//		let clientExpectation = self.expectationWithDescription("client")
-//		let setOk = net.setVerifyLocations("entrust_2048_ca.cer", caDirPath: "certs/")
-//		
-//		XCTAssert(setOk, "Unable to setVerifyLocations \(net.sslErrorCode(1))")
-//		
-//		do {
-//			try net.connect(address, port: 443, timeoutSeconds: 5.0) {
-//				(net: NetTCP?) -> () in
-//				
-//				if let ssl = net as? NetTCPSSL {
-//					
-//					ssl.beginSSL {
-//						(success: Bool) in
-//						
-//						XCTAssert(success)
-//						
-//						ssl.writeBytes(requestString) {
-//							(sent:Int) -> () in
-//							
-//							XCTAssert(sent == requestCount)
-//							
-//							ssl.readBytesFully(1, timeoutSeconds: 5.0) {
-//								(readBytes: [UInt8]?) -> () in
-//								
-//								XCTAssert(readBytes != nil && readBytes!.count > 0)
-//								
-//								let s1 = UTF8Encoding.encode(readBytes!)
-//								
-//								ssl.readSomeBytes(4096) {
-//									(readBytes: [UInt8]?) -> () in
-//									
-//									XCTAssert(readBytes != nil && readBytes!.count > 0)
-//									
-//									let s = s1 + UTF8Encoding.encode(readBytes!)
-//									
-//									XCTAssert(s.hasPrefix("HTTP/1.1 200 OK"))
-//									
-//									print(s)
-//									
-//									clientExpectation.fulfill()
-//								}
-//							}
-//						}
-//					}
-//				} else {
-//					XCTAssert(false, "Did not get NetTCPSSL back after connect")
-//				}
-//			}
-//		} catch {
-//			XCTAssert(false, "Exception thrown")
-//		}
-//		
-//		self.waitForExpectationsWithTimeout(10000) {
-//			(_: NSError?) in
-//			net.close()
-//		}
-//	}
+	
+	func testTCPSSLClient() {
+		
+		let address = "www.treefrog.ca"
+		let requestString = [UInt8](("GET / HTTP/1.0\r\nHost: \(address)\r\n\r\n").utf8)
+		let requestCount = requestString.count
+		let net = NetTCPSSL()
+		let clientExpectation = self.expectationWithDescription("client")
+		
+		let setOk = net.setDefaultVerifyPaths()
+		XCTAssert(setOk, "Unable to setDefaultVerifyPaths \(net.sslErrorCode(1))")
+		
+		do {
+			try net.connect(address, port: 443, timeoutSeconds: 5.0) {
+				(net: NetTCP?) -> () in
+				
+				if let ssl = net as? NetTCPSSL {
+					
+					ssl.beginSSL {
+						(success: Bool) in
+						
+						XCTAssert(success, "Unable to begin SSL \(ssl.errorStr(Int32(ssl.errorCode())))")
+						if !success {
+							clientExpectation.fulfill()
+							return
+						}
+						ssl.writeBytes(requestString) {
+							(sent:Int) -> () in
+							
+							XCTAssert(sent == requestCount)
+							
+							ssl.readBytesFully(1, timeoutSeconds: 5.0) {
+								(readBytes: [UInt8]?) -> () in
+								
+								XCTAssert(readBytes != nil && readBytes!.count > 0)
+								
+								let s1 = UTF8Encoding.encode(readBytes!)
+								
+								ssl.readSomeBytes(4096) {
+									(readBytes: [UInt8]?) -> () in
+									
+									XCTAssert(readBytes != nil && readBytes!.count > 0)
+									
+									let s = s1 + UTF8Encoding.encode(readBytes!)
+									
+									XCTAssert(s.hasPrefix("HTTP/1.1 200 OK"))
+									
+									print(s)
+									
+									clientExpectation.fulfill()
+								}
+							}
+						}
+					}
+				} else {
+					XCTAssert(false, "Did not get NetTCPSSL back after connect")
+				}
+			}
+		} catch {
+			XCTAssert(false, "Exception thrown")
+		}
+		
+		self.waitForExpectationsWithTimeout(10000) {
+			(_: NSError?) in
+			net.close()
+		}
+	}
 	
 	func testStringByResolvingSymlinksInPath() { // YMMV tmp is a link on OSX
 		
