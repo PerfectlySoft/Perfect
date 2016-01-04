@@ -20,7 +20,7 @@ $(TARGET): $(TARGET).o
 	clang++ $(LFLAGS) $< -o $@.so
 
 $(TARGET).o: BSON.swift MongoClient.swift MongoCollection.swift MongoCursor.swift MongoDatabase.swift
-	$(SWIFTC) $(SWIFTC_FLAGS) $< -o $@ -module-name $(TARGET) -emit-module-path $(TARGET).swiftmodule
+	$(SWIFTC) $(SWIFTC_FLAGS) $^ -o $@ -module-name $(TARGET) -emit-module-path $(TARGET).swiftmodule
 
 
 clean:
