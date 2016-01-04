@@ -71,6 +71,32 @@ public class HTTPServer {
 		self.start()
 	}
 	
+	/// Start the server on the indicated TCP port and optional address.
+	/// - parameter port: The port on which to bind.
+	/// - parameter sslCert: The server SSL certificate file.
+	/// - parameter sslKey: The server SSL key file.
+	/// - parameter bindAddress: The local address on which to bind.
+	public func start(port: UInt16, sslCert: String, sslKey: String, bindAddress: String = "0.0.0.0") throws {
+		
+		self.serverPort = port
+		self.serverAddress = bindAddress
+		
+		let socket = NetTCPSSL()
+		socket.initSocket()
+		socket.useCertificateChainFile(sslCert)
+		socket.usePrivateKeyFile(sslKey)
+		try socket.bind(port, address: bindAddress)
+		socket.listen()
+		
+		self.net = socket
+		
+		defer { socket.close() }
+		
+		print("Starting HTTP server on \(bindAddress):\(port) with document root \(self.documentRoot)")
+		
+		self.start()
+	}
+	
 	func start() {
 		
 		if let n = self.net {

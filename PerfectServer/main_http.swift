@@ -32,21 +32,26 @@ import Darwin
 
 func startServer() throws {
 	
-	let buf = getcwd(nil, 0)
-	let dir = String.fromCString(buf) ?? ""
-	free(buf)
-
 	let ls = PerfectServer.staticPerfectServer
 	ls.initializeServices()
 	
-	var webRoot = dir + "/webroot/"
+	var webRoot = "./webroot/"
 	var localAddress = "0.0.0.0"
 	var localPort = 8181
+	var sslCert: String?
+	var sslKey: String?
 	
 	var args = Process.arguments
 	
 	let validArgs = [
-		
+		"--sslcert": {
+			args.removeFirst()
+			sslCert = args.first!
+		},
+		"--sslkey": {
+			args.removeFirst()
+			sslKey = args.first!
+		},
 		"--port": {
 			args.removeFirst()
 			localPort = Int(args.first!) ?? 8181
@@ -60,12 +65,12 @@ func startServer() throws {
 			webRoot = args.first!
 		},
 		"--help": {
-			print("Usage: \(Process.arguments.first!) [--port listen_port] [--address listen_address] [--root root_path]")
+			print("Usage: \(Process.arguments.first!) [--port listen_port] [--address listen_address] [--root root_path] [--sslcert cert_path --sslkey key_path]")
 			exit(0)
 		}]
 	
 	while args.count > 0 {
-		if let closure = validArgs[args.first!] {
+		if let closure = validArgs[args.first!.lowercaseString] {
 			closure()
 		}
 		args.removeFirst()
@@ -73,5 +78,27 @@ func startServer() throws {
 	
 	try Dir(webRoot).create()
 	let httpServer = HTTPServer(documentRoot: webRoot)
-	try httpServer.start(UInt16(localPort), bindAddress: localAddress)
+	if sslCert != nil || sslKey != nil {
+		
+		if sslCert == nil || sslKey == nil {
+			print("Error: if either --sslcert or --sslkey is provided then both --sslcert and --sslkey must be provided.")
+			exit(-1)
+		}
+		
+		if !File(sslCert!).exists() || !File(sslKey!).exists() {
+			print("Error: --sslcert or --sslkey file did not exist.")
+			exit(-1)
+		}
+		
+		try httpServer.start(UInt16(localPort), sslCert: sslCert!, sslKey: sslKey!, bindAddress: localAddress)
+		
+	} else {
+		try httpServer.start(UInt16(localPort), bindAddress: localAddress)
+	}
 }
+
+
+
+
+
+
