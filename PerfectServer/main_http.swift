@@ -35,12 +35,43 @@ func startServer() throws {
 	let buf = getcwd(nil, 0)
 	let dir = String.fromCString(buf) ?? ""
 	free(buf)
-	print("Current working directory: \(dir)")
 
 	let ls = PerfectServer.staticPerfectServer
 	ls.initializeServices()
-
-	try Dir(dir + "/webroot/").create()
-	let httpServer = HTTPServer(documentRoot: dir + "/webroot/")
-	try httpServer.start(8181)
+	
+	var webRoot = dir + "/webroot/"
+	var localAddress = "0.0.0.0"
+	var localPort = 8181
+	
+	var args = Process.arguments
+	
+	let validArgs = [
+		
+		"--port": {
+			args.removeFirst()
+			localPort = Int(args.first!) ?? 8181
+		},
+		"--address": {
+			args.removeFirst()
+			localAddress = args.first!
+		},
+		"--root": {
+			args.removeFirst()
+			webRoot = args.first!
+		},
+		"--help": {
+			print("Usage: \(Process.arguments.first!) [--port listen_port] [--address listen_address] [--root root_path]")
+			exit(0)
+		}]
+	
+	while args.count > 0 {
+		if let closure = validArgs[args.first!] {
+			closure()
+		}
+		args.removeFirst()
+	}
+	
+	try Dir(webRoot).create()
+	let httpServer = HTTPServer(documentRoot: webRoot)
+	try httpServer.start(UInt16(localPort), bindAddress: localAddress)
 }
