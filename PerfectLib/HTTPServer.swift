@@ -66,7 +66,7 @@ public class HTTPServer {
 		
 		defer { socket.close() }
 		
-		print("Starting HTTP server on \(bindAddress):\(port)")
+		print("Starting HTTP server on \(bindAddress):\(port) with document root \(self.documentRoot)")
 		
 		self.start()
 	}
