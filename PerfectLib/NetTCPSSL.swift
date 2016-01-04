@@ -81,6 +81,7 @@ public class NetTCPSSL : NetTCP {
 		SSL_CTX_ctrl(sslCtx, SSL_CTRL_OPTIONS, SSL_OP_ALL, nil)
 		
 		self.ssl = SSL_new(sslCtx)
+		SSL_set_fd(self.ssl!, self.fd.fd)
 	}
 	
 	public func errorCode() -> UInt {
@@ -230,8 +231,6 @@ public class NetTCPSSL : NetTCP {
 			return
 		}
 		
-		self.setConnectState()
-		
 		let res = SSL_connect(ssl)
 		switch res {
 		case 1:
@@ -266,9 +265,11 @@ public class NetTCPSSL : NetTCP {
 				}
 				event.add(timeout)
 				return
+			} else {
+				closure(false)
 			}
 		default:
-			()
+			closure(false)
 		}
 	}
 	
@@ -301,13 +302,22 @@ public class NetTCPSSL : NetTCP {
 		}
 	}
 	
+	public func setDefaultVerifyPaths() -> Bool {
+		self.initSocket()
+		guard let sslCtx = self.sslCtx else {
+			return false
+		}
+		let r = SSL_CTX_set_default_verify_paths(sslCtx)
+		return r == 1
+	}
+	
 	public func setVerifyLocations(caFilePath: String, caDirPath: String) -> Bool {
 		self.initSocket()
 		guard let sslCtx = self.sslCtx else {
 			return false
 		}
 		let r = SSL_CTX_load_verify_locations(sslCtx, caFilePath, caDirPath)
-		return r == 0
+		return r == 1
 	}
 	
 	public func useCertificateChainFile(cert: String) -> Bool {
