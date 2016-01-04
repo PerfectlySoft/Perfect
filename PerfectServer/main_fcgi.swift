@@ -50,7 +50,7 @@ func startServer() throws {
 		}]
 	
 	while args.count > 0 {
-		if let closure = validArgs[args.first!] {
+		if let closure = validArgs[args.first!.lowercaseString] {
 			closure()
 		}
 		args.removeFirst()

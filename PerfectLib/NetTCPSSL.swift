@@ -116,7 +116,9 @@ public class NetTCPSSL : NetTCP {
 	override func isEAgain(err: Int) -> Bool {
 		if err == -1 && self.usingSSL {
 			let sslErr = SSL_get_error(self.ssl!, Int32(err))
-			return sslErr == SSL_ERROR_WANT_READ || sslErr == SSL_ERROR_WANT_WRITE
+			if sslErr != SSL_ERROR_SYSCALL {
+				return sslErr == SSL_ERROR_WANT_READ || sslErr == SSL_ERROR_WANT_WRITE
+			}
 		}
 		return super.isEAgain(err)
 	}
@@ -314,7 +316,7 @@ public class NetTCPSSL : NetTCP {
 			return false
 		}
 		let r = SSL_CTX_use_certificate_chain_file(sslCtx, cert)
-		return r == 0
+		return r == 1
 	}
 	
 	public func usePrivateKeyFile(cert: String) -> Bool {
@@ -323,7 +325,83 @@ public class NetTCPSSL : NetTCP {
 			return false
 		}
 		let r = SSL_CTX_use_PrivateKey_file(sslCtx, cert, SSL_FILETYPE_PEM)
-		return r == 0
+		return r == 1
+	}
+	
+	override func makeFromFd(fd: Int32) -> NetTCP {
+		return NetTCPSSL(fd: fd)
+	}
+	
+	override public func forEachAccept(callBack: (NetTCP?) -> ()) {
+		super.forEachAccept {
+			(net:NetTCP?) -> () in
+			
+			if let netSSL = net as? NetTCPSSL {
+				
+				netSSL.sslCtx = self.sslCtx
+				netSSL.ssl = SSL_new(self.sslCtx!)
+				SSL_set_fd(netSSL.ssl!, netSSL.fd.fd)
+				
+				self.finishAccept(-1, net: netSSL, callBack: callBack)
+			} else {
+				callBack(net)
+			}
+		}
+	}
+	
+	override public func accept(timeoutSeconds: Double, callBack: (NetTCP?) -> ()) throws {
+		try super.accept(timeoutSeconds, callBack: {
+			(net:NetTCP?) -> () in
+			
+			if let netSSL = net as? NetTCPSSL {
+				
+				netSSL.sslCtx = self.sslCtx
+				netSSL.ssl = SSL_new(self.sslCtx!)
+				SSL_set_fd(netSSL.ssl!, netSSL.fd.fd)
+				
+				self.finishAccept(timeoutSeconds, net: netSSL, callBack: callBack)
+			} else {
+				callBack(net)
+			}
+		})
+	}
+	
+	func finishAccept(timeoutSeconds: Double, net: NetTCPSSL, callBack: (NetTCP?) -> ()) {
+		let res = SSL_accept(net.ssl!)
+		let sslErr = SSL_get_error(net.ssl!, res)
+		if res == -1 {
+			if sslErr == SSL_ERROR_WANT_WRITE {
+				
+				let event: LibEvent = LibEvent(base: LibEvent.eventBase, fd: net.fd.fd, what: EV_WRITE, userData: nil) {
+					(fd:Int32, w:Int16, ud:AnyObject?) -> () in
+					
+					if (Int32(w) & EV_TIMEOUT) != 0 {
+						callBack(nil)
+					} else {
+						self.finishAccept(timeoutSeconds, net: net, callBack: callBack)
+					}
+				}
+				event.add(timeoutSeconds)
+				
+			} else if sslErr == SSL_ERROR_WANT_READ {
+				
+				let event: LibEvent = LibEvent(base: LibEvent.eventBase, fd: net.fd.fd, what: EV_READ, userData: nil) {
+					(fd:Int32, w:Int16, ud:AnyObject?) -> () in
+					
+					if (Int32(w) & EV_TIMEOUT) != 0 {
+						callBack(nil)
+					} else {
+						self.finishAccept(timeoutSeconds, net: net, callBack: callBack)
+					}
+				}
+				event.add(timeoutSeconds)
+				
+			} else {
+				callBack(nil)
+			}
+		} else {
+			callBack(net)
+		}
 	}
 	
 //	private func throwSSLNetworkError(err: Int32) throws {
