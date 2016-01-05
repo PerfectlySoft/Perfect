@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		F8664C4B1C2082AE009817C2 /* URL Routing.h in Headers */ = {isa = PBXBuildFile; fileRef = F8664C4A1C2082AE009817C2 /* URL Routing.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F8664C4F1C2082AE009817C2 /* PerfectHandlers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8664C4E1C2082AE009817C2 /* PerfectHandlers.swift */; };
+		F8933C1F1C3C529A0048EFE9 /* PerfectLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8933C1E1C3C529A0048EFE9 /* PerfectLib.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -16,6 +17,7 @@
 		F8664C4A1C2082AE009817C2 /* URL Routing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "URL Routing.h"; sourceTree = "<group>"; };
 		F8664C4E1C2082AE009817C2 /* PerfectHandlers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerfectHandlers.swift; sourceTree = "<group>"; };
 		F8664C501C2082AE009817C2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F8933C1E1C3C529A0048EFE9 /* PerfectLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PerfectLib.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Examples-ebfeivyuaxcjnrhcezzfamsblphw/Build/Products/Debug/PerfectLib.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -23,6 +25,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F8933C1F1C3C529A0048EFE9 /* PerfectLib.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -32,6 +35,7 @@
 		F8664C3D1C2082AE009817C2 = {
 			isa = PBXGroup;
 			children = (
+				F8933C1E1C3C529A0048EFE9 /* PerfectLib.framework */,
 				F8664C491C2082AE009817C2 /* URL Routing */,
 				F8664C481C2082AE009817C2 /* Products */,
 			);
