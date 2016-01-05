@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		F804E2B61C1A0F9C00B0F393 /* Threading.swift in Sources */ = {isa = PBXBuildFile; fileRef = F877D5471C110CA700CC100D /* Threading.swift */; };
 		F804E2B81C1B260800B0F393 /* Routing.swift in Sources */ = {isa = PBXBuildFile; fileRef = F804E2B71C1B260800B0F393 /* Routing.swift */; };
-		F82AADE81C0E2CBB00749854 /* RWLockCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F82AADE71C0E2CBB00749854 /* RWLockCache.swift */; };
 		F877D5481C110CA700CC100D /* Threading.swift in Sources */ = {isa = PBXBuildFile; fileRef = F877D5471C110CA700CC100D /* Threading.swift */; };
 		F88B067B1BDD4269001FD0CD /* libevent_pthreads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F88B06791BDD4269001FD0CD /* libevent_pthreads.a */; };
 		F88B067C1BDD4269001FD0CD /* libevent.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F88B067A1BDD4269001FD0CD /* libevent.a */; };
@@ -81,7 +80,6 @@
 
 /* Begin PBXFileReference section */
 		F804E2B71C1B260800B0F393 /* Routing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Routing.swift; sourceTree = "<group>"; };
-		F82AADE71C0E2CBB00749854 /* RWLockCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RWLockCache.swift; sourceTree = "<group>"; };
 		F877D5471C110CA700CC100D /* Threading.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Threading.swift; sourceTree = "<group>"; };
 		F88B06791BDD4269001FD0CD /* libevent_pthreads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libevent_pthreads.a; path = linked/LibEvent/osx/libevent_pthreads.a; sourceTree = "<group>"; };
 		F88B067A1BDD4269001FD0CD /* libevent.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libevent.a; path = linked/LibEvent/osx/libevent.a; sourceTree = "<group>"; };
@@ -253,7 +251,6 @@
 				F8F28A4D1BD5720400367249 /* Utilities-Server.swift */,
 				F88B06911BDE80F9001FD0CD /* MimeType.swift */,
 				F877D5471C110CA700CC100D /* Threading.swift */,
-				F82AADE71C0E2CBB00749854 /* RWLockCache.swift */,
 				F804E2B71C1B260800B0F393 /* Routing.swift */,
 				F8F289F41BD5427000367249 /* util.c */,
 				F8F28A2A1BD5545000367249 /* curl_support.cpp */,
@@ -446,7 +443,6 @@
 				F8F28A031BD5427000367249 /* JSON.swift in Sources */,
 				F8F28A2B1BD5545000367249 /* curl_support.cpp in Sources */,
 				F8F289FF1BD5427000367249 /* FastCGI.swift in Sources */,
-				F82AADE81C0E2CBB00749854 /* RWLockCache.swift in Sources */,
 				F8F28A101BD5427000367249 /* PageHandler.swift in Sources */,
 				F8F28A141BD5427000367249 /* util.c in Sources */,
 				F8F28A0A1BD5427000367249 /* MimeReader.swift in Sources */,
