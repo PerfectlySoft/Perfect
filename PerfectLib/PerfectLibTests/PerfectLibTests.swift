@@ -669,8 +669,8 @@ class PerfectLibTests: XCTestCase {
 		let address = "www.treefrog.ca"
 		let requestString = [UInt8](("GET / HTTP/1.0\r\nHost: \(address)\r\n\r\n").utf8)
 		let requestCount = requestString.count
-		let net = NetTCPSSL()
 		let clientExpectation = self.expectationWithDescription("client")
+		let net = NetTCPSSL()
 		
 		let setOk = net.setDefaultVerifyPaths()
 		XCTAssert(setOk, "Unable to setDefaultVerifyPaths \(net.sslErrorCode(1))")
@@ -689,6 +689,14 @@ class PerfectLibTests: XCTestCase {
 							clientExpectation.fulfill()
 							return
 						}
+						
+						do {
+							let x509 = ssl.peerCertificate
+							XCTAssert(x509 != nil)
+							let peerKey = x509?.publicKeyBytes
+							XCTAssert(peerKey != nil && peerKey!.count > 0)
+						}
+						
 						ssl.writeBytes(requestString) {
 							(sent:Int) -> () in
 							
