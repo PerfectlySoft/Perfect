@@ -28,21 +28,66 @@ import Foundation
 
 public class NetTCPSSL : NetTCP {
 	
+	public class X509 {
+		
+		private let ptr: UnsafeMutablePointer<OpenSSL.X509>
+		
+		init(ptr: UnsafeMutablePointer<OpenSSL.X509>) {
+			self.ptr = ptr
+		}
+		
+		deinit {
+			X509_free(self.ptr)
+		}
+		
+		public var publicKeyBytes: [UInt8] {
+			let pk = X509_get_pubkey(self.ptr)
+			let len = Int(i2d_PUBKEY(pk, nil))
+			var mp = UnsafeMutablePointer<UInt8>()
+			defer {
+				free(mp)
+				EVP_PKEY_free(pk)
+			}
+			
+			i2d_PUBKEY(pk, &mp)
+			
+			var ret = [UInt8]()
+			ret.reserveCapacity(len)
+			for b in 0..<len {
+				ret.append(mp[b])
+			}
+			return ret
+		}
+	}
+	
 	static var dispatchOnce = Threading.ThreadOnce()
 	
-	var sslCtx: UnsafeMutablePointer<SSL_CTX>?
-	var ssl: UnsafeMutablePointer<SSL>?
+	private var sharedSSLCtx = true
+	private var sslCtx: UnsafeMutablePointer<SSL_CTX>?
+	private var ssl: UnsafeMutablePointer<SSL>?
 	
-	var keyFilePassword: String = "" {
+	public var keyFilePassword: String = "" {
 		didSet {
 			if !self.keyFilePassword.isEmpty {
 				
 				self.initSocket()
-				
+
+				// !FIX!
 //				SSL_CTX_set_default_passwd_cb(self.sslCtx!, passwordCallback)
 				
 			}
 		}
+	}
+	
+	public var peerCertificate: X509? {
+		guard let ssl = self.ssl else {
+			return nil
+		}
+		let cert = SSL_get_peer_certificate(ssl)
+		if cert != nil {
+			return X509(ptr: cert)
+		}
+		return nil
 	}
 	
 	public var usingSSL: Bool {
@@ -56,6 +101,16 @@ public class NetTCPSSL : NetTCP {
 			SSL_library_init()
 			ERR_load_crypto_strings()
 			SSL_load_error_strings()
+		}
+	}
+	
+	deinit {
+		if let ssl = self.ssl {
+			SSL_shutdown(ssl)
+			SSL_free(ssl)
+		}
+		if let sslCtx = self.sslCtx where self.sharedSSLCtx == false {
+			SSL_CTX_free(sslCtx)
 		}
 	}
 	
@@ -74,9 +129,7 @@ public class NetTCPSSL : NetTCP {
 		guard let sslCtx = self.sslCtx else {
 			return
 		}
-		guard sslCtx != nil else {
-			return
-		}
+		self.sharedSSLCtx = false
 		SSL_CTX_ctrl(sslCtx, SSL_CTRL_MODE, SSL_MODE_AUTO_RETRY, nil)
 		SSL_CTX_ctrl(sslCtx, SSL_CTRL_OPTIONS, SSL_OP_ALL, nil)
 		
@@ -198,10 +251,10 @@ public class NetTCPSSL : NetTCP {
 			SSL_free(ssl)
 			self.ssl = nil
 		}
-		if let sslCtx = self.sslCtx {
+		if let sslCtx = self.sslCtx where self.sharedSSLCtx == false {
 			SSL_CTX_free(sslCtx)
-			self.sslCtx = nil
 		}
+		self.sslCtx = nil
 		super.close()
 	}
 	
