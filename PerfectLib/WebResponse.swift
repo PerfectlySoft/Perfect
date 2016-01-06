@@ -193,8 +193,24 @@ public class WebResponse {
 						format: standardDateFormat, timezone: "GMT")
 					cookieLine.appendContentsOf(formattedDate)
 				}
-				// etc...
-				connection.writeHeaderLine(cookieLine)
+                if let path = cookie.path {
+                    cookieLine.appendContentsOf("; path=" + path)
+                }
+                if let domain = cookie.domain {
+                    cookieLine.appendContentsOf("; domain=" + domain)
+                }
+                if let secure = cookie.secure {
+                    if secure == true {
+                        cookieLine.appendContentsOf("; secure")
+                    }
+                }
+                if let httpOnly = cookie.httpOnly {
+                    if httpOnly == true {
+                        cookieLine.appendContentsOf("; HttpOnly")
+                    }
+                }
+                // etc...
+                connection.writeHeaderLine(cookieLine)
 			}
 		}
 		connection.writeHeaderLine("Content-Length: \(bodyData.count)")
