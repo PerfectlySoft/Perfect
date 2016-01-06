@@ -207,6 +207,10 @@ public class SessionManager {
 		c.name = perfectSessionNamePrefix + self.configuration.name
 		c.value = self.configuration.id
 		c.expiresIn = Double(self.configuration.cookieExpires)
+        c.domain = self.configuration.domain
+        c.path = self.configuration.path
+        c.secure = self.configuration.secure
+        c.httpOnly = self.configuration.httpOnly
 		response.addCookie(c)
 	}
 	
