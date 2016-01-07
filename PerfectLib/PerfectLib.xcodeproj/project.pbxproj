@@ -13,6 +13,8 @@
 		F88B067B1BDD4269001FD0CD /* libevent_pthreads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F88B06791BDD4269001FD0CD /* libevent_pthreads.a */; };
 		F88B067C1BDD4269001FD0CD /* libevent.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F88B067A1BDD4269001FD0CD /* libevent.a */; };
 		F88B06921BDE80F9001FD0CD /* MimeType.swift in Sources */ = {isa = PBXBuildFile; fileRef = F88B06911BDE80F9001FD0CD /* MimeType.swift */; };
+		F8933C561C3D9A930048EFE9 /* WebSocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933C551C3D9A930048EFE9 /* WebSocketHandler.swift */; };
+		F8933C5A1C3DC6040048EFE9 /* StaticFileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933C591C3DC6040048EFE9 /* StaticFileHandler.swift */; };
 		F8A03D601C06035100FE7F2F /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E11BD5427000367249 /* File.swift */; };
 		F8E752EC1BDA956500BFC36A /* HTTPServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8E752EB1BDA956500BFC36A /* HTTPServer.swift */; };
 		F8F289C91BD53CF000367249 /* PerfectLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F289BE1BD53CF000367249 /* PerfectLib.framework */; };
@@ -84,6 +86,8 @@
 		F88B06791BDD4269001FD0CD /* libevent_pthreads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libevent_pthreads.a; path = linked/LibEvent/osx/libevent_pthreads.a; sourceTree = "<group>"; };
 		F88B067A1BDD4269001FD0CD /* libevent.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libevent.a; path = linked/LibEvent/osx/libevent.a; sourceTree = "<group>"; };
 		F88B06911BDE80F9001FD0CD /* MimeType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MimeType.swift; sourceTree = "<group>"; };
+		F8933C551C3D9A930048EFE9 /* WebSocketHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebSocketHandler.swift; sourceTree = "<group>"; };
+		F8933C591C3DC6040048EFE9 /* StaticFileHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StaticFileHandler.swift; sourceTree = "<group>"; };
 		F8E752EB1BDA956500BFC36A /* HTTPServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPServer.swift; sourceTree = "<group>"; };
 		F8F289BE1BD53CF000367249 /* PerfectLib.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PerfectLib.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8F289C11BD53CF000367249 /* PerfectLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PerfectLib.h; path = OSX/PerfectLib.h; sourceTree = "<group>"; };
@@ -252,6 +256,8 @@
 				F88B06911BDE80F9001FD0CD /* MimeType.swift */,
 				F877D5471C110CA700CC100D /* Threading.swift */,
 				F804E2B71C1B260800B0F393 /* Routing.swift */,
+				F8933C551C3D9A930048EFE9 /* WebSocketHandler.swift */,
+				F8933C591C3DC6040048EFE9 /* StaticFileHandler.swift */,
 				F8F289F41BD5427000367249 /* util.c */,
 				F8F28A2A1BD5545000367249 /* curl_support.cpp */,
 			);
@@ -437,6 +443,7 @@
 				F8F28A111BD5427000367249 /* SessionManager.swift in Sources */,
 				F8F28A0D1BD5427000367249 /* NetNamedPipe.swift in Sources */,
 				F877D5481C110CA700CC100D /* Threading.swift in Sources */,
+				F8933C561C3D9A930048EFE9 /* WebSocketHandler.swift in Sources */,
 				F8F28A081BD5427000367249 /* LibEvent.swift in Sources */,
 				F8F28A161BD5427000367249 /* WebConnection.swift in Sources */,
 				F8E752EC1BDA956500BFC36A /* HTTPServer.swift in Sources */,
@@ -449,6 +456,7 @@
 				F8F28A151BD5427000367249 /* Utilities.swift in Sources */,
 				F8F28A021BD5427000367249 /* ICU.swift in Sources */,
 				F8F28A0E1BD5427000367249 /* NetTCP.swift in Sources */,
+				F8933C5A1C3DC6040048EFE9 /* StaticFileHandler.swift in Sources */,
 				F804E2B81C1B260800B0F393 /* Routing.swift in Sources */,
 				F88B06921BDE80F9001FD0CD /* MimeType.swift in Sources */,
 				F8F28A171BD5427000367249 /* WebRequest.swift in Sources */,

@@ -3,5 +3,6 @@ module OpenSSL [system] {
     header "openssl/err.h"
     header "openssl/md5.h"
     header "openssl/x509.h"
+    header "openssl/sha.h"
     export *
 }

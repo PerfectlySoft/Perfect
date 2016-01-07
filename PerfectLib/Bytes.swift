@@ -33,6 +33,9 @@ public class Bytes {
 	/// The underlying UInt8 array
 	public var data: [UInt8]
 	
+	/// Indicates the number of bytes which may be successfully exported
+	public var availableExportBytes: Int { return self.data.count - self.position }
+	
 	/// Create an empty Bytes object
 	public init() {
 		self.data = [UInt8]()
@@ -146,6 +149,17 @@ public class Bytes {
 		let eight = UInt64(data[position++]) << 56
 		
 		return (one+two+three+four)+(five+six+seven+eight)
+	}
+	
+	/// Exports the indicated number of bytes
+	public func exportBytes(count: Int) -> [UInt8] {
+		var sub = [UInt8]()
+		let end = self.position + count
+		while self.position < end {
+			sub.append(self.data[self.position])
+			self.position += 1
+		}
+		return sub
 	}
 }
 

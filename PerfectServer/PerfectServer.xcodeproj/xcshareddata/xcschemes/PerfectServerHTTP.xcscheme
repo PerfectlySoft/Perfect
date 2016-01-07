@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0720"
+   LastUpgradeVersion = "0710"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,10 +14,24 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "F8664C461C2082AE009817C2"
-               BuildableName = "URL Routing.framework"
-               BlueprintName = "URL Routing"
-               ReferencedContainer = "container:URL Routing.xcodeproj">
+               BlueprintIdentifier = "F8E752DE1BDA8A7600BFC36A"
+               BuildableName = "perfectserverhttp"
+               BlueprintName = "PerfectServer HTTP"
+               ReferencedContainer = "container:PerfectServer.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "F8F289BD1BD53CF000367249"
+               BuildableName = "PerfectLib.framework"
+               BlueprintName = "PerfectLibOSX"
+               ReferencedContainer = "container:../PerfectLib/PerfectLib.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -32,10 +46,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F88B06801BDD48DD001FD0CD"
-            BuildableName = "PerfectServer HTTP.app"
-            BlueprintName = "PerfectServer HTTP App"
-            ReferencedContainer = "container:../../PerfectServer/PerfectServer.xcodeproj">
+            BlueprintIdentifier = "F8E752DE1BDA8A7600BFC36A"
+            BuildableName = "perfectserverhttp"
+            BlueprintName = "PerfectServer HTTP"
+            ReferencedContainer = "container:PerfectServer.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -55,12 +69,26 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F88B06801BDD48DD001FD0CD"
-            BuildableName = "PerfectServer HTTP.app"
-            BlueprintName = "PerfectServer HTTP App"
-            ReferencedContainer = "container:../../PerfectServer/PerfectServer.xcodeproj">
+            BlueprintIdentifier = "F8E752DE1BDA8A7600BFC36A"
+            BuildableName = "perfectserverhttp"
+            BlueprintName = "PerfectServer HTTP"
+            ReferencedContainer = "container:PerfectServer.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "--help"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--sslcert /Users/kjessup/server.crt --sslkey /Users/kjessup/server.key --port 443"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--port 8080 --address 127.0.0.1 --root ./webroot/"
+            isEnabled = "NO">
+         </CommandLineArgument>
+      </CommandLineArguments>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -70,15 +98,16 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <MacroExpansion>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F8664C461C2082AE009817C2"
-            BuildableName = "URL Routing.framework"
-            BlueprintName = "URL Routing"
-            ReferencedContainer = "container:URL Routing.xcodeproj">
+            BlueprintIdentifier = "F8E752DE1BDA8A7600BFC36A"
+            BuildableName = "perfectserverhttp"
+            BlueprintName = "PerfectServer HTTP"
+            ReferencedContainer = "container:PerfectServer.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

@@ -14,10 +14,24 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "F8664C461C2082AE009817C2"
-               BuildableName = "URL Routing.framework"
-               BlueprintName = "URL Routing"
-               ReferencedContainer = "container:URL Routing.xcodeproj">
+               BlueprintIdentifier = "F8F289BD1BD53CF000367249"
+               BuildableName = "PerfectLib.framework"
+               BlueprintName = "PerfectLibOSX"
+               ReferencedContainer = "container:../../PerfectLib/PerfectLib.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "F8933C451C3D97E10048EFE9"
+               BuildableName = "WebSockets Server.framework"
+               BlueprintName = "WebSockets Server"
+               ReferencedContainer = "container:WebSockets Server.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -73,10 +87,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F8664C461C2082AE009817C2"
-            BuildableName = "URL Routing.framework"
-            BlueprintName = "URL Routing"
-            ReferencedContainer = "container:URL Routing.xcodeproj">
+            BlueprintIdentifier = "F8933C451C3D97E10048EFE9"
+            BuildableName = "WebSockets Server.framework"
+            BlueprintName = "WebSockets Server"
+            ReferencedContainer = "container:WebSockets Server.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

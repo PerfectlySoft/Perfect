@@ -294,7 +294,7 @@ public class WebRequest {
 	/// Returns true if the request was encrypted over HTTPS.
 	public func isHttps() -> Bool { return connection.requestParams["HTTPS"] ?? "" == "on" }
 	/// Returns the indicated HTTP header.
-	public func header(named: String) -> String? { return self.headers[named] }
+	public func header(named: String) -> String? { return self.headers[named.uppercaseString] }
 	/// Returns the raw request parameter header
 	public func rawHeader(named: String) -> String? { return self.connection.requestParams[named] }
 	/// Returns a Dictionary containing all raw request parameters.
