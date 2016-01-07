@@ -161,7 +161,8 @@ public class HTTPServer {
 	// and the request was properly handled
 	func runRequest(req: HTTPWebConnection, withPathInfo: String, completion: (Bool) -> ()) {
 		
-		if PageHandlerRegistry.hasGlobalHandler() {
+        let filePath = self.documentRoot + withPathInfo
+        if PageHandlerRegistry.hasGlobalHandler() && !File(filePath).exists() {
 			req.requestParams["PATH_INFO"] = withPathInfo
 			
 			let request = WebRequest(req)
@@ -171,7 +172,6 @@ public class HTTPServer {
 			}
 		}
 		
-		let filePath = self.documentRoot + withPathInfo
 		let ext = withPathInfo.pathExtension.lowercaseString
 		if ext == mustacheExtension {
 			
