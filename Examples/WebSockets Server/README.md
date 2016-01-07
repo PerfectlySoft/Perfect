@@ -1,33 +1,13 @@
-//
-//  PerfectHandlers.swift
-//  WebSockets Server
-//
-//  Created by Kyle Jessup on 2016-01-06.
-//  Copyright PerfectlySoft 2016. All rights reserved.
-//
-//	This program is free software: you can redistribute it and/or modify
-//	it under the terms of the GNU Affero General Public License as
-//	published by the Free Software Foundation, either version 3 of the
-//	License, or (at your option) any later version, as supplemented by the
-//	Perfect Additional Terms.
-//
-//	This program is distributed in the hope that it will be useful,
-//	but WITHOUT ANY WARRANTY; without even the implied warranty of
-//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//	GNU Affero General Public License, as supplemented by the
-//	Perfect Additional Terms, for more details.
-//
-//	You should have received a copy of the GNU Affero General Public License
-//	and the Perfect Additional Terms that immediately follow the terms and
-//	conditions of the GNU Affero General Public License along with this
-//	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
-//
+# WebSockets Serving
+This example illustrates how to set up a WebSocket server and handle a connection.
 
-import PerfectLib
+## Initiating a WebSocket Session
 
-// This is the function which all Perfect Server modules must expose.
-// The system will load the module and call this function.
-// In here, register any handlers or perform any one-time tasks.
+In your `PerfectServerModuleInit` function, which all Perfect modules must have, enable URL routing by calling `Routing.Handler.registerGlobally()`. Then add one or more URL routes using the `Routing.Routes` subscript functions. These routes will be the endpoints for the WebSocket session. Set the route handler to `WebSocketHandler` and provide your custom closure which will return your own session handler.
+
+The following code is taken from the example project and shows how to enable the system and add a WebSocket handler.
+
+```
 public func PerfectServerModuleInit() {
 	
 	// Initialize the routing system
@@ -55,19 +35,26 @@ public func PerfectServerModuleInit() {
 		})
 	}
 }
+```
+## Handling WebSocket Sessions
 
-// A WebSocket service handler must impliment the `WebSocketSessionHandler` protocol.
-// This protocol requires the function `handleSession(request: WebRequest, socket: WebSocket)`.
-// This function will be called once the WebSocket connection has been established,
-// at which point it is safe to begin reading and writing messages.
-//
-// The initial `WebRequest` object which instigated the session is provided for reference.
-// Messages are transmitted through the provided `WebSocket` object.
-// Call `WebSocket.sendStringMessage` or `WebSocket.sendBinaryMessage` to send data to the client.
-// Call `WebSocket.readStringMessage` or `WebSocket.readBinaryMessage` to read data from the client.
-// By default, reading will block indefinitely until a message arrives or a network error occurs.
-// A read timeout can be set with `WebSocket.readTimeoutSeconds`.
-// When the session is over call `WebSocket.close()`.
+ A WebSocket service handler must impliment the `WebSocketSessionHandler` protocol.
+ This protocol requires the function `handleSession(request: WebRequest, socket: WebSocket)`.
+ This function will be called once the WebSocket connection has been established,
+ at which point it is safe to begin reading and writing messages.
+
+ The initial `WebRequest` object which instigated the session is provided for reference.
+ Messages are transmitted through the provided WebSocket object. 
+ Call `WebSocket.sendStringMessage` or `WebSocket.sendBinaryMessage` to send data to the client.
+ Call `WebSocket.readStringMessage` or `WebSocket.readBinaryMessage` to read data from the client.
+ By default, reading will block indefinitely until a message arrives or a network error occurs.
+ A read timeout can be set with `WebSocket.readTimeoutSeconds`.
+ When the session is over call `WebSocket.close()`.
+
+
+The example `EchoHandler` consists of the following.
+
+```
 class EchoHandler: WebSocketSessionHandler {
 	
 	// The name of the super-protocol we implement.
@@ -111,5 +98,7 @@ class EchoHandler: WebSocketSessionHandler {
 		}
 	}
 }
+```
 
-
+## FastCGI Caveat
+WebSockets serving is only supported with the stand-alone Perfect HTTP server. At this time, the WebSocket server does not operate with the Perfect FastCGI server.
