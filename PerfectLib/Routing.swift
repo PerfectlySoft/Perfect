@@ -240,8 +240,17 @@ class RouteNode: CustomStringConvertible {
 				}
 			}
 			
-		} else {
+		} else if self.handlerGenerator != nil {
+			
 			return self.handlerGenerator
+			
+		} else {
+			// wildcards
+			if let node = self.wildCard {
+				if let h = node.findHandler("", generator: m, webResponse: webResponse) {
+					return self.successfulRoute(currentComponent, handler: node.successfulRoute("", handler: h, webResponse: webResponse), webResponse: webResponse)
+				}
+			}
 		}
 		return nil
 	}

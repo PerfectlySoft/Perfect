@@ -175,7 +175,8 @@ public class WebResponse {
 		self.addHeader(name, value: value)
 	}
 	
-	private func sendResponse() {
+	// directly called by the WebSockets impl
+	func sendResponse() {
 		for (key, value) in headersArray {
 			connection.writeHeaderLine(key + ": " + value)
 		}
