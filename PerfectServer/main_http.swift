@@ -36,6 +36,7 @@ func startServer() throws {
 	ls.initializeServices()
 	
 	var webRoot = "./webroot/"
+	var serverName = ""
 	var localAddress = "0.0.0.0"
 	var localPort = 8181
 	var sslCert: String?
@@ -64,8 +65,12 @@ func startServer() throws {
 			args.removeFirst()
 			webRoot = args.first!
 		},
+		"--name": {
+			args.removeFirst()
+			serverName = args.first!
+		},
 		"--help": {
-			print("Usage: \(Process.arguments.first!) [--port listen_port] [--address listen_address] [--root root_path] [--sslcert cert_path --sslkey key_path]")
+			print("Usage: \(Process.arguments.first!) [--port listen_port] [--address listen_address] [--name server_name] [--root root_path] [--sslcert cert_path --sslkey key_path]")
 			exit(0)
 		}]
 	
@@ -78,22 +83,27 @@ func startServer() throws {
 	
 	try Dir(webRoot).create()
 	let httpServer = HTTPServer(documentRoot: webRoot)
-	if sslCert != nil || sslKey != nil {
-		
-		if sslCert == nil || sslKey == nil {
-			print("Error: if either --sslcert or --sslkey is provided then both --sslcert and --sslkey must be provided.")
-			exit(-1)
+	httpServer.serverName = serverName
+	do {
+		if sslCert != nil || sslKey != nil {
+			
+			if sslCert == nil || sslKey == nil {
+				print("Error: if either --sslcert or --sslkey is provided then both --sslcert and --sslkey must be provided.")
+				exit(-1)
+			}
+			
+			if !File(sslCert!).exists() || !File(sslKey!).exists() {
+				print("Error: --sslcert or --sslkey file did not exist.")
+				exit(-1)
+			}
+			
+			try httpServer.start(UInt16(localPort), sslCert: sslCert!, sslKey: sslKey!, bindAddress: localAddress)
+			
+		} else {
+			try httpServer.start(UInt16(localPort), bindAddress: localAddress)
 		}
-		
-		if !File(sslCert!).exists() || !File(sslKey!).exists() {
-			print("Error: --sslcert or --sslkey file did not exist.")
-			exit(-1)
-		}
-		
-		try httpServer.start(UInt16(localPort), sslCert: sslCert!, sslKey: sslKey!, bindAddress: localAddress)
-		
-	} else {
-		try httpServer.start(UInt16(localPort), bindAddress: localAddress)
+	} catch PerfectError.NetworkError(let err, let msg) {
+		print("Network error thrown: \(err) \(msg)")
 	}
 }
 
