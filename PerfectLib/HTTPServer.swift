@@ -43,6 +43,10 @@ public class HTTPServer {
 	/// The local address on which the server is listening. The default of 0.0.0.0 indicates any local address.
 	public var serverAddress = "0.0.0.0"
 	
+	/// The canonical server name.
+	/// This is important if utilizing the `WebRequest.serverName` "SERVER_NAME" variable.
+	public var serverName = ""
+	
 	/// Initialize the server with a document root.
 	/// - parameter documentRoot: The document root for the server.
 	public init(documentRoot: String) {
@@ -92,7 +96,7 @@ public class HTTPServer {
 		
 		defer { socket.close() }
 		
-		print("Starting HTTP server on \(bindAddress):\(port) with document root \(self.documentRoot)")
+		print("Starting HTTPS server on \(bindAddress):\(port) with document root \(self.documentRoot)")
 		
 		self.start()
 	}
@@ -100,6 +104,8 @@ public class HTTPServer {
 	func start() {
 		
 		if let n = self.net {
+			
+			self.serverAddress = n.sockName().0
 			
 			n.forEachAccept {
 				(net: NetTCP?) -> () in
@@ -122,7 +128,7 @@ public class HTTPServer {
 	}
 	
 	func handleConnection(net: NetTCP) {
-		let req = HTTPWebConnection(net: net)
+		let req = HTTPWebConnection(net: net, server: self)
 		req.readRequest { requestOk in
 			if requestOk {
 				self.runRequest(req)
@@ -272,6 +278,10 @@ public class HTTPServer {
 		var workingBufferOffset = 0
 		var lastHeaderKey = "" // for handling continuations
 		
+		let serverName: String
+		let serverAddr: String
+		let serverPort: UInt16
+		
 		var contentType: String? {
 			return self.requestParams["CONTENT_TYPE"]
 		}
@@ -288,10 +298,13 @@ public class HTTPServer {
 			return (self.requestParams["HTTP_CONNECTION"] ?? "").lowercaseString.contains("keep-alive")
 		}
 		
-		init(net: NetTCP) {
+		init(net: NetTCP, server: HTTPServer) {
 			self.connection = net
 			self.statusCode = 200
 			self.statusMsg = "OK"
+			self.serverName = server.serverName
+			self.serverAddr = server.serverAddress
+			self.serverPort = server.serverPort
 		}
 		
 		func setStatus(code: Int, msg: String) {
@@ -436,8 +449,15 @@ public class HTTPServer {
 			self.requestParams["QUERY_STRING"] = queryString
 			self.requestParams["SERVER_PROTOCOL"] = hvers
 			self.requestParams["GATEWAY_INTERFACE"] = "PerfectHTTPD"
-			// !FIX! 
-			// REMOTE_ADDR, REMOTE_PORT, SERVER_ADDR, SERVER_PORT
+			
+			let (remoteHost, remotePort) = self.connection.peerName()
+			
+			self.requestParams["REMOTE_ADDR"] = remoteHost
+			self.requestParams["REMOTE_PORT"] = "\(remotePort)"
+			
+			self.requestParams["SERVER_NAME"] = self.serverName
+			self.requestParams["SERVER_ADDR"] = self.serverAddr
+			self.requestParams["SERVER_PORT"] = "\(self.serverPort)"
 			return true
 		}
 		
