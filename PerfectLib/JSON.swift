@@ -160,7 +160,7 @@ public class JSONEncode {
 		case let b as Bool:
 			return b ? "true" : "false"
 		default:
-			throw JSONError.UnhandledType("The type \(value) was not handled")
+			throw JSONError.UnhandledType("The type \(value.dynamicType) was not handled")
 		}
 	}
 	
