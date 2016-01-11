@@ -54,6 +54,60 @@ public class NetNamedPipe : NetTCP {
 		fd.family = AF_UNIX
 		fd.switchToNBIO()
 	}
+	
+	public override func sockName() -> (String, UInt16) {
+		var addr = UnsafeMutablePointer<sockaddr_un>.alloc(1)
+		let len = UnsafeMutablePointer<socklen_t>.alloc(1)
+		defer {
+			addr.dealloc(1)
+			len.dealloc(1)
+		}
+		len.memory = socklen_t(sizeof(sockaddr_in))
+		getsockname(fd.fd, UnsafeMutablePointer<sockaddr>(addr), len)
+		
+		var nameBuf = [CChar]()
+		let mirror = Mirror(reflecting: addr.memory.sun_path)
+		let childGen = mirror.children.generate()
+		for _ in 0..<addr.memory.sun_len {
+			let (_, elem) = childGen.next()!
+			if (elem as! Int8) == 0 {
+				break
+			}
+			nameBuf.append(elem as! Int8)
+		}
+		nameBuf.append(0)
+		let s = String.fromCString(nameBuf) ?? ""
+		let p = UInt16(0)
+		
+		return (s, p)
+	}
+	
+	public override func peerName() -> (String, UInt16) {
+		var addr = UnsafeMutablePointer<sockaddr_un>.alloc(1)
+		let len = UnsafeMutablePointer<socklen_t>.alloc(1)
+		defer {
+			addr.dealloc(1)
+			len.dealloc(1)
+		}
+		len.memory = socklen_t(sizeof(sockaddr_in))
+		getpeername(fd.fd, UnsafeMutablePointer<sockaddr>(addr), len)
+		
+		var nameBuf = [CChar]()
+		let mirror = Mirror(reflecting: addr.memory.sun_path)
+		let childGen = mirror.children.generate()
+		for _ in 0..<addr.memory.sun_len {
+			let (_, elem) = childGen.next()!
+			if (elem as! Int8) == 0 {
+				break
+			}
+			nameBuf.append(elem as! Int8)
+		}
+		nameBuf.append(0)
+		let s = String.fromCString(nameBuf) ?? ""
+		let p = UInt16(0)
+		
+		return (s, p)
+	}
 
 	/// Bind the socket to the address path
 	/// - parameter address: The path on the file system at which to create and bind the socket

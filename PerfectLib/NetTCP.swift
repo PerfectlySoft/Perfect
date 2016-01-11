@@ -86,6 +86,46 @@ public class NetTCP : Closeable {
 		}
 	}
 	
+	public func sockName() -> (String, UInt16) {
+		let staticBufferSize = 1024
+		var addr = UnsafeMutablePointer<sockaddr_in>.alloc(1)
+		let len = UnsafeMutablePointer<socklen_t>.alloc(1)
+		let buffer = UnsafeMutablePointer<Int8>.alloc(staticBufferSize)
+		defer {
+			addr.dealloc(1)
+			len.dealloc(1)
+			buffer.dealloc(staticBufferSize)
+		}
+		len.memory = socklen_t(sizeof(sockaddr_in))
+		getsockname(fd.fd, UnsafeMutablePointer<sockaddr>(addr), len)
+		inet_ntop(fd.family, &addr.memory.sin_addr, buffer, len.memory)
+		
+		let s = String.fromCString(buffer) ?? ""
+		let p = ntohs(addr.memory.sin_port)
+		
+		return (s, p)
+	}
+	
+	public func peerName() -> (String, UInt16) {
+		let staticBufferSize = 1024
+		var addr = UnsafeMutablePointer<sockaddr_in>.alloc(1)
+		let len = UnsafeMutablePointer<socklen_t>.alloc(1)
+		let buffer = UnsafeMutablePointer<Int8>.alloc(staticBufferSize)
+		defer {
+			addr.dealloc(1)
+			len.dealloc(1)
+			buffer.dealloc(staticBufferSize)
+		}
+		len.memory = socklen_t(sizeof(sockaddr_in))
+		getpeername(fd.fd, UnsafeMutablePointer<sockaddr>(addr), len)
+		inet_ntop(fd.family, &addr.memory.sin_addr, buffer, len.memory)
+		
+		let s = String.fromCString(buffer) ?? ""
+		let p = ntohs(addr.memory.sin_port)
+		
+		return (s, p)
+	}
+	
 	func isEAgain(err: Int) -> Bool {
 		return err == -1 && errno == EAGAIN
 	}
