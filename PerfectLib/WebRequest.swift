@@ -112,6 +112,27 @@ public class WebRequest {
 		return c
 	}()
 	
+	/// Return the raw POST body as a byte array
+	/// This is mainly useful when POSTing non-url-encoded and not-multipart form data
+	/// For example, if the content-type were application/json you could use this function to get the raw JSON data as bytes
+	public lazy var postBodyBytes: [UInt8] = {
+		if let stdin = self.connection.stdin {
+			return stdin
+		}
+		return [UInt8]()
+	}()
+	
+	/// Return the raw POST body as a String
+	/// This is mainly useful when POSTing non-url-encoded and not-multipart form data
+	/// For example, if the content-type were application/json you could use this function to get the raw JSON data as a String
+	public lazy var postBodyString: String = {
+		if let stdin = self.connection.stdin {
+			let qs = UTF8Encoding.encode(stdin)
+			return qs
+		}
+		return ""
+	}()
+	
 	/// A tuple array containing each POST parameter name/value pair
 	public lazy var postParams: [(String, String)] = {
 		var c = [(String, String)]()
@@ -273,7 +294,7 @@ public class WebRequest {
 	/// Returns true if the request was encrypted over HTTPS.
 	public func isHttps() -> Bool { return connection.requestParams["HTTPS"] ?? "" == "on" }
 	/// Returns the indicated HTTP header.
-	public func header(named: String) -> String? { return self.headers[named] }
+	public func header(named: String) -> String? { return self.headers[named.uppercaseString] }
 	/// Returns the raw request parameter header
 	public func rawHeader(named: String) -> String? { return self.connection.requestParams[named] }
 	/// Returns a Dictionary containing all raw request parameters.

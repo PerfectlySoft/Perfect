@@ -24,7 +24,6 @@
 //
 
 import libmongoc
-import PerfectLib
 
 public enum MongoResult {
 	case Success
@@ -32,9 +31,10 @@ public enum MongoResult {
 	case ReplyDoc(BSON)
 	case ReplyInt(Int)
 	case ReplyCollection(MongoCollection)
-	
-	static func fromError(var error: bson_error_t) -> MongoResult {
-		let message = withUnsafePointer(&error.message) {
+
+	static func fromError(error: bson_error_t) -> MongoResult {
+		var vError = error
+		let message = withUnsafePointer(&vError.message) {
 			String.fromCString(UnsafePointer($0))!
 		}
 		return .Error(error.domain, error.code, message)
@@ -42,30 +42,30 @@ public enum MongoResult {
 }
 
 public class MongoClient {
-	
+
 	var ptr: COpaquePointer
-	
+
 	public typealias Result = MongoResult
-	
+
 	public init(uri: String) {
 		self.ptr = mongoc_client_new(uri)
 	}
-	
+
 	public func close() {
 		if self.ptr != nil {
 			mongoc_client_destroy(self.ptr)
 			self.ptr = nil
 		}
 	}
-	
+
 	public func getCollection(databaseName: String, collectionName: String) -> MongoCollection {
 		return MongoCollection(client: self, databaseName: databaseName, collectionName: collectionName)
 	}
-	
+
 	public func getDatabase(databaseName: String) -> MongoDatabase {
 		return MongoDatabase(client: self, databaseName: databaseName)
 	}
-	
+
 	public func serverStatus() -> Result {
 		var error = bson_error_t()
 		let readPrefs = mongoc_read_prefs_new(MONGOC_READ_PRIMARY)
@@ -78,7 +78,7 @@ public class MongoClient {
 		}
 		return .ReplyDoc(bson)
 	}
-	
+
 	public func databaseNames() -> [String] {
 		let names = mongoc_client_get_database_names(self.ptr, nil)
 		var ret = [String]()
@@ -92,7 +92,5 @@ public class MongoClient {
 		}
 		return ret
 	}
-	
+
 }
-
-

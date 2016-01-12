@@ -44,6 +44,8 @@ Carthage/Build
 
 *.so
 
+*.DS_Store
+
 # Perfect binaries
 PerfectServer/perfectserverfcgi
 PerfectServer/perfectserverhttp

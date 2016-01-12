@@ -24,23 +24,22 @@
 //
 
 import libmongoc
-import PerfectLib
 
 public class MongoCursor {
-	
+
 	var ptr: COpaquePointer
-	
+
 	init(rawPtr: COpaquePointer) {
 		self.ptr = rawPtr
 	}
-	
+
 	public func close() {
 		if self.ptr != nil {
 			mongoc_cursor_destroy(self.ptr)
 			self.ptr = nil
 		}
 	}
-	
+
 	public func next() -> BSON? {
 		var bson = UnsafePointer<bson_t>()
 		if mongoc_cursor_next(self.ptr, &bson) {

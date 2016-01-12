@@ -156,7 +156,7 @@ public class Routing {
 		/// Handle the request, triggering the routing system.
 		/// If a route is discovered the request is sent to the new handler.
 		public func handleRequest(request: WebRequest, response: WebResponse) {
-			let pathInfo = request.pathInfo()
+			let pathInfo = request.requestURI().characters.split("?").map { String($0) }.first ?? "/"
 			
 			if let handler = Routing.Routes[pathInfo, response] {
 				handler(response).handleRequest(request, response: response)
@@ -217,36 +217,45 @@ class RouteNode: CustomStringConvertible {
 	
 	func findHandler(currentComponent: String, generator: ComponentGenerator, webResponse: WebResponse) -> RequestHandlerGenerator? {
 		var m = generator
-		if let p = m.next() {
+		if let p = m.next() where p != "/" {
 			
 			// variables
 			for node in self.variables {
 				if let h = node.findHandler(p, generator: m, webResponse: webResponse) {
-					return self.successfulRoute(currentComponent, handler: h, webResponse: webResponse)
+					return self.successfulRoute(currentComponent, handler: node.successfulRoute(p, handler: h, webResponse: webResponse), webResponse: webResponse)
 				}
 			}
 			
 			// paths
 			if let node = self.subNodes[p] {
 				if let h = node.findHandler(p, generator: m, webResponse: webResponse) {
-					return self.successfulRoute(currentComponent, handler: h, webResponse: webResponse)
+					return self.successfulRoute(currentComponent, handler: node.successfulRoute(p, handler: h, webResponse: webResponse), webResponse: webResponse)
 				}
 			}
 			
 			// wildcards
 			if let node = self.wildCard {
 				if let h = node.findHandler(p, generator: m, webResponse: webResponse) {
-					return self.successfulRoute(currentComponent, handler: h, webResponse: webResponse)
+					return self.successfulRoute(currentComponent, handler: node.successfulRoute(p, handler: h, webResponse: webResponse), webResponse: webResponse)
 				}
 			}
 			
-		} else {
+		} else if self.handlerGenerator != nil {
+			
 			return self.handlerGenerator
+			
+		} else {
+			// wildcards
+			if let node = self.wildCard {
+				if let h = node.findHandler("", generator: m, webResponse: webResponse) {
+					return self.successfulRoute(currentComponent, handler: node.successfulRoute("", handler: h, webResponse: webResponse), webResponse: webResponse)
+				}
+			}
 		}
 		return nil
 	}
 	
-	func successfulRoute(currentComponent: String, handler: RequestHandlerGenerator, webResponse: WebResponse) -> RequestHandlerGenerator? {
+	func successfulRoute(currentComponent: String, handler: RequestHandlerGenerator, webResponse: WebResponse) -> RequestHandlerGenerator {
 		return handler
 	}
 	
@@ -352,7 +361,7 @@ class RouteVariable: RouteNode {
 		self.name = name
 	}
 	
-	override func successfulRoute(currentComponent: String, handler: RequestHandlerGenerator, webResponse: WebResponse) -> RequestHandlerGenerator? {
+	override func successfulRoute(currentComponent: String, handler: RequestHandlerGenerator, webResponse: WebResponse) -> RequestHandlerGenerator {
 		webResponse.request.urlVariables[self.name] = currentComponent
 		return handler
 	}

@@ -24,25 +24,24 @@
 //
 
 import libmongoc
-import PerfectLib
 
 public class MongoDatabase {
-	
+
 	var ptr: COpaquePointer
-	
+
 	public typealias Result = MongoResult
-	
+
 	public init(client: MongoClient, databaseName: String) {
 		self.ptr = mongoc_client_get_database(client.ptr, databaseName)
 	}
-	
+
 	public func close() {
 		if self.ptr != nil {
 			mongoc_database_destroy(self.ptr)
 			self.ptr = nil
 		}
 	}
-	
+
 	public func drop() -> Result {
 		var error = bson_error_t()
 		if mongoc_database_drop(self.ptr, &error) {
@@ -50,11 +49,11 @@ public class MongoDatabase {
 		}
 		return Result.fromError(error)
 	}
-	
+
 	public func name() -> String {
 		return String.fromCString(mongoc_database_get_name(self.ptr))!
 	}
-	
+
 	public func createCollection(collectionName: String, options: BSON) -> Result {
 		var error = bson_error_t()
 		let col = mongoc_database_create_collection(self.ptr, collectionName, options.doc, &error)
@@ -63,12 +62,12 @@ public class MongoDatabase {
 		}
 		return .ReplyCollection(MongoCollection(rawPtr: col))
 	}
-	
+
 	public func getCollection(collectionName: String) -> MongoCollection {
 		let col = mongoc_database_get_collection(self.ptr, collectionName)
 		return MongoCollection(rawPtr: col)
 	}
-	
+
 	public func collectionNames() -> [String] {
 		let names = mongoc_database_get_collection_names(self.ptr, nil)
 		var ret = [String]()
@@ -82,6 +81,6 @@ public class MongoDatabase {
 		}
 		return ret
 	}
-	
-	
+
+
 }
