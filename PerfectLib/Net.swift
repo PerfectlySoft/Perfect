@@ -43,6 +43,7 @@ let invalidSocket = Int32(-1)
 public struct SocketFileDescriptor {
 	
 	var fd: Int32, family: Int32
+	var isValid: Bool { return self.fd != invalidSocket }
 	
 	init(fd: Int32, family: Int32 = AF_UNSPEC) {
 		self.fd = fd

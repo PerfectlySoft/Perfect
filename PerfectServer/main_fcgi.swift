@@ -32,14 +32,30 @@ import PerfectLib
 
 func startServer() throws {
 
-	let buf = getcwd(nil, 0)
-	let dir = String.fromCString(buf) ?? ""
-	free(buf)
-	print("Current working directory: \(dir)")
-
 	let ls = PerfectServer.staticPerfectServer
 	ls.initializeServices()
+
+	var sockPath = "./perfect.fastcgi.sock"
+	var args = Process.arguments
+	
+	let validArgs = [
+		
+		"--sockpath": {
+			args.removeFirst()
+			sockPath = args.first!
+		},
+		"--help": {
+			print("Usage: \(Process.arguments.first!) [--sockpath socket_path]")
+			exit(0)
+		}]
+	
+	while args.count > 0 {
+		if let closure = validArgs[args.first!.lowercaseString] {
+			closure()
+		}
+		args.removeFirst()
+	}
 	
 	let fastCgiServer = FastCGIServer()
-	try fastCgiServer.start("./perfect.fastcgi.sock")
+	try fastCgiServer.start(sockPath)
 }

@@ -28,21 +28,66 @@ import Foundation
 
 public class NetTCPSSL : NetTCP {
 	
+	public class X509 {
+		
+		private let ptr: UnsafeMutablePointer<OpenSSL.X509>
+		
+		init(ptr: UnsafeMutablePointer<OpenSSL.X509>) {
+			self.ptr = ptr
+		}
+		
+		deinit {
+			X509_free(self.ptr)
+		}
+		
+		public var publicKeyBytes: [UInt8] {
+			let pk = X509_get_pubkey(self.ptr)
+			let len = Int(i2d_PUBKEY(pk, nil))
+			var mp = UnsafeMutablePointer<UInt8>()
+			defer {
+				free(mp)
+				EVP_PKEY_free(pk)
+			}
+			
+			i2d_PUBKEY(pk, &mp)
+			
+			var ret = [UInt8]()
+			ret.reserveCapacity(len)
+			for b in 0..<len {
+				ret.append(mp[b])
+			}
+			return ret
+		}
+	}
+	
 	static var dispatchOnce = Threading.ThreadOnce()
 	
-	var sslCtx: UnsafeMutablePointer<SSL_CTX>?
-	var ssl: UnsafeMutablePointer<SSL>?
+	private var sharedSSLCtx = true
+	private var sslCtx: UnsafeMutablePointer<SSL_CTX>?
+	private var ssl: UnsafeMutablePointer<SSL>?
 	
-	var keyFilePassword: String = "" {
+	public var keyFilePassword: String = "" {
 		didSet {
 			if !self.keyFilePassword.isEmpty {
 				
 				self.initSocket()
-				
+
+				// !FIX!
 //				SSL_CTX_set_default_passwd_cb(self.sslCtx!, passwordCallback)
 				
 			}
 		}
+	}
+	
+	public var peerCertificate: X509? {
+		guard let ssl = self.ssl else {
+			return nil
+		}
+		let cert = SSL_get_peer_certificate(ssl)
+		if cert != nil {
+			return X509(ptr: cert)
+		}
+		return nil
 	}
 	
 	public var usingSSL: Bool {
@@ -56,6 +101,16 @@ public class NetTCPSSL : NetTCP {
 			SSL_library_init()
 			ERR_load_crypto_strings()
 			SSL_load_error_strings()
+		}
+	}
+	
+	deinit {
+		if let ssl = self.ssl {
+			SSL_shutdown(ssl)
+			SSL_free(ssl)
+		}
+		if let sslCtx = self.sslCtx where self.sharedSSLCtx == false {
+			SSL_CTX_free(sslCtx)
 		}
 	}
 	
@@ -74,13 +129,12 @@ public class NetTCPSSL : NetTCP {
 		guard let sslCtx = self.sslCtx else {
 			return
 		}
-		guard sslCtx != nil else {
-			return
-		}
+		self.sharedSSLCtx = false
 		SSL_CTX_ctrl(sslCtx, SSL_CTRL_MODE, SSL_MODE_AUTO_RETRY, nil)
 		SSL_CTX_ctrl(sslCtx, SSL_CTRL_OPTIONS, SSL_OP_ALL, nil)
 		
 		self.ssl = SSL_new(sslCtx)
+		SSL_set_fd(self.ssl!, self.fd.fd)
 	}
 	
 	public func errorCode() -> UInt {
@@ -116,7 +170,9 @@ public class NetTCPSSL : NetTCP {
 	override func isEAgain(err: Int) -> Bool {
 		if err == -1 && self.usingSSL {
 			let sslErr = SSL_get_error(self.ssl!, Int32(err))
-			return sslErr == SSL_ERROR_WANT_READ || sslErr == SSL_ERROR_WANT_WRITE
+			if sslErr != SSL_ERROR_SYSCALL {
+				return sslErr == SSL_ERROR_WANT_READ || sslErr == SSL_ERROR_WANT_WRITE
+			}
 		}
 		return super.isEAgain(err)
 	}
@@ -195,10 +251,10 @@ public class NetTCPSSL : NetTCP {
 			SSL_free(ssl)
 			self.ssl = nil
 		}
-		if let sslCtx = self.sslCtx {
+		if let sslCtx = self.sslCtx where self.sharedSSLCtx == false {
 			SSL_CTX_free(sslCtx)
-			self.sslCtx = nil
 		}
+		self.sslCtx = nil
 		super.close()
 	}
 	
@@ -227,8 +283,6 @@ public class NetTCPSSL : NetTCP {
 			closure(false)
 			return
 		}
-		
-		self.setConnectState()
 		
 		let res = SSL_connect(ssl)
 		switch res {
@@ -264,9 +318,11 @@ public class NetTCPSSL : NetTCP {
 				}
 				event.add(timeout)
 				return
+			} else {
+				closure(false)
 			}
 		default:
-			()
+			closure(false)
 		}
 	}
 	
@@ -299,13 +355,22 @@ public class NetTCPSSL : NetTCP {
 		}
 	}
 	
+	public func setDefaultVerifyPaths() -> Bool {
+		self.initSocket()
+		guard let sslCtx = self.sslCtx else {
+			return false
+		}
+		let r = SSL_CTX_set_default_verify_paths(sslCtx)
+		return r == 1
+	}
+	
 	public func setVerifyLocations(caFilePath: String, caDirPath: String) -> Bool {
 		self.initSocket()
 		guard let sslCtx = self.sslCtx else {
 			return false
 		}
 		let r = SSL_CTX_load_verify_locations(sslCtx, caFilePath, caDirPath)
-		return r == 0
+		return r == 1
 	}
 	
 	public func useCertificateChainFile(cert: String) -> Bool {
@@ -314,7 +379,7 @@ public class NetTCPSSL : NetTCP {
 			return false
 		}
 		let r = SSL_CTX_use_certificate_chain_file(sslCtx, cert)
-		return r == 0
+		return r == 1
 	}
 	
 	public func usePrivateKeyFile(cert: String) -> Bool {
@@ -323,7 +388,83 @@ public class NetTCPSSL : NetTCP {
 			return false
 		}
 		let r = SSL_CTX_use_PrivateKey_file(sslCtx, cert, SSL_FILETYPE_PEM)
-		return r == 0
+		return r == 1
+	}
+	
+	override func makeFromFd(fd: Int32) -> NetTCP {
+		return NetTCPSSL(fd: fd)
+	}
+	
+	override public func forEachAccept(callBack: (NetTCP?) -> ()) {
+		super.forEachAccept {
+			(net:NetTCP?) -> () in
+			
+			if let netSSL = net as? NetTCPSSL {
+				
+				netSSL.sslCtx = self.sslCtx
+				netSSL.ssl = SSL_new(self.sslCtx!)
+				SSL_set_fd(netSSL.ssl!, netSSL.fd.fd)
+				
+				self.finishAccept(-1, net: netSSL, callBack: callBack)
+			} else {
+				callBack(net)
+			}
+		}
+	}
+	
+	override public func accept(timeoutSeconds: Double, callBack: (NetTCP?) -> ()) throws {
+		try super.accept(timeoutSeconds, callBack: {
+			(net:NetTCP?) -> () in
+			
+			if let netSSL = net as? NetTCPSSL {
+				
+				netSSL.sslCtx = self.sslCtx
+				netSSL.ssl = SSL_new(self.sslCtx!)
+				SSL_set_fd(netSSL.ssl!, netSSL.fd.fd)
+				
+				self.finishAccept(timeoutSeconds, net: netSSL, callBack: callBack)
+			} else {
+				callBack(net)
+			}
+		})
+	}
+	
+	func finishAccept(timeoutSeconds: Double, net: NetTCPSSL, callBack: (NetTCP?) -> ()) {
+		let res = SSL_accept(net.ssl!)
+		let sslErr = SSL_get_error(net.ssl!, res)
+		if res == -1 {
+			if sslErr == SSL_ERROR_WANT_WRITE {
+				
+				let event: LibEvent = LibEvent(base: LibEvent.eventBase, fd: net.fd.fd, what: EV_WRITE, userData: nil) {
+					(fd:Int32, w:Int16, ud:AnyObject?) -> () in
+					
+					if (Int32(w) & EV_TIMEOUT) != 0 {
+						callBack(nil)
+					} else {
+						self.finishAccept(timeoutSeconds, net: net, callBack: callBack)
+					}
+				}
+				event.add(timeoutSeconds)
+				
+			} else if sslErr == SSL_ERROR_WANT_READ {
+				
+				let event: LibEvent = LibEvent(base: LibEvent.eventBase, fd: net.fd.fd, what: EV_READ, userData: nil) {
+					(fd:Int32, w:Int16, ud:AnyObject?) -> () in
+					
+					if (Int32(w) & EV_TIMEOUT) != 0 {
+						callBack(nil)
+					} else {
+						self.finishAccept(timeoutSeconds, net: net, callBack: callBack)
+					}
+				}
+				event.add(timeoutSeconds)
+				
+			} else {
+				callBack(nil)
+			}
+		} else {
+			callBack(net)
+		}
 	}
 	
 //	private func throwSSLNetworkError(err: Int32) throws {

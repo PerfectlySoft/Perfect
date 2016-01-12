@@ -25,6 +25,13 @@
 
 import Foundation
 
+/*
+
+	NOTE: This class uses GCD and as such does not yet operate on Linux.
+	It is not included in the project for OS X but is left in the source directory for future consideration.
+
+*/
+
 /// This class implements a multi-reader single-writer thread-safe dictionary.
 /// It provides a means for:
 ///	1. Fetching a value given a key, with concurrent readers

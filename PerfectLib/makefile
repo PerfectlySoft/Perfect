@@ -3,7 +3,7 @@
 OS = $(shell uname)
 SWIFTC = swift
 MODULE_NAME = PerfectLib
-
+DEBUG = -g -Onone -Xcc -DDEBUG=1
 Linux_INSTALL_PATH = /usr/local/lib
 Darwin_INSTALL_PATH = /Library/Frameworks
 
@@ -12,14 +12,15 @@ INSTALL_PATH = $($(OS)_INSTALL_PATH)
 Darwin_SWIFTC_FLAGS = -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk
 Linux_SWIFTC_FLAGS = -I linked/LinuxBridge
 
-SWIFTC_FLAGS = -emit-module -I linked/LibEvent -I linked/OpenSSL_Linux -I linked/ICU -I linked/SQLite3 \
+SWIFTC_FLAGS = $(DEBUG) -emit-module -I linked/LibEvent -I linked/OpenSSL_Linux -I linked/ICU -I linked/SQLite3 \
 	-module-cache-path $(MODULE_CACHE_PATH) -module-name $(MODULE_NAME) $($(OS)_SWIFTC_FLAGS)
 
 PERFECT_SRC = ICU.swift NetNamedPipe.swift File.swift Threading.swift LibEvent.swift Bytes.swift FastCGI.swift \
 	LogManager.swift NetTCPSSL.swift PerfectServer.swift WebConnection.swift Closeable.swift \
 	FastCGIServer.swift Net.swift Utilities.swift MimeReader.swift NetTCP.swift SessionManager.swift \
 	WebRequest.swift HTTPServer.swift MimeType.swift PageHandler.swift SQLite.swift WebResponse.swift \
-	Dir.swift Mustache.swift PerfectError.swift SysProcess.swift DynamicLoader.swift JSON.swift Utilities-Server.swift
+	Dir.swift Mustache.swift PerfectError.swift SysProcess.swift DynamicLoader.swift JSON.swift Utilities-Server.swift \
+	Routing.swift StaticFileHandler.swift WebSocketHandler.swift
 
 PERFECT_OBJ = $(addsuffix .o, $(basename $(PERFECT_SRC))) LinuxBridge.o util.o
 
@@ -43,7 +44,7 @@ CFLAGS = -fPIC
 MODULE_CACHE_PATH = /tmp/modulecache
 
 all: perfectlib
-	
+
 install:
 	ln -sf `pwd`/$(MODULE_NAME).so /usr/local/lib/
 	ln -sf `pwd`/$(MODULE_NAME).swiftmodule /usr/local/lib/
@@ -54,12 +55,12 @@ modulecache:
 	@mkdir -p tmp
 
 perfectlib: modulecache $(MODULE_NAME).so
-	
 
-$(MODULE_NAME).so: $(MODULE_NAME).swiftmodule LinuxBridge.o util.o
+
+$(MODULE_NAME).so: $(PERFECT_OBJ) $(MODULE_NAME).swiftmodule LinuxBridge.o util.o
 	clang++ $(PERFECT_OBJ) $(LFLAGS) -o $(MODULE_NAME).so
 
-$(MODULE_NAME).swiftmodule: $(PERFECT_OBJ)
+$(MODULE_NAME).swiftmodule:
 	$(SWIFTC) -frontend $(SWIFTC_FLAGS) $(PERFECT_MODULES) -parse-as-library -emit-module-doc-path $(MODULE_NAME).swiftdoc -o $(MODULE_NAME).swiftmodule
 
 clean:

@@ -5,6 +5,7 @@ These examples illustrate how Xcode projects which use Perfect are organized and
 
 * [Getting Started](#getting-started)
 * [URL Routing](URL%20Routing/#url-routing)
+* [WebSockets](WebSockets%20Server/#websockets-server)
 * [Tap Tracker](Tap%20Tracker/#tap-tracker)
 * [Upload Enumerator](Upload%20Enumerator/#upload-enumerator)
 * [Authenticator](Authenticator/#authenticator)
@@ -28,6 +29,8 @@ First, ensure you have built [PerfectLib](../PerfectLib/#perfectlib) and [Perfec
 * This will produce a .so library which should be copied or linked into the PerfectLibraries directory in whatever location you are running the Perfect Server from.
 
 ## Example Apps
+* [URL Routing](URL%20Routing/#url-routing)
+* [WebSockets](WebSockets%20Server/#websockets-server)
 * [Tap Tracker](Tap%20Tracker/#tap-tracker)
 * [Upload Enumerator](Upload%20Enumerator/#upload-enumerator)
 * [Authenticator](Authenticator/#authenticator)
