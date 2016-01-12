@@ -182,7 +182,7 @@ public class SessionManager {
 							} else {
 								self.result = .Load
 								let data = stmt.columnText(0)
-								self.dictionary = try JSONDecode().decode(data) as? JSONDictionaryType
+								self.dictionary = try JSONDecoder().decode(data) as? JSONDictionaryType
 							}
 						} catch {}
 					})
@@ -231,7 +231,7 @@ public class SessionManager {
 	func commit() throws {
 		// save values
 		let fullKey = self.configuration.name + ":" + self.configuration.id
-		let encoded = try JSONEncode().encode(self.dictionary!)
+		let encoded = try JSONEncoder().encode(self.dictionary!)
 		let sqlite = try SQLite(PerfectServer.staticPerfectServer.homeDir() + serverSQLiteDBs + perfectSessionDB)
 		defer { sqlite.close() }
 		

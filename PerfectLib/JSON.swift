@@ -83,7 +83,7 @@ class KeyPair {
 /// - `JSONDictionary`
 /// - `Array<JSONValue>`
 /// - `Dictionary<String, JSONValue>`
-public class JSONEncode {
+public class JSONEncoder {
 	
 	/// Empty public initializer
 	public init() {
@@ -266,7 +266,7 @@ public class JSONDictionaryType {
 /// - `JSONNull`
 /// - `JSONArray`
 /// - `JSONDictionary`
-public class JSONDecode {
+public class JSONDecoder {
 	
 	var stack = Array<JSONValue>()
 	var exit: JSONValue?
