@@ -46,7 +46,7 @@ let jsonCR = UnicodeScalar(UInt32(13))
 let jsonTab = UnicodeScalar(UInt32(9))
 
 public typealias JSONKey = String
-public typealias JSONValue = Any
+public typealias JSONValue = AnyObject
 
 /// An exception enum type which represents JSON encoding and decoding errors
 public enum JSONError: ErrorType {
