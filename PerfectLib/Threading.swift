@@ -7,6 +7,7 @@
 //
 
 #if USE_LIBDISPATCH
+// !FIX! This code no longer supports libdispatch and needs updating for Lock, Event and RWLock
 import Dispatch
 #else
 #if os(Linux)
@@ -108,6 +109,39 @@ public class Threading {
 			let ret = pthread_cond_timedwait_relative_np(&self.cond, &self.mutex, &tm)
 		#endif
 			return ret == 0;
+		}
+	}
+	
+	public class RWLock {
+		
+		var lock = pthread_rwlock_t()
+		
+		public init() {
+			pthread_rwlock_init(&self.lock, nil)
+		}
+		
+		deinit {
+			pthread_rwlock_destroy(&self.lock)
+		}
+		
+		public func readLock() -> Bool {
+			return 0 == pthread_rwlock_rdlock(&self.lock)
+		}
+		
+		public func tryReadLock() -> Bool {
+			return 0 == pthread_rwlock_tryrdlock(&self.lock)
+		}
+		
+		public func writeLock() -> Bool {
+			return 0 == pthread_rwlock_wrlock(&self.lock)
+		}
+		
+		public func tryWriteLock() -> Bool {
+			return 0 == pthread_rwlock_trywrlock(&self.lock)
+		}
+		
+		public func unlock() -> Bool {
+			return 0 == pthread_rwlock_unlock(&self.lock)
 		}
 	}
 	
