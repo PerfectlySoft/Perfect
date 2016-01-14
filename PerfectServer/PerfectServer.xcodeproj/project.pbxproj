@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D8E865791C14709000730D32 /* WindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E865781C14709000730D32 /* WindowController.swift */; };
 		F84242261BD9675C001EFF66 /* PerfectLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F84242251BD9675C001EFF66 /* PerfectLib.framework */; };
 		F84242291BD9691B001EFF66 /* main_fcgi.swift in Sources */ = {isa = PBXBuildFile; fileRef = F84242281BD9691B001EFF66 /* main_fcgi.swift */; };
 		F86BED0B1C3EEAC40063C5A6 /* PerfectLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F86BED0A1C3EEAC40063C5A6 /* PerfectLib.framework */; };
@@ -42,6 +43,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		D8E865781C14709000730D32 /* WindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WindowController.swift; sourceTree = "<group>"; };
 		F842421B1BD966FC001EFF66 /* perfectserverfcgi */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = perfectserverfcgi; sourceTree = BUILT_PRODUCTS_DIR; };
 		F84242251BD9675C001EFF66 /* PerfectLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PerfectLib.framework; path = "../../../Library/Developer/Xcode/DerivedData/Perfect-bmsnkpplajpulvabysklkvgjzgsj/Build/Products/Debug/PerfectLib.framework"; sourceTree = "<group>"; };
 		F84242281BD9691B001EFF66 /* main_fcgi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main_fcgi.swift; sourceTree = SOURCE_ROOT; };
@@ -129,6 +131,7 @@
 			children = (
 				F88B06831BDD48DD001FD0CD /* AppDelegate.swift */,
 				F88B06851BDD48DD001FD0CD /* ViewController.swift */,
+				D8E865781C14709000730D32 /* WindowController.swift */,
 				F88B06871BDD48DD001FD0CD /* Assets.xcassets */,
 				F88B06891BDD48DD001FD0CD /* Main.storyboard */,
 				F88B068C1BDD48DD001FD0CD /* Info.plist */,
@@ -258,6 +261,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F88B06861BDD48DD001FD0CD /* ViewController.swift in Sources */,
+				D8E865791C14709000730D32 /* WindowController.swift in Sources */,
 				F88B06841BDD48DD001FD0CD /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
