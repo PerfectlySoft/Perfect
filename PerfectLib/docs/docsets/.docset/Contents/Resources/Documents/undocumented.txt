@@ -6,28 +6,45 @@ Closeable.swift
 	func doWithClose(c: ()->())
 	public protocol Closeable
 	public func doWithClose(c: ()->())
-AJAXObjectDriver.swift
-	public let curl = CURL()
-	public init(endpointBase: String, fileExtension: String = ".mustache")
-	public func close()
-	public func performRequest(uri: String) -> (Int, String, String)
-	public func load<T : PerfectObject>(type: T, withId: uuid_t) -> T
-	public func load<T : PerfectObject>(type: T, withUniqueField: (String,String)) -> T
-	public func delete(type: PerfectObject) -> (Int, String)
-	public func commitChanges(type: PerfectObject) -> (Int, String)
-	public func commitChanges(types: [PerfectObject]) -> [(Int, String)]
-	public func create<T : PerfectObject>(withFields: [(String,String)]) -> T
-	public func joinTable<T : PerfectObject>(type: PerfectObject, name: String) -> [T]
-	public func list<T : PerfectObject>() -> [T]
-	public func list<T : PerfectObject>(withCriterion: (String,String)) -> [T]
-PerfectObjectHandler.swift
-	public class PerfectObjectHandler: PageHandler
-	public var action: HandlerAction = .None
-	public var params = [String:String]()
+NetNamedPipe.swift
+	public override func sockName() -> (String, UInt16)
+	public override func peerName() -> (String, UInt16)
+WebSocketHandler.swift
+	case Continuation = 0x0, Text = 0x1, Binary = 0x2, Close = 0x8, Ping = 0x9, Pong = 0xA, Invalid
+	case Continuation = 0x0, Text = 0x1, Binary = 0x2, Close = 0x8, Ping = 0x9, Pong = 0xA, Invalid
+	case Continuation = 0x0, Text = 0x1, Binary = 0x2, Close = 0x8, Ping = 0x9, Pong = 0xA, Invalid
+	case Continuation = 0x0, Text = 0x1, Binary = 0x2, Close = 0x8, Ping = 0x9, Pong = 0xA, Invalid
+	case Continuation = 0x0, Text = 0x1, Binary = 0x2, Close = 0x8, Ping = 0x9, Pong = 0xA, Invalid
+	case Continuation = 0x0, Text = 0x1, Binary = 0x2, Close = 0x8, Ping = 0x9, Pong = 0xA, Invalid
+	case Continuation = 0x0, Text = 0x1, Binary = 0x2, Close = 0x8, Ping = 0x9, Pong = 0xA, Invalid
+	public init(handlerProducer: HandlerProducer)
+	public func handleRequest(request: WebRequest, response: WebResponse)
+PageHandler.swift
+	public static func addRequestHandler(generator: RequestHandlerGenerator)
+	public protocol RequestHandler
+	func handleRequest(request: WebRequest, response: WebResponse)
+Utilities.swift
+	public var stringByDecodingURL: String?
+	public func stringByReplacingString(find: String, withString: String) -> String
+	public func substringTo(index: String.Index) -> String
+	public func substringWith(range: Range<String.Index>) -> String
+	public func rangeOf(string: String, ignoreCase: Bool = false) -> Range<String.Index>?
+	public func contains(string: String) -> Bool
+NetTCP.swift
+	public func sockName() -> (String, UInt16)
+	public func peerName() -> (String, UInt16)
+StaticFileHandler.swift
+	public class StaticFileHandler: RequestHandler
 	public init() {}
-	public func valuesForResponse(context: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) throws -> MustacheEvaluationContext.MapType
+	public func handleRequest(request: WebRequest, response: WebResponse)
+WebRequest.swift
+	public class WebRequest
 NetTCPSSL.swift
 	public class NetTCPSSL : NetTCP
+	public class X509
+	public var publicKeyBytes: [UInt8]
+	public var keyFilePassword: String = ""
+	public var peerCertificate: X509?
 	public var usingSSL: Bool
 	public override init()
 	override public func initSocket()
@@ -42,42 +59,13 @@ NetTCPSSL.swift
 	public func shutdown()
 	public func setConnectState()
 	public func setAcceptState()
+	public func setDefaultVerifyPaths() -> Bool
 	public func setVerifyLocations(caFilePath: String, caDirPath: String) -> Bool
 	public func useCertificateChainFile(cert: String) -> Bool
 	public func usePrivateKeyFile(cert: String) -> Bool
-PerfectObject.swift
-	public enum HandlerAction
-	case None
-	case Load
-	case Create
-	case Delete
-	case Commit
-	case List
-	public enum HandlerAction
-	public func asString() -> String
-	public static func fromString(s:String) -> HandlerAction
-	public protocol PerfectObjectDriver : Closeable
-	func load<T : PerfectObject>(type: T, withId: uuid_t) -> T
-	func load<T : PerfectObject>(type: T, withUniqueField: (String,String)) -> T
-	func delete(type: PerfectObject) -> (Int, String)
-	func commitChanges(type: PerfectObject) -> (Int, String)
-	func commitChanges(types: [PerfectObject]) -> [(Int, String)]
-	func create<T : PerfectObject>(withFields: [(String,String)]) -> T
-	func joinTable<T : PerfectObject>(type: PerfectObject, name: String) -> [T]
-	func list<T : PerfectObject>() -> [T]
-	func list<T : PerfectObject>(withCriterion: (String,String)) -> [T]
-	public protocol PerfectObjectDriver : Closeable
-	public func generateUUID() -> uuid_t
-	public class PerfectObject
-	public func setOrderBy(to: String)
-	public func orderBy() -> String?
-	public func setOrderDesc(to: Bool)
-	public func orderDesc() -> Bool
-	public func setSimpleName(to: String)
-	public func simpleName() -> String
-	public func setObjectId(id: uuid_t)
-	public func fieldList() -> [String]
-	public func tableName() -> String
-	public func joinTable<T : PerfectObject>(name: String) -> [T]
-	public func clearJoins(named: String)
-	public func created(withFields: [(String,String)])
+	override public func forEachAccept(callBack: (NetTCP?) -> ())
+	override public func accept(timeoutSeconds: Double, callBack: (NetTCP?) -> ()) throws
+WebResponse.swift
+	public var requestCompletedCallback: () -> () = {}
+	public func appendBodyBytes(bytes: [UInt8])
+	public func appendBodyString(string: String)
