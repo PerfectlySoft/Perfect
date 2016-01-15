@@ -132,7 +132,9 @@ class LibEventBase {
 	init() {
 		evthread_use_pthreads()
 		
-		baseDispatchQueue = Threading.createSerialQueue("LibEvent Base")
+		// !FIX! this is not ideal, but since we are the only ones dispatching to this queue, 
+		// and it only happens from within the singular libevent loop,  we can ensure is it not called concurrently.
+		baseDispatchQueue = Threading.createConcurrentQueue("LibEvent Base") //Threading.createSerialQueue("LibEvent Base")
 		eventDispatchQueue = Threading.createConcurrentQueue("LibEvent Event")
 		eventBase = event_base_new()
 		
