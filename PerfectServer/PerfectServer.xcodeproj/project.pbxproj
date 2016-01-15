@@ -90,7 +90,6 @@
 		F84242121BD966FC001EFF66 = {
 			isa = PBXGroup;
 			children = (
-				F86BED0A1C3EEAC40063C5A6 /* PerfectLib.framework */,
 				F842421D1BD966FC001EFF66 /* PerfectServer */,
 				F88B06821BDD48DD001FD0CD /* PerfectServerHTTPApp */,
 				F84242271BD96767001EFF66 /* Linked */,
@@ -121,6 +120,7 @@
 		F84242271BD96767001EFF66 /* Linked */ = {
 			isa = PBXGroup;
 			children = (
+				F86BED0A1C3EEAC40063C5A6 /* PerfectLib.framework */,
 				F84242251BD9675C001EFF66 /* PerfectLib.framework */,
 			);
 			name = Linked;
