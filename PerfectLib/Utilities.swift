@@ -279,7 +279,7 @@ extension String {
 
 extension String {
 	
-	func stringByReplacingString(find: String, withString: String) -> String {
+	public func stringByReplacingString(find: String, withString: String) -> String {
 		
 		guard !find.isEmpty else {
 			return self
@@ -316,7 +316,7 @@ extension String {
 		return ret
 	}
 	
-	func substringTo(index: String.Index) -> String {
+	public func substringTo(index: String.Index) -> String {
 		var s = ""
 		var idx = self.startIndex
 		let endIdx = self.endIndex
@@ -327,7 +327,7 @@ extension String {
 		return s
 	}
 	
-	func substringWith(range: Range<String.Index>) -> String {
+	public func substringWith(range: Range<String.Index>) -> String {
 		var s = ""
 		var idx = range.startIndex
 		let endIdx = self.endIndex
