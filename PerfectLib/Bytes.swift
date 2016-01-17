@@ -113,14 +113,19 @@ public class Bytes {
 	/// Exports one UInt8 from the current position. Advances the position marker by 1 byte.
 	/// - returns: The UInt8 value
 	public func export8Bits() -> UInt8 {
-		return data[position++]
+		let result = data[position]
+		position += 1
+		return result
 	}
 	
 	/// Exports one UInt16 from the current position. Advances the position marker by 2 bytes.
 	/// - returns: The UInt16 value
 	public func export16Bits() -> UInt16 {
-		let one = UInt16(data[position++])
-		let two = UInt16(data[position++])
+
+		let one = UInt16(data[position])
+		position += 1
+		let two = UInt16(data[position])
+		position += 1
 		
 		return (two << 8) + one
 	}
@@ -128,10 +133,14 @@ public class Bytes {
 	/// Exports one UInt32 from the current position. Advances the position marker by 4 bytes.
 	/// - returns: The UInt32 value
 	public func export32Bits() -> UInt32 {
-		let one = UInt32(data[position++])
-		let two = UInt32(data[position++])
-		let three = UInt32(data[position++])
-		let four = UInt32(data[position++])
+		let one = UInt32(data[position])
+		position += 1
+		let two = UInt32(data[position])
+		position += 1
+		let three = UInt32(data[position])
+		position += 1
+		let four = UInt32(data[position])
+		position += 1
 		
 		return (four << 24) + (three << 16) + (two << 8) + one
 	}
@@ -139,14 +148,22 @@ public class Bytes {
 	/// Exports one UInt64 from the current position. Advances the position marker by 8 bytes.
 	/// - returns: The UInt64 value
 	public func export64Bits() -> UInt64 {
-		let one = UInt64(data[position++])
-		let two = UInt64(data[position++]) << 8
-		let three = UInt64(data[position++]) << 16
-		let four = UInt64(data[position++]) << 24
-		let five = UInt64(data[position++]) << 32
-		let six = UInt64(data[position++]) << 40
-		let seven = UInt64(data[position++]) << 48
-		let eight = UInt64(data[position++]) << 56
+		let one = UInt64(data[position])
+		position += 1
+		let two = UInt64(data[position]) << 8
+		position += 1
+		let three = UInt64(data[position]) << 16
+		position += 1
+		let four = UInt64(data[position]) << 24
+		position += 1
+		let five = UInt64(data[position]) << 32
+		position += 1
+		let six = UInt64(data[position]) << 40
+		position += 1
+		let seven = UInt64(data[position]) << 48
+		position += 1
+		let eight = UInt64(data[position]) << 56
+		position += 1
 		
 		return (one+two+three+four)+(five+six+seven+eight)
 	}
