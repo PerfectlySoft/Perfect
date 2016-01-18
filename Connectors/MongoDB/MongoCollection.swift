@@ -246,7 +246,7 @@ public class MongoCollection {
 
 	public func insert(document: BSON, flag: MongoInsertFlag = .None) -> Result {
 		var error = bson_error_t()
-		let res = mongoc_collection_insert(self.ptr, flag.mongoFlag, document.doc, COpaquePointer(bitPattern: Int(MONGOC_WRITE_CONCERN_W_DEFAULT)), &error)
+		let res = mongoc_collection_insert(self.ptr, flag.mongoFlag, document.doc, nil, &error)
 		guard res == true else {
 			return Result.fromError(error)
 		}
@@ -255,7 +255,7 @@ public class MongoCollection {
 
 	public func update(update: BSON, selector: BSON, flag: MongoUpdateFlag = .None) -> Result {
 		var error = bson_error_t()
-		let res = mongoc_collection_update(self.ptr, flag.mongoFlag, selector.doc, update.doc, COpaquePointer(bitPattern: Int(MONGOC_WRITE_CONCERN_W_DEFAULT)), &error)
+		let res = mongoc_collection_update(self.ptr, flag.mongoFlag, selector.doc, update.doc, nil, &error)
 		guard res == true else {
 			return Result.fromError(error)
 		}
@@ -264,7 +264,7 @@ public class MongoCollection {
 
 	public func remove(selector: BSON, flag: MongoRemoveFlag = .None) -> Result {
 		var error = bson_error_t()
-		let res = mongoc_collection_remove(self.ptr, flag.mongoFlag, selector.doc, COpaquePointer(bitPattern: Int(MONGOC_WRITE_CONCERN_W_DEFAULT)), &error)
+		let res = mongoc_collection_remove(self.ptr, flag.mongoFlag, selector.doc, nil, &error)
 		guard res == true else {
 			return Result.fromError(error)
 		}
