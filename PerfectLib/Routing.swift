@@ -156,7 +156,7 @@ public class Routing {
 		/// Handle the request, triggering the routing system.
 		/// If a route is discovered the request is sent to the new handler.
 		public func handleRequest(request: WebRequest, response: WebResponse) {
-			let pathInfo = request.requestURI().characters.split("?").map { String($0) }.first ?? "/"
+			let pathInfo = request.pathInfo()
 			
 			if let handler = Routing.Routes[pathInfo, response] {
 				handler(response).handleRequest(request, response: response)
