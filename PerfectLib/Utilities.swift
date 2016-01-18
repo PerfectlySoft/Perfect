@@ -46,7 +46,9 @@ public struct GenerateFromPointer<T> : GeneratorType {
 			return nil
 		}
 		self.count -= 1
-		return self.from[self.pos++]
+		let result = self.from[self.pos]
+		self.pos += 1
+		return result
 	}
 }
 

@@ -185,7 +185,8 @@ public class SQLite : Closeable {
 		}
 		var rowNum = 1
 		while r == SQLITE_ROW {
-			handleRow(stat, rowNum++)
+			handleRow(stat, rowNum)
+			rowNum += 1
 			r = stat.step()
 		}
 	}
