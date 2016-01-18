@@ -130,19 +130,27 @@ public class FastCGIServer {
 
 				repeat {
 					// sizes are either one byte or 4
-					var sz = Int32(bytes[idx++])
+					var sz = Int32(bytes[idx])
+					idx += 1
 					if (sz & 0x80) != 0 { // name length
 						sz = (sz & 0x7f) << 24
-						sz += (Int32(bytes[idx++]) << 16)
-						sz += (Int32(bytes[idx++]) << 8)
-						sz += Int32(bytes[idx++])
+						sz += (Int32(bytes[idx]) << 16)
+						idx += 1
+						sz += (Int32(bytes[idx]) << 8)
+						idx += 1
+						sz += Int32(bytes[idx])
+						idx += 1
 					}
-					var vsz = Int32(bytes[idx++])
+					var vsz = Int32(bytes[idx])
+					idx += 1
 					if (vsz & 0x80) != 0 { // value length
 						vsz = (vsz & 0x7f) << 24
-						vsz += (Int32(bytes[idx++]) << 16)
-						vsz += (Int32(bytes[idx++]) << 8)
-						vsz += Int32(bytes[idx++])
+						vsz += (Int32(bytes[idx]) << 16)
+						idx += 1
+						vsz += (Int32(bytes[idx]) << 8)
+						idx += 1
+						vsz += Int32(bytes[idx])
+						idx += 1
 					}
 					if sz > 0 {
 						let idx2 = Int(idx + sz)

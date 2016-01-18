@@ -13,7 +13,7 @@ body {
   -webkit-font-smoothing: subpixel-antialiased;
   word-wrap: break-word; }
 
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3 {
   margin-top: 0.8em;
   margin-bottom: 0.3em;
   font-weight: 100;
@@ -26,11 +26,10 @@ h2 {
   font-size: 2em;
   border-bottom: 1px solid #e2e2e2; }
 
-h3 {
-  font-size: 1.5em; }
-
 h4 {
-  font-size: 1.25em; }
+  font-size: 13px;
+  line-height: 1.5;
+  margin-top: 21px; }
 
 h5 {
   font-size: 1.1em; }
@@ -38,6 +37,14 @@ h5 {
 h6 {
   font-size: 1.1em;
   color: #777; }
+
+.section-name {
+  color: gray;
+  display: block;
+  font-family: Helvetica;
+  font-size: 22px;
+  font-weight: 100;
+  margin-bottom: 15px; }
 
 pre, code {
   font: 0.95em Menlo, monospace;
@@ -167,12 +174,6 @@ header {
   border-radius: 4px;
   overflow-x: auto; }
 
-.aside-title {
-  font-size: 9px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  padding-bottom: 0; }
-
 .declaration .highlight {
   overflow-x: initial;
   padding: 0 40px 40px 0;
@@ -191,6 +192,12 @@ header {
 .task-group {
   padding-top: 0px; }
 
+.task-name-container a[name]:before {
+  content: "";
+  display: block;
+  padding-top: 70px;
+  margin: -70px 0 0; }
+
 .item {
   padding-top: 8px;
   width: 100%;
@@ -205,7 +212,12 @@ header {
     padding: 0; }
   .item .token {
     padding-left: 3px;
-    margin-left: 15px; }
+    margin-left: 15px;
+    font-size: 11.9px; }
+  .item .declaration-note {
+    font-size: .85em;
+    color: gray;
+    font-style: italic; }
 
 .pointer-container {
   border-bottom: 1px solid #e2e2e2;
@@ -244,14 +256,31 @@ header {
     padding-top: 10px;
     padding-bottom: 5px; }
 
-div.Swift {
-  padding: 4px 0 2px 10px;
-  margin-bottom: 1em;
-  border-left: 5px solid #cde9f4;
+.aside, .language {
+  padding: 6px 12px;
+  margin: 12px 0;
+  border-left: 5px solid #dddddd;
   overflow-y: hidden; }
-  div.Swift .aside-title {
-    color: #4b8afb;
+  .aside .aside-title, .language .aside-title {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding-bottom: 0;
+    margin: 0;
+    color: #aaa;
     -webkit-user-select: none; }
+  .aside p:last-child, .language p:last-child {
+    margin-bottom: 0; }
+
+.language {
+  border-left: 5px solid #cde9f4; }
+  .language .aside-title {
+    color: #4b8afb; }
+
+.aside-warning {
+  border-left: 5px solid #ff6666; }
+  .aside-warning .aside-title {
+    color: #ff0000; }
 
 .graybox {
   border-collapse: collapse;

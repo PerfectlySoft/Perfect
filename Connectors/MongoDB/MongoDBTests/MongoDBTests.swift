@@ -170,6 +170,9 @@ class MongoDBTests: XCTestCase {
 		let db = client.getDatabase("test")
 		XCTAssert(db.name() == "test")
 		
+		let oldC = db.getCollection("testcollection")
+		oldC.drop()
+		
 		let result = db.createCollection("testcollection", options: BSON())
 		switch result {
 		case .ReplyCollection(let collection):
@@ -231,7 +234,43 @@ class MongoDBTests: XCTestCase {
 		client.close()
 	}
 	
-	
+	func testDeleteDoc() {
+		let client = MongoClient(uri: "mongodb://localhost")
+		let db = client.getDatabase("test")
+		XCTAssert(db.name() == "test")
+		
+		let collection = db.getCollection("testcollection")
+		XCTAssert(collection.name() == "testcollection")
+		
+		let bson = BSON()
+		defer {
+			bson.close()
+		}
+		
+		XCTAssert(bson.append("stringKey", string: "String Value"))
+		XCTAssert(bson.append("intKey", int: 42))
+		XCTAssert(bson.append("nullKey"))
+		XCTAssert(bson.append("int32Key", int32: 42))
+		XCTAssert(bson.append("doubleKey", double: 4.2))
+		XCTAssert(bson.append("boolKey", bool: true))
+		
+		let result2 = collection.insert(bson)
+		switch result2 {
+		case .Success:
+			XCTAssert(true)
+		default:
+			XCTAssert(false, "Bad result \(result2)")
+		}
+		
+		let result3 = collection.remove(bson)
+		switch result3 {
+		case .Success:
+			XCTAssert(true)
+		default:
+			XCTAssert(false, "Bad result \(result2)")
+		}
+		
+	}
 	
 	
 	

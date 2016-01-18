@@ -393,7 +393,7 @@ public class HTTPServer {
 			self.connection.readSomeBytes(size) {
 				(b:[UInt8]?) in
 				
-				if b == nil {
+				if b == nil || b!.count == 0 {
 					self.connection.readBytesFully(1, timeoutSeconds: httpReadTimeout) {
 						(b:[UInt8]?) in
 						

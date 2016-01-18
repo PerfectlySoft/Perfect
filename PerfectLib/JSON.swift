@@ -143,6 +143,8 @@ public class JSONEncoder {
 	func encodeValue(value: JSONValue) throws -> String {
 		
 		switch(value) {
+		case let b as Bool:
+			return b ? "true" : "false"
 		case let i as Int:
 			return encodeInt(i)
 		case let d as Double:
@@ -159,8 +161,6 @@ public class JSONEncoder {
 			return try encodeDictionary(d)
 		case _ as JSONNull:
 			return "null"
-		case let b as Bool:
-			return b ? "true" : "false"
 		default:
 			throw JSONError.UnhandledType("The type \(value.dynamicType) was not handled")
 		}
@@ -174,7 +174,7 @@ public class JSONEncoder {
 			case jsonBackSlash:
 				s.appendContentsOf("\\\\")
 			case jsonQuoteDouble:
-				s.appendContentsOf("\"")
+				s.appendContentsOf("\\\"")
 			case jsonBackSpace:
 				s.appendContentsOf("\\b")
 			case jsonFormFeed:
@@ -265,6 +265,8 @@ public class JSONDictionaryType {
 	}
 }
 
+private let malformedJSONString = "Malformed JSON string"
+
 /// This class decodes JSON string data and returns the resulting value(s)
 ///
 /// A resulting value may consist of
@@ -323,11 +325,11 @@ public class JSONDecoder {
 				try handlePop()
 			case jsonColon:
 				guard stack.count > 0 && stack.last! is KeyPair && (stack.last! as! KeyPair).value == nil else {
-					throw JSONError.SyntaxError("Malformed JSON string")
+					throw JSONError.SyntaxError(malformedJSONString)
 				}
 			case jsonComma:
 				guard stack.count > 0 && !(stack.last! is KeyPair) else {
-					throw JSONError.SyntaxError("Malformed JSON string")
+					throw JSONError.SyntaxError(malformedJSONString)
 				}
 			case jsonQuoteDouble:
 				try handlePop(try readString())
@@ -350,7 +352,7 @@ public class JSONDecoder {
 	
 	func pop() throws -> JSONValue {
 		guard stack.count > 0 else {
-			throw JSONError.SyntaxError("Malformed JSON string")
+			throw JSONError.SyntaxError(malformedJSONString)
 		}
 		return stack.removeLast()
 	}
@@ -367,7 +369,7 @@ public class JSONDecoder {
 			switch obj {
 			case let keyPair as KeyPair:
 				guard keyPair.value != nil else {
-					throw JSONError.SyntaxError("Malformed JSON string")
+					throw JSONError.SyntaxError(malformedJSONString)
 				}
 				d[keyPair.key] = keyPair.value!
 				return d
@@ -376,17 +378,17 @@ public class JSONDecoder {
 				stack.append(ky)
 				return ky
 			default:
-				throw JSONError.SyntaxError("Malformed JSON string")
+				throw JSONError.SyntaxError(malformedJSONString)
 			}
 		case let pair as KeyPair:
 			guard pair.value == nil else {
-				throw JSONError.SyntaxError("Malformed JSON string")
+				throw JSONError.SyntaxError(malformedJSONString)
 			}
 			pair.value = obj
 			try pop()
 			return try handlePop(pair)
 		default:
-			throw JSONError.SyntaxError("Malformed JSON string")
+			throw JSONError.SyntaxError(malformedJSONString)
 		}
 	}
 	
@@ -401,7 +403,7 @@ public class JSONDecoder {
 	func handlePop() throws -> JSONValue {
 		
 		guard stack.count > 0 else {
-			throw JSONError.SyntaxError("Malformed JSON string")
+			throw JSONError.SyntaxError(malformedJSONString)
 		}
 		
 		return try handlePop(try pop())
