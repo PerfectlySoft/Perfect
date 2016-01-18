@@ -58,8 +58,9 @@ public class SysProcess : Closeable {
 		cArgs[0] = strdup(cmd)
 		cArgs[cArgsCount + 1] = UnsafeMutablePointer<CChar>(())
 		var idx = 0
-		for (; idx < cArgsCount; ++idx) {
+		while idx < cArgsCount {
 			cArgs[idx+1] = strdup(args![idx])
+			idx += 1
 		}
 		
 		let cEnvCount = env != nil ? env!.count : 0
@@ -69,8 +70,9 @@ public class SysProcess : Closeable {
 		
 		cEnv[cEnvCount] = UnsafeMutablePointer<CChar>(())
 		idx = 0
-		for (; idx < cEnvCount; ++idx) {
+		while idx < cEnvCount {
 			cEnv[idx] = strdup(env![idx].0 + "=" + env![idx].1)
+			idx += 1
 		}
 		
 		let fSTDIN = UnsafeMutablePointer<Int32>.alloc(2)
@@ -106,13 +108,15 @@ public class SysProcess : Closeable {
 		posix_spawn_file_actions_destroy(&action)
 		
 		idx = 0
-		for (; idx < cArgsCount; ++idx) {
+		while idx < cArgsCount {
 			free(cArgs[idx])
+			idx += 1
 		}
 		
 		idx = 0
-		for (; idx < cEnvCount; ++idx) {
+		while idx < cEnvCount {
 			free(cEnv[idx])
+			idx += 1
 		}
 
 	#if os(Linux)

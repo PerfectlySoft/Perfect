@@ -167,7 +167,7 @@ public class WebResponse {
 	
 	/// Set a HTTP header, replacing all existing instances of said header
 	public func replaceHeader(name: String, value: String) {
-		for var i = 0; i < self.headersArray.count; ++i {
+		for i in 0..<self.headersArray.count {
 			if self.headersArray[i].0 == name {
 				self.headersArray.removeAtIndex(i)
 			}
