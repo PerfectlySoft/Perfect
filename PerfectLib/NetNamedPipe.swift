@@ -173,11 +173,14 @@ public class NetNamedPipe : NetTCP {
 
 		var memLoc = 0
 
-		addrPtr[memLoc++] = UInt8(addrLen)
-		addrPtr[memLoc++] = UInt8(AF_UNIX)
+		addrPtr[memLoc] = UInt8(addrLen)
+                memLoc += 1
+		addrPtr[memLoc] = UInt8(AF_UNIX)
+                memLoc += 1
 
 		for char in utf8 {
-			addrPtr[memLoc++] = char
+			addrPtr[memLoc] = char
+			memLoc += 1
 		}
 
 		addrPtr[memLoc] = 0
