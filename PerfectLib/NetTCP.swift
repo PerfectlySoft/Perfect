@@ -192,7 +192,9 @@ public class NetTCP : Closeable {
 			}
 			
 			if self.semaphore != nil {
+				self.semaphore!.lock()
 				self.semaphore!.signal()
+				self.semaphore!.unlock()
 			}
 		}
 	}
