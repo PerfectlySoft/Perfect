@@ -27,6 +27,9 @@ import XCTest
 @testable import MySQL
 
 let HOST = "127.0.0.1"
+let USER = "root"
+let PASSWORD = ""
+let SCHEMA = "test"
 
 class MySQLTests: XCTestCase {
     
@@ -48,7 +51,7 @@ class MySQLTests: XCTestCase {
 		XCTAssert(mysql.setOption(.MYSQL_OPT_LOCAL_INFILE) == true)
 		XCTAssert(mysql.setOption(.MYSQL_OPT_CONNECT_TIMEOUT, 5) == true)
 		
-		let res = mysql.connect(HOST)
+        let res = mysql.connect(HOST, user: USER, password: PASSWORD)
 		
 		XCTAssert(res)
 		
@@ -57,7 +60,10 @@ class MySQLTests: XCTestCase {
 			return
 		}
 		
-		let sres = mysql.selectDatabase("test")
+		var sres = mysql.selectDatabase(SCHEMA)
+        if sres == false {
+            sres = mysql.query("CREATE SCHEMA `\(SCHEMA)` DEFAULT CHARACTER SET utf8mb4 ;")
+        }
 		
 		XCTAssert(sres == true)
 		
@@ -71,7 +77,7 @@ class MySQLTests: XCTestCase {
 	func testListDbs1() {
 		
 		let mysql = MySQL()
-		let res = mysql.connect(HOST)
+		let res = mysql.connect(HOST, user: USER, password: PASSWORD)
 		
 		XCTAssert(res)
 		
@@ -91,7 +97,7 @@ class MySQLTests: XCTestCase {
 	func testListDbs2() {
 		
 		let mysql = MySQL()
-		let res = mysql.connect(HOST)
+		let res = mysql.connect(HOST, user: USER, password: PASSWORD)
 		
 		XCTAssert(res)
 		
@@ -111,7 +117,7 @@ class MySQLTests: XCTestCase {
 	func testListTables1() {
 		
 		let mysql = MySQL()
-		let res = mysql.connect(HOST)
+		let res = mysql.connect(HOST, user: USER, password: PASSWORD)
 		
 		XCTAssert(res)
 		
@@ -135,7 +141,7 @@ class MySQLTests: XCTestCase {
 	func testListTables2() {
 		
 		let mysql = MySQL()
-		let res = mysql.connect(HOST)
+		let res = mysql.connect(HOST, user: USER, password: PASSWORD)
 		
 		XCTAssert(res)
 		
@@ -162,7 +168,7 @@ class MySQLTests: XCTestCase {
 			mysql.close()
 		}
 		
-		let res = mysql.connect(HOST)
+		let res = mysql.connect(HOST, user: USER, password: PASSWORD)
 		XCTAssert(res)
 		
 		if !res {
@@ -170,7 +176,7 @@ class MySQLTests: XCTestCase {
 			return
 		}
 		
-		let sres = mysql.selectDatabase("test")
+		let sres = mysql.selectDatabase(SCHEMA)
 		XCTAssert(sres == true)
 		
 		let qres = mysql.query("CREATE TABLE test (id INT, d DOUBLE, s VARCHAR(1024))")
@@ -209,14 +215,14 @@ class MySQLTests: XCTestCase {
 			mysql.close()
 		}
 		
-		let res = mysql.connect(HOST)
+		let res = mysql.connect(HOST, user: USER, password: PASSWORD)
 		XCTAssert(res)
 		
 		if !res {
 			print(mysql.errorMessage())
 		}
 		
-		let sres = mysql.selectDatabase("test")
+		let sres = mysql.selectDatabase(SCHEMA)
 		XCTAssert(sres == true)
 		
 		let qres = mysql.query("CREATE TABLE test (id INT, d DOUBLE, s VARCHAR(1024))")
@@ -255,14 +261,14 @@ class MySQLTests: XCTestCase {
 			mysql.close()
 		}
 		
-		let res = mysql.connect(HOST)
+		let res = mysql.connect(HOST, user: USER, password: PASSWORD)
 		XCTAssert(res)
 		
 		if !res {
 			print(mysql.errorMessage())
 		}
 		
-		let sres = mysql.selectDatabase("test")
+		let sres = mysql.selectDatabase(SCHEMA)
 		XCTAssert(sres == true)
 		
 		mysql.query("DROP TABLE IF EXISTS all_data_types")
@@ -328,19 +334,19 @@ class MySQLTests: XCTestCase {
 		}
 		
 		mysql.setOption(.MYSQL_SET_CHARSET_NAME, "utf8mb4")
-		let res = mysql.connect(HOST)
+		let res = mysql.connect(HOST, user: USER, password: PASSWORD)
 		XCTAssert(res)
 		
 		if !res {
 			print(mysql.errorMessage())
 		}
 		
-		let sres = mysql.selectDatabase("test")
+		let sres = mysql.selectDatabase(SCHEMA)
 		XCTAssert(sres == true)
 		
 		mysql.query("DROP TABLE IF EXISTS all_data_types")
 		
-		let qres = mysql.query("CREATE TABLE `all_data_types` (`varchar` VARCHAR( 20 ),\n`tinyint` TINYINT,\n`text` TEXT,\n`date` DATE,\n`smallint` SMALLINT,\n`mediumint` MEDIUMINT,\n`int` INT,\n`bigint` BIGINT,\n`float` FLOAT( 10, 2 ),\n`double` DOUBLE,\n`decimal` DECIMAL( 10, 2 ),\n`datetime` DATETIME,\n`timestamp` TIMESTAMP,\n`time` TIME,\n`year` YEAR,\n`char` CHAR( 10 ),\n`tinyblob` TINYBLOB,\n`tinytext` TINYTEXT,\n`blob` BLOB,\n`mediumblob` MEDIUMBLOB,\n`mediumtext` MEDIUMTEXT,\n`longblob` LONGBLOB,\n`longtext` LONGTEXT,\n`enum` ENUM( '1', '2', '3' ),\n`set` SET( '1', '2', '3' ),\n`bool` BOOL,\n`binary` BINARY( 20 ),\n`varbinary` VARBINARY( 20 ) ) ENGINE = MYISAM")
+		let qres = mysql.query("CREATE TABLE `all_data_types` (`varchar` VARCHAR( 20 ),\n`tinyint` TINYINT,\n`text` TEXT,\n`date` DATE,\n`smallint` SMALLINT,\n`mediumint` MEDIUMINT,\n`int` INT,\n`bigint` BIGINT,\n`ubigint` BIGINT UNSIGNED,\n`float` FLOAT( 10, 2 ),\n`double` DOUBLE,\n`decimal` DECIMAL( 10, 2 ),\n`datetime` DATETIME,\n`timestamp` TIMESTAMP,\n`time` TIME,\n`year` YEAR,\n`char` CHAR( 10 ),\n`tinyblob` TINYBLOB,\n`tinytext` TINYTEXT,\n`blob` BLOB,\n`mediumblob` MEDIUMBLOB,\n`mediumtext` MEDIUMTEXT,\n`longblob` LONGBLOB,\n`longtext` LONGTEXT,\n`enum` ENUM( '1', '2', '3' ),\n`set` SET( '1', '2', '3' ),\n`bool` BOOL,\n`binary` BINARY( 20 ),\n`varbinary` VARBINARY( 20 ) ) ENGINE = MYISAM")
 		XCTAssert(qres == true, mysql.errorMessage())
 		
 		for _ in 1...2 {
@@ -348,18 +354,19 @@ class MySQLTests: XCTestCase {
 			defer {
 				stmt1.close()
 			}
-			let prepRes = stmt1.prepare("INSERT INTO all_data_types VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
+			let prepRes = stmt1.prepare("INSERT INTO all_data_types VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
 			XCTAssert(prepRes, stmt1.errorMessage())
-			XCTAssert(stmt1.paramCount() == 28)
+			XCTAssert(stmt1.paramCount() == 29)
 			
 			stmt1.bindParam("varchar 20 string 👻")
 			stmt1.bindParam(1)
 			stmt1.bindParam("text string")
 			stmt1.bindParam("2015-10-21")
-			stmt1.bindParam(1)
-			stmt1.bindParam(1)
-			stmt1.bindParam(1)
-			stmt1.bindParam(1)
+			stmt1.bindParam(32767)
+			stmt1.bindParam(8388607)
+            stmt1.bindParam(2147483647)
+            stmt1.bindParam(9223372036854775807)
+            stmt1.bindParam(18446744073709551615 as UInt64)
 			stmt1.bindParam(1.1)
 			stmt1.bindParam(1.1)
 			stmt1.bindParam(1.1)
@@ -424,7 +431,7 @@ class MySQLTests: XCTestCase {
 		defer {
 			mysql.close()
 		}
-		let res = mysql.connect(HOST)
+		let res = mysql.connect(HOST, user: USER, password: PASSWORD)
 		XCTAssert(res)
 		
 		if !res {
