@@ -78,7 +78,7 @@ class EchoHandler: WebSocketSessionHandler {
 	func handleSession(request: WebRequest, socket: WebSocket) {
 		
 		// Read a message from the client as a String.
-		// Alternatively we could call `WebSocket.readBytesMessage` to get the data as a String.
+		// Alternatively we could call `WebSocket.readBytesMessage` to get binary data from the client.
 		socket.readStringMessage {
 			// This callback is provided:
 			//	the received data
