@@ -20,5 +20,5 @@ sudo rm -fr tmp
 echo"Building PerfectServer..."
 cd ../PerfectServer
 make
-cp -s perfectserverfcgi /usr/local/bin/perfectserverfcgi
-cp -s perfectserverhttp /usr/local/bin/perfectserverhttp
+ln -s perfectserverfcgi /usr/local/bin/perfectserverfcgi
+ln -s perfectserverhttp /usr/local/bin/perfectserverhttp
