@@ -1,0 +1,24 @@
+#!/bin/sh
+# swift and PerfectLib dependencies
+echo"Installing Dependencies..."
+sudo apt-get -y install clang libicu-dev
+sudo apt-get -y install clang libssl-dev
+sudo apt-get -y install clang libevent-dev
+sudo apt-get -y install clang libsqlite3-dev
+
+# download and verify swift
+
+# building PerfectLib
+echo"Building PerfectLib..."
+cd Perfect/PerfectLib
+make 
+sudo make install
+# cleaning up
+sudo clean
+sudo rm -fr tmp
+# building PerfectServer
+echo"Building PerfectServer..."
+cd ../PerfectServer
+make
+cp -s perfectserverfcgi /usr/local/bin/perfectserverfcgi
+cp -s perfectserverhttp /usr/local/bin/perfectserverhttp
