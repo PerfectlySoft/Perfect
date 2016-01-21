@@ -14,8 +14,8 @@ sudo apt-get -y install clang libsqlite3-dev
 
 # download and verify swift
 echo "Downloading Swift..."
-wget ${SWIFT_END_POINT}/${SWIFT_VERSION}.tar.gz -O ${SWIFT_SNAPSHOT_LOCATION}
-wget ${SWIFT_END_POINT}/${SWIFT_VERSION}.tar.gz.sig -O ${SWIFT_SNAPSHOT_LOCATION}
+wget ${SWIFT_END_POINT}/${SWIFT_VERSION}.tar.gz -P ${SWIFT_SNAPSHOT_LOCATION}
+wget ${SWIFT_END_POINT}/${SWIFT_VERSION}.tar.gz.sig -P ${SWIFT_SNAPSHOT_LOCATION}
 wget -q -O - https://swift.org/keys/all-keys.asc | gpg --import -
 
 echo "Verifying Swift..."
