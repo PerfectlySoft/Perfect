@@ -26,7 +26,7 @@
 /// Standard directory for server-side SQLite support databases
 public let serverSQLiteDBs = "SQLiteDBs/"
 /// Directory for server-size modules. Modules in this directory are loaded at server startup.
-public let serverPerfectLibraries = "PerfectLibraries/"
+public var serverPerfectLibraries = "PerfectLibraries/"
 
 /// Provides access to various system level features for the process.
 /// A static instance of this class is created at startup and all access to this object go through the `PerfectServer.staticPerfectServer` static property.
@@ -49,7 +49,13 @@ public class PerfectServer {
 		}
 		
 		let dl = DynamicLoader()
-		let baseDir = Dir(homeDir() + serverPerfectLibraries)
+        var baseDir : Dir
+        if serverPerfectLibraries.hasPrefix("/") || serverPerfectLibraries.hasPrefix("~/") || serverPerfectLibraries.hasPrefix("./") {
+            baseDir = Dir(serverPerfectLibraries)
+        } else {
+            baseDir = Dir(homeDir() + serverPerfectLibraries)
+        }
+        print("Load libs from: \(baseDir.realPath())");
 		do {
 			try baseDir.forEachEntry { (name: String) -> () in
 				if name.hasSuffix(".framework") || name.hasSuffix(".framework/") {

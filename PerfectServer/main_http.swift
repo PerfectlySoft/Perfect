@@ -33,7 +33,6 @@ import Darwin
 func startServer() throws {
 	
 	let ls = PerfectServer.staticPerfectServer
-	ls.initializeServices()
 	
 	var webRoot = "./webroot/"
 	var serverName = ""
@@ -68,9 +67,13 @@ func startServer() throws {
 		"--name": {
 			args.removeFirst()
 			serverName = args.first!
-		},
+        },
+		"--libpath": {
+            args.removeFirst()
+            serverPerfectLibraries = args.first!
+        },
 		"--help": {
-			print("Usage: \(Process.arguments.first!) [--port listen_port] [--address listen_address] [--name server_name] [--root root_path] [--sslcert cert_path --sslkey key_path]")
+			print("Usage: \(Process.arguments.first!) [--port listen_port] [--address listen_address] [--name server_name] [--root root_path] [--sslcert cert_path --sslkey key_path] [--libpath lib_path]")
 			exit(0)
 		}]
 	
@@ -80,7 +83,9 @@ func startServer() throws {
 		}
 		args.removeFirst()
 	}
-	
+    
+    ls.initializeServices()
+    
 	try Dir(webRoot).create()
 	let httpServer = HTTPServer(documentRoot: webRoot)
 	httpServer.serverName = serverName
