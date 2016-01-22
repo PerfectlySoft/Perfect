@@ -33,7 +33,6 @@ import PerfectLib
 func startServer() throws {
 
 	let ls = PerfectServer.staticPerfectServer
-	ls.initializeServices()
 
 	var sockPath = "./perfect.fastcgi.sock"
 	var args = Process.arguments
@@ -43,9 +42,13 @@ func startServer() throws {
 		"--sockpath": {
 			args.removeFirst()
 			sockPath = args.first!
-		},
+        },
+		"--libpath": {
+            args.removeFirst()
+            serverPerfectLibraries = args.first!
+        },
 		"--help": {
-			print("Usage: \(Process.arguments.first!) [--sockpath socket_path]")
+			print("Usage: \(Process.arguments.first!) [--sockpath socket_path] [--libpath lib_path]")
 			exit(0)
 		}]
 	
@@ -55,7 +58,9 @@ func startServer() throws {
 		}
 		args.removeFirst()
 	}
-	
+    
+    ls.initializeServices()
+    
 	let fastCgiServer = FastCGIServer()
 	try fastCgiServer.start(sockPath)
 }
