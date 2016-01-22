@@ -39,7 +39,19 @@ public class WebRequest {
 	
 	var connection: WebConnection
 	
-	var documentRoot: String = ""
+	public lazy var documentRoot: String = {
+		var f = self.connection.requestParams["PERFECTSERVER_DOCUMENT_ROOT"]
+		var root = ""
+		if let r = f {
+			root = r
+		} else {
+			f = self.connection.requestParams["DOCUMENT_ROOT"]
+			if let r = f {
+				root = r
+			}
+		}
+		return root
+	}()
 	
 	private var cachedHttpAuthorization: [String:String]? = nil
 	
@@ -302,16 +314,6 @@ public class WebRequest {
 	
 	internal init(_ c: WebConnection) {
 		self.connection = c
-		
-		var f = self.connection.requestParams["PERFECTSERVER_DOCUMENT_ROOT"]
-		if let r = f {
-			self.documentRoot = r
-		} else {
-			f = self.connection.requestParams["DOCUMENT_ROOT"]
-			if let r = f {
-				self.documentRoot = r
-			}
-		}
 	}
 	
 	private func extractField(from: String, named: String) -> String? {
