@@ -17,6 +17,13 @@ The script will always try to get the most updated dependencies, such as:
 It will then attempt download, verify, and install Swift version "swift-2.2-SNAPSHOT-2016-01-11-a" if the folder is not found. Currently, you will have to run the script twice on the initial installation. The script does not currently update your PATH variables. A handy print out is supplied at the end of the script. 
 The suggested solution is to use either the **/etc/profile.d/** or **/etc/environment/** option. 
 
+For fast installation do the following:
+```sh 
+$ echo "export PATH=$PATH:$HOME/Swift_Snapshots/swift-2.2-SNAPSHOT-2016-01-11-a-ubuntu15.10/usr/bin" >> ~/.bash_profile
+$ source ~/.bash_profile
+$ ./perfectinstaller
+```
+
 Lastly, the script also make a folder at **${HOME}/SwiftServer/PerfectLibraries**. You should create an additional folder **${HOME}/SwiftServer/webroot** and add a default index.html. Running **perfectserverhttp** will create the folder for you, but the server will not have anything to server and you will have to restart with an index.html later. So might as well do it now. 
 
 ## Running Examples 
