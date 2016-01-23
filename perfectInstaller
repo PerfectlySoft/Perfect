@@ -34,8 +34,6 @@ gpg --verify ${SWIFT_LOCAL_LOCATION}.tar.gz.sig
 echo "Extracting and Linking swift..."
 tar xzf ${SWIFT_LOCAL_LOCATION}.tar.gz -C ${SWIFT_SNAPSHOT_LOCATION}
 
-echo "export PATH=$PATH:${SWIFT_LOCAL_LOCATION}/usr/bin" > /etc/profile.d/swift_vars.sh
-
 fi #ENDING DOWNLOAD BLOCK
 
 # building PerfectLib
