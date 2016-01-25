@@ -204,8 +204,12 @@ public final class MySQL {
 		return r == 0
 	}
 	
-	public func storeResults() -> MySQL.Results {
-		return MySQL.Results(mysql_store_result(self.ptr))
+    public func storeResults() -> MySQL.Results? {
+        let ret = mysql_store_result(self.ptr)
+        if ret == nil {
+            return nil
+        }
+		return MySQL.Results(ret)
 	}
 	
 	func exposedOptionToMySQLOption(o: MySQLOpt) -> mysql_option {
@@ -916,29 +920,3 @@ public final class MySQLStmt {
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
