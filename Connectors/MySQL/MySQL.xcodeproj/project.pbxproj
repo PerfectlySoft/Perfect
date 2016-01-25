@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F832F62C1BD6821D008593A8 /* MySQL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F832F6211BD6821D008593A8 /* MySQL.framework */; settings = {ASSET_TAGS = (); }; };
+		F832F62C1BD6821D008593A8 /* MySQL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F832F6211BD6821D008593A8 /* MySQL.framework */; };
 		F832F6311BD6821D008593A8 /* MySQLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F832F6301BD6821D008593A8 /* MySQLTests.swift */; };
-		F832F6471BD682AE008593A8 /* MySQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = F832F6461BD682AE008593A8 /* MySQL.swift */; settings = {ASSET_TAGS = (); }; };
+		F832F6471BD682AE008593A8 /* MySQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = F832F6461BD682AE008593A8 /* MySQL.swift */; };
 		F832F6491BD682DA008593A8 /* libmysqlclient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F832F6481BD682DA008593A8 /* libmysqlclient.a */; };
 		F832F64B1BD6831E008593A8 /* PerfectLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F832F64A1BD6831E008593A8 /* PerfectLib.framework */; };
 		F832F64D1BD68C51008593A8 /* libstdc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F832F64C1BD68C51008593A8 /* libstdc++.tbd */; };
@@ -347,7 +347,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/linked/libmysqlclient/osx",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = ca.perfectlysoft.MySQL;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -373,7 +373,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/linked/libmysqlclient/osx",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = ca.perfectlysoft.MySQL;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
