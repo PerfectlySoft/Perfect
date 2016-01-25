@@ -24,15 +24,33 @@
 //
 
 /// This class bundles together the values which will be used to set a cookie in the outgoing response
-public class Cookie {
-	var name: String?
-	var value: String?
-	var domain: String?
-	var expires: String?
-	var expiresIn: Double = 0.0 // seconds from now. may be negative. 0.0 means no expiry (session cookie)
-	var path: String?
-	var secure: Bool?
-	var httpOnly: Bool?
+public struct Cookie {
+	public let name: String?
+	public let value: String?
+	public let domain: String?
+	public let expires: String?
+	public let expiresIn: Double // seconds from now. may be negative. 0.0 means no expiry (session cookie)
+	public let path: String?
+	public let secure: Bool?
+	public let httpOnly: Bool?
+	
+	public init(name: String?,
+		value: String?,
+		domain: String?,
+		expires: String?,
+		expiresIn: Double,
+		path: String?,
+		secure: Bool?,
+		httpOnly: Bool?) {
+			self.name = name
+			self.value = value
+			self.domain = domain
+			self.expires = expires
+			self.expiresIn = expiresIn
+			self.path = path
+			self.secure = secure
+			self.httpOnly = httpOnly
+	}
 }
 /*
 class MustacheCacheItem {
