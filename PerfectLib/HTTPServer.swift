@@ -177,7 +177,8 @@ public class HTTPServer {
 			}
 		}
 		
-		let filePath = self.documentRoot + withPathInfo
+        var pathInfo = withPathInfo.stringByDecodingURL!
+		let filePath = self.documentRoot + pathInfo
 		let ext = withPathInfo.pathExtension.lowercaseString
 		if ext == mustacheExtension {
 			
@@ -186,7 +187,7 @@ public class HTTPServer {
 			}
 			
 			// PATH_INFO may have been altered. set it to this version
-			req.requestParams["PATH_INFO"] = withPathInfo
+			req.requestParams["PATH_INFO"] = pathInfo
 			
 			let request = WebRequest(req)
 			let response = WebResponse(req, request: request)
