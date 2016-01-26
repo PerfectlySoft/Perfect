@@ -23,8 +23,6 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
-
-import Foundation
 import cURL
 
 /// This class is a wrapper around the CURL library. It permits network operations to be completed using cURL in a block or non-blocking manner.
