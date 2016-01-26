@@ -81,11 +81,11 @@ public class FastCGIServer {
 		if let n = self.net {
 
 			n.forEachAccept {
-				(net: NetTCP?) -> () in
+				[weak self] (net: NetTCP?) -> () in
 
 				if let n = net {
 					Threading.dispatchBlock {
-						self.handleConnection(n)
+						self?.handleConnection(n)
 					}
 				}
 			}
@@ -100,14 +100,14 @@ public class FastCGIServer {
 	func readRecord(fcgiReq: FastCGIRequest) {
 
 		fcgiReq.readRecord {
-			(r:FastCGIRecord?) -> () in
+			[weak self] (r:FastCGIRecord?) -> () in
 
 			guard let record = r else {
 				fcgiReq.connection.close()
 				return // died. timed out. errorered
 			}
 
-			self.handleRecord(fcgiReq, fcgiRecord: record)
+			self?.handleRecord(fcgiReq, fcgiRecord: record)
 		}
 
 	}
@@ -204,7 +204,7 @@ public class FastCGIServer {
 	func readXStdin(fcgiReq: FastCGIRequest, size: Int) {
 
 		fcgiReq.connection.readSomeBytes(size) {
-			(b:[UInt8]?) -> () in
+			[weak self] (b:[UInt8]?) -> () in
 
 			guard let bytes = b else {
 				fcgiReq.connection.close()
@@ -216,9 +216,9 @@ public class FastCGIServer {
 			let remaining = size - bytes.count
 			if  remaining == 0 {
 				fcgiReq.lastRecordType = fcgiStdin
-				self.readRecord(fcgiReq)
+				self?.readRecord(fcgiReq)
 			} else {
-				self.readXStdin(fcgiReq, size: remaining)
+				self?.readXStdin(fcgiReq, size: remaining)
 			}
 		}
 	}

@@ -141,12 +141,12 @@ class ViewController: NSViewController, NSTextFieldDelegate {
 		let time_a = dispatch_time(0, Int64(NSEC_PER_SEC) * Int64(1))
 		
 		self.updateButtonTitle()
-		dispatch_after(time_a, dispatch_get_main_queue()) {
+		dispatch_after(time_a, dispatch_get_main_queue()) { [weak self] in
 			do {
 				try appDel.startServer()
 			} catch { }
 			dispatch_after(dispatch_time(0, Int64(NSEC_PER_SEC) * Int64(2)), dispatch_get_main_queue()) {
-				self.updateButtonTitle()
+				self?.updateButtonTitle()
 			}
 		}
 	}
