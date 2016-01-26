@@ -23,13 +23,14 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
-import Foundation
 #if os(Linux)
 	import SwiftGlibc
 	import LinuxBridge
 	let S_IRUSR = __S_IREAD
 	let S_IROTH = (S_IRGRP >> 3)
 	let S_IWOTH = (S_IWGRP >> 3)
+#else
+	import Darwin
 #endif
 
 enum MimeReadState {

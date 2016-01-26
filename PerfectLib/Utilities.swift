@@ -23,8 +23,6 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
-import Foundation
-
 /// This class permits an UnsafeMutablePointer to be used as a GeneratorType
 public struct GenerateFromPointer<T> : GeneratorType {
 	

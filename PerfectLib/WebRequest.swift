@@ -33,8 +33,6 @@
 ///
 /// Access to the current WebRequest object is generally provided through the corresponding WebResponse object
 
-import Foundation
-
 public class WebRequest {
 	
 	var connection: WebConnection
