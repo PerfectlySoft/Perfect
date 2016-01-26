@@ -124,7 +124,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 			print("Server already running")
 			return
 		}
-		dispatch_async(self.serverDispatchQueue) {
+		dispatch_async(self.serverDispatchQueue) { [unowned self] in
 			do {
 				try Dir(documentRoot).create()
 				self.httpServer = HTTPServer(documentRoot: documentRoot)

@@ -144,9 +144,9 @@ public class WebSocket {
 
 	func fillBuffer(demand: Int, completion: (Bool) -> ()) {
 		self.socket.readBytesFully(demand, timeoutSeconds: self.readTimeoutSeconds) {
-			(b:[UInt8]?) -> () in
+			[weak self] (b:[UInt8]?) -> () in
 			if let b = b {
-				self.readBuffer.data.appendContentsOf(b)
+				self?.readBuffer.data.appendContentsOf(b)
 			}
 			completion(b != nil)
 		}
@@ -154,9 +154,9 @@ public class WebSocket {
 
 	func fillBufferSome(suggestion: Int, completion: () -> ()) {
 		self.socket.readSomeBytes(suggestion) {
-			(b:[UInt8]?) -> () in
+			[weak self] (b:[UInt8]?) -> () in
 			if let b = b {
-				self.readBuffer.data.appendContentsOf(b)
+				self?.readBuffer.data.appendContentsOf(b)
 			}
 			completion()
 		}

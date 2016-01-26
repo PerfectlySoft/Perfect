@@ -145,16 +145,16 @@ class LibEventBase {
 	
 	private func addDummyEvent() {
 		let event = LibEvent(base: self, fd: -1, what: EV_TIMEOUT, userData: nil) {
-			(fd:Int32, w:Int16, ud:AnyObject?) -> () in
+			[weak self] (fd:Int32, w:Int16, ud:AnyObject?) -> () in
 			
-			self.addDummyEvent()
+			self?.addDummyEvent()
 		}
 		event.add(1_000_000)
 	}
 	
 	private func triggerEventBaseLoop() {
-		Threading.dispatchBlock(baseDispatchQueue) {
-			self.eventBaseLoop()
+		Threading.dispatchBlock(baseDispatchQueue) { [weak self] in
+			self?.eventBaseLoop()
 		}
 	}
 	

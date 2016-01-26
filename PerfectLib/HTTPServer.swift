@@ -108,11 +108,11 @@ public class HTTPServer {
 			self.serverAddress = n.sockName().0
 			
 			n.forEachAccept {
-				(net: NetTCP?) -> () in
+				[weak self] (net: NetTCP?) -> () in
 				
 				if let n = net {
 					Threading.dispatchBlock {
-						self.handleConnection(n)
+						self?.handleConnection(n)
 					}
 				}
 			}
@@ -391,10 +391,10 @@ public class HTTPServer {
 				return
 			}
 			self.connection.readSomeBytes(size) {
-				(b:[UInt8]?) in
+				[weak self] (b:[UInt8]?) in
 				
 				if b == nil || b!.count == 0 {
-					self.connection.readBytesFully(1, timeoutSeconds: httpReadTimeout) {
+					self?.connection.readBytesFully(1, timeoutSeconds: httpReadTimeout) {
 						(b:[UInt8]?) in
 						
 						guard b != nil else {
@@ -402,12 +402,12 @@ public class HTTPServer {
 							return
 						}
 						
-						self.putStdinData(b!)
-						self.readBody(size - 1, callback: callback)
+						self?.putStdinData(b!)
+						self?.readBody(size - 1, callback: callback)
 					}
 				} else {
-					self.putStdinData(b!)
-					self.readBody(size - b!.count, callback: callback)
+					self?.putStdinData(b!)
+					self?.readBody(size - b!.count, callback: callback)
 				}
 			}
 		}

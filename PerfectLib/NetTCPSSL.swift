@@ -238,9 +238,9 @@ public class NetTCPSSL : NetTCP {
 		}
 		
 		let event: LibEvent = LibEvent(base: LibEvent.eventBase, fd: fd.fd, what: what, userData: nil) {
-			(fd:Int32, w:Int16, ud:AnyObject?) -> () in
+			[weak self] (fd:Int32, w:Int16, ud:AnyObject?) -> () in
 			
-			self.writeBytes(nptr, wrote: wrote, length: length, completion: completion)
+			self?.writeBytes(nptr, wrote: wrote, length: length, completion: completion)
 		}
 		event.add()
 	}
@@ -295,10 +295,10 @@ public class NetTCPSSL : NetTCP {
 			if sslErr == SSL_ERROR_WANT_WRITE {
 				
 				let event: LibEvent = LibEvent(base: LibEvent.eventBase, fd: fd.fd, what: EV_WRITE, userData: nil) {
-					(fd:Int32, w:Int16, ud:AnyObject?) -> () in
+					[weak self] (fd:Int32, w:Int16, ud:AnyObject?) -> () in
 					
 					if (Int32(w) & EV_WRITE) != 0 {
-						self.beginSSL(timeout, closure: closure)
+						self?.beginSSL(timeout, closure: closure)
 					} else {
 						closure(false)
 					}
@@ -308,10 +308,10 @@ public class NetTCPSSL : NetTCP {
 			} else if sslErr == SSL_ERROR_WANT_READ {
 				
 				let event: LibEvent = LibEvent(base: LibEvent.eventBase, fd: fd.fd, what: EV_READ, userData: nil) {
-					(fd:Int32, w:Int16, ud:AnyObject?) -> () in
+					[weak self] (fd:Int32, w:Int16, ud:AnyObject?) -> () in
 					
 					if (Int32(w) & EV_READ) != 0 {
-						self.beginSSL(timeout, closure: closure)
+						self?.beginSSL(timeout, closure: closure)
 					} else {
 						closure(false)
 					}
@@ -397,7 +397,7 @@ public class NetTCPSSL : NetTCP {
 	
 	override public func forEachAccept(callBack: (NetTCP?) -> ()) {
 		super.forEachAccept {
-			(net:NetTCP?) -> () in
+			[unowned self] (net:NetTCP?) -> () in
 			
 			if let netSSL = net as? NetTCPSSL {
 				
@@ -414,7 +414,7 @@ public class NetTCPSSL : NetTCP {
 	
 	override public func accept(timeoutSeconds: Double, callBack: (NetTCP?) -> ()) throws {
 		try super.accept(timeoutSeconds, callBack: {
-			(net:NetTCP?) -> () in
+			[unowned self] (net:NetTCP?) -> () in
 			
 			if let netSSL = net as? NetTCPSSL {
 				

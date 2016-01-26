@@ -521,15 +521,15 @@ public class NetTCP : Closeable {
 	
 	private func waitAccept() {
 		let event: LibEvent = LibEvent(base: LibEvent.eventBase, fd: fd.fd, what: self.evWhatFor(EV_READ), userData: nil) {
-			(fd:Int32, w:Int16, ud:AnyObject?) -> () in
+			[weak self] (fd:Int32, w:Int16, ud:AnyObject?) -> () in
 			
-			self.waitAcceptEvent = nil
+			self?.waitAcceptEvent = nil
 			if (Int32(w) & EV_TIMEOUT) != 0 {
 				print("huh?")
 			} else {
-				self.semaphore!.lock()
-				self.semaphore!.signal()
-				self.semaphore!.unlock()
+				self?.semaphore!.lock()
+				self?.semaphore!.signal()
+				self?.semaphore!.unlock()
 			}
 		}
 		self.waitAcceptEvent = event
