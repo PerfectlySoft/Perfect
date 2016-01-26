@@ -293,6 +293,9 @@ public class WebResponse {
 	func include(path: String, local: Bool) throws {
 		
 		var fullPath = path
+        if let decodedPath = path.stringByDecodingURL {
+            fullPath = decodedPath
+        }
 		if !path.hasPrefix("/") {
 			fullPath = makeNonRelative(path, local: local)
 		}
