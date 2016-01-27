@@ -64,15 +64,10 @@ public class HTTPServer {
 		let socket = NetTCP()
 		socket.initSocket()
 		try socket.bind(port, address: bindAddress)
-		socket.listen()
-		
-		self.net = socket
-		
-		defer { socket.close() }
 		
 		print("Starting HTTP server on \(bindAddress):\(port) with document root \(self.documentRoot)")
 		
-		self.start()
+		try self.startInner(socket)
 	}
 	
 	/// Start the server on the indicated TCP port and optional address.
@@ -87,17 +82,33 @@ public class HTTPServer {
 		
 		let socket = NetTCPSSL()
 		socket.initSocket()
-		socket.useCertificateChainFile(sslCert)
-		socket.usePrivateKeyFile(sslKey)
+		
+		guard socket.useCertificateFile(sslCert) else {
+			let code = Int32(socket.errorCode())
+			throw PerfectError.NetworkError(code, "Error setting certificate file: \(socket.errorStr(code))")
+		}
+		
+		guard socket.usePrivateKeyFile(sslKey) else {
+			let code = Int32(socket.errorCode())
+			throw PerfectError.NetworkError(code, "Error setting private key file: \(socket.errorStr(code))")
+		}
+		
+		guard socket.checkPrivateKey() else {
+			let code = Int32(socket.errorCode())
+			throw PerfectError.NetworkError(code, "Error validating private key file: \(socket.errorStr(code))")
+		}
+		
 		try socket.bind(port, address: bindAddress)
-		socket.listen()
-		
-		self.net = socket
-		
-		defer { socket.close() }
-		
+
 		print("Starting HTTPS server on \(bindAddress):\(port) with document root \(self.documentRoot)")
 		
+		try self.startInner(socket)
+	}
+	
+	private func startInner(socket: NetTCP) throws {
+		socket.listen()
+		self.net = socket
+		defer { socket.close() }
 		self.start()
 	}
 	
