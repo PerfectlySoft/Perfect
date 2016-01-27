@@ -623,7 +623,7 @@ class PerfectLibTests: XCTestCase {
 	func testCURL() {
 		
 		let url = "https://www.treefrog.ca"
-		let curl = CURL(url: url)
+		let curl = CURL(withURL: url)
 		
 		XCTAssert(curl.url == url)
 		

@@ -96,38 +96,38 @@ class FastCGIRequest : WebConnection {
 	var lastRecordType: UInt8 = 0
 	
 	init(net: NetTCP) {
-		self.connection = net
-		self.statusCode = 200
-		self.statusMsg = "OK"
+		connection = net
+		statusCode = 200
+		statusMsg = "OK"
 	}
 	
 	func setStatus(code: Int, msg: String) {
-		self.statusCode = code
-		self.statusMsg = msg
+		statusCode = code
+		statusMsg = msg
 	}
 	
 	func getStatus() -> (Int, String) {
-		return (self.statusCode, self.statusMsg)
+		return (statusCode, statusMsg)
 	}
 	
 	func putStdinData(b: [UInt8]) {
-		if self.stdin == nil && self.mimes == nil {
+		if stdin == nil && mimes == nil {
 			let contentType = requestParams["CONTENT_TYPE"]
 			if contentType == nil || !contentType!.hasPrefix("multipart/form-data") {
-				self.stdin = b
+				stdin = b
 			} else {
-				self.mimes = MimeReader(contentType!)//, Int(requestParams["CONTENT_LENGTH"] ?? "0")!)
-				self.mimes!.addToBuffer(b)
+				mimes = MimeReader(contentType!)//, Int(requestParams["CONTENT_LENGTH"] ?? "0")!)
+				mimes!.addToBuffer(b)
 			}
-		} else if self.stdin != nil {
-			self.stdin!.appendContentsOf(b)
+		} else if stdin != nil {
+			stdin!.appendContentsOf(b)
 		} else {
-			self.mimes!.addToBuffer(b)
+			mimes!.addToBuffer(b)
 		}
 	}
 	
 	func writeHeaderLine(h: String) {
-		self.header += h + "\r\n"
+		header += h + "\r\n"
 	}
 	
 	func writeHeaderBytes(b: [UInt8]) {
@@ -155,7 +155,7 @@ class FastCGIRequest : WebConnection {
 	}
 	
 	func writeBytes(b: [UInt8]) {
-		self.connection.writeBytesFully(b)
+		connection.writeBytesFully(b)
 	}
 	
 	func makeEndRequestBody(requestId: Int, appStatus: Int, protocolStatus: Int) -> [UInt8] {
@@ -210,7 +210,7 @@ class FastCGIRequest : WebConnection {
 	}
 	
 	func readRecord(continuation: (FastCGIRecord?) -> ()) {
-		self.connection.readBytesFully(fcgiBaseRecordSize, timeoutSeconds: fcgiTimeoutSeconds) {
+		connection.readBytesFully(fcgiBaseRecordSize, timeoutSeconds: fcgiTimeoutSeconds) {
 			(b: [UInt8]?) -> () in
 			
 			guard let recBytes = b else {
@@ -233,7 +233,7 @@ class FastCGIRequest : WebConnection {
 	func readRecordContent(record: FastCGIRecord, continuation: (FastCGIRecord?) -> ()) {
 		if record.contentLength > 0 {
 			
-			self.connection.readBytesFully(Int(record.contentLength), timeoutSeconds: fcgiTimeoutSeconds, completion: {
+			connection.readBytesFully(Int(record.contentLength), timeoutSeconds: fcgiTimeoutSeconds, completion: {
 				(b:[UInt8]?) -> () in
 				if let contentBytes = b {
 					
@@ -246,14 +246,14 @@ class FastCGIRequest : WebConnection {
 			})
 			
 		} else {
-			self.readRecordPadding(record, continuation: continuation)
+			readRecordPadding(record, continuation: continuation)
 		}
 	}
 	
 	func readRecordPadding(record: FastCGIRecord, continuation: (FastCGIRecord?) -> ()) {
 		if record.paddingLength > 0 {
 			
-			self.connection.readBytesFully(Int(record.paddingLength), timeoutSeconds: fcgiTimeoutSeconds, completion: {
+			connection.readBytesFully(Int(record.paddingLength), timeoutSeconds: fcgiTimeoutSeconds, completion: {
 				(b:[UInt8]?) -> () in
 				if let paddingBytes = b {
 					

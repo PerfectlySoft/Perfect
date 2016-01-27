@@ -38,9 +38,9 @@ public class Dir {
 	/// Create a new Dir object with the given path
 	public init(_ path: String) {
 		if path.hasSuffix("/") {
-			self.internalPath = path
+			internalPath = path
 		} else {
-			self.internalPath = path + "/"
+			internalPath = path + "/"
 		}
 	}
 	

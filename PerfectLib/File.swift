@@ -59,7 +59,7 @@ public class File : Closeable {
 	/// - parameter path: Path to the file which will be accessed
 	/// - parameter openMode: Default mode with which the file will be opened. Defaults to read-only. The file can be opened in any other mode by calling the accosiated openXXX function.
 	public init(_ path: String, openMode: Int = Int(O_RDONLY)) {
-		self.internalPath = path
+		internalPath = path
 		self.openMode = openMode
 	}
 
@@ -68,7 +68,7 @@ public class File : Closeable {
 	/// - parameter path: The path to the file which has been previously opened. Defaults to no path.
 	public init(fd: Int32, path: String = "") {
 		self.fd = Int(fd)
-		self.internalPath = path
+		internalPath = path
 	}
 	
 	/// Create a temporary file, usually in the system's /tmp/ directory
@@ -240,7 +240,7 @@ public class File : Closeable {
 	/// - returns: The file marker value
 	public func marker() -> Int {
 		if isOpen() {
-			return Int(lseek(Int32(self.fd), 0, SEEK_CUR))
+			return Int(lseek(Int32(fd), 0, SEEK_CUR))
 		}
 		return 0
 	}
@@ -251,7 +251,7 @@ public class File : Closeable {
 	/// - returns: The new position marker value
 	public func setMarker(to: Int, whence: Int32 = SEEK_CUR) -> Int {
 		if isOpen() {
-			return Int(lseek(Int32(self.fd), off_t(to), whence))
+			return Int(lseek(Int32(fd), off_t(to), whence))
 		}
 		return 0
 	}
@@ -291,8 +291,8 @@ public class File : Closeable {
 			return destFile
 		}
 		if errno == EXDEV {
-			try self.copyTo(path, overWrite: overWrite)
-			self.delete()
+			try copyTo(path, overWrite: overWrite)
+			delete()
 			return destFile
 		}
 		try ThrowFileError()
@@ -312,8 +312,8 @@ public class File : Closeable {
 				throw PerfectError.FileError(-1, "Can not overwrite existing file")
 			}
 		}
-		let wasOpen = self.isOpen()
-		let oldMarker = self.marker()
+		let wasOpen = isOpen()
+		let oldMarker = marker()
 		if !wasOpen {
 			try openRead()
 		} else {
@@ -329,10 +329,10 @@ public class File : Closeable {
 		
 		try destFile.openTruncate()
 		
-		var bytes = try self.readSomeBytes(fileCopyBufferSize)
+		var bytes = try readSomeBytes(fileCopyBufferSize)
 		while bytes.count > 0 {
 			try destFile.writeBytes(bytes)
-			bytes = try self.readSomeBytes(fileCopyBufferSize)
+			bytes = try readSomeBytes(fileCopyBufferSize)
 		}
 		
 		destFile.close()
@@ -413,7 +413,7 @@ public class File : Closeable {
 		if !isOpen() {
 			try openRead()
 		}
-		let bSize = min(count, self.sizeOr(count))
+		let bSize = min(count, sizeOr(count))
 		let ptr = UnsafeMutablePointer<UInt8>.alloc(bSize)
 		defer {
 			ptr.destroy()
@@ -428,7 +428,7 @@ public class File : Closeable {
 	
 	/// Reads the entire file as a string
 	public func readString() throws -> String {
-		let bytes = try self.readSomeBytes(self.size())
+		let bytes = try readSomeBytes(size())
 		return UTF8Encoding.encode(bytes)
 	}
 	
@@ -470,7 +470,7 @@ public class File : Closeable {
 		if !isOpen() {
 			try openWrite()
 		}
-		let res = lockf(Int32(self.fd), F_LOCK, off_t(byteCount))
+		let res = lockf(Int32(fd), F_LOCK, off_t(byteCount))
 		guard res == 0 else {
 			try ThrowFileError()
 		}
@@ -483,7 +483,7 @@ public class File : Closeable {
 		if !isOpen() {
 			try openWrite()
 		}
-		let res = lockf(Int32(self.fd), F_ULOCK, off_t(byteCount))
+		let res = lockf(Int32(fd), F_ULOCK, off_t(byteCount))
 		guard res == 0 else {
 			try ThrowFileError()
 		}
@@ -496,7 +496,7 @@ public class File : Closeable {
 		if !isOpen() {
 			try openWrite()
 		}
-		let res = lockf(Int32(self.fd), F_TLOCK, off_t(byteCount))
+		let res = lockf(Int32(fd), F_TLOCK, off_t(byteCount))
 		guard res == 0 else {
 			try ThrowFileError()
 		}
@@ -510,7 +510,7 @@ public class File : Closeable {
 		if !isOpen() {
 			try openWrite()
 		}
-		let res = Int(lockf(Int32(self.fd), F_TEST, off_t(byteCount)))
+		let res = Int(lockf(Int32(fd), F_TEST, off_t(byteCount)))
 		guard res == 0 || res == Int(EACCES) || res == Int(EAGAIN) else {
 			try ThrowFileError()
 		}

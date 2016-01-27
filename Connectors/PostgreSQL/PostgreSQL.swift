@@ -46,27 +46,27 @@ public final class PGResult {
 	}
 	
 	deinit {
-		self.close()
+		close()
 	}
 	
 	public func close() {
-		self.clear()
+		clear()
 	}
 	
 	public func clear() {
-		if self.res != nil {
-			PQclear(self.res)
-			self.res = COpaquePointer()
+		if res != nil {
+			PQclear(res)
+			res = COpaquePointer()
 		}
 	}
 	
 	public func statusInt() -> Int {
-		let s = PQresultStatus(self.res)
+		let s = PQresultStatus(res)
 		return Int(s.rawValue)
 	}
 	
 	public func status() -> StatusType {
-		let s = PQresultStatus(self.res)
+		let s = PQresultStatus(res)
 		switch(s.rawValue) {
 		case PGRES_EMPTY_QUERY.rawValue:
 			return .EmptyQuery
@@ -89,15 +89,15 @@ public final class PGResult {
 	}
 	
 	public func errorMessage() -> String {
-		return String.fromCString(PQresultErrorMessage(self.res)) ?? ""
+		return String.fromCString(PQresultErrorMessage(res)) ?? ""
 	}
 	
 	public func numFields() -> Int {
-		return Int(PQnfields(self.res))
+		return Int(PQnfields(res))
 	}
 	
 	public func fieldName(index: Int) -> String? {
-		let fn = PQfname(self.res, Int32(index))
+		let fn = PQfname(res, Int32(index))
 		if fn != nil {
 			return String.fromCString(fn) ?? ""
 		}
@@ -105,20 +105,20 @@ public final class PGResult {
 	}
 	
 	public func fieldType(index: Int) -> Oid? {
-		let fn = PQftype(self.res, Int32(index))
+		let fn = PQftype(res, Int32(index))
 		return fn
 	}
 	
 	public func numTuples() -> Int {
-		return Int(PQntuples(self.res))
+		return Int(PQntuples(res))
 	}
 	
 	public func fieldIsNull(tupleIndex: Int, fieldIndex: Int) -> Bool {
-		return 1 == PQgetisnull(self.res, Int32(tupleIndex), Int32(fieldIndex))
+		return 1 == PQgetisnull(res, Int32(tupleIndex), Int32(fieldIndex))
 	}
 	
 	public func getFieldString(tupleIndex: Int, fieldIndex: Int) -> String {
-		let v = PQgetvalue(self.res, Int32(tupleIndex), Int32(fieldIndex))
+		let v = PQgetvalue(res, Int32(tupleIndex), Int32(fieldIndex))
 		return String.fromCString(v) ?? ""
 	}
 	
@@ -163,8 +163,8 @@ public final class PGResult {
 	}
 	
 	public func getFieldBlob(tupleIndex: Int, fieldIndex: Int) -> [Int8] {
-		let v = PQgetvalue(self.res, Int32(tupleIndex), Int32(fieldIndex))
-		let length = Int(PQgetlength(self.res, Int32(tupleIndex), Int32(fieldIndex)))
+		let v = PQgetvalue(res, Int32(tupleIndex), Int32(fieldIndex))
+		let length = Int(PQgetlength(res, Int32(tupleIndex), Int32(fieldIndex)))
 		let ip = UnsafePointer<Int8>(v)
 		var ret = [Int8]()
 		for idx in 0..<length {
@@ -189,37 +189,37 @@ public final class PGConnection {
 	}
 	
 	deinit {
-		self.close()
+		close()
 	}
 	
 	public func connectdb(info: String) -> StatusType {
-		self.conn = PQconnectdb(info)
-		self.connectInfo = info
-		return self.status()
+		conn = PQconnectdb(info)
+		connectInfo = info
+		return status()
 	}
 	
 	public func close() {
-		self.finish()
+		finish()
 	}
 	
 	public func finish() {
-		if self.conn != nil {
-			PQfinish(self.conn)
-			self.conn = COpaquePointer()
+		if conn != nil {
+			PQfinish(conn)
+			conn = COpaquePointer()
 		}
 	}
 	
 	public func status() -> StatusType {
-		let status = PQstatus(self.conn)
+		let status = PQstatus(conn)
 		return status == CONNECTION_OK ? .OK : .Bad
 	}
 	
 	public func errorMessage() -> String {
-		return String.fromCString(PQerrorMessage(self.conn)) ?? ""
+		return String.fromCString(PQerrorMessage(conn)) ?? ""
 	}
 	
 	public func exec(statement: String) -> PGResult {
-		return PGResult(PQexec(self.conn, statement))
+		return PGResult(PQexec(conn, statement))
 	}
 	
 	// !FIX! does not handle binary data
@@ -244,7 +244,7 @@ public final class PGConnection {
 			values[idx] = UnsafePointer<Int8>(temps.last!)
 		}
 		
-		let r = PQexecParams(self.conn, statement, Int32(count), nil, values, nil, nil, Int32(0))
+		let r = PQexecParams(conn, statement, Int32(count), nil, values, nil, nil, Int32(0))
 		return PGResult(r)
 	}
 }

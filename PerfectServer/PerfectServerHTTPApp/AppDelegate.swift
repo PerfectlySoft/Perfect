@@ -43,19 +43,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	
 	var serverPort: UInt16 = 8181 {
 		didSet {
-			NSUserDefaults.standardUserDefaults().setValue(Int(self.serverPort), forKey: KEY_SERVER_PORT)
+			NSUserDefaults.standardUserDefaults().setValue(Int(serverPort), forKey: KEY_SERVER_PORT)
 			NSUserDefaults.standardUserDefaults().synchronize()
 		}
 	}
 	var serverAddress: String = "0.0.0.0" {
 		didSet {
-			NSUserDefaults.standardUserDefaults().setValue(self.serverAddress, forKey: KEY_SERVER_ADDRESS)
+			NSUserDefaults.standardUserDefaults().setValue(serverAddress, forKey: KEY_SERVER_ADDRESS)
 			NSUserDefaults.standardUserDefaults().synchronize()
 		}
 	}
 	var documentRoot: String = "./webroot/" {
 		didSet {
-			NSUserDefaults.standardUserDefaults().setValue(self.documentRoot, forKey: KEY_SERVER_ROOT)
+			NSUserDefaults.standardUserDefaults().setValue(documentRoot, forKey: KEY_SERVER_ROOT)
 			NSUserDefaults.standardUserDefaults().synchronize()
 		}
 	}
@@ -63,12 +63,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	override init() {
 		let r = UInt16(NSUserDefaults.standardUserDefaults().integerForKey(KEY_SERVER_PORT))
 		if r == 0 {
-			self.serverPort = 8181
+			serverPort = 8181
 		} else {
-			self.serverPort = r
+			serverPort = r
 		}
-		self.serverAddress = NSUserDefaults.standardUserDefaults().stringForKey(KEY_SERVER_ADDRESS) ?? "0.0.0.0"
-		self.documentRoot = NSUserDefaults.standardUserDefaults().stringForKey(KEY_SERVER_ROOT) ?? "./webroot/"
+		serverAddress = NSUserDefaults.standardUserDefaults().stringForKey(KEY_SERVER_ADDRESS) ?? "0.0.0.0"
+		documentRoot = NSUserDefaults.standardUserDefaults().stringForKey(KEY_SERVER_ROOT) ?? "./webroot/"
 	}
 	
 	func applicationDidFinishLaunching(aNotification: NSNotification) {
@@ -77,7 +77,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 		ls.initializeServices()
 		
 		do {
-			try self.startServer()
+			try startServer()
 		} catch {
 			
 		}
@@ -89,16 +89,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	
 	@IBAction
 	func startServer(sender: AnyObject) {
-		do { try self.startServer() } catch {}
+		do { try startServer() } catch {}
 	}
 	
 	@IBAction
 	func stopServer(sender: AnyObject) {
-		self.stopServer()
+		stopServer()
 	}
 	
 	func serverIsRunning() -> Bool {
-		guard let s = self.httpServer else {
+		guard let s = httpServer else {
 			return false
 		}
 		let tcp = NetTCP()
@@ -116,15 +116,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	}
 	
 	func startServer() throws {
-		try self.startServer(serverPort, address: serverAddress, documentRoot: documentRoot)
+		try startServer(serverPort, address: serverAddress, documentRoot: documentRoot)
 	}
 	
 	func startServer(port: UInt16, address: String, documentRoot: String) throws {
-		guard nil == self.httpServer else {
+		guard nil == httpServer else {
 			print("Server already running")
 			return
 		}
-		dispatch_async(self.serverDispatchQueue) {
+		dispatch_async(serverDispatchQueue) {
 			do {
 				try Dir(documentRoot).create()
 				self.httpServer = HTTPServer(documentRoot: documentRoot)
@@ -137,9 +137,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	}
 
 	func stopServer() {
-		if let _ = self.httpServer {
-			self.httpServer!.stop()
-			self.httpServer = nil
+		if let _ = httpServer {
+			httpServer!.stop()
+			httpServer = nil
 		}
 	}
 }

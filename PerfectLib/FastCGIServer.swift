@@ -53,13 +53,13 @@ public class FastCGIServer {
 		pipe.listen()
 		chmod(namedPipe, mode_t(S_IRWXU|S_IRWXO|S_IRWXG))
 
-		self.net = pipe
+		net = pipe
 
 		defer { pipe.close() }
 
 		print("Starting FastCGI server on named pipe "+namedPipe)
 
-		self.start()
+		start()
 	}
 
 	/// Start the server on the indicated TCP port and optional address
@@ -73,12 +73,12 @@ public class FastCGIServer {
 
 		print("Starting FastCGi server on \(bindAddress):\(port)")
 
-		self.start()
+		start()
 	}
 
 	func start() {
 
-		if let n = self.net {
+		if let n = net {
 
 			n.forEachAccept {
 				(net: NetTCP?) -> () in

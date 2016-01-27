@@ -43,9 +43,9 @@ public struct GenerateFromPointer<T> : GeneratorType {
 		guard count > 0 else {
 			return nil
 		}
-		self.count -= 1
-		let result = self.from[self.pos]
-		self.pos += 1
+		count -= 1
+		let result = from[pos]
+		pos += 1
 		return result
 	}
 }
@@ -128,7 +128,7 @@ extension String {
 	/// Returns the String with all special HTML characters encoded.
 	public var stringByEncodingHTML: String {
 		var ret = ""
-		var g = self.unicodeScalars.generate()
+		var g = unicodeScalars.generate()
 		while let c = g.next() {
 			if c < UnicodeScalar(0x0009) {
 				ret.appendContentsOf("&#x");
@@ -156,7 +156,7 @@ extension String {
 	/// Returns the String with all special URL characters encoded.
 	public var stringByEncodingURL: String {
 		var ret = ""
-		var g = self.utf8.generate()
+		var g = utf8.generate()
 		while let c = g.next() {
 			if c.shouldURLEncode {
 				ret.append(UnicodeScalar(37))
@@ -182,7 +182,7 @@ extension String {
 		
 		var bytesArray = [UInt8]()
 		
-		var g = self.utf8.generate()
+		var g = utf8.generate()
 		while let c = g.next() {
 			if c == percent {
 				var newChar = UInt8(0)
@@ -233,7 +233,7 @@ extension String {
 	/// Parse an HTTP Digest authentication header returning a Dictionary containing each part.
 	public func parseAuthentication() -> [String:String] {
 		var ret = [String:String]()
-		if let _ = self.rangeOf("Digest ") {
+		if let _ = rangeOf("Digest ") {
 			ret["type"] = "Digest"
 			let wantFields = ["username", "nonce", "nc", "cnonce", "response", "uri", "realm", "qop", "algorithm"]
 			for field in wantFields {
@@ -284,13 +284,13 @@ extension String {
 		guard !find.isEmpty else {
 			return self
 		}
-		guard !self.isEmpty else {
+		guard !isEmpty else {
 			return self
 		}
 		
 		var ret = ""
-		var idx = self.startIndex
-		let endIdx = self.endIndex
+		var idx = startIndex
+		let endIdx = endIndex
 		
 		while idx != endIdx {
 			if self[idx] == find[find.startIndex] {
@@ -318,8 +318,8 @@ extension String {
 	
 	public func substringTo(index: String.Index) -> String {
 		var s = ""
-		var idx = self.startIndex
-		let endIdx = self.endIndex
+		var idx = startIndex
+		let endIdx = endIndex
 		while idx != endIdx && idx != index {
 			s.append(self[idx])
 			idx = idx.successor()
@@ -330,7 +330,7 @@ extension String {
 	public func substringWith(range: Range<String.Index>) -> String {
 		var s = ""
 		var idx = range.startIndex
-		let endIdx = self.endIndex
+		let endIdx = endIndex
 		
 		while idx < endIdx && idx < range.endIndex {
 			s.append(self[idx])
@@ -341,8 +341,8 @@ extension String {
 	}
 	
 	public func rangeOf(string: String, ignoreCase: Bool = false) -> Range<String.Index>? {
-		var idx = self.startIndex
-		let endIdx = self.endIndex
+		var idx = startIndex
+		let endIdx = endIndex
 		
 		while idx != endIdx {
 			if ignoreCase ? (String(self[idx]).lowercaseString == String(string[string.startIndex]).lowercaseString) : (self[idx] == string[string.startIndex]) {
@@ -365,7 +365,7 @@ extension String {
 	}
 
 	public func contains(string: String) -> Bool {
-		return nil != self.rangeOf(string)
+		return nil != rangeOf(string)
 	}
 }
 
@@ -380,7 +380,7 @@ extension String {
 	}
 	
 	private var beginsWithSeparator: Bool {
-		let unis = self.characters
+		let unis = characters
 		guard unis.count > 0 else {
 			return false
 		}
@@ -388,7 +388,7 @@ extension String {
 	}
 	
 	private var endsWithSeparator: Bool {
-		let unis = self.characters
+		let unis = characters
 		guard unis.count > 0 else {
 			return false
 		}
@@ -397,19 +397,19 @@ extension String {
 	
 	private func pathComponents(addFirstLast: Bool) -> [String] {
 		var r = [String]()
-		let unis = self.characters
+		let unis = characters
 		guard unis.count > 0 else {
 			return r
 		}
 		
-		if addFirstLast && self.beginsWithSeparator {
+		if addFirstLast && beginsWithSeparator {
 			r.append(String(pathSeparator))
 		}
 		
-		r.appendContentsOf(self.characters.split(Character(pathSeparator)).map { String($0) })
+		r.appendContentsOf(characters.split(Character(pathSeparator)).map { String($0) })
 		
-		if addFirstLast && self.endsWithSeparator {
-			if !self.beginsWithSeparator || r.count > 1 {
+		if addFirstLast && endsWithSeparator {
+			if !beginsWithSeparator || r.count > 1 {
 				r.append(String(pathSeparator))
 			}
 		}
@@ -417,35 +417,35 @@ extension String {
 	}
 	
 	var pathComponents: [String] {
-		return self.pathComponents(true)
+		return pathComponents(true)
 	}
 	
 	var lastPathComponent: String {
-		let last = self.pathComponents(false).last ?? ""
-		if last.isEmpty && self.characters.first == Character(pathSeparator) {
+		let last = pathComponents(false).last ?? ""
+		if last.isEmpty && characters.first == Character(pathSeparator) {
 			return String(pathSeparator)
 		}
 		return last
 	}
 	
 	var stringByDeletingLastPathComponent: String {
-		var comps = self.pathComponents(false)
+		var comps = pathComponents(false)
 		guard comps.count > 1 else {
-			if self.beginsWithSeparator {
+			if beginsWithSeparator {
 				return String(pathSeparator)
 			}
 			return ""
 		}
 		comps.removeLast()
 		let joined = comps.joinWithSeparator(String(pathSeparator))
-		if self.beginsWithSeparator {
+		if beginsWithSeparator {
 			return String(pathSeparator) + joined
 		}
 		return joined
 	}
 	
 	var stringByDeletingPathExtension: String {
-		let unis = self.characters
+		let unis = characters
 		let startIndex = unis.startIndex
 		var endIndex = unis.endIndex
 		while endIndex != startIndex {
@@ -465,13 +465,13 @@ extension String {
 			if noTrailsIndex == startIndex {
 				return self
 			}
-			return self.substringTo(noTrailsIndex)
+			return substringTo(noTrailsIndex)
 		}
-		return self.substringTo(endIndex)
+		return substringTo(endIndex)
 	}
 	
 	var pathExtension: String {
-		let unis = self.characters
+		let unis = characters
 		let startIndex = unis.startIndex
 		var endIndex = unis.endIndex
 		while endIndex != startIndex {
@@ -490,14 +490,14 @@ extension String {
 		guard endIndex != startIndex else {
 			return ""
 		}
-		return self.substringWith(Range(start:endIndex.successor(), end:noTrailsIndex))
+		return substringWith(Range(start:endIndex.successor(), end:noTrailsIndex))
 	}
 
 	var stringByResolvingSymlinksInPath: String {
 		return File(self).realPath()
 		
-//		let absolute = self.beginsWithSeparator
-//		let components = self.pathComponents(false)
+//		let absolute = beginsWithSeparator
+//		let components = pathComponents(false)
 //		var s = absolute ? "/" : ""
 //		for component in components {
 //			if component == "." {

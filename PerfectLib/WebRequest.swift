@@ -173,11 +173,11 @@ public class WebRequest {
 	
 	/// Returns the first GET or POST parameter with the given name
 	public func param(name: String) -> String? {
-		for p in self.queryParams
+		for p in queryParams
 			where p.0 == name {
 				return p.1
 		}
-		for p in self.postParams
+		for p in postParams
 			where p.0 == name {
 				return p.1
 		}
@@ -187,11 +187,11 @@ public class WebRequest {
 	/// Returns the first GET or POST parameter with the given name
 	/// Returns the supplied default value if the parameter was not found
 	public func param(name: String, defaultValue: String) -> String {
-		for p in self.queryParams
+		for p in queryParams
 			where p.0 == name {
 				return p.1
 		}
-		for p in self.postParams
+		for p in postParams
 			where p.0 == name {
 				return p.1
 		}
@@ -201,11 +201,11 @@ public class WebRequest {
 	/// Returns all GET or POST parameters with the given name
 	public func params(named: String) -> [String]? {
 		var a = [String]()
-		for p in self.queryParams
+		for p in queryParams
 			where p.0 == named {
 				a.append(p.1)
 		}
-		for p in self.postParams
+		for p in postParams
 			where p.0 == named {
 				a.append(p.1)
 		}
@@ -215,10 +215,10 @@ public class WebRequest {
 	/// Returns all GET or POST parameters
 	public func params() -> [(String,String)]? {
 		var a = [(String,String)]()
-		for p in self.queryParams {
+		for p in queryParams {
 			a.append(p)
 		}
-		for p in self.postParams {
+		for p in postParams {
 			a.append(p)
 		}
 		return a.count > 0 ? a : nil
@@ -252,9 +252,9 @@ public class WebRequest {
 		let auth = connection.requestParams["HTTP_AUTHORIZATION"] ?? connection.requestParams["Authorization"] ?? ""
 		var ret = auth.parseAuthentication()
 		if ret.count > 0 {
-			ret["method"] = self.requestMethod()
+			ret["method"] = requestMethod()
 		}
-		self.cachedHttpAuthorization = ret
+		cachedHttpAuthorization = ret
 		return ret
 	}
 	/// Provides access to the CONTENT_LENGTH parameter.
@@ -304,14 +304,14 @@ public class WebRequest {
 	/// Returns true if the request was encrypted over HTTPS.
 	public func isHttps() -> Bool { return connection.requestParams["HTTPS"] ?? "" == "on" }
 	/// Returns the indicated HTTP header.
-	public func header(named: String) -> String? { return self.headers[named.uppercaseString] }
+	public func header(named: String) -> String? { return headers[named.uppercaseString] }
 	/// Returns the raw request parameter header
-	public func rawHeader(named: String) -> String? { return self.connection.requestParams[named] }
+	public func rawHeader(named: String) -> String? { return connection.requestParams[named] }
 	/// Returns a Dictionary containing all raw request parameters.
-	public func raw() -> Dictionary<String, String> { return self.connection.requestParams }
+	public func raw() -> Dictionary<String, String> { return connection.requestParams }
 	
 	internal init(_ c: WebConnection) {
-		self.connection = c
+		connection = c
 	}
 	
 	private func extractField(from: String, named: String) -> String? {

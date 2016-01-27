@@ -43,43 +43,43 @@ public class CURL {
 	
 	/// The CURLINFO_RESPONSE_CODE for the last operation.
 	public var responseCode: Int {
-		return self.getInfo(CURLINFO_RESPONSE_CODE).0
+		return getInfo(CURLINFO_RESPONSE_CODE).0
 	}
 	
 	/// Get or set the current URL.
 	public var url: String {
 		get {
-			return self.getInfo(CURLINFO_EFFECTIVE_URL).0
+			return getInfo(CURLINFO_EFFECTIVE_URL).0
 		}
 		set {
-			self.setOption(CURLOPT_URL, s: newValue)
+			setOption(CURLOPT_URL, s: newValue)
 		}
 	}
 	
 	/// Initialize the CURL request.
 	public init() {
-		self.curl = curl_easy_init()
+		curl = curl_easy_init()
 		setCurlOpts()
 	}
 	
 	/// Initialize the CURL request with a given URL.
-	public convenience init(url: String) {
+	public convenience init(withURL: String) {
 		self.init()
-		self.url = url
+		url = withURL
 	}
 	
 	/// Duplicate the given request into a new CURL object.
 	public init(dupeCurl: CURL) {
 		if let copyFrom = dupeCurl.curl {
-			self.curl = curl_easy_duphandle(copyFrom)
+			curl = curl_easy_duphandle(copyFrom)
 		} else {
-			self.curl = curl_easy_init()
+			curl = curl_easy_init()
 		}
 		setCurlOpts() // still set options
 	}
 	
 	func setCurlOpts() {
-		curl_easy_setopt_long(self.curl!, CURLOPT_NOSIGNAL, 1)
+		curl_easy_setopt_long(curl!, CURLOPT_NOSIGNAL, 1)
 		let opaqueMe = UnsafeMutablePointer<Void>(Unmanaged.passUnretained(self).toOpaque())
 		setOption(CURLOPT_HEADERDATA, v: opaqueMe)
 		setOption(CURLOPT_WRITEDATA, v: opaqueMe)
@@ -125,16 +125,16 @@ public class CURL {
 	
 	/// Clean up and reset the CURL object.
 	public func reset() {
-		if self.curl != nil {
-			if self.multi != nil {
-				curl_multi_remove_handle(self.multi!, self.curl!)
-				self.multi = nil
+		if curl != nil {
+			if multi != nil {
+				curl_multi_remove_handle(multi!, curl!)
+				multi = nil
 			}
-			while self.slists.count > 0 {
-				curl_slist_free_all(self.slists.last!)
-				self.slists.removeLast()
+			while slists.count > 0 {
+				curl_slist_free_all(slists.last!)
+				slists.removeLast()
 			}
-			curl_easy_reset(self.curl!)
+			curl_easy_reset(curl!)
 			setCurlOpts()
 		}
 	}
@@ -145,14 +145,14 @@ public class CURL {
 		let header = Bytes()
 		let body = Bytes()
 		
-		self.multi = curl_multi_init()
-		curl_multi_add_handle(self.multi!, self.curl!)
+		multi = curl_multi_init()
+		curl_multi_add_handle(multi!, curl!)
 		
 		performInner(header, body: body, closure: closure)
 	}
 	
 	private func performInner(header: Bytes, body: Bytes, closure: (Int, [UInt8], [UInt8]) -> ()) {
-		let perf = self.perform()
+		let perf = perform()
 		if let h = perf.2 {
 			header.importBytes(h)
 		} 
@@ -172,35 +172,35 @@ public class CURL {
 	/// - returns: A tuple consisting of: Int - the result code, [UInt8] - the header bytes if any, [UInt8] - the body bytes if any
 	public func performFully() -> (Int, [UInt8], [UInt8]) {
 		
-		let code = curl_easy_perform(self.curl!)
+		let code = curl_easy_perform(curl!)
 		defer {
-			if self.headerBytes.count > 0 {
-				self.headerBytes = [UInt8]()
+			if headerBytes.count > 0 {
+				headerBytes = [UInt8]()
 			}
-			if self.bodyBytes.count > 0 {
-				self.bodyBytes = [UInt8]()
+			if bodyBytes.count > 0 {
+				bodyBytes = [UInt8]()
 			}
-			self.reset()
+			reset()
 		}
 		if code != CURLE_OK {
-			let str = self.strError(code)
+			let str = strError(code)
 			print(str)
 		}
-		return (Int(code.rawValue), self.headerBytes, self.bodyBytes)
+		return (Int(code.rawValue), headerBytes, bodyBytes)
 	}
 	
 	/// Performs a bit of work on the current request.
 	/// - returns: A tuple consisting of: Bool - should perform() be called again, Int - the result code, [UInt8] - the header bytes if any, [UInt8] - the body bytes if any
 	public func perform() -> (Bool, Int, [UInt8]?, [UInt8]?) {
-		if self.multi == nil {
-			self.multi = curl_multi_init()
-			curl_multi_add_handle(self.multi!, self.curl!)
+		if multi == nil {
+			multi = curl_multi_init()
+			curl_multi_add_handle(multi!, curl!)
 		}
 		var one: Int32 = 0
 		var code = CURLM_OK
 		repeat {
 		
-			code = curl_multi_perform(self.multi!, &one)
+			code = curl_multi_perform(multi!, &one)
 			
 		} while code == CURLM_CALL_MULTI_PERFORM
 		
@@ -208,14 +208,14 @@ public class CURL {
 			return (false, Int(code.rawValue), nil, nil)
 		}
 		var two: Int32 = 0
-		let msg = curl_multi_info_read(self.multi!, &two)
+		let msg = curl_multi_info_read(multi!, &two)
 		
 		defer {
-			if self.headerBytes.count > 0 {
-				self.headerBytes = [UInt8]()
+			if headerBytes.count > 0 {
+				headerBytes = [UInt8]()
 			}
-			if self.bodyBytes.count > 0 {
-				self.bodyBytes = [UInt8]()
+			if bodyBytes.count > 0 {
+				bodyBytes = [UInt8]()
 			}
 		}
 		
@@ -225,18 +225,18 @@ public class CURL {
 				return (false, Int(msgResult.rawValue), nil, nil)
 			}
 			return (false, Int(msgResult.rawValue),
-				self.headerBytes.count > 0 ? self.headerBytes : nil,
-				self.bodyBytes.count > 0 ? self.bodyBytes : nil)
+				headerBytes.count > 0 ? headerBytes : nil,
+				bodyBytes.count > 0 ? bodyBytes : nil)
 		}
 		return (true, 0,
-			self.headerBytes.count > 0 ? self.headerBytes : nil,
-			self.bodyBytes.count > 0 ? self.bodyBytes : nil)
+			headerBytes.count > 0 ? headerBytes : nil,
+			bodyBytes.count > 0 ? bodyBytes : nil)
 	}
 	
 //	/// Returns the result code for the last
 //	public func multiResult() -> CURLcode {
 //		var two: Int32 = 0
-//		let msg = curl_multi_info_read(self.multi!, &two)
+//		let msg = curl_multi_info_read(multi!, &two)
 //		if msg != nil && msg.memory.msg == CURLMSG_DONE {
 //			return curl_get_msg_result(msg)
 //		}
@@ -251,7 +251,7 @@ public class CURL {
 	/// Returns the Int value for the given CURLINFO.
 	public func getInfo(info: CURLINFO) -> (Int, CURLcode) {
 		var i = 0
-		let c = curl_easy_getinfo_long(self.curl!, info, &i)
+		let c = curl_easy_getinfo_long(curl!, info, &i)
 		return (i, c)
 	}
 	
@@ -259,28 +259,28 @@ public class CURL {
 	public func getInfo(info: CURLINFO) -> (String, CURLcode) {
 		let i = UnsafeMutablePointer<UnsafePointer<Int8>>.alloc(1)
 		defer { i.destroy(); i.dealloc(1) }
-		let code = curl_easy_getinfo_cstr(self.curl!, info, i)
+		let code = curl_easy_getinfo_cstr(curl!, info, i)
 		return (code != CURLE_OK ? "" : String.fromCString(i.memory)!, code)
 	}
 	
 	/// Sets the Int64 option value.
 	public func setOption(option: CURLoption, int: Int64) -> CURLcode {
-		return curl_easy_setopt_int64(self.curl!, option, int)
+		return curl_easy_setopt_int64(curl!, option, int)
 	}
 	
 	/// Sets the Int option value.
 	public func setOption(option: CURLoption, int: Int) -> CURLcode {
-		return curl_easy_setopt_long(self.curl!, option, int)
+		return curl_easy_setopt_long(curl!, option, int)
 	}
 	
 	/// Sets the poionter option value.
 	public func setOption(option: CURLoption, v: UnsafeMutablePointer<Void>) -> CURLcode {
-		return curl_easy_setopt_void(self.curl!, option, v)
+		return curl_easy_setopt_void(curl!, option, v)
 	}
 	
 	/// Sets the callback function option value.
 	public func setOption(option: CURLoption, f: curl_func) -> CURLcode {
-		return curl_easy_setopt_func(self.curl!, option, f)
+		return curl_easy_setopt_func(curl!, option, f)
 	}
 	
 	/// Sets the String option value.
@@ -294,33 +294,33 @@ public class CURL {
 			CURLOPT_MAIL_FROM.rawValue,
 			CURLOPT_MAIL_RCPT.rawValue:
 			let slist = curl_slist_append(nil, s)
-			self.slists.append(slist)
-			return curl_easy_setopt_slist(self.curl!, option, slist)
+			slists.append(slist)
+			return curl_easy_setopt_slist(curl!, option, slist)
 		default:
 			()
 		}
-		return curl_easy_setopt_cstr(self.curl!, option, s)
+		return curl_easy_setopt_cstr(curl!, option, s)
 	}
 	
 	/// Cleanup and close the CURL request.
 	public func close() {
-		if self.curl != nil {
-			if self.multi != nil {
-				curl_multi_cleanup(self.multi!)
-				self.multi = nil
+		if curl != nil {
+			if multi != nil {
+				curl_multi_cleanup(multi!)
+				multi = nil
 			}
-			curl_easy_cleanup(self.curl!)
+			curl_easy_cleanup(curl!)
 			
-			self.curl = nil
-			while self.slists.count > 0 {
-				curl_slist_free_all(self.slists.last!)
-				self.slists.removeLast()
+			curl = nil
+			while slists.count > 0 {
+				curl_slist_free_all(slists.last!)
+				slists.removeLast()
 			}
 		}
 	}
 	
 	deinit {
-		self.close()
+		close()
 	}
 }
 

@@ -70,19 +70,19 @@ public class Threading {
 		/// Attempt to grab the lock.
 		/// Returns true if the lock was successful.
 		public func lock() -> Bool {
-			return 0 == pthread_mutex_lock(&self.mutex)
+			return 0 == pthread_mutex_lock(&mutex)
 		}
 		
 		/// Attempt to grab the lock.
 		/// Will only return true if the lock was not being held by any other thread.
 		/// Returns false if the lock is currently being held by another thread.
 		public func tryLock() -> Bool {
-			return 0 == pthread_mutex_trylock(&self.mutex)
+			return 0 == pthread_mutex_trylock(&mutex)
 		}
 		
 		/// Unlock. Returns true if the lock was held by the current thread and was successfully unlocked. ior the lock count was decremented.
 		public func unlock() -> Bool {
-			return 0 == pthread_mutex_unlock(&self.mutex)
+			return 0 == pthread_mutex_unlock(&mutex)
 		}
 		
 	}
@@ -115,13 +115,13 @@ public class Threading {
 		/// Signal at most ONE thread which may be waiting on this event.
 		/// Has no effect if there is no waiting thread.
 		public func signal() -> Bool {
-			return 0 == pthread_cond_signal(&self.cond)
+			return 0 == pthread_cond_signal(&cond)
 		}
 		
 		/// Signal ALL threads which may be waiting on this event.
 		/// Has no effect if there is no waiting thread.
 		public func broadcast() -> Bool {
-			return 0 == pthread_cond_broadcast(&self.cond)
+			return 0 == pthread_cond_broadcast(&cond)
 		}
 		
 		/// Wait on this event for another thread to call signal.
@@ -130,7 +130,7 @@ public class Threading {
 		/// Returns false upon timeout or error.
 		public func wait(waitMillis: Int = -1) -> Bool {
 			if waitMillis == -1 {
-				return 0 == pthread_cond_wait(&self.cond, &self.mutex)
+				return 0 == pthread_cond_wait(&cond, &mutex)
 			}
 			var tm = timespec()
 		#if os(Linux)
@@ -140,12 +140,12 @@ public class Threading {
 			gettimeofday(&tv, nil)
 			tm.tv_sec = tv.tv_sec + waitMillis / 1000;
 			tm.tv_nsec = (tv.tv_usec + 1000 * waitMillis) * 1000
-			let ret = pthread_cond_timedwait(&self.cond, &self.mutex, &tm)
+			let ret = pthread_cond_timedwait(&cond, &mutex, &tm)
 		#else
 			tm.tv_sec = waitMillis / 1000
 			tm.tv_nsec = (waitMillis - (tm.tv_sec * 1000)) * 1000000
 			
-			let ret = pthread_cond_timedwait_relative_np(&self.cond, &self.mutex, &tm)
+			let ret = pthread_cond_timedwait_relative_np(&cond, &mutex, &tm)
 		#endif
 			return ret == 0;
 		}
@@ -162,41 +162,41 @@ public class Threading {
 		
 		/// Initialize a new read-write lock.
 		public init() {
-			pthread_rwlock_init(&self.lock, nil)
+			pthread_rwlock_init(&lock, nil)
 		}
 		
 		deinit {
-			pthread_rwlock_destroy(&self.lock)
+			pthread_rwlock_destroy(&lock)
 		}
 		
 		/// Attempt to acquire the lock for reading.
 		/// Returns false if an error occurs.
 		public func readLock() -> Bool {
-			return 0 == pthread_rwlock_rdlock(&self.lock)
+			return 0 == pthread_rwlock_rdlock(&lock)
 		}
 		
 		/// Attempts to acquire the lock for reading.
 		/// Returns false if the lock is held by a writer or an error occurs.
 		public func tryReadLock() -> Bool {
-			return 0 == pthread_rwlock_tryrdlock(&self.lock)
+			return 0 == pthread_rwlock_tryrdlock(&lock)
 		}
 		
 		/// Attempt to acquire the lock for writing.
 		/// Returns false if an error occurs.
 		public func writeLock() -> Bool {
-			return 0 == pthread_rwlock_wrlock(&self.lock)
+			return 0 == pthread_rwlock_wrlock(&lock)
 		}
 		
 		/// Attempt to acquire the lock for writing.
 		/// Returns false if the lock is held by readers or a writer or an error occurs.
 		public func tryWriteLock() -> Bool {
-			return 0 == pthread_rwlock_trywrlock(&self.lock)
+			return 0 == pthread_rwlock_trywrlock(&lock)
 		}
 		
 		/// Unlock a lock which is held for either reading or writing.
 		/// Returns false if an error occurs.
 		public func unlock() -> Bool {
-			return 0 == pthread_rwlock_unlock(&self.lock)
+			return 0 == pthread_rwlock_unlock(&lock)
 		}
 	}
 	

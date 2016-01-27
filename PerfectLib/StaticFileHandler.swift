@@ -44,7 +44,7 @@ public class StaticFileHandler: RequestHandler {
 			return
 		}
 		
-		self.sendFile(response, file: file)
+		sendFile(response, file: file)
 		response.requestCompletedCallback()
 	}
 	

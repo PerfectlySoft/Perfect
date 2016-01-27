@@ -13,8 +13,8 @@ class WindowController: NSWindowController {
     override func windowDidLoad() {
         super.windowDidLoad()
         
-        self.window?.titleVisibility = .Hidden
-        self.window?.titlebarAppearsTransparent = true
-        self.window?.movableByWindowBackground  = true
+        window?.titleVisibility = .Hidden
+        window?.titlebarAppearsTransparent = true
+        window?.movableByWindowBackground  = true
     }
 }
