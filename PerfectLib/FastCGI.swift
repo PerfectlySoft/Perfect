@@ -211,7 +211,7 @@ class FastCGIRequest : WebConnection {
 	
 	func readRecord(continuation: (FastCGIRecord?) -> ()) {
 		self.connection.readBytesFully(fcgiBaseRecordSize, timeoutSeconds: fcgiTimeoutSeconds) {
-			(b: [UInt8]?) -> () in
+            [weak self] (b: [UInt8]?) -> () in
 			
 			guard let recBytes = b else {
 				continuation(nil)
@@ -226,7 +226,7 @@ class FastCGIRequest : WebConnection {
 			record.paddingLength = recBytes[6];
 			record.reserved = recBytes[7]
 			
-			self.readRecordContent(record, continuation: continuation)
+			self?.readRecordContent(record, continuation: continuation)
 		}
 	}
 	
@@ -234,11 +234,11 @@ class FastCGIRequest : WebConnection {
 		if record.contentLength > 0 {
 			
 			self.connection.readBytesFully(Int(record.contentLength), timeoutSeconds: fcgiTimeoutSeconds, completion: {
-				(b:[UInt8]?) -> () in
+				[weak self] (b:[UInt8]?) -> () in
 				if let contentBytes = b {
 					
 					record.content = contentBytes
-					self.readRecordPadding(record, continuation: continuation)
+					self?.readRecordPadding(record, continuation: continuation)
 					
 				} else {
 					continuation(nil)

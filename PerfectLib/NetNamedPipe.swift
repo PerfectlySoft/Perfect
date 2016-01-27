@@ -268,13 +268,13 @@ public class NetNamedPipe : NetTCP {
 		} else if res == -1 && errno == EAGAIN {
 
 			let event: LibEvent = LibEvent(base: LibEvent.eventBase, fd: self.fd.fd, what: EV_WRITE, userData: nil) {
-				(fd:Int32, w:Int16, ud:AnyObject?) -> () in
+				[weak self] (fd:Int32, w:Int16, ud:AnyObject?) -> () in
 
 				if (Int32(w) & EV_TIMEOUT) != 0 {
 					callBack(false)
 				} else {
 					do {
-						try self.sendFd(fd, callBack: callBack)
+						try self?.sendFd(fd, callBack: callBack)
 					} catch {
 						callBack(false)
 					}
@@ -338,13 +338,13 @@ public class NetNamedPipe : NetTCP {
 		} else if res == -1 && errno == EAGAIN {
 
 			let event: LibEvent = LibEvent(base: LibEvent.eventBase, fd: self.fd.fd, what: EV_READ, userData: nil) {
-				(fd:Int32, w:Int16, ud:AnyObject?) -> () in
+				[weak self] (fd:Int32, w:Int16, ud:AnyObject?) -> () in
 
 				if (Int32(w) & EV_TIMEOUT) != 0 {
 					callBack(invalidSocket)
 				} else {
 					do {
-						try self.receiveFd(callBack)
+						try self?.receiveFd(callBack)
 					} catch {
 						callBack(invalidSocket)
 					}

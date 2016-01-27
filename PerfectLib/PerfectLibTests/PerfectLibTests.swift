@@ -42,11 +42,11 @@ class PerfectLibTests: XCTestCase {
 	
 	// !FIX! broken test
 	/*
-	func testJSONEncodeDecode() {
+	func testJSONEncoderDecode() {
 		
 		let srcAry: [[String:JSONValue]] = [["i": -41451, "i2": 41451, "d": -42E+2, "t": true, "f": false, "n": JSONNull(), "a":[1, 2, 3, 4]], ["another":"one"]]
-		let decode = JSONDecode()
-		let encode = JSONEncode()
+		let decode = JSONDecoder()
+		let encode = JSONEncoder()
 		var encoded = ""
 		var decoded: JSONArrayType?
 		do {

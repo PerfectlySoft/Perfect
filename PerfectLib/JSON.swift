@@ -84,7 +84,7 @@ class KeyPair {
 /// - `JSONDictionary`
 /// - `Array<JSONValue>`
 /// - `Dictionary<String, JSONValue>`
-public class JSONEncode {
+public class JSONEncoder {
 	
 	/// Empty public initializer
 	public init() {
@@ -139,6 +139,8 @@ public class JSONEncode {
 		return s
 	}
 	
+    /// Encode a `JSONValue` into a JSON string
+    /// - throws: A `JSONError.UnhandledType` exception
 	func encodeValue(value: JSONValue) throws -> String {
 		
 		switch(value) {
@@ -165,6 +167,7 @@ public class JSONEncode {
 		}
 	}
 	
+    /// Encode a `String` into a JSON string
 	func encodeString(src: String) -> String {
 		var s = "\""
 		for uchar in src.unicodeScalars {
@@ -191,18 +194,24 @@ public class JSONEncode {
 		return s
 	}
 	
-	func encodeInt(i: Int) -> String {
+    /// Encode an `Int` into a JSON string
+ 	func encodeInt(i: Int) -> String {
 		return String(i)
 	}
-	
+    
+	/// Encode a `Double` into a JSON string
 	func encodeDouble(d: Double) -> String {
 		return String(d)
 	}
 	
+    /// Encode an `Array` into a JSON string
+    /// - throws: A `JSONError.UnhandledType` exception
 	func encodeArray(a: Array<JSONValue>) throws -> String {
 		return try encode(a)
 	}
 	
+    /// Encode a `Dictionary<String, JSONValue>` intot a JSON string
+    /// - throws: A `JSONError.UnhandledType` exception
 	func encodeDictionary(d: Dictionary<String, JSONValue>) throws -> String {
 		return try encode(d)
 	}
@@ -269,7 +278,7 @@ private let malformedJSONString = "Malformed JSON string"
 /// - `JSONNull`
 /// - `JSONArray`
 /// - `JSONDictionary`
-public class JSONDecode {
+public class JSONDecoder {
 	
 	var stack = Array<JSONValue>()
 	var exit: JSONValue?
