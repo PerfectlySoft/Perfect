@@ -16,6 +16,7 @@
 		F8933C561C3D9A930048EFE9 /* WebSocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933C551C3D9A930048EFE9 /* WebSocketHandler.swift */; };
 		F8933C5A1C3DC6040048EFE9 /* StaticFileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933C591C3DC6040048EFE9 /* StaticFileHandler.swift */; };
 		F8A03D601C06035100FE7F2F /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E11BD5427000367249 /* File.swift */; };
+		F8BC99081C590F5F00303688 /* JSONConvertable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8BC99071C590F5F00303688 /* JSONConvertable.swift */; };
 		F8E752EC1BDA956500BFC36A /* HTTPServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8E752EB1BDA956500BFC36A /* HTTPServer.swift */; };
 		F8F289C91BD53CF000367249 /* PerfectLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F289BE1BD53CF000367249 /* PerfectLib.framework */; };
 		F8F289CE1BD53CF000367249 /* PerfectLibTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289CD1BD53CF000367249 /* PerfectLibTests.swift */; };
@@ -88,6 +89,7 @@
 		F88B06911BDE80F9001FD0CD /* MimeType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MimeType.swift; sourceTree = "<group>"; };
 		F8933C551C3D9A930048EFE9 /* WebSocketHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebSocketHandler.swift; sourceTree = "<group>"; };
 		F8933C591C3DC6040048EFE9 /* StaticFileHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StaticFileHandler.swift; sourceTree = "<group>"; };
+		F8BC99071C590F5F00303688 /* JSONConvertable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONConvertable.swift; sourceTree = "<group>"; };
 		F8E752EB1BDA956500BFC36A /* HTTPServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPServer.swift; sourceTree = "<group>"; };
 		F8F289BE1BD53CF000367249 /* PerfectLib.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PerfectLib.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8F289C11BD53CF000367249 /* PerfectLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PerfectLib.h; path = OSX/PerfectLib.h; sourceTree = "<group>"; };
@@ -234,6 +236,7 @@
 				F8F289E11BD5427000367249 /* File.swift */,
 				F8F289E21BD5427000367249 /* ICU.swift */,
 				F8F289E31BD5427000367249 /* JSON.swift */,
+				F8BC99071C590F5F00303688 /* JSONConvertable.swift */,
 				F8F289E41BD5427000367249 /* PerfectError.swift */,
 				F8F289E71BD5427000367249 /* PerfectServer.swift */,
 				F8F289E81BD5427000367249 /* LibEvent.swift */,
@@ -454,6 +457,7 @@
 				F8F28A141BD5427000367249 /* util.c in Sources */,
 				F8F28A0A1BD5427000367249 /* MimeReader.swift in Sources */,
 				F8F28A151BD5427000367249 /* Utilities.swift in Sources */,
+				F8BC99081C590F5F00303688 /* JSONConvertable.swift in Sources */,
 				F8F28A021BD5427000367249 /* ICU.swift in Sources */,
 				F8F28A0E1BD5427000367249 /* NetTCP.swift in Sources */,
 				F8933C5A1C3DC6040048EFE9 /* StaticFileHandler.swift in Sources */,
@@ -618,7 +622,7 @@
 					"$(PROJECT_DIR)/linked/OpenSSL/osx",
 					"$(PROJECT_DIR)/linked/SQLite3/osx",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MODULEMAP_PRIVATE_FILE = "${SRCROOT}/OSX/module.modulemap";
 				OTHER_SWIFT_FLAGS = "-DTMP_NOT_USE_LIBDISPATCH";
 				PRODUCT_BUNDLE_IDENTIFIER = ca.perfectlysoft.PerfectLib;
@@ -652,7 +656,7 @@
 					"$(PROJECT_DIR)/linked/OpenSSL/osx",
 					"$(PROJECT_DIR)/linked/SQLite3/osx",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MODULEMAP_PRIVATE_FILE = "${SRCROOT}/OSX/module.modulemap";
 				OTHER_SWIFT_FLAGS = "-DTMP_NOT_USE_LIBDISPATCH";
 				PRODUCT_BUNDLE_IDENTIFIER = ca.perfectlysoft.PerfectLib;

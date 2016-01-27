@@ -193,7 +193,7 @@ class MySQLTests: XCTestCase {
 		let sres2 = mysql.query("SELECT id,d,s FROM test")
 		XCTAssert(sres2 == true, mysql.errorMessage())
 		
-		let results = mysql.storeResults()
+		let results = mysql.storeResults()!
 		XCTAssert(results.numRows() == 10)
 		
 		while let row = results.next() {
@@ -239,7 +239,7 @@ class MySQLTests: XCTestCase {
 		let sres2 = mysql.query("SELECT id,d,s FROM test")
 		XCTAssert(sres2 == true, mysql.errorMessage())
 		
-		let results = mysql.storeResults()
+		let results = mysql.storeResults()!
 		XCTAssert(results.numRows() == 10)
 		
 		results.forEachRow { a in

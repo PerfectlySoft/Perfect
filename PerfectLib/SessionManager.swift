@@ -23,7 +23,6 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
-
 import Foundation
 
 let perfectSessionDB = "perfect_sessions"
@@ -203,14 +202,14 @@ public class SessionManager {
 	
 	/// !FIX! needs to support all the special cookie options
 	func initializeForResponse(response: WebResponse) {
-		let c = Cookie()
-		c.name = perfectSessionNamePrefix + self.configuration.name
-		c.value = self.configuration.id
-		c.expiresIn = Double(self.configuration.cookieExpires)
-		c.domain = self.configuration.domain
-		c.path = self.configuration.path
-		c.secure = self.configuration.secure
-		c.httpOnly = self.configuration.httpOnly
+		let c = Cookie(name: perfectSessionNamePrefix + self.configuration.name,
+			value: self.configuration.id,
+			domain: self.configuration.domain,
+			expires: nil,
+			expiresIn: Double(self.configuration.cookieExpires),
+			path: self.configuration.path,
+			secure: self.configuration.secure,
+			httpOnly: self.configuration.httpOnly)
 		response.addCookie(c)
 	}
 	

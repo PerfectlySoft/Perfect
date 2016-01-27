@@ -23,13 +23,14 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
-import Foundation
 #if os(Linux)
 import SwiftGlibc
 let AF_UNSPEC: Int32 = 0
 let AF_INET: Int32 = 2
 let INADDR_NONE = UInt32(0xffffffff)
 let EINPROGRESS = Int32(115)
+#else
+import Darwin
 #endif
 
 /// Provides an asynchronous IO wrapper around a file descriptor.

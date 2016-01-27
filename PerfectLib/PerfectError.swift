@@ -23,7 +23,6 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
-import Foundation
 #if os(Linux)
 import SwiftGlibc
 import LinuxBridge
@@ -31,6 +30,8 @@ import LinuxBridge
 var errno: Int32 {
 	return linux_errno()
 }
+#else
+import Darwin
 #endif
 
 /// Some but not all of the exception types which may be thrown by the system

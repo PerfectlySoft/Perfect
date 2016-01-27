@@ -23,7 +23,6 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
-import Foundation
 #if os(Linux)
 	import SwiftGlibc
 	let AF_UNIX: Int32 = 1
