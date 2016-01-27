@@ -77,7 +77,7 @@ public extension JSONConvertibleObject {
 }
 
 public enum JSONConversionError: ErrorType {
-	case NotConvertable(Any)
+	case NotConvertible(Any)
 	case InvalidKey(Any)
 	case SyntaxError
 }
@@ -145,7 +145,7 @@ extension Optional: JSONConvertible {
 		} else if let v = self! as? JSONConvertible {
 			return try v.jsonValueString()
 		}
-		throw JSONConversionError.NotConvertable(self)
+		throw JSONConversionError.NotConvertible(self)
 	}
 }
 
@@ -169,7 +169,7 @@ extension Array: JSONConvertible {
 				first = false
 			}
 			guard let jsonAble = v as? JSONConvertible else {
-				throw JSONConversionError.NotConvertable(v)
+				throw JSONConversionError.NotConvertible(v)
 			}
 			s.appendContentsOf(try jsonAble.jsonValueString())
 		}
@@ -189,7 +189,7 @@ extension Dictionary: JSONConvertible {
 				throw JSONConversionError.InvalidKey(k)
 			}
 			guard let jsonAble = v as? JSONConvertible else {
-				throw JSONConversionError.NotConvertable(v)
+				throw JSONConversionError.NotConvertible(v)
 			}
 			if !first {
 				s.appendContentsOf(",")
