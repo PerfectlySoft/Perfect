@@ -310,6 +310,7 @@ private class JSONDecodeState {
 					self.movePastWhite()
 					d[key] = try readObject()
 					do {
+						self.movePastWhite()
 						guard let c = self.next() else {
 							throw JSONConversionError.SyntaxError
 						}
