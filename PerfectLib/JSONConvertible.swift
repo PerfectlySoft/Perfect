@@ -29,6 +29,8 @@
 	import Darwin
 #endif
 
+/// This non-instantiable object serves as an access point to a registry for JSONConvertibleObjects
+/// A JSONConvertibleObject is a custom class or struct which can be converted to and from JSON.
 public class JSONDecoding {
 	private init() {}
 	
@@ -59,11 +61,14 @@ public class JSONDecoding {
 }
 
 public protocol JSONConvertible {
-	func jsonValueString() throws -> String
+	
+	/// Returns the JSON encoded String for any JSONConvertible type.
+	func jsonEncodedString() throws -> String
 }
 
 public protocol JSONConvertibleObject: JSONConvertible {
 	func setJSONValues(values:[String:Any])
+	func getJSONValues() -> [String:Any]
 }
 
 public extension JSONConvertibleObject {
@@ -73,6 +78,9 @@ public extension JSONConvertibleObject {
 			return v
 		}
 		return defaultValue
+	}
+	func jsonEncodedString() throws -> String {
+		return try self.getJSONValues().jsonEncodedString()
 	}
 }
 
@@ -98,8 +106,16 @@ private let jsonWhiteSpace = UnicodeScalar(UInt32(32))
 private let jsonColon = UnicodeScalar(UInt32(58))
 private let jsonComma = UnicodeScalar(UInt32(44))
 
+// this is a stand-in for a JSON null
+// may be produced when decoding
+public struct JSONConvertibleNull: JSONConvertible {
+	public func jsonEncodedString() throws -> String {
+		return "null"
+	}
+}
+
 extension String: JSONConvertible {
-	public func jsonValueString() throws -> String {
+	public func jsonEncodedString() throws -> String {
 		var s = "\""
 		for uchar in self.unicodeScalars {
 			switch(uchar) {
@@ -127,30 +143,30 @@ extension String: JSONConvertible {
 }
 
 extension Int: JSONConvertible {
-	public func jsonValueString() throws -> String {
+	public func jsonEncodedString() throws -> String {
 		return String(self)
 	}
 }
 
 extension Double: JSONConvertible {
-	public func jsonValueString() throws -> String {
+	public func jsonEncodedString() throws -> String {
 		return String(self)
 	}
 }
 
 extension Optional: JSONConvertible {
-	public func jsonValueString() throws -> String {
+	public func jsonEncodedString() throws -> String {
 		if self == nil {
 			return "null"
 		} else if let v = self! as? JSONConvertible {
-			return try v.jsonValueString()
+			return try v.jsonEncodedString()
 		}
 		throw JSONConversionError.NotConvertible(self)
 	}
 }
 
 extension Bool: JSONConvertible {
-	public func jsonValueString() throws -> String {
+	public func jsonEncodedString() throws -> String {
 		if true == self {
 			return "true"
 		}
@@ -159,7 +175,7 @@ extension Bool: JSONConvertible {
 }
 
 extension Array: JSONConvertible {
-	public func jsonValueString() throws -> String {
+	public func jsonEncodedString() throws -> String {
 		var s = "["
 		var first = true
 		for v in self {
@@ -171,7 +187,7 @@ extension Array: JSONConvertible {
 			guard let jsonAble = v as? JSONConvertible else {
 				throw JSONConversionError.NotConvertible(v)
 			}
-			s.appendContentsOf(try jsonAble.jsonValueString())
+			s.appendContentsOf(try jsonAble.jsonEncodedString())
 		}
 		s.appendContentsOf("]")
 		return s
@@ -179,7 +195,7 @@ extension Array: JSONConvertible {
 }
 
 extension Dictionary: JSONConvertible {
-	public func jsonValueString() throws -> String {
+	public func jsonEncodedString() throws -> String {
 		var s = "{"
 		
 		var first = true
@@ -196,9 +212,9 @@ extension Dictionary: JSONConvertible {
 			} else {
 				first = false
 			}
-			s.appendContentsOf(try strKey.jsonValueString())
+			s.appendContentsOf(try strKey.jsonEncodedString())
 			s.appendContentsOf(":")
-			s.appendContentsOf(try jsonAble.jsonValueString())
+			s.appendContentsOf(try jsonAble.jsonEncodedString())
 		}
 		
 		s.appendContentsOf("}")
@@ -207,8 +223,9 @@ extension Dictionary: JSONConvertible {
 	}
 }
 
+/// Decode the JSON object represented by the String.
 extension String {
-	public func jsonDecode() throws -> JSONConvertible? {
+	public func jsonDecode() throws -> JSONConvertible {
 		
 		let state = JSONDecodeState()
 		state.g = self.unicodeScalars.generate()
@@ -224,7 +241,7 @@ extension String {
 private class JSONDecodeState {
 	
 	struct EOF: JSONConvertible {
-		func jsonValueString() throws -> String { return "" }
+		func jsonEncodedString() throws -> String { return "" }
 	}
 	
 	var g = String().unicodeScalars.generate()
@@ -239,7 +256,7 @@ private class JSONDecodeState {
 		}
 	}
 	
-	func readObject() throws -> JSONConvertible? {
+	func readObject() throws -> JSONConvertible {
 		
 		self.movePastWhite()
 		
@@ -324,7 +341,7 @@ private class JSONDecodeState {
 				return try readFalse()
 			} else if c == "n" || c == "N" {
 				try readNull()
-				return nil as String?
+				return JSONConvertibleNull()
 			}
 		}
 		throw JSONConversionError.SyntaxError
