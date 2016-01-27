@@ -1,5 +1,5 @@
 //
-//  JSONConvertable.swift
+//  JSONConvertible.swift
 //  PerfectLib
 //
 //  Created by Kyle Jessup on 2016-01-21.
@@ -33,22 +33,22 @@ public class JSONDecoding {
 	private init() {}
 	
 	public static let objectIdentifierKey = "_jsonobjid"
-	public typealias JSONConvertableObjectCreator = () -> JSONConvertableObject
+	public typealias JSONConvertibleObjectCreator = () -> JSONConvertibleObject
 	
-	static private var jsonDecodableRegistry = [String:JSONConvertableObjectCreator]()
+	static private var jsonDecodableRegistry = [String:JSONConvertibleObjectCreator]()
 	
-	static public func registerJSONDecodable(name: String, creator: JSONConvertableObjectCreator) {
+	static public func registerJSONDecodable(name: String, creator: JSONConvertibleObjectCreator) {
 		JSONDecoding.jsonDecodableRegistry[name] = creator
 	}
 	
-	static public func createJSONConvertableObject(values:[String:Any]) -> JSONConvertableObject? {
+	static public func createJSONConvertibleObject(values:[String:Any]) -> JSONConvertibleObject? {
 		guard let objkey = values[JSONDecoding.objectIdentifierKey] as? String else {
 			return nil
 		}
-		return JSONDecoding.createJSONConvertableObject(objkey, values: values)
+		return JSONDecoding.createJSONConvertibleObject(objkey, values: values)
 	}
 	
-	static public func createJSONConvertableObject(name: String, values:[String:Any]) -> JSONConvertableObject? {
+	static public func createJSONConvertibleObject(name: String, values:[String:Any]) -> JSONConvertibleObject? {
 		guard let creator = JSONDecoding.jsonDecodableRegistry[name] else {
 			return nil
 		}
@@ -58,16 +58,16 @@ public class JSONDecoding {
 	}
 }
 
-public protocol JSONConvertable {
+public protocol JSONConvertible {
 	func jsonValueString() throws -> String
 }
 
-public protocol JSONConvertableObject: JSONConvertable {
+public protocol JSONConvertibleObject: JSONConvertible {
 	func setJSONValues(values:[String:Any])
 }
 
-public extension JSONConvertableObject {
-	func getJSONValue<T: JSONConvertable>(named: String, from:[String:Any], defaultValue: T) -> T {
+public extension JSONConvertibleObject {
+	func getJSONValue<T: JSONConvertible>(named: String, from:[String:Any], defaultValue: T) -> T {
 		let f = from[named]
 		if let v = f as? T {
 			return v
@@ -77,7 +77,7 @@ public extension JSONConvertableObject {
 }
 
 public enum JSONConversionError: ErrorType {
-	case NotConvertable(Any)
+	case NotConvertible(Any)
 	case InvalidKey(Any)
 	case SyntaxError
 }
@@ -98,7 +98,7 @@ private let jsonWhiteSpace = UnicodeScalar(UInt32(32))
 private let jsonColon = UnicodeScalar(UInt32(58))
 private let jsonComma = UnicodeScalar(UInt32(44))
 
-extension String: JSONConvertable {
+extension String: JSONConvertible {
 	public func jsonValueString() throws -> String {
 		var s = "\""
 		for uchar in self.unicodeScalars {
@@ -126,30 +126,30 @@ extension String: JSONConvertable {
 	}
 }
 
-extension Int: JSONConvertable {
+extension Int: JSONConvertible {
 	public func jsonValueString() throws -> String {
 		return String(self)
 	}
 }
 
-extension Double: JSONConvertable {
+extension Double: JSONConvertible {
 	public func jsonValueString() throws -> String {
 		return String(self)
 	}
 }
 
-extension Optional: JSONConvertable {
+extension Optional: JSONConvertible {
 	public func jsonValueString() throws -> String {
 		if self == nil {
 			return "null"
-		} else if let v = self! as? JSONConvertable {
+		} else if let v = self! as? JSONConvertible {
 			return try v.jsonValueString()
 		}
-		throw JSONConversionError.NotConvertable(self)
+		throw JSONConversionError.NotConvertible(self)
 	}
 }
 
-extension Bool: JSONConvertable {
+extension Bool: JSONConvertible {
 	public func jsonValueString() throws -> String {
 		if true == self {
 			return "true"
@@ -158,7 +158,7 @@ extension Bool: JSONConvertable {
 	}
 }
 
-extension Array: JSONConvertable {
+extension Array: JSONConvertible {
 	public func jsonValueString() throws -> String {
 		var s = "["
 		var first = true
@@ -168,8 +168,8 @@ extension Array: JSONConvertable {
 			} else {
 				first = false
 			}
-			guard let jsonAble = v as? JSONConvertable else {
-				throw JSONConversionError.NotConvertable(v)
+			guard let jsonAble = v as? JSONConvertible else {
+				throw JSONConversionError.NotConvertible(v)
 			}
 			s.appendContentsOf(try jsonAble.jsonValueString())
 		}
@@ -178,7 +178,7 @@ extension Array: JSONConvertable {
 	}
 }
 
-extension Dictionary: JSONConvertable {
+extension Dictionary: JSONConvertible {
 	public func jsonValueString() throws -> String {
 		var s = "{"
 		
@@ -188,8 +188,8 @@ extension Dictionary: JSONConvertable {
 			guard let strKey = k as? String else {
 				throw JSONConversionError.InvalidKey(k)
 			}
-			guard let jsonAble = v as? JSONConvertable else {
-				throw JSONConversionError.NotConvertable(v)
+			guard let jsonAble = v as? JSONConvertible else {
+				throw JSONConversionError.NotConvertible(v)
 			}
 			if !first {
 				s.appendContentsOf(",")
@@ -208,7 +208,7 @@ extension Dictionary: JSONConvertable {
 }
 
 extension String {
-	public func jsonDecode() throws -> JSONConvertable? {
+	public func jsonDecode() throws -> JSONConvertible? {
 		
 		let state = JSONDecodeState()
 		state.g = self.unicodeScalars.generate()
@@ -223,7 +223,7 @@ extension String {
 
 private class JSONDecodeState {
 	
-	struct EOF: JSONConvertable {
+	struct EOF: JSONConvertible {
 		func jsonValueString() throws -> String { return "" }
 	}
 	
@@ -239,7 +239,7 @@ private class JSONDecodeState {
 		}
 	}
 	
-	func readObject() throws -> JSONConvertable? {
+	func readObject() throws -> JSONConvertible? {
 		
 		self.movePastWhite()
 		
@@ -306,7 +306,7 @@ private class JSONDecodeState {
 				}
 			}
 			if let objid = d[JSONDecoding.objectIdentifierKey] as? String {
-				if let o = JSONDecoding.createJSONConvertableObject(objid, values: d) {
+				if let o = JSONDecoding.createJSONConvertibleObject(objid, values: d) {
 					return o
 				}
 			}
@@ -393,7 +393,7 @@ private class JSONDecodeState {
 		throw JSONConversionError.SyntaxError
 	}
 	
-	func readNumber(firstChar: UnicodeScalar) throws -> JSONConvertable {
+	func readNumber(firstChar: UnicodeScalar) throws -> JSONConvertible {
 		var s = ""
 		var needPeriod = true, needExp = true
 		s.append(firstChar)

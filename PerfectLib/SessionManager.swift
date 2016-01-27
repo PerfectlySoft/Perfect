@@ -163,7 +163,7 @@ public class SessionManager {
 						try stmt.bind(1, fullKey)
 					},
 					handleRow: {
-						(stmt: SQLiteStmt, count: Int) -> () in
+						[unowned self] (stmt: SQLiteStmt, count: Int) -> () in
 						do {
 							let lastAccess = stmt.columnDouble(1)
 							let expireMinutes = stmt.columnDouble(2)
@@ -181,7 +181,7 @@ public class SessionManager {
 							} else {
 								self.result = .Load
 								let data = stmt.columnText(0)
-								self.dictionary = try JSONDecode().decode(data) as? JSONDictionaryType
+								self.dictionary = try JSONDecoder().decode(data) as? JSONDictionaryType
 							}
 						} catch {}
 					})
@@ -230,13 +230,13 @@ public class SessionManager {
 	func commit() throws {
 		// save values
 		let fullKey = self.configuration.name + ":" + self.configuration.id
-		let encoded = try JSONEncode().encode(self.dictionary!)
+		let encoded = try JSONEncoder().encode(self.dictionary!)
 		let sqlite = try SQLite(PerfectServer.staticPerfectServer.homeDir() + serverSQLiteDBs + perfectSessionDB)
 		defer { sqlite.close() }
 		
 		try sqlite.execute("INSERT OR REPLACE INTO sessions (data,last_access,expire_minutes,session_key) " +
 							"VALUES (?,?,?,?)", doBindings: {
-			(stmt: SQLiteStmt) -> () in
+			[unowned self] (stmt: SQLiteStmt) -> () in
 			
 			try stmt.bind(1, UTF8Encoding.decode(encoded))
 			try stmt.bind(2, self.getNowSeconds())
