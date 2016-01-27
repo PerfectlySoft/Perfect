@@ -41,7 +41,7 @@ class AuthenticatingHandler: PageHandler {
 	func valuesForResponse(context: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) throws -> MustacheEvaluationContext.MapType {
 		
 		// The dictionary which we will return
-		let values = [String:Any]()
+		let values = MustacheEvaluationContext.MapType()
 		
 		if let response = context.webResponse, let request = context.webRequest {
 		

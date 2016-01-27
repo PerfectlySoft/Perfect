@@ -70,6 +70,6 @@ class RegistrationHandler: PageHandler { // all template handlers must inherit f
 					return ["title":"Registration Successful", "message":"Registration Successful", "json":json, "resultCode":0, "first":fname, "last":lname, "email":email]
 			}
 		}
-		return [String:Any]() // unreachable
+		return MustacheEvaluationContext.MapType() // unreachable
 	}
 }
