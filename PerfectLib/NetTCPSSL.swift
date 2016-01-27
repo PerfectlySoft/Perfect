@@ -372,6 +372,15 @@ public class NetTCPSSL : NetTCP {
 		return r == 1
 	}
 	
+	public func useCertificateFile(cert: String) -> Bool {
+		self.initSocket()
+		guard let sslCtx = self.sslCtx else {
+			return false
+		}
+		let r = SSL_CTX_use_certificate_file(sslCtx, cert, SSL_FILETYPE_PEM)
+		return r == 1
+	}
+	
 	public func useCertificateChainFile(cert: String) -> Bool {
 		self.initSocket()
 		guard let sslCtx = self.sslCtx else {
@@ -387,6 +396,15 @@ public class NetTCPSSL : NetTCP {
 			return false
 		}
 		let r = SSL_CTX_use_PrivateKey_file(sslCtx, cert, SSL_FILETYPE_PEM)
+		return r == 1
+	}
+	
+	public func checkPrivateKey() -> Bool {
+		self.initSocket()
+		guard let sslCtx = self.sslCtx else {
+			return false
+		}
+		let r = SSL_CTX_check_private_key(sslCtx)
 		return r == 1
 	}
 	
