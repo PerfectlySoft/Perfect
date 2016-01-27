@@ -33,13 +33,23 @@
 ///
 /// Access to the current WebRequest object is generally provided through the corresponding WebResponse object
 
-import Foundation
-
 public class WebRequest {
 	
 	var connection: WebConnection
 	
-	var documentRoot: String = ""
+	public lazy var documentRoot: String = {
+		var f = self.connection.requestParams["PERFECTSERVER_DOCUMENT_ROOT"]
+		var root = ""
+		if let r = f {
+			root = r
+		} else {
+			f = self.connection.requestParams["DOCUMENT_ROOT"]
+			if let r = f {
+				root = r
+			}
+		}
+		return root
+	}()
 	
 	private var cachedHttpAuthorization: [String:String]? = nil
 	
@@ -48,7 +58,7 @@ public class WebRequest {
 	
 	/// A `Dictionary` containing all HTTP header names and values
 	/// Only HTTP headers are included in the result. Any "meta" headers, i.e. those provided by the web server, are discarded.
-	lazy var headers: Dictionary<String, String> = {
+	public lazy var headers: Dictionary<String, String> = {
 		var d = Dictionary<String, String>()
 		for (key, value) in self.connection.requestParams {
 			if key.hasPrefix("HTTP_") {
@@ -62,13 +72,13 @@ public class WebRequest {
 	}()
 	
 	/// A tuple array containing each incoming cookie name/value pair
-	lazy var cookies: [(String, String)] = {
+	public lazy var cookies: [(String, String)] = {
 		var c = [(String, String)]()
 		let rawCookie = self.httpCookie()
 		let semiSplit = rawCookie.characters.split(";").map { String($0.filter { $0 != " " }) }
 		for cookiePair in semiSplit {
 			
-			let cookieSplit = cookiePair.characters.split("=").map { String($0.filter { $0 != " " }) }
+			let cookieSplit = cookiePair.characters.split("=", allowEmptySlices: true).map { String($0.filter { $0 != " " }) }
 			if cookieSplit.count == 2 {
 				let name = cookieSplit[0].stringByDecodingURL
 				let value = cookieSplit[1].stringByDecodingURL
@@ -87,7 +97,7 @@ public class WebRequest {
 		let semiSplit = qs.characters.split("&").map { String($0) }
 		for paramPair in semiSplit {
 			
-			let paramSplit = paramPair.characters.split("=").map { String($0) }
+			let paramSplit = paramPair.characters.split("=", allowEmptySlices: true).map { String($0) }
 			if paramSplit.count == 2 {
 				let name = paramSplit[0].stringByDecodingURL
 				let value = paramSplit[1].stringByDecodingURL
@@ -148,7 +158,7 @@ public class WebRequest {
 			let semiSplit = qs.characters.split("&").map { String($0) }
 			for paramPair in semiSplit {
 				
-				let paramSplit = paramPair.characters.split("=").map { String($0) }
+				let paramSplit = paramPair.characters.split("=", allowEmptySlices: true).map { String($0) }
 				if paramSplit.count == 2 {
 					let name = paramSplit[0].stringByReplacingString("+", withString: " ").stringByDecodingURL
 					let value = paramSplit[1].stringByReplacingString("+", withString: " ").stringByDecodingURL
@@ -302,16 +312,6 @@ public class WebRequest {
 	
 	internal init(_ c: WebConnection) {
 		self.connection = c
-		
-		var f = self.connection.requestParams["PERFECTSERVER_DOCUMENT_ROOT"]
-		if let r = f {
-			self.documentRoot = r
-		} else {
-			f = self.connection.requestParams["DOCUMENT_ROOT"]
-			if let r = f {
-				self.documentRoot = r
-			}
-		}
 	}
 	
 	private func extractField(from: String, named: String) -> String? {

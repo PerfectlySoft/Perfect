@@ -58,7 +58,7 @@ class UploadHandler: PageHandler { // all template handlers must inherit from Pa
 
 		print("UploadHandler got request")
 		
-		var values = [String:Any]()
+		var values = MustacheEvaluationContext.MapType()
 		// Grab the WebRequest so we can get information about what was uploaded
 		if let request = context.webRequest {
 			// Grab the fileUploads array and see what's there

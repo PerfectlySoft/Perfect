@@ -24,7 +24,6 @@
 //
 
 import OpenSSL
-import Foundation
 
 public class NetTCPSSL : NetTCP {
 	
