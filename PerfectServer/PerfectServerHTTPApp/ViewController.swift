@@ -51,42 +51,42 @@ class ViewController: NSViewController, NSTextFieldDelegate {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
-		view.wantsLayer = true
+		self.view.wantsLayer = true
 		
-		startStopButtonBackground?.layer?.backgroundColor = NSColor(red:0.93, green:0.32, blue:0.2, alpha:1).CGColor
-		urlButtonBackground?.layer?.backgroundColor = NSColor(red:0.22, green:0.22, blue:0.22, alpha:1).CGColor
+		self.startStopButtonBackground?.layer?.backgroundColor = NSColor(red:0.93, green:0.32, blue:0.2, alpha:1).CGColor
+		self.urlButtonBackground?.layer?.backgroundColor = NSColor(red:0.22, green:0.22, blue:0.22, alpha:1).CGColor
         
-        startStopButtonBackground?.layer?.cornerRadius = 3
-        urlButtonBackground?.layer?.cornerRadius = 3
+        self.startStopButtonBackground?.layer?.cornerRadius = 3
+        self.urlButtonBackground?.layer?.cornerRadius = 3
 		
-		savedFont = startStopButton?.cell?.font
+		self.savedFont = self.startStopButton?.cell?.font
 		
-		setBlackTextButton(startStopButton!, title: startStopButton!.title)
-		setBlackTextButton(urlButton!, title: urlButton!.title)
-		setBlackTextButton(chooseButton!, title: chooseButton!.title)
+		self.setBlackTextButton(self.startStopButton!, title: self.startStopButton!.title)
+		self.setBlackTextButton(self.urlButton!, title: self.urlButton!.title)
+		self.setBlackTextButton(self.chooseButton!, title: self.chooseButton!.title)
 	}
 
 	func setBlackTextButton(button: NSButton, title: String) {
-		let attrTitle = NSMutableAttributedString(string: title, attributes: [NSForegroundColorAttributeName: NSColor.blackColor(), NSFontAttributeName: savedFont!])
+		let attrTitle = NSMutableAttributedString(string: title, attributes: [NSForegroundColorAttributeName: NSColor.blackColor(), NSFontAttributeName: self.savedFont!])
 		button.attributedTitle = attrTitle
 	}
     
     func setWhiteTextButton(button: NSButton, title: String) {
-        let attrTitle = NSMutableAttributedString(string: title, attributes: [NSForegroundColorAttributeName: NSColor.whiteColor(), NSFontAttributeName: savedFont!])
+        let attrTitle = NSMutableAttributedString(string: title, attributes: [NSForegroundColorAttributeName: NSColor.whiteColor(), NSFontAttributeName: self.savedFont!])
         button.attributedTitle = attrTitle
     }
 	
 	override func viewWillAppear() {
 		super.viewWillAppear()
 		
-		portTextField?.stringValue = String(AppDelegate.sharedInstance.serverPort)
-		addressTextField?.stringValue = String(AppDelegate.sharedInstance.serverAddress)
-		documentRootTextField?.stringValue = String(AppDelegate.sharedInstance.documentRoot)
+		self.portTextField?.stringValue = String(AppDelegate.sharedInstance.serverPort)
+		self.addressTextField?.stringValue = String(AppDelegate.sharedInstance.serverAddress)
+		self.documentRootTextField?.stringValue = String(AppDelegate.sharedInstance.documentRoot)
 	}
 	
 	override func viewDidAppear() {
 		super.viewDidAppear()
-		updateButtonTitle()
+		self.updateButtonTitle()
 	}
 	
 	override var representedObject: AnyObject? {
@@ -105,7 +105,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
 				try appDel.startServer()
 			} catch { }
 		}
-		updateButtonTitle()
+		self.updateButtonTitle()
 	}
 	
 	@IBAction
@@ -117,7 +117,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
 		
 		if panel.runModal() == NSFileHandlingPanelOKButton {
 			if let path = panel.URL, pathPath = path.path {
-				documentRootTextField!.stringValue = pathPath
+				self.documentRootTextField!.stringValue = pathPath
 			}
 		}
 	}
@@ -140,13 +140,13 @@ class ViewController: NSViewController, NSTextFieldDelegate {
 		let appDel = AppDelegate.sharedInstance
 		let time_a = dispatch_time(0, Int64(NSEC_PER_SEC) * Int64(1))
 		
-		updateButtonTitle()
-		dispatch_after(time_a, dispatch_get_main_queue()) {
+		self.updateButtonTitle()
+		dispatch_after(time_a, dispatch_get_main_queue()) { [weak self] in
 			do {
 				try appDel.startServer()
 			} catch { }
 			dispatch_after(dispatch_time(0, Int64(NSEC_PER_SEC) * Int64(2)), dispatch_get_main_queue()) {
-				self.updateButtonTitle()
+				self?.updateButtonTitle()
 			}
 		}
 	}
@@ -157,23 +157,23 @@ class ViewController: NSViewController, NSTextFieldDelegate {
 		if wasRunning {
 			appDel.stopServer()
 		}
-		if control == portTextField! {
+		if control == self.portTextField! {
 			appDel.serverPort = UInt16(control.stringValue) ?? 8181
-		} else if control == addressTextField! {
+		} else if control == self.addressTextField! {
 			appDel.serverAddress = control.stringValue
-		} else if control == documentRootTextField! {
+		} else if control == self.documentRootTextField! {
 			appDel.documentRoot = control.stringValue
 		}
-		setBlackTextButton(urlButton!, title: serverUrl)
+		self.setBlackTextButton(self.urlButton!, title: self.serverUrl)
 		if wasRunning {
-			rebootServer()
+			self.rebootServer()
 		}
 		return true
 	}
 	
 	@IBAction
 	func openUrl(sender: NSButton) {
-		let url = serverUrl
+		let url = self.serverUrl
 		NSWorkspace.sharedWorkspace().openURL(NSURL(string: url)!)
 	}
 }

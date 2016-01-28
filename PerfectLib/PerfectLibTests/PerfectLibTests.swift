@@ -40,18 +40,43 @@ class PerfectLibTests: XCTestCase {
 		super.tearDown()
 	}
 	
-	// !FIX! broken test
-	/*
+	func testJSONConvertibleObject() {
+		
+		class Test: JSONConvertibleObject {
+			
+			static let registerName = "test"
+			
+			var one = 0
+			func setJSONValues(values: [String : Any]) {
+				self.one = getJSONValue("One", from: values, defaultValue: 42)
+			}
+			func getJSONValues() -> [String : Any] {
+				return [JSONDecoding.objectIdentifierKey:Test.registerName, "One":1]
+			}
+		}
+		
+		JSONDecoding.registerJSONDecodable(Test.registerName, creator: { return Test() })
+		
+		do {
+			let encoded = try Test().jsonEncodedString()
+			let decoded = try encoded.jsonDecode() as? Test
+			
+			XCTAssert(decoded != nil)
+			
+			XCTAssert(decoded!.one == 1)
+		} catch {
+			XCTAssert(false, "Exception \(error)")
+		}
+	}
+	
 	func testJSONEncodeDecode() {
 		
-		let srcAry: [[String:JSONValue]] = [["i": -41451, "i2": 41451, "d": -42E+2, "t": true, "f": false, "n": JSONNull(), "a":[1, 2, 3, 4]], ["another":"one"]]
-		let decode = JSONDecode()
-		let encode = JSONEncode()
+		let srcAry: [[String:Any]] = [["i": -41451, "i2": 41451, "d": -42E+2, "t": true, "f": false, "n": nil as String?, "a":[1, 2, 3, 4]], ["another":"one"]]
 		var encoded = ""
-		var decoded: JSONArrayType?
+		var decoded: [Any]?
 		do {
 			
-			encoded = try encode.encode(srcAry)
+			encoded = try srcAry.jsonEncodedString()
 			
 		} catch let e {
 			XCTAssert(false, "Exception while encoding JSON \(e)")
@@ -60,7 +85,7 @@ class PerfectLibTests: XCTestCase {
 		
 		do {
 			
-			decoded = try decode.decode(encoded) as? JSONArrayType
+			decoded = try encoded.jsonDecode() as? [Any]
 			
 		} catch let e {
 			XCTAssert(false, "Exception while decoding JSON \(e)")
@@ -69,25 +94,21 @@ class PerfectLibTests: XCTestCase {
 		
 		XCTAssert(decoded != nil)
 		
-		let resAry = decoded!.array
+		let resAry = decoded!
 		
 		XCTAssert(srcAry.count == resAry.count)
 		
 		for index in 0..<srcAry.count {
 			
 			let d1 = srcAry[index]
-			let a2 = resAry[index] as? JSONDictionaryType
-			
-			XCTAssert(a2 != nil)
-			
-			let d2 = a2!.dictionary
+			let d2 = resAry[index] as? [String:Any]
 			
 			for (key, value) in d1 {
 				
-				let value2 = d2[key]
-				
+				let value2 = d2![key]
+
 				XCTAssert(value2 != nil)
-				
+
 				switch value {
 				case let i as Int:
 					XCTAssert(i == value2 as! Int)
@@ -97,7 +118,7 @@ class PerfectLibTests: XCTestCase {
 					XCTAssert(s == value2 as! String)
 				case let s as Bool:
 					XCTAssert(s == value2 as! Bool)
-					
+
 				default:
 					()
 					// does not go on to test sub-sub-elements
@@ -106,7 +127,6 @@ class PerfectLibTests: XCTestCase {
 			
 		}
 	}
-	*/
 	
 	func testSQLite() {
 		

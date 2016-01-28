@@ -98,7 +98,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
 					print("Request succeeded with data \(strData)")
 					do {
 						if let strOk = strData {
-							let jsonDecoded = try JSONDecode().decode(strOk)
+							let jsonDecoded = try JSONDecoder().decode(strOk)
 							if let jsonMap = jsonDecoded as? JSONDictionaryType {
 								
 								if let sets = jsonMap.dictionary["resultSets"] as? JSONArrayType {

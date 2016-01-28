@@ -71,7 +71,7 @@ class TTHandler: PageHandler { // all template handlers must inherit from PageHa
 	func valuesForResponse(context: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) throws -> MustacheEvaluationContext.MapType {
 
 		// The dictionary which we will return
-		var values = [String:Any]()
+		var values = MustacheEvaluationContext.MapType()
 
 		print("TTHandler got request")
 

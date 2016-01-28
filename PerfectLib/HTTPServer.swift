@@ -64,15 +64,10 @@ public class HTTPServer {
 		let socket = NetTCP()
 		socket.initSocket()
 		try socket.bind(port, address: bindAddress)
-		socket.listen()
-		
-		self.net = socket
-		
-		defer { socket.close() }
 		
 		print("Starting HTTP server on \(bindAddress):\(port) with document root \(self.documentRoot)")
 		
-		self.start()
+		try self.startInner(socket)
 	}
 	
 	/// Start the server on the indicated TCP port and optional address.
@@ -87,17 +82,33 @@ public class HTTPServer {
 		
 		let socket = NetTCPSSL()
 		socket.initSocket()
-		socket.useCertificateChainFile(sslCert)
-		socket.usePrivateKeyFile(sslKey)
+		
+		guard socket.useCertificateChainFile(sslCert) else {
+			let code = Int32(socket.errorCode())
+			throw PerfectError.NetworkError(code, "Error setting certificate chain file: \(socket.errorStr(code))")
+		}
+		
+		guard socket.usePrivateKeyFile(sslKey) else {
+			let code = Int32(socket.errorCode())
+			throw PerfectError.NetworkError(code, "Error setting private key file: \(socket.errorStr(code))")
+		}
+		
+		guard socket.checkPrivateKey() else {
+			let code = Int32(socket.errorCode())
+			throw PerfectError.NetworkError(code, "Error validating private key file: \(socket.errorStr(code))")
+		}
+		
 		try socket.bind(port, address: bindAddress)
-		socket.listen()
-		
-		self.net = socket
-		
-		defer { socket.close() }
-		
+
 		print("Starting HTTPS server on \(bindAddress):\(port) with document root \(self.documentRoot)")
 		
+		try self.startInner(socket)
+	}
+	
+	private func startInner(socket: NetTCP) throws {
+		socket.listen()
+		self.net = socket
+		defer { socket.close() }
 		self.start()
 	}
 	
@@ -108,11 +119,11 @@ public class HTTPServer {
 			self.serverAddress = n.sockName().0
 			
 			n.forEachAccept {
-				(net: NetTCP?) -> () in
+				[weak self] (net: NetTCP?) -> () in
 				
 				if let n = net {
 					Threading.dispatchBlock {
-						self.handleConnection(n)
+						self?.handleConnection(n)
 					}
 				}
 			}
@@ -391,10 +402,10 @@ public class HTTPServer {
 				return
 			}
 			self.connection.readSomeBytes(size) {
-				(b:[UInt8]?) in
+				[weak self] (b:[UInt8]?) in
 				
 				if b == nil || b!.count == 0 {
-					self.connection.readBytesFully(1, timeoutSeconds: httpReadTimeout) {
+					self?.connection.readBytesFully(1, timeoutSeconds: httpReadTimeout) {
 						(b:[UInt8]?) in
 						
 						guard b != nil else {
@@ -402,12 +413,12 @@ public class HTTPServer {
 							return
 						}
 						
-						self.putStdinData(b!)
-						self.readBody(size - 1, callback: callback)
+						self?.putStdinData(b!)
+						self?.readBody(size - 1, callback: callback)
 					}
 				} else {
-					self.putStdinData(b!)
-					self.readBody(size - b!.count, callback: callback)
+					self?.putStdinData(b!)
+					self?.readBody(size - b!.count, callback: callback)
 				}
 			}
 		}

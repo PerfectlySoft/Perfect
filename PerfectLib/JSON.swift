@@ -29,22 +29,22 @@ import SwiftGlibc
 import Darwin
 #endif
 
-let jsonOpenObject = UnicodeScalar(UInt32(123))
-let jsonOpenArray = UnicodeScalar(UInt32(91))
-let jsonCloseObject = UnicodeScalar(UInt32(125))
-let jsonCloseArray = UnicodeScalar(UInt32(93))
-let jsonQuoteDouble = UnicodeScalar(UInt32(34))
-let jsonWhiteSpace = UnicodeScalar(UInt32(32))
-let jsonColon = UnicodeScalar(UInt32(58))
-let jsonComma = UnicodeScalar(UInt32(44))
-let jsonBackSlash = UnicodeScalar(UInt32(92))
+private let jsonOpenObject = UnicodeScalar(UInt32(123))
+private let jsonOpenArray = UnicodeScalar(UInt32(91))
+private let jsonCloseObject = UnicodeScalar(UInt32(125))
+private let jsonCloseArray = UnicodeScalar(UInt32(93))
+private let jsonQuoteDouble = UnicodeScalar(UInt32(34))
+private let jsonWhiteSpace = UnicodeScalar(UInt32(32))
+private let jsonColon = UnicodeScalar(UInt32(58))
+private let jsonComma = UnicodeScalar(UInt32(44))
+private let jsonBackSlash = UnicodeScalar(UInt32(92))
 
-let jsonBackSpace = UnicodeScalar(UInt32(8))
-let jsonFormFeed = UnicodeScalar(UInt32(12))
+private let jsonBackSpace = UnicodeScalar(UInt32(8))
+private let jsonFormFeed = UnicodeScalar(UInt32(12))
 
-let jsonLF = UnicodeScalar(UInt32(10))
-let jsonCR = UnicodeScalar(UInt32(13))
-let jsonTab = UnicodeScalar(UInt32(9))
+private let jsonLF = UnicodeScalar(UInt32(10))
+private let jsonCR = UnicodeScalar(UInt32(13))
+private let jsonTab = UnicodeScalar(UInt32(9))
 
 public typealias JSONKey = String
 public typealias JSONValue = Any
@@ -84,7 +84,7 @@ class KeyPair {
 /// - `JSONDictionary`
 /// - `Array<JSONValue>`
 /// - `Dictionary<String, JSONValue>`
-public class JSONEncode {
+public class JSONEncoder {
 	
 	/// Empty public initializer
 	public init() {
@@ -139,6 +139,8 @@ public class JSONEncode {
 		return s
 	}
 	
+    /// Encode a `JSONValue` into a JSON string
+    /// - throws: A `JSONError.UnhandledType` exception
 	func encodeValue(value: JSONValue) throws -> String {
 		
 		switch(value) {
@@ -165,6 +167,7 @@ public class JSONEncode {
 		}
 	}
 	
+    /// Encode a `String` into a JSON string
 	func encodeString(src: String) -> String {
 		var s = "\""
 		for uchar in src.unicodeScalars {
@@ -191,18 +194,24 @@ public class JSONEncode {
 		return s
 	}
 	
-	func encodeInt(i: Int) -> String {
+    /// Encode an `Int` into a JSON string
+ 	func encodeInt(i: Int) -> String {
 		return String(i)
 	}
-	
+    
+	/// Encode a `Double` into a JSON string
 	func encodeDouble(d: Double) -> String {
 		return String(d)
 	}
 	
+    /// Encode an `Array` into a JSON string
+    /// - throws: A `JSONError.UnhandledType` exception
 	func encodeArray(a: Array<JSONValue>) throws -> String {
 		return try encode(a)
 	}
 	
+    /// Encode a `Dictionary<String, JSONValue>` intot a JSON string
+    /// - throws: A `JSONError.UnhandledType` exception
 	func encodeDictionary(d: Dictionary<String, JSONValue>) throws -> String {
 		return try encode(d)
 	}
@@ -269,7 +278,7 @@ private let malformedJSONString = "Malformed JSON string"
 /// - `JSONNull`
 /// - `JSONArray`
 /// - `JSONDictionary`
-public class JSONDecode {
+public class JSONDecoder {
 	
 	var stack = Array<JSONValue>()
 	var exit: JSONValue?

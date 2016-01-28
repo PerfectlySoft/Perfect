@@ -36,7 +36,7 @@ class NullHandler: AuthenticatingHandler { // all template handlers must inherit
 	// - parameter collector: The MustacheEvaluationOutputCollector which can be used to adjust the template output. For example a `defaultEncodingFunc` could be installed to change how outgoing values are encoded.
 	override func valuesForResponse(context: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) throws -> MustacheEvaluationContext.MapType {
 		
-		return [String:Any]()
+		return MustacheEvaluationContext.MapType()
 	}
 	
 }
