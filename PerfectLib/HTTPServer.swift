@@ -83,9 +83,9 @@ public class HTTPServer {
 		let socket = NetTCPSSL()
 		socket.initSocket()
 		
-		guard socket.useCertificateFile(sslCert) else {
+		guard socket.useCertificateChainFile(sslCert) else {
 			let code = Int32(socket.errorCode())
-			throw PerfectError.NetworkError(code, "Error setting certificate file: \(socket.errorStr(code))")
+			throw PerfectError.NetworkError(code, "Error setting certificate chain file: \(socket.errorStr(code))")
 		}
 		
 		guard socket.usePrivateKeyFile(sslKey) else {
