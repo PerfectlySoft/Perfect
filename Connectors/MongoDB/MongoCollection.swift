@@ -66,7 +66,7 @@ public struct MongoQueryFlag: OptionSetType {
 	public let rawValue: Int
 
 	var queryFlags: mongoc_query_flags_t {
-		return mongoc_query_flags_t(UInt32(self.rawValue))
+		return mongoc_query_flags_t(UInt32(rawValue))
 	}
 
 	public init(rawValue: Int) {
@@ -105,27 +105,27 @@ public class MongoIndexOptionsGeo {
 	var rawOpt = UnsafeMutablePointer<mongoc_index_opt_geo_t>.alloc(1)
 
 	public init(twodSphereVersion: UInt8? = nil, twodBitsPrecision: UInt8? = nil, twodLocationMin: Double? = nil, twodLocationMax: Double? = nil, haystackBucketSize: Double? = nil) {
-		mongoc_index_opt_geo_init(self.rawOpt)
+		mongoc_index_opt_geo_init(rawOpt)
 		if let twodSphereVersion = twodSphereVersion {
-			self.rawOpt.memory.twod_sphere_version = twodSphereVersion
+			rawOpt.memory.twod_sphere_version = twodSphereVersion
 		}
 		if let twodBitsPrecision = twodBitsPrecision {
-			self.rawOpt.memory.twod_bits_precision = twodBitsPrecision
+			rawOpt.memory.twod_bits_precision = twodBitsPrecision
 		}
 		if let twodLocationMin = twodLocationMin {
-			self.rawOpt.memory.twod_location_min = twodLocationMin
+			rawOpt.memory.twod_location_min = twodLocationMin
 		}
 		if let twodLocationMax = twodLocationMax {
-			self.rawOpt.memory.twod_location_max = twodLocationMax
+			rawOpt.memory.twod_location_max = twodLocationMax
 		}
 		if let haystackBucketSize = haystackBucketSize {
-			self.rawOpt.memory.haystack_bucket_size = haystackBucketSize
+			rawOpt.memory.haystack_bucket_size = haystackBucketSize
 		}
 	}
 
 	deinit {
-		self.rawOpt.destroy(1)
-		self.rawOpt.dealloc(1)
+		rawOpt.destroy(1)
+		rawOpt.dealloc(1)
 	}
 }
 
@@ -144,49 +144,49 @@ public class MongoIndexOptions {
 	public init(name: String? = nil, background: Bool? = nil, unique: Bool? = nil, dropDups: Bool? = nil, sparse: Bool? = nil,
 				expireAfterSeconds: Int32? = nil, v: Int32? = nil, defaultLanguage: String? = nil, languageOverride: String? = nil,
 		weights: BSON? = nil, geoOptions: MongoIndexOptionsGeo? = nil, storageOptions: MongoIndexStorageOptionType? = nil) {
-		mongoc_index_opt_init(&self.rawOpt)
+		mongoc_index_opt_init(&rawOpt)
 
-		self.nameNil = self.rawOpt.name == nil
-		self.defLangNil = self.rawOpt.default_language == nil
-		self.langOverNil = self.rawOpt.language_override == nil
+		nameNil = rawOpt.name == nil
+		defLangNil = rawOpt.default_language == nil
+		langOverNil = rawOpt.language_override == nil
 
 		if let name = name {
-			self.nameNil = true
-			self.rawOpt.name = UnsafePointer<Int8>(strdup(name))
+			nameNil = true
+			rawOpt.name = UnsafePointer<Int8>(strdup(name))
 		}
 		if let background = background {
-			self.rawOpt.background = background
+			rawOpt.background = background
 		}
 		if let unique = unique {
-			self.rawOpt.unique = unique
+			rawOpt.unique = unique
 		}
 		if let dropDups = dropDups {
-			self.rawOpt.drop_dups = dropDups
+			rawOpt.drop_dups = dropDups
 		}
 		if let sparse = sparse {
-			self.rawOpt.sparse = sparse
+			rawOpt.sparse = sparse
 		}
 		if let expireAfterSeconds = expireAfterSeconds {
-			self.rawOpt.expire_after_seconds = expireAfterSeconds
+			rawOpt.expire_after_seconds = expireAfterSeconds
 		}
 		if let v = v {
-			self.rawOpt.v = v
+			rawOpt.v = v
 		}
 		if let defaultLanguage = defaultLanguage {
-			self.defLangNil = true
-			self.rawOpt.default_language = UnsafePointer<Int8>(strdup(defaultLanguage))
+			defLangNil = true
+			rawOpt.default_language = UnsafePointer<Int8>(strdup(defaultLanguage))
 		}
 		if let languageOverride = languageOverride {
-			self.langOverNil = true
-			self.rawOpt.language_override = UnsafePointer<Int8>(strdup(languageOverride))
+			langOverNil = true
+			rawOpt.language_override = UnsafePointer<Int8>(strdup(languageOverride))
 		}
 		if let weights = weights {
-			self.weightsDoc = weights // reference this so the ptr doesn't disappear beneath us
-			self.rawOpt.weights = UnsafePointer<bson_t>(weights.doc)
+			weightsDoc = weights // reference this so the ptr doesn't disappear beneath us
+			rawOpt.weights = UnsafePointer<bson_t>(weights.doc)
 		}
 		if let geoOptions = geoOptions {
 			self.geoOptions = geoOptions
-			self.rawOpt.geo_options = geoOptions.rawOpt
+			rawOpt.geo_options = geoOptions.rawOpt
 		}
 		if let storageOptions = storageOptions {
 			self.storageOptions = UnsafeMutablePointer<mongoc_index_opt_storage_t>.alloc(1)
@@ -195,17 +195,17 @@ public class MongoIndexOptions {
 	}
 
 	deinit {
-		if self.nameNil && self.rawOpt.name != nil {
-			free(UnsafeMutablePointer<()>(self.rawOpt.name))
+		if nameNil && rawOpt.name != nil {
+			free(UnsafeMutablePointer<()>(rawOpt.name))
 		}
-		if self.defLangNil && self.rawOpt.default_language != nil {
-			free(UnsafeMutablePointer<()>(self.rawOpt.default_language))
+		if defLangNil && rawOpt.default_language != nil {
+			free(UnsafeMutablePointer<()>(rawOpt.default_language))
 		}
-		if self.langOverNil && self.rawOpt.language_override != nil {
-			free(UnsafeMutablePointer<()>(self.rawOpt.language_override))
+		if langOverNil && rawOpt.language_override != nil {
+			free(UnsafeMutablePointer<()>(rawOpt.language_override))
 		}
-		if self.storageOptions != nil {
-			self.storageOptions!.dealloc(1)
+		if storageOptions != nil {
+			storageOptions!.dealloc(1)
 		}
 	}
 }
@@ -230,23 +230,23 @@ public class MongoCollection {
 	public typealias Result = MongoResult
 
 	public init(client: MongoClient, databaseName: String, collectionName: String) {
-		self.ptr = mongoc_client_get_collection(client.ptr, databaseName, collectionName)
+		ptr = mongoc_client_get_collection(client.ptr, databaseName, collectionName)
 	}
 
 	init(rawPtr: COpaquePointer) {
-		self.ptr = rawPtr
+		ptr = rawPtr
 	}
 
 	public func close() {
-		if self.ptr != nil {
-			mongoc_collection_destroy(self.ptr)
-			self.ptr = nil
+		if ptr != nil {
+			mongoc_collection_destroy(ptr)
+			ptr = nil
 		}
 	}
 
 	public func insert(document: BSON, flag: MongoInsertFlag = .None) -> Result {
 		var error = bson_error_t()
-		let res = mongoc_collection_insert(self.ptr, flag.mongoFlag, document.doc, nil, &error)
+		let res = mongoc_collection_insert(ptr, flag.mongoFlag, document.doc, nil, &error)
 		guard res == true else {
 			return Result.fromError(error)
 		}
@@ -255,7 +255,7 @@ public class MongoCollection {
 
 	public func update(update: BSON, selector: BSON, flag: MongoUpdateFlag = .None) -> Result {
 		var error = bson_error_t()
-		let res = mongoc_collection_update(self.ptr, flag.mongoFlag, selector.doc, update.doc, nil, &error)
+		let res = mongoc_collection_update(ptr, flag.mongoFlag, selector.doc, update.doc, nil, &error)
 		guard res == true else {
 			return Result.fromError(error)
 		}
@@ -264,7 +264,7 @@ public class MongoCollection {
 
 	public func remove(selector: BSON, flag: MongoRemoveFlag = .None) -> Result {
 		var error = bson_error_t()
-		let res = mongoc_collection_remove(self.ptr, flag.mongoFlag, selector.doc, nil, &error)
+		let res = mongoc_collection_remove(ptr, flag.mongoFlag, selector.doc, nil, &error)
 		guard res == true else {
 			return Result.fromError(error)
 		}
@@ -273,7 +273,7 @@ public class MongoCollection {
 
 	public func save(document: BSON) -> Result {
 		var error = bson_error_t()
-		let res = mongoc_collection_save(self.ptr, document.doc, nil, &error)
+		let res = mongoc_collection_save(ptr, document.doc, nil, &error)
 		guard res == true else {
 			return Result.fromError(error)
 		}
@@ -282,7 +282,7 @@ public class MongoCollection {
 
 	public func rename(newDbName: String, newCollectionName: String, dropExisting: Bool) -> Result {
 		var error = bson_error_t()
-		let res = mongoc_collection_rename(self.ptr, newDbName, newCollectionName, dropExisting, &error)
+		let res = mongoc_collection_rename(ptr, newDbName, newCollectionName, dropExisting, &error)
 		guard res == true else {
 			return Result.fromError(error)
 		}
@@ -290,13 +290,13 @@ public class MongoCollection {
 	}
 
 	public func name() -> String {
-		return String.fromCString(mongoc_collection_get_name(self.ptr))!
+		return String.fromCString(mongoc_collection_get_name(ptr))!
 	}
 
 	public func validate(options: BSON) -> Result {
 		var error = bson_error_t()
 		let reply = BSON()
-		let res = mongoc_collection_validate(self.ptr, options.doc, reply.doc, &error)
+		let res = mongoc_collection_validate(ptr, options.doc, reply.doc, &error)
 		guard res == true else {
 			return Result.fromError(error)
 		}
@@ -306,7 +306,7 @@ public class MongoCollection {
 	public func stats(options: BSON) -> Result {
 		var error = bson_error_t()
 		let reply = BSON()
-		let res = mongoc_collection_stats(self.ptr, options.doc, reply.doc, &error)
+		let res = mongoc_collection_stats(ptr, options.doc, reply.doc, &error)
 		guard res == true else {
 			return Result.fromError(error)
 		}
@@ -314,7 +314,7 @@ public class MongoCollection {
 	}
 
 	public func find(query: BSON, fields: BSON? = nil, flags: MongoQueryFlag = MongoQueryFlag.None, skip: Int = 0, limit: Int = 0, batchSize: Int = 0) -> MongoCursor? {
-		let cursor = mongoc_collection_find(self.ptr, flags.queryFlags, UInt32(skip), UInt32(limit), UInt32(batchSize), query.doc, fields == nil ? nil : fields!.doc, nil)
+		let cursor = mongoc_collection_find(ptr, flags.queryFlags, UInt32(skip), UInt32(limit), UInt32(batchSize), query.doc, fields == nil ? nil : fields!.doc, nil)
 		guard cursor != nil else {
 			return nil
 		}
@@ -323,7 +323,7 @@ public class MongoCollection {
 
 	public func createIndex(keys: BSON, options: MongoIndexOptions) -> Result {
 		var error = bson_error_t()
-		let res = mongoc_collection_create_index(self.ptr, keys.doc, &options.rawOpt, &error)
+		let res = mongoc_collection_create_index(ptr, keys.doc, &options.rawOpt, &error)
 		guard res == true else {
 			return Result.fromError(error)
 		}
@@ -332,7 +332,7 @@ public class MongoCollection {
 
 	public func dropIndex(name: String) -> Result {
 		var error = bson_error_t()
-		let res = mongoc_collection_drop_index(self.ptr, name, &error)
+		let res = mongoc_collection_drop_index(ptr, name, &error)
 		guard res == true else {
 			return Result.fromError(error)
 		}
@@ -341,7 +341,7 @@ public class MongoCollection {
 
 	public func drop() -> Result {
 		var error = bson_error_t()
-		let res = mongoc_collection_drop(self.ptr, &error)
+		let res = mongoc_collection_drop(ptr, &error)
 		guard res == true else {
 			return Result.fromError(error)
 		}
@@ -350,7 +350,7 @@ public class MongoCollection {
 
 	public func count(query: BSON, fields: BSON? = nil, flags: MongoQueryFlag = MongoQueryFlag.None, skip: Int = 0, limit: Int = 0, batchSize: Int = 0) -> Result {
 		var error = bson_error_t()
-		let ires = mongoc_collection_count(self.ptr, flags.queryFlags, query.doc, Int64(skip), Int64(limit), nil, &error)
+		let ires = mongoc_collection_count(ptr, flags.queryFlags, query.doc, Int64(skip), Int64(limit), nil, &error)
 		guard ires != -1 else {
 			return Result.fromError(error)
 		}
@@ -360,7 +360,7 @@ public class MongoCollection {
 	public func findAndModify(query: BSON, sort: BSON, update: BSON, fields: BSON, remove: Bool, upsert: Bool, new: Bool) -> Result {
 		var error = bson_error_t()
 		let reply = BSON()
-		let res = mongoc_collection_find_and_modify(self.ptr, query.doc, sort.doc, update.doc, fields.doc, remove, upsert, new, reply.doc, &error)
+		let res = mongoc_collection_find_and_modify(ptr, query.doc, sort.doc, update.doc, fields.doc, remove, upsert, new, reply.doc, &error)
 		guard res == true else {
 			return Result.fromError(error)
 		}
@@ -368,7 +368,7 @@ public class MongoCollection {
 	}
 
 	public func getLastError() -> BSON {
-		let reply = mongoc_collection_get_last_error(self.ptr)
+		let reply = mongoc_collection_get_last_error(ptr)
 		return NoDestroyBSON(rawBson: UnsafeMutablePointer(reply))
 	}
 

@@ -48,7 +48,7 @@ class PerfectLibTests: XCTestCase {
 			
 			var one = 0
 			func setJSONValues(values: [String : Any]) {
-				self.one = getJSONValue("One", from: values, defaultValue: 42)
+				one = getJSONValue("One", from: values, defaultValue: 42)
 			}
 			func getJSONValues() -> [String : Any] {
 				return [JSONDecoding.objectIdentifierKey:Test.registerName, "One":1]
@@ -413,8 +413,8 @@ class PerfectLibTests: XCTestCase {
 			try server.bind(port)
 			server.listen()
 			
-			let serverExpectation = self.expectationWithDescription("server")
-			let clientExpectation = self.expectationWithDescription("client")
+			let serverExpectation = expectationWithDescription("server")
+			let clientExpectation = expectationWithDescription("client")
 			
 			try server.accept(-1.0) {
 				(inn: NetTCP?) -> () in
@@ -469,7 +469,7 @@ class PerfectLibTests: XCTestCase {
 				}
 			}
 			
-			self.waitForExpectationsWithTimeout(10000, handler: {
+			waitForExpectationsWithTimeout(10000, handler: {
 				(_: NSError?) in
 				server.close()
 				client.close()
@@ -689,7 +689,7 @@ class PerfectLibTests: XCTestCase {
 		let address = "www.treefrog.ca"
 		let requestString = [UInt8](("GET / HTTP/1.0\r\nHost: \(address)\r\n\r\n").utf8)
 		let requestCount = requestString.count
-		let clientExpectation = self.expectationWithDescription("client")
+		let clientExpectation = expectationWithDescription("client")
 		let net = NetTCPSSL()
 		
 		let setOk = net.setDefaultVerifyPaths()
@@ -753,7 +753,7 @@ class PerfectLibTests: XCTestCase {
 			XCTAssert(false, "Exception thrown")
 		}
 		
-		self.waitForExpectationsWithTimeout(10000) {
+		waitForExpectationsWithTimeout(10000) {
 			(_: NSError?) in
 			net.close()
 		}
@@ -816,7 +816,7 @@ class PerfectLibTests: XCTestCase {
 	
 	func testPathComponentsExPerformance() {
 		let s = "/foo/bar/baz/bilbo/bucket/salami"
-		self.measureBlock {
+		measureBlock {
 			
 			for _ in 0..<100000 {
 				s.pathComponents.count
@@ -827,7 +827,7 @@ class PerfectLibTests: XCTestCase {
 	
 	func testPathComponentsNatPerformance() {
 		let s = "/foo/bar/baz/bilbo/bucket/salami" as NSString
-		self.measureBlock {
+		measureBlock {
 			
 			for _ in 0..<100000 {
 				s.pathComponents.count
@@ -838,7 +838,7 @@ class PerfectLibTests: XCTestCase {
 	
 	func testPathComponentsSplitPerformance() {
 		let s = "/foo/bar/baz/bilbo/bucket/salami"
-		self.measureBlock {
+		measureBlock {
 			
 			for _ in 0..<100000 {
 				s.characters.split(Character("/")).map { String($0) } .count

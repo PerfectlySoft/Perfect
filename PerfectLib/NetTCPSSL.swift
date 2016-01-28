@@ -36,11 +36,11 @@ public class NetTCPSSL : NetTCP {
 		}
 		
 		deinit {
-			X509_free(self.ptr)
+			X509_free(ptr)
 		}
 		
 		public var publicKeyBytes: [UInt8] {
-			let pk = X509_get_pubkey(self.ptr)
+			let pk = X509_get_pubkey(ptr)
 			let len = Int(i2d_PUBKEY(pk, nil))
 			var mp = UnsafeMutablePointer<UInt8>()
 			defer {
@@ -67,12 +67,12 @@ public class NetTCPSSL : NetTCP {
 	
 	public var keyFilePassword: String = "" {
 		didSet {
-			if !self.keyFilePassword.isEmpty {
+			if !keyFilePassword.isEmpty {
 				
-				self.initSocket()
+				initSocket()
 
 				// !FIX!
-//				SSL_CTX_set_default_passwd_cb(self.sslCtx!, passwordCallback)
+//				SSL_CTX_set_default_passwd_cb(sslCtx!, passwordCallback)
 				
 			}
 		}
@@ -90,7 +90,7 @@ public class NetTCPSSL : NetTCP {
 	}
 	
 	public var usingSSL: Bool {
-		return self.sslCtx != nil
+		return sslCtx != nil
 	}
 	
 	public override init() {
@@ -108,32 +108,32 @@ public class NetTCPSSL : NetTCP {
 			SSL_shutdown(ssl)
 			SSL_free(ssl)
 		}
-		if let sslCtx = self.sslCtx where self.sharedSSLCtx == false {
+		if let sslCtx = self.sslCtx where sharedSSLCtx == false {
 			SSL_CTX_free(sslCtx)
 		}
 	}
 	
 	func passwordCallback(buf:UnsafeMutablePointer<Int8>, size:Int32, rwflag:Int32, userData:UnsafeMutablePointer<Void>) -> Int32 {
-		let chars = self.keyFilePassword.utf8
-		memmove(buf, self.keyFilePassword, chars.count + 1)
+		let chars = keyFilePassword.utf8
+		memmove(buf, keyFilePassword, chars.count + 1)
 		return Int32(chars.count)
 	}
 
 	override public func initSocket() {
 		super.initSocket()
-		guard self.sslCtx == nil else {
+		guard sslCtx == nil else {
 			return
 		}
-		self.sslCtx = SSL_CTX_new(TLSv1_method())
+		sslCtx = SSL_CTX_new(TLSv1_method())
 		guard let sslCtx = self.sslCtx else {
 			return
 		}
-		self.sharedSSLCtx = false
+		sharedSSLCtx = false
 		SSL_CTX_ctrl(sslCtx, SSL_CTRL_MODE, SSL_MODE_AUTO_RETRY, nil)
 		SSL_CTX_ctrl(sslCtx, SSL_CTRL_OPTIONS, SSL_OP_ALL, nil)
 		
-		self.ssl = SSL_new(sslCtx)
-		SSL_set_fd(self.ssl!, self.fd.fd)
+		ssl = SSL_new(sslCtx)
+		SSL_set_fd(ssl!, fd.fd)
 	}
 	
 	public func errorCode() -> UInt {
@@ -167,8 +167,8 @@ public class NetTCPSSL : NetTCP {
 	}
 	
 	override func isEAgain(err: Int) -> Bool {
-		if err == -1 && self.usingSSL {
-			let sslErr = SSL_get_error(self.ssl!, Int32(err))
+		if err == -1 && usingSSL {
+			let sslErr = SSL_get_error(ssl!, Int32(err))
 			if sslErr != SSL_ERROR_SYSCALL {
 				return sslErr == SSL_ERROR_WANT_READ || sslErr == SSL_ERROR_WANT_WRITE
 			}
@@ -177,8 +177,8 @@ public class NetTCPSSL : NetTCP {
 	}
 	
 	override func evWhatFor(operation: Int32) -> Int32 {
-		if self.usingSSL {
-			let sslErr = SSL_get_error(self.ssl!, -1)
+		if usingSSL {
+			let sslErr = SSL_get_error(ssl!, -1)
 			if sslErr == SSL_ERROR_WANT_READ {
 				return EV_READ
 			} else if sslErr == SSL_ERROR_WANT_WRITE {
@@ -189,16 +189,16 @@ public class NetTCPSSL : NetTCP {
 	}
 	
 	override func recv(buf: UnsafeMutablePointer<Void>, count: Int) -> Int {
-		if self.usingSSL {
-			let i = Int(SSL_read(self.ssl!, buf, Int32(count)))
+		if usingSSL {
+			let i = Int(SSL_read(ssl!, buf, Int32(count)))
 			return i
 		}
 		return super.recv(buf, count: count)
 	}
 	
 	override func send(buf: UnsafePointer<Void>, count: Int) -> Int {
-		if self.usingSSL {
-			let i = Int(SSL_write(self.ssl!, buf, Int32(count)))
+		if usingSSL {
+			let i = Int(SSL_write(ssl!, buf, Int32(count)))
 			return i
 		}
 		return super.send(buf, count: count)
@@ -209,7 +209,7 @@ public class NetTCPSSL : NetTCP {
 			return super.readBytesFullyIncomplete(into, read: read, remaining: remaining, timeoutSeconds: timeoutSeconds, completion: completion)
 		}
 		var what = EV_WRITE
-		let sslErr = SSL_get_error(self.ssl!, -1)
+		let sslErr = SSL_get_error(ssl!, -1)
 		if sslErr == SSL_ERROR_WANT_READ {
 			what = EV_READ
 		}
@@ -231,7 +231,7 @@ public class NetTCPSSL : NetTCP {
 			return super.writeBytesIncomplete(nptr, wrote: wrote, length: length, completion: completion)
 		}
 		var what = EV_WRITE
-		let sslErr = SSL_get_error(self.ssl!, -1)
+		let sslErr = SSL_get_error(ssl!, -1)
 		if sslErr == SSL_ERROR_WANT_READ {
 			what = EV_READ
 		}
@@ -250,19 +250,19 @@ public class NetTCPSSL : NetTCP {
 			SSL_free(ssl)
 			self.ssl = nil
 		}
-		if let sslCtx = self.sslCtx where self.sharedSSLCtx == false {
+		if let sslCtx = self.sslCtx where sharedSSLCtx == false {
 			SSL_CTX_free(sslCtx)
 		}
-		self.sslCtx = nil
+		sslCtx = nil
 		super.close()
 	}
 	
 	public func beginSSL(closure: (Bool) -> ()) {
-		self.beginSSL(5.0, closure: closure)
+		beginSSL(5.0, closure: closure)
 	}
 	
 	public func beginSSL(timeout: Double, closure: (Bool) -> ()) {
-		guard self.fd.fd != invalidSocket else {
+		guard fd.fd != invalidSocket else {
 			closure(false)
 			return
 		}
@@ -355,7 +355,7 @@ public class NetTCPSSL : NetTCP {
 	}
 	
 	public func setDefaultVerifyPaths() -> Bool {
-		self.initSocket()
+		initSocket()
 		guard let sslCtx = self.sslCtx else {
 			return false
 		}
@@ -364,7 +364,7 @@ public class NetTCPSSL : NetTCP {
 	}
 	
 	public func setVerifyLocations(caFilePath: String, caDirPath: String) -> Bool {
-		self.initSocket()
+		initSocket()
 		guard let sslCtx = self.sslCtx else {
 			return false
 		}
@@ -373,7 +373,7 @@ public class NetTCPSSL : NetTCP {
 	}
 	
 	public func useCertificateFile(cert: String) -> Bool {
-		self.initSocket()
+		initSocket()
 		guard let sslCtx = self.sslCtx else {
 			return false
 		}
@@ -382,7 +382,7 @@ public class NetTCPSSL : NetTCP {
 	}
 	
 	public func useCertificateChainFile(cert: String) -> Bool {
-		self.initSocket()
+		initSocket()
 		guard let sslCtx = self.sslCtx else {
 			return false
 		}
@@ -391,7 +391,7 @@ public class NetTCPSSL : NetTCP {
 	}
 	
 	public func usePrivateKeyFile(cert: String) -> Bool {
-		self.initSocket()
+		initSocket()
 		guard let sslCtx = self.sslCtx else {
 			return false
 		}
@@ -400,7 +400,7 @@ public class NetTCPSSL : NetTCP {
 	}
 	
 	public func checkPrivateKey() -> Bool {
-		self.initSocket()
+		initSocket()
 		guard let sslCtx = self.sslCtx else {
 			return false
 		}
