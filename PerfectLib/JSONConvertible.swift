@@ -174,6 +174,25 @@ extension Bool: JSONConvertible {
 	}
 }
 
+// !FIX! Downcasting to protocol dows not work on Linux
+// Not sure if this is intentional, or a bug.
+private func jsonEncodedStringWorkAround(o: Any) throws -> String {
+	switch o {
+	case let jsonAble as JSONConvertible:
+		return try jsonAble.jsonEncodedString()
+	case let jsonAble as String:
+		return try jsonAble.jsonEncodedString()
+	case let jsonAble as Int:
+		return try jsonAble.jsonEncodedString()
+	case let jsonAble as Double:
+		return try jsonAble.jsonEncodedString()
+	case let jsonAble as Bool:
+		return try jsonAble.jsonEncodedString()
+	default:
+		throw JSONConversionError.NotConvertible(o)
+	}
+}
+
 extension Array: JSONConvertible {
 	public func jsonEncodedString() throws -> String {
 		var s = "["
@@ -184,10 +203,7 @@ extension Array: JSONConvertible {
 			} else {
 				first = false
 			}
-			guard let jsonAble = v as? JSONConvertible else {
-				throw JSONConversionError.NotConvertible(v)
-			}
-			s.appendContentsOf(try jsonAble.jsonEncodedString())
+			s.appendContentsOf(try jsonEncodedStringWorkAround(v))
 		}
 		s.appendContentsOf("]")
 		return s
@@ -204,9 +220,6 @@ extension Dictionary: JSONConvertible {
 			guard let strKey = k as? String else {
 				throw JSONConversionError.InvalidKey(k)
 			}
-			guard let jsonAble = v as? JSONConvertible else {
-				throw JSONConversionError.NotConvertible(v)
-			}
 			if !first {
 				s.appendContentsOf(",")
 			} else {
@@ -214,7 +227,7 @@ extension Dictionary: JSONConvertible {
 			}
 			s.appendContentsOf(try strKey.jsonEncodedString())
 			s.appendContentsOf(":")
-			s.appendContentsOf(try jsonAble.jsonEncodedString())
+			s.appendContentsOf(try jsonEncodedStringWorkAround(v))
 		}
 		
 		s.appendContentsOf("}")
