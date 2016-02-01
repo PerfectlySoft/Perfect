@@ -99,7 +99,8 @@ public class HTTPServer {
 			"ECDHE-RSA-AES256-SHA384",
 			"ECDHE-ECDSA-AES256-SHA384",
 			"ECDHE-RSA-AES256-SHA",
-			"ECDHE-ECDSA-AES256-SHA",
+			"ECDHE-ECDSA-AES256-SHA"
+			/*,
 			"SRP-DSS-AES-256-CBC-SHA",
 			"SRP-RSA-AES-256-CBC-SHA",
 			"SRP-AES-256-CBC-SHA",
@@ -195,6 +196,7 @@ public class HTTPServer {
 			"DH-RSA-DES-CBC-SHA",
 			"DH-DSS-DES-CBC-SHA",
 			"DES-CBC-SHA"
+			*/
 		]
 		
 		socket.cipherList = cipherList
