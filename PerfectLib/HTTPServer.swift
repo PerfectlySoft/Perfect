@@ -97,7 +97,7 @@ public class HTTPServer {
 			let code = Int32(socket.errorCode())
 			throw PerfectError.NetworkError(code, "Error validating private key file: \(socket.errorStr(code))")
 		}
-		
+		/*
 		let cipherList = ["ECDHE-ECDSA-AES256-GCM-SHA384",
 			"ECDHE-ECDSA-AES128-GCM-SHA256",
 			"ECDHE-ECDSA-AES256-CBC-SHA384",
@@ -118,7 +118,7 @@ public class HTTPServer {
 		]
 		
 		socket.cipherList = cipherList
-		
+		*/
 		try socket.bind(port, address: bindAddress)
 
 		print("Starting HTTPS server on \(bindAddress):\(port) with document root \(self.documentRoot)")
