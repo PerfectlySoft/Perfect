@@ -2,8 +2,10 @@
 
 OS = $(shell uname)
 SWIFTC = swift
+CC = clang
+CXX = clang
 MODULE_NAME = PerfectLib
-DEBUG = -g -Onone -Xcc -DDEBUG=1
+DEBUG = -g -Onone -D DEBUG
 Linux_INSTALL_PATH = /usr/local/lib
 Darwin_INSTALL_PATH = /Library/Frameworks
 
@@ -14,7 +16,7 @@ INSTALL_PATH = $($(OS)_INSTALL_PATH)
 
 Darwin_SWIFTC_FLAGS = -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk
 Linux_SWIFTC_FLAGS = -I linked/LinuxBridge
-Linux_EXTRA_FLAGS = -D$(LSB_OS)_$(subst .,_,$(LSB_VER))=1
+Linux_EXTRA_FLAGS = -D $(LSB_OS)_$(subst .,_,$(LSB_VER))
 
 SWIFTC_FLAGS = $(DEBUG) $($(OS)_EXTRA_FLAGS) -emit-module -I /usr/include/ -I linked/LibEvent -I linked/OpenSSL_Linux -I linked/ICU -I linked/SQLite3 -I linked/cURL_Linux \
 	-module-cache-path $(MODULE_CACHE_PATH) -module-name $(MODULE_NAME) $($(OS)_SWIFTC_FLAGS)
