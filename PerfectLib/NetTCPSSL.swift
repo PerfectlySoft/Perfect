@@ -89,6 +89,39 @@ public class NetTCPSSL : NetTCP {
 		return nil
 	}
 	
+	public var cipherList: [String] {
+		get {
+			var a = [String]()
+			guard let ssl = self.ssl else {
+				return a
+			}
+			var i = Int32(0)
+			while true {
+				let n = SSL_get_cipher_list(ssl, i)
+				if n != nil {
+					a.append(String.fromCString(n)!)
+				} else {
+					break
+				}
+				i += 1
+			}
+			return a
+		}
+		set(list) {
+			let listStr = list.joinWithSeparator(",")
+			if let ctx = self.sslCtx {
+				if 0 == SSL_CTX_set_cipher_list(ctx, listStr) {
+					print("SSL_CTX_set_cipher_list failed: \(self.errorStr(Int32(self.errorCode())))")
+				}
+			}
+			if let ssl = self.ssl {
+				if 0 == SSL_set_cipher_list(ssl, listStr) {
+					print("SSL_CTX_set_cipher_list failed: \(self.errorStr(Int32(self.errorCode())))")
+				}
+			}
+		}
+	}
+	
 	public var usingSSL: Bool {
 		return self.sslCtx != nil
 	}
