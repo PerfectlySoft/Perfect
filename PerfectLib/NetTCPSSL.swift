@@ -122,6 +122,23 @@ public class NetTCPSSL : NetTCP {
 		}
 	}
 	
+	public func setTmpDH(path: String) -> Bool {
+		guard let ctx = self.sslCtx else {
+			return false
+		}
+		
+		let bio = BIO_new_file(path, "r")
+		if bio == nil {
+			return false
+		}
+		
+		let dh = PEM_read_bio_DHparams(bio, nil, nil, nil)
+		SSL_CTX_ctrl(ctx, SSL_CTRL_SET_TMP_DH, 0, dh)
+		DH_free(dh)
+		BIO_free(bio)
+		return true
+	}
+	
 	public var usingSSL: Bool {
 		return self.sslCtx != nil
 	}
@@ -162,6 +179,7 @@ public class NetTCPSSL : NetTCP {
 			return
 		}
 		self.sharedSSLCtx = false
+		SSL_CTX_ctrl(sslCtx, SSL_CTRL_SET_ECDH_AUTO, 1, nil)
 		SSL_CTX_ctrl(sslCtx, SSL_CTRL_MODE, SSL_MODE_AUTO_RETRY, nil)
 		SSL_CTX_ctrl(sslCtx, SSL_CTRL_OPTIONS, SSL_OP_ALL, nil)
 		
