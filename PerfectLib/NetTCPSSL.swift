@@ -124,7 +124,7 @@ public class NetTCPSSL : NetTCP {
 		guard self.sslCtx == nil else {
 			return
 		}
-		self.sslCtx = SSL_CTX_new(TLSv1_method())
+		self.sslCtx = SSL_CTX_new(TLSv1_2_method())
 		guard let sslCtx = self.sslCtx else {
 			return
 		}
