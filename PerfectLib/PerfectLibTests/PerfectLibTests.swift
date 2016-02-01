@@ -696,34 +696,6 @@ class PerfectLibTests: XCTestCase {
 		XCTAssert(setOk, "Unable to setDefaultVerifyPaths \(net.sslErrorCode(1))")
 		
 		do {
-			let cipherList = ["ECDHE-ECDSA-AES256-GCM-SHA384",
-				"ECDHE-ECDSA-AES128-GCM-SHA256",
-				"ECDHE-ECDSA-AES256-CBC-SHA384",
-				"ECDHE-ECDSA-AES256-CBC-SHA",
-				"ECDHE-ECDSA-AES128-CBC-SHA256",
-				"ECDHE-ECDSA-AES128-CBC-SHA",
-				"ECDHE-RSA-AES256-GCM-SHA384",
-				"ECDHE-RSA-AES128-GCM-SHA256",
-				"ECDHE-RSA-AES256-CBC-SHA384",
-				"ECDHE-RSA-AES128-CBC-SHA256",
-				"ECDHE-RSA-AES128-CBC-SHA",
-				"DHE-RSA-AES128-GCM-SHA256",
-				"DHE-RSA-AES256-GCM-SHA384",
-				"DHE-RSA-AES256-SHA256",
-				"DHE-RSA-AES128-SHA256",
-				"DHE-RSA-AES256-SHA",
-				"DHE-RSA-AES128-SHA"]
-			
-			net.cipherList = cipherList
-		}
-		
-		do {
-			let cipherList = net.cipherList
-			XCTAssert(cipherList.count > 0, "Nil cipher list")
-			print("Ordered SSL cipher list: \(cipherList)")
-		}
-		
-		do {
 			try net.connect(address, port: 443, timeoutSeconds: 5.0) {
 				(net: NetTCP?) -> () in
 				

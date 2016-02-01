@@ -75,7 +75,7 @@ public class HTTPServer {
 	/// - parameter sslCert: The server SSL certificate file.
 	/// - parameter sslKey: The server SSL key file.
 	/// - parameter bindAddress: The local address on which to bind.
-	public func start(port: UInt16, sslCert: String, sslKey: String, bindAddress: String = "0.0.0.0") throws {
+	public func start(port: UInt16, sslCert: String, sslKey: String, dhParams: String? = nil, bindAddress: String = "0.0.0.0") throws {
 		
 		self.serverPort = port
 		self.serverAddress = bindAddress

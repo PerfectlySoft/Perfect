@@ -40,6 +40,7 @@ func startServer() throws {
 	var localPort = 8181
 	var sslCert: String?
 	var sslKey: String?
+	var dhParams: String?
 	
 	var args = Process.arguments
 	
@@ -51,6 +52,10 @@ func startServer() throws {
 		"--sslkey": {
 			args.removeFirst()
 			sslKey = args.first!
+		},
+		"--dhparams": {
+			args.removeFirst()
+			dhParams = args.first!
 		},
 		"--port": {
 			args.removeFirst()
@@ -73,7 +78,7 @@ func startServer() throws {
             serverPerfectLibraries = args.first!
         },
 		"--help": {
-			print("Usage: \(Process.arguments.first!) [--port listen_port] [--address listen_address] [--name server_name] [--root root_path] [--sslcert cert_path --sslkey key_path] [--libpath lib_path]")
+			print("Usage: \(Process.arguments.first!) [--port listen_port] [--address listen_address] [--name server_name] [--root root_path] [--sslcert cert_path --sslkey key_path] [--dhparams file_path] [--libpath lib_path]")
 			exit(0)
 		}]
 	
@@ -102,7 +107,7 @@ func startServer() throws {
 				exit(-1)
 			}
 			
-			try httpServer.start(UInt16(localPort), sslCert: sslCert!, sslKey: sslKey!, bindAddress: localAddress)
+			try httpServer.start(UInt16(localPort), sslCert: sslCert!, sslKey: sslKey!, dhParams: dhParams, bindAddress: localAddress)
 			
 		} else {
 			try httpServer.start(UInt16(localPort), bindAddress: localAddress)
