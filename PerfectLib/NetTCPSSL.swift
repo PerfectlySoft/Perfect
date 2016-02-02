@@ -89,6 +89,56 @@ public class NetTCPSSL : NetTCP {
 		return nil
 	}
 	
+	public var cipherList: [String] {
+		get {
+			var a = [String]()
+			guard let ssl = self.ssl else {
+				return a
+			}
+			var i = Int32(0)
+			while true {
+				let n = SSL_get_cipher_list(ssl, i)
+				if n != nil {
+					a.append(String.fromCString(n)!)
+				} else {
+					break
+				}
+				i += 1
+			}
+			return a
+		}
+		set(list) {
+			let listStr = list.joinWithSeparator(",")
+			if let ctx = self.sslCtx {
+				if 0 == SSL_CTX_set_cipher_list(ctx, listStr) {
+					print("SSL_CTX_set_cipher_list failed: \(self.errorStr(Int32(self.errorCode())))")
+				}
+			}
+			if let ssl = self.ssl {
+				if 0 == SSL_set_cipher_list(ssl, listStr) {
+					print("SSL_CTX_set_cipher_list failed: \(self.errorStr(Int32(self.errorCode())))")
+				}
+			}
+		}
+	}
+	
+	public func setTmpDH(path: String) -> Bool {
+		guard let ctx = self.sslCtx else {
+			return false
+		}
+		
+		let bio = BIO_new_file(path, "r")
+		if bio == nil {
+			return false
+		}
+		
+		let dh = PEM_read_bio_DHparams(bio, nil, nil, nil)
+		SSL_CTX_ctrl(ctx, SSL_CTRL_SET_TMP_DH, 0, dh)
+		DH_free(dh)
+		BIO_free(bio)
+		return true
+	}
+	
 	public var usingSSL: Bool {
 		return self.sslCtx != nil
 	}
@@ -124,11 +174,12 @@ public class NetTCPSSL : NetTCP {
 		guard self.sslCtx == nil else {
 			return
 		}
-		self.sslCtx = SSL_CTX_new(TLSv1_method())
+		self.sslCtx = SSL_CTX_new(TLSv1_2_method())
 		guard let sslCtx = self.sslCtx else {
 			return
 		}
 		self.sharedSSLCtx = false
+		SSL_CTX_ctrl(sslCtx, SSL_CTRL_SET_ECDH_AUTO, 1, nil)
 		SSL_CTX_ctrl(sslCtx, SSL_CTRL_MODE, SSL_MODE_AUTO_RETRY, nil)
 		SSL_CTX_ctrl(sslCtx, SSL_CTRL_OPTIONS, SSL_OP_ALL, nil)
 		
