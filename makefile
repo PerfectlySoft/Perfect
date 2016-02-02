@@ -10,3 +10,6 @@ examples:
 clean:
 	cd PerfectLib && $(MAKE) clean
 	cd PerfectServer && $(MAKE) clean
+
+template:
+	cd Extras/Xcode\ Templates/Perfect && $(MAKE) install
