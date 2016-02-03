@@ -85,6 +85,13 @@ public class Threading {
 			return 0 == pthread_mutex_unlock(&self.mutex)
 		}
 		
+		public func doWithLock(closure: () -> ()) {
+			self.lock()
+			defer {
+				self.unlock()
+			}
+			closure()
+		}
 	}
 	
 	/// A thread event object. Inherits from `Threading.Lock`.
