@@ -30,19 +30,19 @@ public class MongoCursor {
 	var ptr: COpaquePointer
 
 	init(rawPtr: COpaquePointer) {
-		self.ptr = rawPtr
+		ptr = rawPtr
 	}
 
 	public func close() {
-		if self.ptr != nil {
-			mongoc_cursor_destroy(self.ptr)
-			self.ptr = nil
+		if ptr != nil {
+			mongoc_cursor_destroy(ptr)
+			ptr = nil
 		}
 	}
 
 	public func next() -> BSON? {
 		var bson = UnsafePointer<bson_t>()
-		if mongoc_cursor_next(self.ptr, &bson) {
+		if mongoc_cursor_next(ptr, &bson) {
 			return NoDestroyBSON(rawBson: UnsafeMutablePointer<bson_t>(bson))
 		}
 		return nil

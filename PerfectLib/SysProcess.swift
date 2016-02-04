@@ -141,59 +141,59 @@ public class SysProcess : Closeable {
 			try ThrowSystemError()
 		}
 	#endif
-		self.pid = procPid
-		self.stdin = File(fd: fSTDIN[1], path: "")
-		self.stdout = File(fd: fSTDOUT[0], path: "")
-		self.stderr = File(fd: fSTDERR[0], path: "")
+		pid = procPid
+		stdin = File(fd: fSTDIN[1], path: "")
+		stdout = File(fd: fSTDOUT[0], path: "")
+		stderr = File(fd: fSTDERR[0], path: "")
 	}
 	
 	deinit {
-		self.close()
+		close()
 	}
 	
 	/// Returns true if the process was opened and was running at some point.
 	/// Note that the process may not be currently running. Use `wait(false)` to check if the process is currently running.
 	public func isOpen() -> Bool {
-		return self.pid != -1
+		return pid != -1
 	}
 	
 	/// Terminate the process and clean up.
 	public func close() {
-		if self.stdin != nil {
-			self.stdin!.close()
+		if stdin != nil {
+			stdin!.close()
 		}
-		if self.stdout != nil {
-			self.stdout!.close()
+		if stdout != nil {
+			stdout!.close()
 		}
-		if self.stderr != nil {
-			self.stderr!.close()
+		if stderr != nil {
+			stderr!.close()
 		}
-		if self.pid != -1 {
+		if pid != -1 {
 			do {
-				try self.kill()
+				try kill()
 			} catch {
 			
 			}
 		}
-		self.stdin = nil
-		self.stdout = nil
-		self.stderr = nil
-		self.pid = -1
+		stdin = nil
+		stdout = nil
+		stderr = nil
+		pid = -1
 	}
 	
 	/// Detach from the process such that it will not be manually terminated when this object is deinitialized.
 	public func detach() {
-		self.pid = -1
+		pid = -1
 	}
 	
 	/// Determine if the process has completed running and retrieve its result code.
 	public func wait(hang: Bool = true) throws -> Int32 {
 		var code = Int32(0)
-		let status = waitpid(self.pid, &code, WUNTRACED | (hang ? 0 : WNOHANG))
+		let status = waitpid(pid, &code, WUNTRACED | (hang ? 0 : WNOHANG))
 		if status == -1 {
 			try ThrowSystemError()
 		}
-		self.pid = -1
+		pid = -1
 		close()
 		return code
 	}
@@ -201,14 +201,14 @@ public class SysProcess : Closeable {
 	/// Terminate the process and return its result code.
 	public func kill(signal: Int32 = SIGTERM) throws -> Int32 {
 	#if os(Linux)
-		let status = SwiftGlibc.kill(self.pid, signal)
+		let status = SwiftGlibc.kill(pid, signal)
 	#else
-		let status = Darwin.kill(self.pid, signal)
+		let status = Darwin.kill(pid, signal)
 	#endif
 		guard status != -1 else {
 			try ThrowSystemError()
 		}
-		return try self.wait()
+		return try wait()
 	}
 }
 

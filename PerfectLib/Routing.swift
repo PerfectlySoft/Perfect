@@ -189,24 +189,24 @@ class RouteNode: CustomStringConvertible {
 	
 	func descriptionTabbedInner(tabCount: Int) -> String {
 		var s = ""
-		for (_, node) in self.subNodes {
-			s.appendContentsOf("\(self.putTabs(tabCount))\(node.descriptionTabbed(tabCount+1))")
+		for (_, node) in subNodes {
+			s.appendContentsOf("\(putTabs(tabCount))\(node.descriptionTabbed(tabCount+1))")
 		}
-		for node in self.variables {
-			s.appendContentsOf("\(self.putTabs(tabCount))\(node.descriptionTabbed(tabCount+1))")
+		for node in variables {
+			s.appendContentsOf("\(putTabs(tabCount))\(node.descriptionTabbed(tabCount+1))")
 		}
-		if let node = self.wildCard {
-			s.appendContentsOf("\(self.putTabs(tabCount))\(node.descriptionTabbed(tabCount+1))")
+		if let node = wildCard {
+			s.appendContentsOf("\(putTabs(tabCount))\(node.descriptionTabbed(tabCount+1))")
 		}
 		return s
 	}
 	
 	func descriptionTabbed(tabCount: Int) -> String {
 		var s = ""
-		if let _ = self.handlerGenerator {
+		if let _ = handlerGenerator {
 			s.appendContentsOf("/+h\n")
 		}
-		s.appendContentsOf(self.descriptionTabbedInner(tabCount))
+		s.appendContentsOf(descriptionTabbedInner(tabCount))
 		return s
 	}
 	
@@ -220,35 +220,35 @@ class RouteNode: CustomStringConvertible {
 		if let p = m.next() where p != "/" {
 			
 			// variables
-			for node in self.variables {
+			for node in variables {
 				if let h = node.findHandler(p, generator: m, webResponse: webResponse) {
-					return self.successfulRoute(currentComponent, handler: node.successfulRoute(p, handler: h, webResponse: webResponse), webResponse: webResponse)
+					return successfulRoute(currentComponent, handler: node.successfulRoute(p, handler: h, webResponse: webResponse), webResponse: webResponse)
 				}
 			}
 			
 			// paths
-			if let node = self.subNodes[p] {
+			if let node = subNodes[p] {
 				if let h = node.findHandler(p, generator: m, webResponse: webResponse) {
-					return self.successfulRoute(currentComponent, handler: node.successfulRoute(p, handler: h, webResponse: webResponse), webResponse: webResponse)
+					return successfulRoute(currentComponent, handler: node.successfulRoute(p, handler: h, webResponse: webResponse), webResponse: webResponse)
 				}
 			}
 			
 			// wildcards
-			if let node = self.wildCard {
+			if let node = wildCard {
 				if let h = node.findHandler(p, generator: m, webResponse: webResponse) {
-					return self.successfulRoute(currentComponent, handler: node.successfulRoute(p, handler: h, webResponse: webResponse), webResponse: webResponse)
+					return successfulRoute(currentComponent, handler: node.successfulRoute(p, handler: h, webResponse: webResponse), webResponse: webResponse)
 				}
 			}
 			
-		} else if self.handlerGenerator != nil {
+		} else if handlerGenerator != nil {
 			
-			return self.handlerGenerator
+			return handlerGenerator
 			
 		} else {
 			// wildcards
-			if let node = self.wildCard {
+			if let node = wildCard {
 				if let h = node.findHandler("", generator: m, webResponse: webResponse) {
-					return self.successfulRoute(currentComponent, handler: node.successfulRoute("", handler: h, webResponse: webResponse), webResponse: webResponse)
+					return successfulRoute(currentComponent, handler: node.successfulRoute("", handler: h, webResponse: webResponse), webResponse: webResponse)
 				}
 			}
 		}
@@ -263,17 +263,17 @@ class RouteNode: CustomStringConvertible {
 		var m = g
 		if let p = m.next() {
 			if p == "/" {
-				self.addPathSegments(m, h: h)
+				addPathSegments(m, h: h)
 			} else {
-				self.addPathSegment(p, g: m, h: h)
+				addPathSegment(p, g: m, h: h)
 			}
 		} else {
-			self.handlerGenerator = h
+			handlerGenerator = h
 		}
 	}
 	
 	private func addPathSegment(component: String, g: ComponentGenerator, h: RequestHandlerGenerator) {
-		if let node = self.nodeForComponent(component) {
+		if let node = nodeForComponent(component) {
 			node.addPathSegments(g, h: h)
 		}
 	}
@@ -283,21 +283,21 @@ class RouteNode: CustomStringConvertible {
 			return nil
 		}
 		if component == "*" {
-			if self.wildCard == nil {
-				self.wildCard = RouteWildCard()
+			if wildCard == nil {
+				wildCard = RouteWildCard()
 			}
-			return self.wildCard
+			return wildCard
 		}
 		if component.characters.count >= 3 && component[component.startIndex] == "{" && component[component.endIndex.predecessor()] == "}" {
 			let node = RouteVariable(name: component.substringWith(Range(start: component.startIndex.successor(), end: component.endIndex.predecessor())))
-			self.variables.append(node)
+			variables.append(node)
 			return node
 		}
-		if let node = self.subNodes[component] {
+		if let node = subNodes[component] {
 			return node
 		}
 		let node = RoutePath(name: component)
-		self.subNodes[component] = node
+		subNodes[component] = node
 		return node
 	}
 	
@@ -306,14 +306,14 @@ class RouteNode: CustomStringConvertible {
 class RoutePath: RouteNode {
 	
 	override func descriptionTabbed(tabCount: Int) -> String {
-		var s = "/\(self.name)"
+		var s = "/\(name)"
 		
-		if let _ = self.handlerGenerator {
+		if let _ = handlerGenerator {
 			s.appendContentsOf("+h\n")
 		} else {
 			s.appendContentsOf("\n")
 		}
-		s.appendContentsOf(self.descriptionTabbedInner(tabCount))
+		s.appendContentsOf(descriptionTabbedInner(tabCount))
 		return s
 	}
 	
@@ -331,12 +331,12 @@ class RouteWildCard: RouteNode {
 	override func descriptionTabbed(tabCount: Int) -> String {
 		var s = "/*"
 		
-		if let _ = self.handlerGenerator {
+		if let _ = handlerGenerator {
 			s.appendContentsOf("+h\n")
 		} else {
 			s.appendContentsOf("\n")
 		}
-		s.appendContentsOf(self.descriptionTabbedInner(tabCount))
+		s.appendContentsOf(descriptionTabbedInner(tabCount))
 		return s
 	}
 	
@@ -345,14 +345,14 @@ class RouteWildCard: RouteNode {
 class RouteVariable: RouteNode {
 	
 	override func descriptionTabbed(tabCount: Int) -> String {
-		var s = "/{\(self.name)}"
+		var s = "/{\(name)}"
 		
-		if let _ = self.handlerGenerator {
+		if let _ = handlerGenerator {
 			s.appendContentsOf("+h\n")
 		} else {
 			s.appendContentsOf("\n")
 		}
-		s.appendContentsOf(self.descriptionTabbedInner(tabCount))
+		s.appendContentsOf(descriptionTabbedInner(tabCount))
 		return s
 	}
 	
@@ -362,7 +362,7 @@ class RouteVariable: RouteNode {
 	}
 	
 	override func successfulRoute(currentComponent: String, handler: RequestHandlerGenerator, webResponse: WebResponse) -> RequestHandlerGenerator {
-		webResponse.request.urlVariables[self.name] = currentComponent
+		webResponse.request.urlVariables[name] = currentComponent
 		return handler
 	}
 	

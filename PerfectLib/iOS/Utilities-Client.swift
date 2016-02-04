@@ -32,19 +32,19 @@ extension UnicodeScalar {
 	
 	/// Returns true if the UnicodeScalar is a white space character
 	public func isWhiteSpace() -> Bool {
-		return UnicodeScalar.spaces.longCharacterIsMember(self.value)
+		return UnicodeScalar.spaces.longCharacterIsMember(value)
 	}
 	/// Returns true if the UnicodeScalar is a digit character
 	public func isDigit() -> Bool {
-		return UnicodeScalar.digits.longCharacterIsMember(self.value)
+		return UnicodeScalar.digits.longCharacterIsMember(value)
 	}
 	/// Returns true if the UnicodeScalar is an alpha-numeric character
 	public func isAlphaNum() -> Bool {
-		return UnicodeScalar.letters.longCharacterIsMember(self.value) || UnicodeScalar.digits.longCharacterIsMember(self.value)
+		return UnicodeScalar.letters.longCharacterIsMember(value) || UnicodeScalar.digits.longCharacterIsMember(value)
 	}
 	/// Returns true if the UnicodeScalar is a hexadecimal character
 	public func isHexDigit() -> Bool {
-		if self.isDigit() {
+		if isDigit() {
 			return true
 		}
 		switch self {

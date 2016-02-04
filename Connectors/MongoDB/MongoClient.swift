@@ -48,13 +48,13 @@ public class MongoClient {
 	public typealias Result = MongoResult
 
 	public init(uri: String) {
-		self.ptr = mongoc_client_new(uri)
+		ptr = mongoc_client_new(uri)
 	}
 
 	public func close() {
-		if self.ptr != nil {
-			mongoc_client_destroy(self.ptr)
-			self.ptr = nil
+		if ptr != nil {
+			mongoc_client_destroy(ptr)
+			ptr = nil
 		}
 	}
 
@@ -73,14 +73,14 @@ public class MongoClient {
 			mongoc_read_prefs_destroy(readPrefs)
 		}
 		let bson = BSON()
-		guard mongoc_client_get_server_status(self.ptr, readPrefs, bson.doc, &error) else {
+		guard mongoc_client_get_server_status(ptr, readPrefs, bson.doc, &error) else {
 			return Result.fromError(error)
 		}
 		return .ReplyDoc(bson)
 	}
 
 	public func databaseNames() -> [String] {
-		let names = mongoc_client_get_database_names(self.ptr, nil)
+		let names = mongoc_client_get_database_names(ptr, nil)
 		var ret = [String]()
 		if names != nil {
 			var curr = names

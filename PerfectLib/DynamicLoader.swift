@@ -48,7 +48,7 @@ class DynamicLoader {
 		let file = File(resolvedPath + "/" + moduleName)
 		if file.exists() {
 			let realPath = file.realPath()
-			return self.loadRealPath(realPath, moduleName: moduleName)
+			return loadRealPath(realPath, moduleName: moduleName)
 		}
 		return false
 	}
@@ -59,7 +59,7 @@ class DynamicLoader {
 		let file = File(resolvedPath)
 		if file.exists() {
 			let realPath = file.realPath()
-			return self.loadRealPath(realPath, moduleName: moduleName)
+			return loadRealPath(realPath, moduleName: moduleName)
 		}
 		return false
 	}

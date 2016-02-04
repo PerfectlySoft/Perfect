@@ -32,7 +32,7 @@ public protocol Closeable {
 
 extension Closeable {
 	public func doWithClose(c: ()->()) {
-		defer { self.close() }
+		defer { close() }
 		
 		c()
 	}

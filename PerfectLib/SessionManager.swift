@@ -189,13 +189,13 @@ public class SessionManager {
 		} catch {
 			
 		}
-		if self.dictionary == nil {
-			self.dictionary = JSONDictionaryType()
-			if self.result == .None {
-				self.result = .New
+		if dictionary == nil {
+			dictionary = JSONDictionaryType()
+			if result == .None {
+				result = .New
 			}
-		} else if self.configuration.rotate {
-			self.result = .Rotate
+		} else if configuration.rotate {
+			result = .Rotate
 			self.configuration.id = SessionManager.generateSessionKey()
 		}
 	}

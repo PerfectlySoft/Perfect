@@ -58,8 +58,8 @@ class MustacheCacheItem {
 	let template: MustacheTemplate
 	
 	init(modificationDate: Int, template: MustacheTemplate) {
-		self.modificationDate = modificationDate
-		self.template = template
+		modificationDate = modificationDate
+		template = template
 	}
 }
 
@@ -93,36 +93,36 @@ public class WebResponse {
 	public var requestCompletedCallback: () -> () = {}
 	
 	internal init(_ c: WebConnection, request: WebRequest) {
-		self.connection = c
+		connection = c
 		self.request = request
 	}
 	
 	/// Set the response status code and message. For example, 200, "OK".
 	public func setStatus(code: Int, message: String) {
-		self.connection.setStatus(code, msg: message)
+		connection.setStatus(code, msg: message)
 	}
 	
 	/// Get the response status code and message.
 	public func getStatus() -> (Int, String) {
-		return self.connection.getStatus()
+		return connection.getStatus()
 	}
 	
 	/// Adds the cookie object to the response
 	public func addCookie(cookie: Cookie) {
-		self.cookiesArray.append(cookie)
+		cookiesArray.append(cookie)
 	}
 	
 	public func appendBodyBytes(bytes: [UInt8]) {
-		self.bodyData.appendContentsOf(bytes)
+		bodyData.appendContentsOf(bytes)
 	}
 	
 	public func appendBodyString(string: String) {
-		self.bodyData.appendContentsOf([UInt8](string.utf8))
+		bodyData.appendContentsOf([UInt8](string.utf8))
 	}
 	
 	func respond(completion: () -> ()) {
 		
-		self.requestCompletedCallback = {
+		requestCompletedCallback = {
 			
 			self.doSessionHeaders()
 			self.sendResponse()
@@ -137,7 +137,7 @@ public class WebResponse {
 	/// !FIX! needs to pull key from possible request param
 	func getSessionKey(name: String) -> String {
 		// ...
-		for (cName, cValue) in self.request.cookies {
+		for (cName, cValue) in request.cookies {
 			if name == cName {
 				return cValue
 			}
@@ -148,49 +148,49 @@ public class WebResponse {
 	/// Provides access to the indicated `SessionManager` object.
 	/// If the session does not exist it is created. If it does exist, the existing object is returned.
 	public func getSession(named: String) -> SessionManager {
-		if let s = self.sessions[named] {
+		if let s = sessions[named] {
 			return s
 		}
 		let s = SessionManager(SessionConfiguration(named, id: getSessionKey(perfectSessionNamePrefix + named)))
-		self.sessions[named] = s
+		sessions[named] = s
 		return s
 	}
 	
 	/// Provides access to the indicated `SessionManager` object using the given `SessionConfiguration` data.
 	/// - throws: If the session already exists, `PerfectError.APIError` is thrown.
 	public func getSession(named: String, withConfiguration: SessionConfiguration) throws -> SessionManager {
-		guard self.sessions[named] == nil else {
+		guard sessions[named] == nil else {
 			throw PerfectError.APIError("WebResponse getSession withConfiguration: session was already initialized")
 		}
 		let s = SessionManager(SessionConfiguration(named, id: getSessionKey(perfectSessionNamePrefix + named), copyFrom: withConfiguration))
-		self.sessions[named] = s
+		sessions[named] = s
 		return s
 	}
 	
 	/// Discards a previously started session. The session will not be propagated and any changes to the session's variables will be discarded.
 	public func abandonSession(named: String) {
-		self.sessions.removeValueForKey(named)
+		sessions.removeValueForKey(named)
 	}
 	
 	/// Perform a 302 redirect to the given url
 	public func redirectTo(url: String) {
-		self.setStatus(302, message: "FOUND")
-		self.replaceHeader("Location", value: url)
+		setStatus(302, message: "FOUND")
+		replaceHeader("Location", value: url)
 	}
 	
 	/// Add an outgoing HTTP header
 	public func addHeader(name: String, value: String) {
-		self.headersArray.append( (name, value) )
+		headersArray.append( (name, value) )
 	}
 	
 	/// Set a HTTP header, replacing all existing instances of said header
 	public func replaceHeader(name: String, value: String) {
-		for i in 0..<self.headersArray.count {
-			if self.headersArray[i].0 == name {
-				self.headersArray.removeAtIndex(i)
+		for i in 0..<headersArray.count {
+			if headersArray[i].0 == name {
+				headersArray.removeAtIndex(i)
 			}
 		}
-		self.addHeader(name, value: value)
+		addHeader(name, value: value)
 	}
 	
 	// directly called by the WebSockets impl
@@ -199,10 +199,10 @@ public class WebResponse {
 			connection.writeHeaderLine(key + ": " + value)
 		}
 		// cookies
-		if self.cookiesArray.count > 0 {
+		if cookiesArray.count > 0 {
 			let standardDateFormat = "';expires='E, dd-LLL-yyyy HH:mm:ss 'GMT'"
 			let now = ICU.getNow()
-			for cookie in self.cookiesArray {
+			for cookie in cookiesArray {
 				var cookieLine = "Set-Cookie: "
 				cookieLine.appendContentsOf(cookie.name!.stringByEncodingURL)
 				cookieLine.appendContentsOf("=")
@@ -246,35 +246,35 @@ public class WebResponse {
 		} catch PerfectError.FileError(let code, let msg) {
 			
 			print("File exception \(code) \(msg)")
-			self.setStatus(code == 404 ? Int(code) : 500, message: msg)
-			self.bodyData = [UInt8]("File exception \(code) \(msg)".utf8)
+			setStatus(code == 404 ? Int(code) : 500, message: msg)
+			bodyData = [UInt8]("File exception \(code) \(msg)".utf8)
 			
 		} catch MustacheError.SyntaxError(let msg) {
 		
 			print("MustacheError.SyntaxError \(msg)")
-			self.setStatus(500, message: msg)
-			self.bodyData = [UInt8]("Mustache syntax error \(msg)".utf8)
+			setStatus(500, message: msg)
+			bodyData = [UInt8]("Mustache syntax error \(msg)".utf8)
 			
 		} catch MustacheError.EvaluationError(let msg) {
 			
 			print("MustacheError.EvaluationError exception \(msg)")
-			self.setStatus(500, message: msg)
-			self.bodyData = [UInt8]("Mustache evaluation error \(msg)".utf8)
+			setStatus(500, message: msg)
+			bodyData = [UInt8]("Mustache evaluation error \(msg)".utf8)
 			
 		} catch let e {
 			print("Unexpected exception \(e)")
 		}
-		self.requestCompletedCallback()
+		requestCompletedCallback()
 	}
 	
 	func doSessionHeaders() {
-		for (_, session) in self.sessions {
+		for (_, session) in sessions {
 			session.initializeForResponse(self)
 		}
 	}
 	
 	func commitSessions() {
-		for (name, session) in self.sessions {
+		for (name, session) in sessions {
 			do {
 				try session.commit()
 			} catch let e {
@@ -287,7 +287,7 @@ public class WebResponse {
 		guard let handler = PageHandlerRegistry.getRequestHandler(self) else {
 			throw PerfectError.FileError(404, "The path \(path) had no associated handler")
 		}
-		handler.handleRequest(self.request, response: self)
+		handler.handleRequest(request, response: self)
 	}
 	
 	func include(path: String, local: Bool) throws {
@@ -301,7 +301,7 @@ public class WebResponse {
 		let file = File(fullPath)
 		
 		if PageHandlerRegistry.hasGlobalHandler() && (!path.hasSuffix("."+mustacheExtension) || !file.exists()) {
-			return try self.includeVirtual(path)
+			return try includeVirtual(path)
 		}
 		
 		if !path.hasSuffix("."+mustacheExtension) {
@@ -331,9 +331,9 @@ public class WebResponse {
 			template.evaluate(context, collector: collector)
 			
 			let fullString = collector.asString()
-			self.bodyData += Array(fullString.utf8)
+			bodyData += Array(fullString.utf8)
 		}
-		self.requestCompletedCallback()
+		requestCompletedCallback()
 	}
 	
 	private func makeNonRelative(path: String, local: Bool = false) -> String {
@@ -397,7 +397,7 @@ public class WebResponse {
 	template.evaluate(context, collector: collector)
 	
 	let fullString = collector.asString()
-	self.bodyData += Array(fullString.utf8)
+	bodyData += Array(fullString.utf8)
 	}
 	}
 	*/

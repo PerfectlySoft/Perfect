@@ -46,12 +46,12 @@ public class NetTCP : Closeable {
 		let size: Int
 		init(size: Int) {
 			self.size = size
-			self.b = UnsafeMutablePointer<UInt8>.alloc(size)
+			b = UnsafeMutablePointer<UInt8>.alloc(size)
 		}
 		
 		deinit {
-			self.b.destroy()
-			self.b.dealloc(self.size)
+			b.destroy()
+			b.dealloc(size)
 		}
 	}
 	
@@ -187,32 +187,32 @@ public class NetTCP : Closeable {
 		#endif
 			fd.fd = invalidSocket
 			
-			if let event = self.waitAcceptEvent {
+			if let event = waitAcceptEvent {
 				event.del()
-				self.waitAcceptEvent = nil
+				waitAcceptEvent = nil
 			}
 			
-			if self.semaphore != nil {
-				self.semaphore!.lock()
-				self.semaphore!.signal()
-				self.semaphore!.unlock()
+			if semaphore != nil {
+				semaphore!.lock()
+				semaphore!.signal()
+				semaphore!.unlock()
 			}
 		}
 	}
 	
 	func recv(buf: UnsafeMutablePointer<Void>, count: Int) -> Int {
 	#if os(Linux)
-		return SwiftGlibc.recv(self.fd.fd, buf, count, 0)
+		return SwiftGlibc.recv(fd.fd, buf, count, 0)
 	#else
-		return Darwin.recv(self.fd.fd, buf, count, 0)
+		return Darwin.recv(fd.fd, buf, count, 0)
 	#endif
 	}
 	
 	func send(buf: UnsafePointer<Void>, count: Int) -> Int {
 	#if os(Linux)
-		return SwiftGlibc.send(self.fd.fd, buf, count, 0)
+		return SwiftGlibc.send(fd.fd, buf, count, 0)
 	#else
-		return Darwin.send(self.fd.fd, buf, count, 0)
+		return Darwin.send(fd.fd, buf, count, 0)
 	#endif
 	}
 	
@@ -249,10 +249,10 @@ public class NetTCP : Closeable {
 		let readCount = recv(into.b + read, count: remaining)
 		if readCount == 0 {
 			completion(nil) // disconnect
-		} else if self.isEAgain(readCount) {
+		} else if isEAgain(readCount) {
 			
 			// no data available. wait
-			self.readBytesFullyIncomplete(into, read: read, remaining: remaining, timeoutSeconds: timeoutSeconds, completion: completion)
+			readBytesFullyIncomplete(into, read: read, remaining: remaining, timeoutSeconds: timeoutSeconds, completion: completion)
 			
 		} else if readCount == -1 {
 			completion(nil) // networking or other error
@@ -299,7 +299,7 @@ public class NetTCP : Closeable {
 		let readCount = recv(ptr.b, count: count)
 		if readCount == 0 {
 			completion(nil)
-		} else if self.isEAgain(readCount) {
+		} else if isEAgain(readCount) {
 			completion([UInt8]())
 		} else if readCount == -1 {
 			completion(nil)
@@ -421,8 +421,7 @@ public class NetTCP : Closeable {
 	func writeBytesIncomplete(nptr: UnsafeMutablePointer<UInt8>, wrote: Int, length: Int, completion: (Int) -> ()) {
 		let event: LibEvent = LibEvent(base: LibEvent.eventBase, fd: fd.fd, what: EV_WRITE, userData: nil) {
 			(fd:Int32, w:Int16, ud:AnyObject?) -> () in
-			
-			self.writeBytes(nptr, wrote: wrote, length: length, completion: completion)
+		self.writeBytes(nptr, wrote: wrote, length: length, completion: completion)
 		}
 		event.add()
 	}
@@ -486,14 +485,14 @@ public class NetTCP : Closeable {
 		let accRes = Darwin.accept(fd.fd, UnsafeMutablePointer<sockaddr>(), UnsafeMutablePointer<socklen_t>())
 	#endif
 		if accRes != -1 {
-			let newTcp = self.makeFromFd(accRes)
+			let newTcp = makeFromFd(accRes)
 			callBack(newTcp)
 		} else {
-			guard self.isEAgain(Int(accRes)) else {
+			guard isEAgain(Int(accRes)) else {
 				try ThrowNetworkError()
 			}
 			
-			let event: LibEvent = LibEvent(base: LibEvent.eventBase, fd: fd.fd, what: self.evWhatFor(EV_READ), userData: nil) {
+			let event: LibEvent = LibEvent(base: LibEvent.eventBase, fd: fd.fd, what: evWhatFor(EV_READ), userData: nil) {
 				(fd:Int32, w:Int16, ud:AnyObject?) -> () in
 				
 				if (Int32(w) & EV_TIMEOUT) != 0 {
@@ -521,7 +520,7 @@ public class NetTCP : Closeable {
 	}
 	
 	private func waitAccept() {
-		let event: LibEvent = LibEvent(base: LibEvent.eventBase, fd: fd.fd, what: self.evWhatFor(EV_READ), userData: nil) {
+		let event: LibEvent = LibEvent(base: LibEvent.eventBase, fd: fd.fd, what: evWhatFor(EV_READ), userData: nil) {
 			[weak self] (fd:Int32, w:Int16, ud:AnyObject?) -> () in
 			
 			self?.waitAcceptEvent = nil
@@ -533,7 +532,7 @@ public class NetTCP : Closeable {
 				self?.semaphore!.unlock()
 			}
 		}
-		self.waitAcceptEvent = event
+		waitAcceptEvent = event
 		event.add()
 	}
 	
@@ -541,12 +540,12 @@ public class NetTCP : Closeable {
 	/// - parameter callBack: The closure which will be called when the accept completes. the parameter will be a newly allocated instance of NetTCP which represents the client.
 	public func forEachAccept(callBack: (NetTCP?) -> ()) {
 		
-		guard self.semaphore == nil else {
+		guard semaphore == nil else {
 			return
 		}
 		
-		self.semaphore = Threading.Event()
-		defer { self.semaphore = nil }
+		semaphore = Threading.Event()
+		defer { semaphore = nil }
 		
 		repeat {
 		
@@ -555,17 +554,17 @@ public class NetTCP : Closeable {
 				Threading.dispatchBlock {
 					callBack(self.makeFromFd(accRes))
 				}
-			} else if self.isEAgain(Int(accRes)) {
-				self.semaphore!.lock()
+			} else if isEAgain(Int(accRes)) {
+				semaphore!.lock()
 				waitAccept()
-				self.semaphore!.wait()
-				self.semaphore!.unlock()
+				semaphore!.wait()
+				semaphore!.unlock()
 			} else {
 				let errStr = String.fromCString(strerror(Int32(errno))) ?? "NO MESSAGE"
 				print("Unexpected networking error: \(errno) '\(errStr)'")
 				networkFailure = true
 			}
-		} while !networkFailure && self.fd.fd != invalidSocket
+		} while !networkFailure && fd.fd != invalidSocket
 		return
 	}
 	

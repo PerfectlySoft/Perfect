@@ -80,7 +80,7 @@ public extension JSONConvertibleObject {
 		return defaultValue
 	}
 	func jsonEncodedString() throws -> String {
-		return try self.getJSONValues().jsonEncodedString()
+		return try getJSONValues().jsonEncodedString()
 	}
 }
 
@@ -117,7 +117,7 @@ public struct JSONConvertibleNull: JSONConvertible {
 extension String: JSONConvertible {
 	public func jsonEncodedString() throws -> String {
 		var s = "\""
-		for uchar in self.unicodeScalars {
+		for uchar in unicodeScalars {
 			switch(uchar) {
 			case jsonBackSlash:
 				s.appendContentsOf("\\\\")
@@ -245,7 +245,7 @@ extension String {
 	public func jsonDecode() throws -> JSONConvertible {
 		
 		let state = JSONDecodeState()
-		state.g = self.unicodeScalars.generate()
+		state.g = unicodeScalars.generate()
 		
 		let o = try state.readObject()
 		if let _ = o as? JSONDecodeState.EOF {
@@ -265,9 +265,9 @@ private class JSONDecodeState {
 	var pushBack: UnicodeScalar?
 	
 	func movePastWhite() {
-		while let c = self.next() {
+		while let c = next() {
 			if !c.isWhiteSpace() {
-				self.pushBack = c
+				pushBack = c
 				break
 			}
 		}
@@ -275,25 +275,25 @@ private class JSONDecodeState {
 	
 	func readObject() throws -> JSONConvertible {
 		
-		self.movePastWhite()
+		movePastWhite()
 		
-		guard let c = self.next() else {
+		guard let c = next() else {
 			return EOF()
 		}
 		
 		switch(c) {
 		case jsonOpenArray:
 			var a = [Any]()
-			self.movePastWhite()
-			guard let c = self.next() else {
+			movePastWhite()
+			guard let c = next() else {
 				throw JSONConversionError.SyntaxError
 			}
 			if c != jsonCloseArray {
-				self.pushBack = c
+				pushBack = c
 				while true {
 					a.append(try readObject())
-					self.movePastWhite()
-					guard let c = self.next() else {
+					movePastWhite()
+					guard let c = next() else {
 						throw JSONConversionError.SyntaxError
 					}
 					if c == jsonCloseArray {
@@ -307,28 +307,28 @@ private class JSONDecodeState {
 			return a
 		case jsonOpenObject:
 			var d = [String:Any]()
-			self.movePastWhite()
-			guard let c = self.next() else {
+			movePastWhite()
+			guard let c = next() else {
 				throw JSONConversionError.SyntaxError
 			}
 			if c != jsonCloseObject {
-				self.pushBack = c
+				pushBack = c
 				while true {
 					guard let key = try readObject() as? String else {
 						throw JSONConversionError.SyntaxError
 					}
-					self.movePastWhite()
-					guard let c = self.next() else {
+					movePastWhite()
+					guard let c = next() else {
 						throw JSONConversionError.SyntaxError
 					}
 					guard c == jsonColon else {
 						throw JSONConversionError.SyntaxError
 					}
-					self.movePastWhite()
+					movePastWhite()
 					d[key] = try readObject()
 					do {
-						self.movePastWhite()
-						guard let c = self.next() else {
+						movePastWhite()
+						guard let c = next() else {
 							throw JSONConversionError.SyntaxError
 						}
 						if c == jsonCloseObject {
