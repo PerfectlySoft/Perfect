@@ -362,7 +362,11 @@ class RouteVariable: RouteNode {
 	}
 	
 	override func successfulRoute(currentComponent: String, handler: RequestHandlerGenerator, webResponse: WebResponse) -> RequestHandlerGenerator {
-		webResponse.request.urlVariables[self.name] = currentComponent
+        if let decodedComponent = currentComponent.stringByDecodingURL {
+            webResponse.request.urlVariables[self.name] = decodedComponent
+        } else {
+            webResponse.request.urlVariables[self.name] = currentComponent
+        }
 		return handler
 	}
 	
