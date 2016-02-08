@@ -810,7 +810,7 @@ class PerfectLibTests: XCTestCase {
 	
 	func testStringByDeletingLastPathComponent() {
 		XCTAssert("/a/".stringByDeletingLastPathComponent == "/")
-		XCTAssert("/b/a".stringByDeletingLastPathComponent == "/b/")
+		XCTAssert("/b/a".stringByDeletingLastPathComponent == "/b")
 		XCTAssert("/".stringByDeletingLastPathComponent == "/")
 	}
 	
