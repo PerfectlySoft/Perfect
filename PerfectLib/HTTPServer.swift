@@ -306,7 +306,12 @@ public class HTTPServer {
 			}
 		}
 		
-		let filePath = self.documentRoot + withPathInfo
+        var filePath: String
+        if let decodedPathInfo = withPathInfo.stringByDecodingURL {
+            filePath = self.documentRoot + decodedPathInfo
+        } else {
+            filePath = self.documentRoot + withPathInfo
+        }
 		let ext = withPathInfo.pathExtension.lowercaseString
 		if ext == mustacheExtension {
 			
