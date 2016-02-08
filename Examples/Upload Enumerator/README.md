@@ -1,7 +1,7 @@
 # Upload Enumerator
 This example illustrates how to extract file upload information from a request. The project consists of only a server component which generates HTML that can be viewed in your browser.
 
-To use the exmaple, run the **Upload Enumerator** target. This will launch the **Perfect Server HTTP** app. Then click the "open in browser" button as show below.
+To use the example, run the **Upload Enumerator** target. This will launch the **Perfect Server HTTP** app. Then click the "open in browser" button as show below.
 
 ![Perfect HTTP Go Button](../../SiteAssets/perfect_dev_http_window_show_button.png)
 
