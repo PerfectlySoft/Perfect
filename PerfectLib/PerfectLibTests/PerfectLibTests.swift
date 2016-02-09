@@ -846,6 +846,13 @@ class PerfectLibTests: XCTestCase {
 			
 		}
 	}
+	
+	func testStringHasPrefix() {
+		let s1 = "abcdefg"
+		
+		XCTAssert(s1.hasPrefix("abc"))
+		XCTAssert(!s1.hasPrefix("acb"))
+	}
 }
 
 
