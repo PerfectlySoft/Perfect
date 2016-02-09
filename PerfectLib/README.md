@@ -1,7 +1,7 @@
 # PerfectLib
 ![Perfect logo](http://www.perfect.org/images/icon_128x128.png)
 
-PerfectLib is a Swift module providing a set of core utilities for both server and client development. In many cases the same APIs are utilized on both the client and the server. However, the goal is to leverage the APIs provided by the platform on the client side, reducing the potential for bloat, while providing a complete server-side solution supporting both Linux and OS X. The aim is to permit the same domain model code to be used by both client and server while providing the minimum functionality required to support communication and synchronization between the two sides.
+PerfectLib is a Swift module providing a set of core utilities for both server and client development. In many cases the same APIs are utilized on both the client and the server. However, the goal is to leaverage the APIs provided by the platform on the client side, reducing the potential for bloat, while providing a complete server-side solution supporting both Linux and OS X. The aim is to permit the same domain model code to be used by both client and server while providing the minimum functionality required to support communication and synchronization between the two sides.
 
 The client-side module aims to be light weight, providing support for the following:
 
@@ -44,6 +44,7 @@ PerfectLib builds on Ubuntu with the provided makefile. You must have a working 
 * libevent-dev
 * libsqlite3-dev
 * libcurl4-openssl-dev
+* libicu-dev
 
 After cloning the repository *git clone https://github.com/PerfectlySoft/Perfect.git*, execute the following commands:
 
