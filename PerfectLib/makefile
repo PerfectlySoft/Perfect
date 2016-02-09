@@ -22,7 +22,7 @@ PERFECT_SRC = ICU.swift NetNamedPipe.swift File.swift Threading.swift LibEvent.s
 	Dir.swift Mustache.swift PerfectError.swift SysProcess.swift DynamicLoader.swift JSON.swift Utilities-Server.swift \
 	Routing.swift StaticFileHandler.swift WebSocketHandler.swift JSONConvertible.swift cURL.swift
 
-PERFECT_OBJ = $(addsuffix .o, $(basename $(PERFECT_SRC))) LinuxBridge.o util.o
+PERFECT_OBJ = $(addsuffix .o, $(basename $(PERFECT_SRC))) LinuxBridge.o util.o linked/cURL_Linux/curl_support.o
 
 PERFECT_MODULES = $(addprefix ./tmp/, $(addsuffix .swiftmodule, $(basename $(PERFECT_SRC))))
 
@@ -41,6 +41,7 @@ Linux_LFLAGS = $(SHLIB_PATH) -lFoundation -lswiftCore -lswiftGlibc -ldl -lm -sha
 
 LFLAGS = $($(OS)_LFLAGS) -levent -levent_pthreads -lssl -lcrypto -lsqlite3 -licudata -licui18n -licuuc -lpthread
 CFLAGS = -fPIC
+CPPFLAGS = -fPIC
 MODULE_CACHE_PATH = /tmp/modulecache
 
 all: perfectlib
@@ -57,14 +58,14 @@ modulecache:
 perfectlib: modulecache $(MODULE_NAME).so
 
 
-$(MODULE_NAME).so: $(PERFECT_OBJ) $(MODULE_NAME).swiftmodule LinuxBridge.o util.o
+$(MODULE_NAME).so: $(PERFECT_OBJ) $(MODULE_NAME).swiftmodule
 	clang++ $(PERFECT_OBJ) $(LFLAGS) -o $(MODULE_NAME).so
 
 $(MODULE_NAME).swiftmodule:
 	$(SWIFTC) -frontend $(SWIFTC_FLAGS) $(PERFECT_MODULES) -parse-as-library -emit-module-doc-path $(MODULE_NAME).swiftdoc -o $(MODULE_NAME).swiftmodule
 
 clean:
-	@rm -f *.o *.so *.swiftmodule *.swiftdoc *.d *.swiftdeps ./tmp/*
+	@rm -f *.o *.so *.swiftmodule *.swiftdoc *.d *.swiftdeps ./tmp/* linked/cURL_Linux/curl_support.o
 
 %.o : %.swift
 	$(SWIFTC) -frontend -c $(subst $<,,$(PERFECT_SRC)) -primary-file $< \
