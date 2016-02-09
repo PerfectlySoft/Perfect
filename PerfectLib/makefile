@@ -37,7 +37,7 @@ Darwin_LFLAGS = $(SHLIB_PATH) -arch x86_64 -dynamiclib \
 	-L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx \
 	-Xlinker -add_ast_path -Xlinker PerfectLib.swiftmodule -single_module
 
-Linux_LFLAGS = $(SHLIB_PATH) -lFoundation -lswiftCore -lswiftGlibc -ldl -lm -shared
+Linux_LFLAGS = $(SHLIB_PATH) -lswiftCore -lswiftGlibc -ldl -lm -shared
 
 LFLAGS = $($(OS)_LFLAGS) -levent -levent_pthreads -lssl -lcrypto -lsqlite3 -licudata -licui18n -licuuc -lpthread
 CFLAGS = -fPIC
