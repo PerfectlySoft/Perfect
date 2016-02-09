@@ -24,7 +24,6 @@
 //
 
 import PerfectLib
-import Foundation
 
 // Handler class
 // When referenced in a mustache template, this class will be instantiated to handle the request
