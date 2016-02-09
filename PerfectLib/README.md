@@ -43,7 +43,7 @@ PerfectLib builds on Ubuntu with the provided makefile. You must have a working 
 * libssl-dev
 * libevent-dev
 * libsqlite3-dev
-* (note that curl support is currently not included by default)
+* libcurl4-openssl-dev
 
 After cloning the repository *git clone https://github.com/PerfectlySoft/Perfect.git*, execute the following commands:
 
