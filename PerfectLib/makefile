@@ -12,7 +12,7 @@ INSTALL_PATH = $($(OS)_INSTALL_PATH)
 Darwin_SWIFTC_FLAGS = -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk
 Linux_SWIFTC_FLAGS = -I linked/LinuxBridge
 
-SWIFTC_FLAGS = $(DEBUG) -emit-module -I linked/LibEvent -I linked/OpenSSL_Linux -I linked/ICU -I linked/SQLite3 \
+SWIFTC_FLAGS = $(DEBUG) -emit-module -I /usr/include/ -I linked/LibEvent -I linked/OpenSSL_Linux -I linked/ICU -I linked/SQLite3 -I linked/cURL_Linux \
 	-module-cache-path $(MODULE_CACHE_PATH) -module-name $(MODULE_NAME) $($(OS)_SWIFTC_FLAGS)
 
 PERFECT_SRC = ICU.swift NetNamedPipe.swift File.swift Threading.swift LibEvent.swift Bytes.swift FastCGI.swift \
@@ -20,7 +20,7 @@ PERFECT_SRC = ICU.swift NetNamedPipe.swift File.swift Threading.swift LibEvent.s
 	FastCGIServer.swift Net.swift Utilities.swift MimeReader.swift NetTCP.swift SessionManager.swift \
 	WebRequest.swift HTTPServer.swift MimeType.swift PageHandler.swift SQLite.swift WebResponse.swift \
 	Dir.swift Mustache.swift PerfectError.swift SysProcess.swift DynamicLoader.swift JSON.swift Utilities-Server.swift \
-	Routing.swift StaticFileHandler.swift WebSocketHandler.swift JSONConvertible.swift
+	Routing.swift StaticFileHandler.swift WebSocketHandler.swift JSONConvertible.swift cURL.swift
 
 PERFECT_OBJ = $(addsuffix .o, $(basename $(PERFECT_SRC))) LinuxBridge.o util.o
 
