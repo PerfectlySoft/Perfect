@@ -71,8 +71,8 @@ public class JSONConvertibleObject: JSONConvertible {
 	
 	public init() {}
 	
-	func setJSONValues(values:[String:Any]) {}
-	func getJSONValues() -> [String:Any] { return [String:Any]() }
+	public func setJSONValues(values:[String:Any]) {}
+	public func getJSONValues() -> [String:Any] { return [String:Any]() }
 
 	public func jsonEncodedString() throws -> String {
 		return try self.getJSONValues().jsonEncodedString()
