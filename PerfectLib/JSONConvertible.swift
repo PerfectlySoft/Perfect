@@ -68,6 +68,9 @@ public protocol JSONConvertible {
 
 // changed this to be a class due to Linux protocols failing 'as' tests
 public class JSONConvertibleObject: JSONConvertible {
+	
+	public init() {}
+	
 	func setJSONValues(values:[String:Any]) {}
 	func getJSONValues() -> [String:Any] { return [String:Any]() }
 
