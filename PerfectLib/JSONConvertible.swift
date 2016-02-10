@@ -178,6 +178,8 @@ extension Bool: JSONConvertible {
 // Not sure if this is intentional, or a bug.
 private func jsonEncodedStringWorkAround(o: Any) throws -> String {
 	switch o {
+	case let jsonAble as JSONConvertibleObject: // as part of Linux work around
+		return try jsonAble.jsonEncodedString()
 	case let jsonAble as JSONConvertible:
 		return try jsonAble.jsonEncodedString()
 	case let jsonAble as String:
