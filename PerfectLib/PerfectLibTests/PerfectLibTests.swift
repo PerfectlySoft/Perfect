@@ -47,10 +47,10 @@ class PerfectLibTests: XCTestCase {
 			static let registerName = "test"
 			
 			var one = 0
-			func setJSONValues(values: [String : Any]) {
+			override func setJSONValues(values: [String : Any]) {
 				self.one = getJSONValue("One", from: values, defaultValue: 42)
 			}
-			func getJSONValues() -> [String : Any] {
+			override func getJSONValues() -> [String : Any] {
 				return [JSONDecoding.objectIdentifierKey:Test.registerName, "One":1]
 			}
 		}

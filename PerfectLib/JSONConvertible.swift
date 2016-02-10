@@ -66,9 +66,14 @@ public protocol JSONConvertible {
 	func jsonEncodedString() throws -> String
 }
 
-public protocol JSONConvertibleObject: JSONConvertible {
-	func setJSONValues(values:[String:Any])
-	func getJSONValues() -> [String:Any]
+// changed this to be a class due to Linux protocols failing 'as' tests
+public class JSONConvertibleObject: JSONConvertible {
+	func setJSONValues(values:[String:Any]) {}
+	func getJSONValues() -> [String:Any] { return [String:Any]() }
+
+	public func jsonEncodedString() throws -> String {
+		return try self.getJSONValues().jsonEncodedString()
+	}
 }
 
 public extension JSONConvertibleObject {
@@ -79,9 +84,9 @@ public extension JSONConvertibleObject {
 		}
 		return defaultValue
 	}
-	func jsonEncodedString() throws -> String {
-		return try self.getJSONValues().jsonEncodedString()
-	}
+//	func jsonEncodedString() throws -> String {
+//		return try self.getJSONValues().jsonEncodedString()
+//	}
 }
 
 public enum JSONConversionError: ErrorType {
