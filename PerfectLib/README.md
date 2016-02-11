@@ -45,6 +45,7 @@ PerfectLib builds on Ubuntu with the provided makefile. You must have a working 
 * libsqlite3-dev
 * libcurl4-openssl-dev
 * libicu-dev
+* uuid-dev
 
 After cloning the repository *git clone https://github.com/PerfectlySoft/Perfect.git*, execute the following commands:
 
