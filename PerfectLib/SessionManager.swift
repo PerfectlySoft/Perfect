@@ -23,8 +23,6 @@
 //	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
 //
 
-import Foundation
-
 let perfectSessionDB = "perfect_sessions"
 let perfectSessionNamePrefix = "_PerfectSessionTracker_"
 
@@ -274,7 +272,7 @@ public class SessionManager {
 	/// Generate a presumably unique session id
 	static public func generateSessionKey() -> String {
 		
-		return NSUUID().UUIDString
+		return String.fromUUID(random_uuid())
 	}
 }
 

@@ -26,6 +26,7 @@
 
 import XCTest
 @testable import PerfectLib
+import cURL
 
 class PerfectLibTests: XCTestCase {
 	
@@ -47,10 +48,10 @@ class PerfectLibTests: XCTestCase {
 			static let registerName = "test"
 			
 			var one = 0
-			func setJSONValues(values: [String : Any]) {
+			override func setJSONValues(values: [String : Any]) {
 				self.one = getJSONValue("One", from: values, defaultValue: 42)
 			}
-			func getJSONValues() -> [String : Any] {
+			override func getJSONValues() -> [String : Any] {
 				return [JSONDecoding.objectIdentifierKey:Test.registerName, "One":1]
 			}
 		}
@@ -683,8 +684,64 @@ class PerfectLibTests: XCTestCase {
 		print(bodyStr)
 	}
 	
-	
-	func testTCPSSLClient() {
+    func testCURLHeader() {
+        let url = "https://httpbin.org/headers"
+        let header = ("Accept", "application/json")
+        
+        let curl = CURL(url: url)
+        curl.setOption(CURLOPT_HTTPHEADER, s: "\(header.0): \(header.1)" )
+        let response = curl.performFully()
+        XCTAssert(response.0 == 0)
+        
+        let body = UTF8Encoding.encode(response.2)
+        do {
+            guard
+                let jsonMap = try body.jsonDecode() as? [String: Any],
+                let headers = jsonMap["headers"] as? [String: Any],
+                let accept = headers[header.0] as? String
+            else {
+                XCTAssert(false)
+                return
+            }
+            XCTAssertEqual(accept, header.1)
+        } catch let e {
+            XCTAssert(false, "Exception: \(e)")
+        }
+    }
+
+    func testCURLPost() {
+        let url = "https://httpbin.org/post"
+        let curl = CURL(url: url)
+        
+        curl.setOption(CURLOPT_POST, int: 1)
+        
+        let postParamString = "key1=value1&key2=value2"
+        let byteArray = UTF8Encoding.decode(postParamString)
+        curl.setOption(CURLOPT_POSTFIELDS, v: UnsafeMutablePointer<UInt8>(byteArray))
+        curl.setOption(CURLOPT_POSTFIELDSIZE, int: byteArray.count)
+        
+        let response = curl.performFully()
+        XCTAssert(response.0 == 0)
+        
+        let body = UTF8Encoding.encode(response.2)
+        do {
+            guard
+                let jsonMap = try body.jsonDecode() as? [String: Any],
+                let form = jsonMap["form"] as? [String: Any],
+                let value1 = form["key1"] as? String,
+                let value2 = form["key2"] as? String
+            else {
+                XCTAssert(false)
+                return
+            }
+            XCTAssertEqual(value1, "value1")
+            XCTAssertEqual(value2, "value2")
+        } catch let e {
+            XCTAssert(false, "Exception: \(e)")
+        }
+    }
+
+    func testTCPSSLClient() {
 		
 		let address = "www.treefrog.ca"
 		let requestString = [UInt8](("GET / HTTP/1.0\r\nHost: \(address)\r\n\r\n").utf8)
@@ -810,7 +867,7 @@ class PerfectLibTests: XCTestCase {
 	
 	func testStringByDeletingLastPathComponent() {
 		XCTAssert("/a/".stringByDeletingLastPathComponent == "/")
-		XCTAssert("/b/a".stringByDeletingLastPathComponent == "/b/")
+		XCTAssert("/b/a".stringByDeletingLastPathComponent == "/b")
 		XCTAssert("/".stringByDeletingLastPathComponent == "/")
 	}
 	
@@ -845,6 +902,13 @@ class PerfectLibTests: XCTestCase {
 			}
 			
 		}
+	}
+	
+	func testStringHasPrefix() {
+		let s1 = "abcdefg"
+		
+		XCTAssert(s1.hasPrefix("abc"))
+		XCTAssert(!s1.hasPrefix("acb"))
 	}
 }
 

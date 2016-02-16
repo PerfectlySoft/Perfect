@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <uuid/uuid.h>
 
 int linux_open(const char *path, int oflag, mode_t mode);
 int linux_errno();
