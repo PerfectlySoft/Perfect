@@ -41,6 +41,11 @@ public class Bytes {
 		self.data = [UInt8]()
 	}
 	
+	/// Initialize with existing bytes
+	public init(existingBytes: [UInt8]) {
+		self.data = existingBytes
+	}
+	
 	/// Create a new Bytes object containing `initialSize` values of zero
 	/// - parameter initialSize: The size of the initial array
 	public init(initialSize: Int) {
