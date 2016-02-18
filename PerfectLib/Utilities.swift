@@ -174,16 +174,47 @@ extension String {
 		return ret
 	}
 	
-	public var stringByDecodingURL: String? {
+	
+	// Utility - not sure if it makes the most sense to have here or outside or elsewhere
+	static func byteFromHexDigits(one c1v: UInt8, two c2v: UInt8) -> UInt8? {
 		
-		let percent: UInt8 = 37
-		let plus: UInt8 = 43
 		let capA: UInt8 = 65
 		let capF: UInt8 = 70
 		let lowA: UInt8 = 97
 		let lowF: UInt8 = 102
 		let zero: UInt8 = 48
 		let nine: UInt8 = 57
+		
+		var newChar = UInt8(0)
+		
+		if c1v >= capA && c1v <= capF {
+			newChar = c1v - capA + 10
+		} else if c1v >= lowA && c1v <= lowF {
+			newChar = c1v - lowA + 10
+		} else if c1v >= zero && c1v <= nine {
+			newChar = c1v - zero
+		} else {
+			return nil
+		}
+		
+		newChar *= 16
+		
+		if c2v >= capA && c2v <= capF {
+			newChar += c2v - capA + 10
+		} else if c2v >= lowA && c2v <= lowF {
+			newChar += c2v - lowA + 10
+		} else if c2v >= zero && c2v <= nine {
+			newChar += c2v - zero
+		} else {
+			return nil
+		}
+		return newChar
+	}
+	
+	public var stringByDecodingURL: String? {
+		
+		let percent: UInt8 = 37
+		let plus: UInt8 = 43
 		let space: UInt8 = 32
 		
 		var bytesArray = [UInt8]()
@@ -191,8 +222,7 @@ extension String {
 		var g = self.utf8.generate()
 		while let c = g.next() {
 			if c == percent {
-				var newChar = UInt8(0)
-				
+
 				guard let c1v = g.next() else {
 					return nil
 				}
@@ -200,25 +230,7 @@ extension String {
 					return nil
 				}
 				
-				if c1v >= capA && c1v <= capF {
-					newChar = c1v - capA + 10
-				} else if c1v >= lowA && c1v <= lowF {
-					newChar = c1v - lowA + 10
-				} else if c1v >= zero && c1v <= nine {
-					newChar = c1v - zero
-				} else {
-					return nil
-				}
-				
-				newChar *= 16
-				
-				if c2v >= capA && c2v <= capF {
-					newChar += c2v - capA + 10
-				} else if c2v >= lowA && c2v <= lowF {
-					newChar += c2v - lowA + 10
-				} else if c2v >= zero && c2v <= nine {
-					newChar += c2v - zero
-				} else {
+				guard let newChar = String.byteFromHexDigits(one: c1v, two: c2v) else {
 					return nil
 				}
 				
@@ -231,6 +243,25 @@ extension String {
 		}
 		
 		return UTF8Encoding.encode(bytesArray)
+	}
+	
+	public var decodeHex: [UInt8]? {
+		
+		var bytesArray = [UInt8]()
+		var g = self.utf8.generate()
+		while let c1v = g.next() {
+			
+			guard let c2v = g.next() else {
+				return nil
+			}
+			
+			guard let newChar = String.byteFromHexDigits(one: c1v, two: c2v) else {
+				return nil
+			}
+			
+			bytesArray.append(newChar)
+		}
+		return bytesArray
 	}
 }
 

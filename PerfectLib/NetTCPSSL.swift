@@ -25,6 +25,8 @@
 
 import OpenSSL
 
+private typealias passwordCallbackFunc = @convention(c) (UnsafeMutablePointer<Int8>, Int32, Int32, UnsafeMutablePointer<Void>) -> Int32
+
 public class NetTCPSSL : NetTCP {
 	
 	public class X509 {
@@ -65,15 +67,24 @@ public class NetTCPSSL : NetTCP {
 	private var sslCtx: UnsafeMutablePointer<SSL_CTX>?
 	private var ssl: UnsafeMutablePointer<SSL>?
 	
+	
 	public var keyFilePassword: String = "" {
 		didSet {
 			if !self.keyFilePassword.isEmpty {
 				
 				self.initSocket()
 
-				// !FIX!
-//				SSL_CTX_set_default_passwd_cb(self.sslCtx!, passwordCallback)
+				let opaqueMe = UnsafeMutablePointer<Void>(Unmanaged.passUnretained(self).toOpaque())
+				let callback: passwordCallbackFunc = {
+					
+					(buf, size, rwflag, userData) -> Int32 in
+
+					let crl = Unmanaged<NetTCPSSL>.fromOpaque(COpaquePointer(userData)).takeUnretainedValue()
+					return crl.passwordCallback(buf, size: size, rwflag: rwflag)
+				}
 				
+				SSL_CTX_set_default_passwd_cb_userdata(self.sslCtx!, opaqueMe)
+				SSL_CTX_set_default_passwd_cb(self.sslCtx!, callback)
 			}
 		}
 	}
@@ -163,7 +174,7 @@ public class NetTCPSSL : NetTCP {
 		}
 	}
 	
-	func passwordCallback(buf:UnsafeMutablePointer<Int8>, size:Int32, rwflag:Int32, userData:UnsafeMutablePointer<Void>) -> Int32 {
+	func passwordCallback(buf:UnsafeMutablePointer<Int8>, size:Int32, rwflag:Int32) -> Int32 {
 		let chars = self.keyFilePassword.utf8
 		memmove(buf, self.keyFilePassword, chars.count + 1)
 		return Int32(chars.count)
@@ -321,15 +332,7 @@ public class NetTCPSSL : NetTCP {
 			closure(false)
 			return
 		}
-		guard sslCtx != nil else {
-			closure(false)
-			return
-		}
 		guard let ssl = self.ssl else {
-			closure(false)
-			return
-		}
-		guard ssl != nil else {
 			closure(false)
 			return
 		}
