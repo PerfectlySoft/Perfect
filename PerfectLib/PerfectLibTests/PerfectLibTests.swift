@@ -910,6 +910,52 @@ class PerfectLibTests: XCTestCase {
 		XCTAssert(s1.hasPrefix("abc"))
 		XCTAssert(!s1.hasPrefix("acb"))
 	}
+	
+	func testHPACKEncode() {
+		
+		let encoder = HPACKEncoder(maxCapacity: 256)
+		let b = Bytes()
+		
+		let headers = [
+			(":method", "POST"),
+			(":scheme", "https"),
+			(":path", "/3/device/00fc13adff785122b4ad28809a3420982341241421348097878e577c991de8f0"),
+			("host", "api.development.push.apple.com"),
+			("apns-id", "eabeae54-14a8-11e5-b60b-1697f925ec7b"),
+			("apns-expiration", "0"),
+			("apns-priority", "10"),
+			("content-length", "33")]
+		do {
+			for (n, v) in headers {
+				try encoder.encodeHeader(b, name: UTF8Encoding.decode(n), value: UTF8Encoding.decode(v), sensitive: false)
+			}
+			
+			class Listener: HeaderListener {
+				var headers = [(String, String)]()
+				func addHeader(name: [UInt8], value: [UInt8], sensitive: Bool) {
+					self.headers.append((UTF8Encoding.encode(name), UTF8Encoding.encode(value)))
+				}
+			}
+			
+			let decoder = HPACKDecoder(maxHeaderSize: 256, maxHeaderTableSize: 256)
+			let l = Listener()
+			try decoder.decode(b, headerListener: l)
+			
+			XCTAssert(l.headers.count == headers.count)
+			
+			for i in 0..<headers.count {
+				let h1 = headers[i]
+				let h2 = l.headers[i]
+				
+				XCTAssert(h1.0 == h2.0)
+				XCTAssert(h1.1 == h2.1)
+			}
+			
+		}
+		catch {
+			XCTAssert(false, "Exception \(error)")
+		}
+	}
 }
 
 

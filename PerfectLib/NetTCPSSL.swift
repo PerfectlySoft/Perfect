@@ -328,10 +328,6 @@ public class NetTCPSSL : NetTCP {
 			closure(false)
 			return
 		}
-		guard let sslCtx = self.sslCtx else {
-			closure(false)
-			return
-		}
 		guard let ssl = self.ssl else {
 			closure(false)
 			return
