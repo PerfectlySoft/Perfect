@@ -7,12 +7,16 @@ DEBUG = -g -Onone -Xcc -DDEBUG=1
 Linux_INSTALL_PATH = /usr/local/lib
 Darwin_INSTALL_PATH = /Library/Frameworks
 
+LSB_OS = $(shell lsb_release -si)
+LSB_VER = $(shell lsb_release -sr)
+
 INSTALL_PATH = $($(OS)_INSTALL_PATH)
 
 Darwin_SWIFTC_FLAGS = -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk
 Linux_SWIFTC_FLAGS = -I linked/LinuxBridge
+Linux_EXTRA_FLAGS = -D$(LSB_OS)_$(subst .,_,$(LSB_VER))=1
 
-SWIFTC_FLAGS = $(DEBUG) -emit-module -I /usr/include/ -I linked/LibEvent -I linked/OpenSSL_Linux -I linked/ICU -I linked/SQLite3 -I linked/cURL_Linux \
+SWIFTC_FLAGS = $(DEBUG) $($(OS)_EXTRA_FLAGS) -emit-module -I /usr/include/ -I linked/LibEvent -I linked/OpenSSL_Linux -I linked/ICU -I linked/SQLite3 -I linked/cURL_Linux \
 	-module-cache-path $(MODULE_CACHE_PATH) -module-name $(MODULE_NAME) $($(OS)_SWIFTC_FLAGS)
 
 PERFECT_SRC = ICU.swift NetNamedPipe.swift File.swift Threading.swift LibEvent.swift Bytes.swift FastCGI.swift \
