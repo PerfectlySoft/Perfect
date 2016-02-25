@@ -42,7 +42,7 @@ public protocol WebConnection {
 	func writeHeaderLine(h: String)
 	/// Send header bytes to the client.
 	func writeHeaderBytes(b: [UInt8])
-	/// Write body bytes ot the client. Any pending header data will be written first.
+	/// Write body bytes to the client. Any pending header data will be written first.
 	func writeBodyBytes(b: [UInt8])
 	
 }
