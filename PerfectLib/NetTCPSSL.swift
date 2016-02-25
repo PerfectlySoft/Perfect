@@ -29,6 +29,13 @@ private typealias passwordCallbackFunc = @convention(c) (UnsafeMutablePointer<In
 
 public class NetTCPSSL : NetTCP {
 	
+	public static var opensslVersionText : String {
+		return OPENSSL_VERSION_TEXT
+	}
+	public static var opensslVersionNumber : Int {
+		return OPENSSL_VERSION_NUMBER
+	}
+	
 	public class X509 {
 		
 		private let ptr: UnsafeMutablePointer<OpenSSL.X509>
@@ -66,7 +73,6 @@ public class NetTCPSSL : NetTCP {
 	private var sharedSSLCtx = true
 	private var sslCtx: UnsafeMutablePointer<SSL_CTX>?
 	private var ssl: UnsafeMutablePointer<SSL>?
-	
 	
 	public var keyFilePassword: String = "" {
 		didSet {
@@ -151,7 +157,7 @@ public class NetTCPSSL : NetTCP {
 	}
 	
 	public var usingSSL: Bool {
-		return self.sslCtx != nil
+		return self.ssl != nil
 	}
 	
 	public override init() {
@@ -193,9 +199,6 @@ public class NetTCPSSL : NetTCP {
 		SSL_CTX_ctrl(sslCtx, SSL_CTRL_SET_ECDH_AUTO, 1, nil)
 		SSL_CTX_ctrl(sslCtx, SSL_CTRL_MODE, SSL_MODE_AUTO_RETRY, nil)
 		SSL_CTX_ctrl(sslCtx, SSL_CTRL_OPTIONS, SSL_OP_ALL, nil)
-		
-		self.ssl = SSL_new(sslCtx)
-		SSL_set_fd(self.ssl!, self.fd.fd)
 	}
 	
 	public func errorCode() -> UInt {
@@ -328,6 +331,12 @@ public class NetTCPSSL : NetTCP {
 			closure(false)
 			return
 		}
+		
+		if self.ssl == nil {
+			self.ssl = SSL_new(self.sslCtx!)
+			SSL_set_fd(self.ssl!, self.fd.fd)
+		}
+		
 		guard let ssl = self.ssl else {
 			closure(false)
 			return

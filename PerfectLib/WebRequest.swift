@@ -58,7 +58,7 @@ public class WebRequest {
 	
 	/// A `Dictionary` containing all HTTP header names and values
 	/// Only HTTP headers are included in the result. Any "meta" headers, i.e. those provided by the web server, are discarded.
-	public lazy var headers: Dictionary<String, String> = {
+	public lazy var headers: [String:String] = {
 		var d = Dictionary<String, String>()
 		for (key, value) in self.connection.requestParams {
 			if key.hasPrefix("HTTP_") {
@@ -309,6 +309,14 @@ public class WebRequest {
 	public func rawHeader(named: String) -> String? { return self.connection.requestParams[named] }
 	/// Returns a Dictionary containing all raw request parameters.
 	public func raw() -> Dictionary<String, String> { return self.connection.requestParams }
+	
+	public func setRequestMethod(method: String) {
+		connection.requestParams["REQUEST_METHOD"] = method
+	}
+	
+	public func setRequestURI(uri: String) {
+		connection.requestParams["REQUEST_URI"] = uri
+	}
 	
 	internal init(_ c: WebConnection) {
 		self.connection = c

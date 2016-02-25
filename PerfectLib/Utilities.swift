@@ -105,7 +105,7 @@ public class UTF8Encoding {
 	
 	/// Decode a String into an array of UInt8.
 	public static func decode(str: String) -> Array<UInt8> {
-		return Array<UInt8>(str.utf8)
+		return [UInt8](str.utf8)
 	}
 }
 

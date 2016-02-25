@@ -398,7 +398,7 @@ public class HTTPServer {
 		typealias OkCallback = (Bool) -> ()
 		
 		var connection: NetTCP
-		var requestParams: Dictionary<String, String> = Dictionary<String, String>()
+		var requestParams = [String:String]()
 		var stdin: [UInt8]? = nil
 		var mimes: MimeReader? = nil
 		

@@ -28,7 +28,7 @@ public protocol WebConnection {
 	/// The TCP based connection
 	var connection: NetTCP { get }
 	/// The parameters sent by the client
-	var requestParams: Dictionary<String, String> { get }
+	var requestParams: [String:String] { get set }
 	/// Any non mime based request body data
 	var stdin: [UInt8]? { get }
 	/// Parsed mime based body data
