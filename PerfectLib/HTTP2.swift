@@ -123,7 +123,7 @@ public class HTTP2WebResponse: WebResponse, HeaderListener {
 		let n = UTF8Encoding.encode(name)
 		let v = UTF8Encoding.encode(value)
 
-		print("\(n): \(v)")
+//		print("\(n): \(v)")
 
 		switch n {
 		case ":status":
@@ -198,12 +198,12 @@ public class HTTP2Client {
 	}
 
 	func processSettingsPayload(b: Bytes) {
-		while b.availableExportBytes >= 6 {
-			let identifier = ntohs(b.export16Bits())
-			let value = ntohl(b.export32Bits())
-
-			print("Setting \(identifier) \(value)")
-		}
+//		while b.availableExportBytes >= 6 {
+//			let identifier = ntohs(b.export16Bits())
+//			let value = ntohl(b.export32Bits())
+//
+//			print("Setting \(identifier) \(value)")
+//		}
 	}
 
 	func readOneFrame() {
@@ -406,7 +406,6 @@ public class HTTP2Client {
 				case HTTP2_DATA:
 					if frame.length > 0 {
 						response.bodyData.appendContentsOf(frame.payload!)
-						print("\(UTF8Encoding.encode(response.bodyData))")
 					}
 					streamOpen = (frame.flags & HTTP2_END_STREAM) == 0
 					if !streamOpen {
