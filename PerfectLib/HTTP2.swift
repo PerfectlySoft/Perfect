@@ -412,11 +412,13 @@ public class HTTP2Client {
 						callback(response, nil)
 					}
 				default:
+					streamOpen = false
 					callback(nil, "Unexpected frame type \(frame.type)")
 				}
 
 			} else {
 				self.close()
+				streamOpen = false
 				callback(nil, "Connection dropped")
 			}
 		}
