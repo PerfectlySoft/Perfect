@@ -212,7 +212,9 @@ public struct NotificationPusher {
 			
 			c.lock.doWithLock {
 				activeStreams.removeValueForKey(n.id)
-				c.streams.append(n)
+				if net.isConnected {
+					c.streams.append(n)
+				}
 			}
 			
 		} else {
