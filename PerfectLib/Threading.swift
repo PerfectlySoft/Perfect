@@ -12,6 +12,8 @@ import Dispatch
 #else
 #if os(Linux)
 import SwiftGlibc
+import LinuxBridge
+let CLOCK_MONOTONIC = Int32(1)
 #else
 import Darwin
 #endif
@@ -109,7 +111,7 @@ public class Threading {
 			var __c_attr = pthread_condattr_t()
 			pthread_condattr_init(&__c_attr)
 			#if os (Linux)
-				//			pthread_condattr_setclock(&__c_attr, CLOCK_REALTIME)
+			pthread_condattr_setclock(&__c_attr, CLOCK_MONOTONIC)
 			#endif
 			pthread_cond_init(&cond, &__c_attr)
 			pthread_condattr_destroy(&__c_attr)
@@ -140,20 +142,11 @@ public class Threading {
 				return 0 == pthread_cond_wait(&self.cond, &self.mutex)
 			}
 			var tm = timespec()
-		#if os(Linux)
-			var tv = timeval()
-			// !FIX! use clock_gettime
-			// CLOCK_MONOTONIC isn't exported by Glibc
-			gettimeofday(&tv, nil)
-			tm.tv_sec = tv.tv_sec + waitMillis / 1000;
-			tm.tv_nsec = (tv.tv_usec + 1000 * waitMillis) * 1000
-			let ret = pthread_cond_timedwait(&self.cond, &self.mutex, &tm)
-		#else
 			tm.tv_sec = waitMillis / 1000
 			tm.tv_nsec = (waitMillis - (tm.tv_sec * 1000)) * 1000000
 			
 			let ret = pthread_cond_timedwait_relative_np(&self.cond, &self.mutex, &tm)
-		#endif
+
 			return ret == 0;
 		}
 	}

@@ -237,7 +237,6 @@ public struct NotificationPusher {
 		
 		do {
 			let jsond = try self.itemsToPayloadString(notificationItems)
-			print("made push payload: \(jsond)")
 			
 			NotificationPusher.getStreamIOS(configurationName) {
 				n in
