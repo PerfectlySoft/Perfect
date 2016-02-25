@@ -1,0 +1,340 @@
+//
+//  NotificationPusher.swift
+//  PerfectLib
+//
+//  Created by Kyle Jessup on 2016-02-16.
+//  Copyright © 2016 PerfectlySoft. All rights reserved.
+//
+//	This program is free software: you can redistribute it and/or modify
+//	it under the terms of the GNU Affero General Public License as
+//	published by the Free Software Foundation, either version 3 of the
+//	License, or (at your option) any later version, as supplemented by the
+//	Perfect Additional Terms.
+//
+//	This program is distributed in the hope that it will be useful,
+//	but WITHOUT ANY WARRANTY; without even the implied warranty of
+//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//	GNU Affero General Public License, as supplemented by the
+//	Perfect Additional Terms, for more details.
+//
+//	You should have received a copy of the GNU Affero General Public License
+//	and the Perfect Additional Terms that immediately follow the terms and
+//	conditions of the GNU Affero General Public License along with this
+//	program. If not, see <http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt>.
+//
+
+/**
+Example code:
+
+// BEGIN one-time initialization code
+
+let configurationName = "My configuration name - can be whatever"
+
+NotificationPusher.addConfigurationIOS(configurationName) {
+	(net:NetTCPSSL) in
+
+	// This code will be called whenever a new connection to the APNS service is required.
+	// Configure the SSL related settings.
+
+	net.keyFilePassword = "if you have password protected key file"
+
+	guard net.useCertificateChainFile("path/to/entrust_2048_ca.cer") &&
+		net.useCertificateFile("path/to/aps_development.pem") &&
+		net.usePrivateKeyFile("path/to/key.pem") &&
+		net.checkPrivateKey() else {
+
+		let code = Int32(net.errorCode())
+		print("Error validating private key file: \(net.errorStr(code))")
+		return
+	}
+}
+
+NotificationPusher.development = true // set to toggle to the APNS sandbox server
+
+// END one-time initialization code
+
+// BEGIN - individual notification push
+
+let deviceId = "hex string device id"
+let ary = [IOSNotificationItem.AlertBody("This is the message"), IOSNotificationItem.Sound("default")]
+let n = NotificationPusher()
+
+n.pushIOS(configurationName, deviceToken: deviceId, identifier: 1, expiration: 0, priority: 10, notificationItems: ary) {
+	errorMessage in
+
+	print("\(errorMessage)")
+}
+
+// END - individual notification push
+*/
+
+/// Items to configure an individual notification push.
+/// These correspond to what is described here:
+/// https://developer.apple.com/library/mac/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/TheNotificationPayload.html
+public enum IOSNotificationItem {
+	case AlertBody(String)
+	case AlertTitle(String)
+	case AlertTitleLoc(String, [String]?)
+	case AlertActionLoc(String)
+	case AlertLoc(String, [String]?)
+	case AlertLaunchImage(String)
+	case Badge(Int)
+	case Sound(String)
+	case ContentAvailable
+	case Category(String)
+	case CustomPayload(String, Any)
+}
+
+enum IOSItemId: UInt8 {
+	case DeviceToken = 1
+	case Payload = 2
+	case NotificationIdentifier = 3
+	case ExpirationDate = 4
+	case Priority = 5
+}
+
+private let iosDeviceIdLength = 32
+private let iosNotificationCommand = UInt8(2)
+private let iosNotificationPort = UInt16(443)
+private let iosNotificationDevelopmentHost = "api.development.push.apple.com"
+private let iosNotificationProductionHost = "api.push.apple.com"
+
+struct IOSNotificationError {
+	let code: UInt8
+	let identifier: UInt32
+}
+
+class NotificationConfiguration {
+	
+	let configurator: NotificationPusher.netConfigurator
+	let lock = Threading.Lock()
+	var streams = [NotificationHTTP2Client]()
+	
+	init(configurator: NotificationPusher.netConfigurator) {
+		self.configurator = configurator
+	}
+}
+
+class NotificationHTTP2Client: HTTP2Client {
+	let id: Int
+	
+	init(id: Int) {
+		self.id = id
+	}
+}
+
+/// The interface for APNS notifications.
+public struct NotificationPusher {
+	
+	/// On-demand configuration for SSL related functions.
+	public typealias netConfigurator = (NetTCPSSL) -> ()
+	
+	/// Toggle development or production on a global basis.
+	public static var development = false
+	
+	static var idCounter = 0
+	
+	static var notificationHostIOS: String {
+		if self.development {
+			return iosNotificationDevelopmentHost
+		}
+		return iosNotificationProductionHost
+	}
+	
+	static let configurationsLock = Threading.Lock()
+	static var iosConfigurations = [String:NotificationConfiguration]()
+	static var activeStreams = [Int:NotificationHTTP2Client]()
+	
+	/// Add a configuration given a name and a callback.
+	/// A particular configuration will generally correspond to an individual app.
+	/// The configuration callback will be called each time a new connection is initiated to the APNS.
+	/// Within the callback you will want to set:
+	/// 1. Path to chain file as provided by Apple: net.useCertificateChainFile("path/to/entrust_2048_ca.cer")
+	/// 2. Path to push notification certificate as obtained from Apple: net.useCertificateFile("path/to/aps.pem")
+	/// 3a. Password for the certificate's private key file, if it is password protected: net.keyFilePassword = "password"
+	/// 3b. Path to the certificate's private key file: net.usePrivateKeyFile("path/to/key.pem")
+	public static func addConfigurationIOS(name: String, configurator: netConfigurator) {
+		self.configurationsLock.doWithLock {
+			self.iosConfigurations[name] = NotificationConfiguration(configurator: configurator)
+		}
+	}
+	
+	static func getStreamIOS(configurationName: String, callback: (HTTP2Client?) -> ()) {
+		
+		var conf: NotificationConfiguration?
+		self.configurationsLock.doWithLock {
+			conf = self.iosConfigurations[configurationName]
+		}
+		
+		if let c = conf {
+			
+			var net: NotificationHTTP2Client?
+			var needsConnect = false
+			c.lock.doWithLock {
+				if c.streams.count > 0 {
+					net = c.streams.removeLast()
+				} else {
+					needsConnect = true
+					net = NotificationHTTP2Client(id: idCounter)
+					activeStreams[idCounter] = net
+					idCounter = idCounter &+ 1
+				}
+			}
+			
+			if !needsConnect {
+				callback(net!)
+			} else {
+				// add a new connected stream
+				
+				c.configurator(net!.net)
+				net!.connect(self.notificationHostIOS, port: iosNotificationPort, ssl: true, timeoutSeconds: 5.0) {
+					b in
+					if b {
+						callback(net!)
+					} else {
+						callback(nil)
+					}
+				}
+			}
+			
+		} else {
+			callback(nil)
+		}
+	}
+	
+	static func releaseStreamIOS(configurationName: String, net: HTTP2Client) {
+		var conf: NotificationConfiguration?
+		self.configurationsLock.doWithLock {
+			conf = self.iosConfigurations[configurationName]
+		}
+		
+		if let c = conf, n = net as? NotificationHTTP2Client {
+			
+			c.lock.doWithLock {
+				activeStreams.removeValueForKey(n.id)
+				c.streams.append(n)
+			}
+			
+		} else {
+			net.close()
+		}
+	}
+	
+	public init() {
+
+	}
+	
+	/// Push one message to one device.
+	/// Provide the previously set configuration name, device token.
+	/// Provide the expiration and priority as described here:
+	///		https://developer.apple.com/library/mac/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/APNsProviderAPI.html
+	/// Provide a list of IOSNotificationItems.
+	/// Provide a callback with which to receive any errors which may have occurred.
+	/// nil is passed to the callback if the push was successful.
+	public func pushIOS(configurationName: String, deviceToken: String, expiration: UInt32, priority: UInt8, notificationItems: [IOSNotificationItem], callback: (errorMessage: String?) -> ()) {
+		
+		do {
+			let jsond = try self.itemsToPayloadString(notificationItems)
+			print("made push payload: \(jsond)")
+			
+			NotificationPusher.getStreamIOS(configurationName) {
+				n in
+				
+				if let net = n {
+					
+					let request = net.createRequest()
+					request.setRequestMethod("POST")
+					request.postBodyBytes = UTF8Encoding.decode(jsond)
+					request.headers["content-type"] = "application/json; charset=utf-8"
+					request.headers["apns-expiration"] = "\(expiration)"
+					request.headers["apns-priority"] = "\(priority)"
+					request.headers["apns-topic"] = "ca.treefrog.Smirkee"
+					request.setRequestURI("/3/device/\(deviceToken)")
+					net.sendRequest(request) {
+						response, msg in
+						
+						if let r = response {
+							let code = r.getStatus().0
+							if code != 200 {
+								callback(errorMessage: "Response code \(code)")
+							} else {
+								callback(errorMessage: nil)
+							}
+							NotificationPusher.releaseStreamIOS(configurationName, net: net)
+						} else {
+							callback(errorMessage: msg)
+						}
+					}
+					
+				} else {
+					callback(errorMessage: "No stream")
+				}
+			}
+			
+		} catch let e {
+			callback(errorMessage: "\(e)")
+		}
+	}
+	
+	func itemsToPayloadString(notificationItems: [IOSNotificationItem]) throws -> String {
+		var dict = [String:Any]()
+		var aps = [String:Any]()
+		var alert = [String:Any]()
+		var alertBody: String?
+		
+		for item in notificationItems {
+			switch item {
+			case .AlertBody(let s):
+				alertBody = s
+			case .AlertTitle(let s):
+				alert["title"] = s
+			case .AlertTitleLoc(let s, let a):
+				alert["title-loc-key"] = s
+				if let titleLocArgs = a {
+					alert["title-loc-args"] = titleLocArgs
+				}
+			case .AlertActionLoc(let s):
+				alert["action-loc-key"] = s
+			case .AlertLoc(let s, let a):
+				alert["loc-key"] = s
+				if let locArgs = a {
+					alert["loc-args"] = locArgs
+				}
+			case .AlertLaunchImage(let s):
+				alert["launch-image"] = s
+			case .Badge(let i):
+				aps["badge"] = i
+			case .Sound(let s):
+				aps["sound"] = s
+			case .ContentAvailable:
+				aps["content-available"] = 1
+			case .Category(let s):
+				aps["category"] = s
+			case .CustomPayload(let s, let a):
+				dict[s] = a
+			}
+		}
+		
+		if let ab = alertBody {
+			if alert.count == 0 { // just a string alert
+				aps["alert"] = ab
+			} else { // a dict alert
+				alert["body"] = ab
+				aps["alert"] = alert
+			}
+		}
+		
+		dict["aps"] = aps
+		
+		return try dict.jsonEncodedString()
+	}
+}
+
+private func jsonSerialize(o: Any) -> String? {
+	do {
+		return try jsonEncodedStringWorkAround(o)
+	} catch let e as JSONConversionError {
+		print("Could not convert to JSON: \(e)")
+	} catch {}
+	return nil
+}

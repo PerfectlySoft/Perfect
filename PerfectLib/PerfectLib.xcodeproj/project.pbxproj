@@ -13,10 +13,13 @@
 		F88B067B1BDD4269001FD0CD /* libevent_pthreads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F88B06791BDD4269001FD0CD /* libevent_pthreads.a */; };
 		F88B067C1BDD4269001FD0CD /* libevent.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F88B067A1BDD4269001FD0CD /* libevent.a */; };
 		F88B06921BDE80F9001FD0CD /* MimeType.swift in Sources */ = {isa = PBXBuildFile; fileRef = F88B06911BDE80F9001FD0CD /* MimeType.swift */; };
+		F8924FFA1C7397B300A6ED4D /* NotificationPusher.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8924FF91C7397B300A6ED4D /* NotificationPusher.swift */; };
 		F8933C561C3D9A930048EFE9 /* WebSocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933C551C3D9A930048EFE9 /* WebSocketHandler.swift */; };
 		F8933C5A1C3DC6040048EFE9 /* StaticFileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933C591C3DC6040048EFE9 /* StaticFileHandler.swift */; };
 		F8A03D601C06035100FE7F2F /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E11BD5427000367249 /* File.swift */; };
 		F8BC99081C590F5F00303688 /* JSONConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8BC99071C590F5F00303688 /* JSONConvertible.swift */; };
+		F8D609621C7624D700216FFB /* HTTP2.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D609611C7624D700216FFB /* HTTP2.swift */; };
+		F8D609641C765E1D00216FFB /* HPACK.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D609631C765E1D00216FFB /* HPACK.swift */; };
 		F8E752EC1BDA956500BFC36A /* HTTPServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8E752EB1BDA956500BFC36A /* HTTPServer.swift */; };
 		F8F289C91BD53CF000367249 /* PerfectLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F289BE1BD53CF000367249 /* PerfectLib.framework */; };
 		F8F289CE1BD53CF000367249 /* PerfectLibTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289CD1BD53CF000367249 /* PerfectLibTests.swift */; };
@@ -87,9 +90,12 @@
 		F88B06791BDD4269001FD0CD /* libevent_pthreads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libevent_pthreads.a; path = linked/LibEvent/osx/libevent_pthreads.a; sourceTree = "<group>"; };
 		F88B067A1BDD4269001FD0CD /* libevent.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libevent.a; path = linked/LibEvent/osx/libevent.a; sourceTree = "<group>"; };
 		F88B06911BDE80F9001FD0CD /* MimeType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MimeType.swift; sourceTree = "<group>"; };
+		F8924FF91C7397B300A6ED4D /* NotificationPusher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationPusher.swift; sourceTree = "<group>"; };
 		F8933C551C3D9A930048EFE9 /* WebSocketHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebSocketHandler.swift; sourceTree = "<group>"; };
 		F8933C591C3DC6040048EFE9 /* StaticFileHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StaticFileHandler.swift; sourceTree = "<group>"; };
 		F8BC99071C590F5F00303688 /* JSONConvertible.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONConvertible.swift; sourceTree = "<group>"; };
+		F8D609611C7624D700216FFB /* HTTP2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTP2.swift; sourceTree = "<group>"; };
+		F8D609631C765E1D00216FFB /* HPACK.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HPACK.swift; sourceTree = "<group>"; };
 		F8E752EB1BDA956500BFC36A /* HTTPServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPServer.swift; sourceTree = "<group>"; };
 		F8F289BE1BD53CF000367249 /* PerfectLib.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PerfectLib.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8F289C11BD53CF000367249 /* PerfectLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PerfectLib.h; path = OSX/PerfectLib.h; sourceTree = "<group>"; };
@@ -261,6 +267,9 @@
 				F804E2B71C1B260800B0F393 /* Routing.swift */,
 				F8933C551C3D9A930048EFE9 /* WebSocketHandler.swift */,
 				F8933C591C3DC6040048EFE9 /* StaticFileHandler.swift */,
+				F8924FF91C7397B300A6ED4D /* NotificationPusher.swift */,
+				F8D609611C7624D700216FFB /* HTTP2.swift */,
+				F8D609631C765E1D00216FFB /* HPACK.swift */,
 				F8F289F41BD5427000367249 /* util.c */,
 				F8F28A2A1BD5545000367249 /* curl_support.cpp */,
 			);
@@ -456,6 +465,7 @@
 				F8F28A101BD5427000367249 /* PageHandler.swift in Sources */,
 				F8F28A141BD5427000367249 /* util.c in Sources */,
 				F8F28A0A1BD5427000367249 /* MimeReader.swift in Sources */,
+				F8D609621C7624D700216FFB /* HTTP2.swift in Sources */,
 				F8F28A151BD5427000367249 /* Utilities.swift in Sources */,
 				F8BC99081C590F5F00303688 /* JSONConvertible.swift in Sources */,
 				F8F28A021BD5427000367249 /* ICU.swift in Sources */,
@@ -464,6 +474,7 @@
 				F804E2B81C1B260800B0F393 /* Routing.swift in Sources */,
 				F88B06921BDE80F9001FD0CD /* MimeType.swift in Sources */,
 				F8F28A171BD5427000367249 /* WebRequest.swift in Sources */,
+				F8D609641C765E1D00216FFB /* HPACK.swift in Sources */,
 				F8F28A0B1BD5427000367249 /* Mustache.swift in Sources */,
 				F8F28A0F1BD5427000367249 /* NetTCPSSL.swift in Sources */,
 				F8F28A0C1BD5427000367249 /* Net.swift in Sources */,
@@ -472,6 +483,7 @@
 				F8F289FD1BD5427000367249 /* Dir.swift in Sources */,
 				F8F28A041BD5427000367249 /* PerfectError.swift in Sources */,
 				F8F28A181BD5427000367249 /* WebResponse.swift in Sources */,
+				F8924FFA1C7397B300A6ED4D /* NotificationPusher.swift in Sources */,
 				F8F28A4E1BD5720400367249 /* Utilities-Server.swift in Sources */,
 				F8F289FE1BD5427000367249 /* DynamicLoader.swift in Sources */,
 				F8F28A131BD5427000367249 /* SysProcess.swift in Sources */,

@@ -184,7 +184,7 @@ extension Bool: JSONConvertible {
 
 // !FIX! Downcasting to protocol does not work on Linux
 // Not sure if this is intentional, or a bug.
-private func jsonEncodedStringWorkAround(o: Any) throws -> String {
+func jsonEncodedStringWorkAround(o: Any) throws -> String {
 	switch o {
 	case let jsonAble as JSONConvertibleObject: // as part of Linux work around
 		return try jsonAble.jsonEncodedString()

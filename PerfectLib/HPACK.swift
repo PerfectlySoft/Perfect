@@ -812,7 +812,12 @@ public class HPACKEncoder {
 	}
 	
 	/// Encodes a new header field and value, writing the results to out Bytes.
-	public func encodeHeader(out: Bytes, name: [UInt8], value: [UInt8], sensitive: Bool) throws {
+	public func encodeHeader(out: Bytes, name: String, value: String, sensitive: Bool = false) throws {
+		return try encodeHeader(out, name: UTF8Encoding.decode(name), value: UTF8Encoding.decode(value), sensitive: sensitive)
+	}
+	
+	/// Encodes a new header field and value, writing the results to out Bytes.
+	public func encodeHeader(out: Bytes, name: [UInt8], value: [UInt8], sensitive: Bool = false) throws {
 		if sensitive {
 			let nameIndex = getNameIndex(name)
 			try encodeLiteral(out, name: name, value: value, indexType: .Never, nameIndex: nameIndex)
@@ -832,10 +837,7 @@ public class HPACKEncoder {
 		if headerSize > capacity {
 			let nameIndex = getNameIndex(name)
 			try encodeLiteral(out, name: name, value: value, indexType: .None, nameIndex: nameIndex)
-			return
-		}
-		
-		if let headerField = getEntry(name, value: value) {
+		} else if let headerField = getEntry(name, value: value) {
 			let index = getIndex(headerField.index) + StaticTable.length
 			encodeInteger(out, mask: 0x80, n: 7, i: index)
 		} else {
