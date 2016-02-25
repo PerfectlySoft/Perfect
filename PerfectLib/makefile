@@ -24,7 +24,8 @@ PERFECT_SRC = ICU.swift NetNamedPipe.swift File.swift Threading.swift LibEvent.s
 	FastCGIServer.swift Net.swift Utilities.swift MimeReader.swift NetTCP.swift SessionManager.swift \
 	WebRequest.swift HTTPServer.swift MimeType.swift PageHandler.swift SQLite.swift WebResponse.swift \
 	Dir.swift Mustache.swift PerfectError.swift SysProcess.swift DynamicLoader.swift JSON.swift Utilities-Server.swift \
-	Routing.swift StaticFileHandler.swift WebSocketHandler.swift JSONConvertible.swift cURL.swift
+	Routing.swift StaticFileHandler.swift WebSocketHandler.swift JSONConvertible.swift cURL.swift \
+	HPACK.swift HTTP2.swift NotificationPusher.swift
 
 PERFECT_OBJ = $(addsuffix .o, $(basename $(PERFECT_SRC))) LinuxBridge.o util.o linked/cURL_Linux/curl_support.o
 
