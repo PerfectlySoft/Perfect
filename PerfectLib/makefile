@@ -80,5 +80,5 @@ clean:
 		-emit-module-doc-path ./tmp/$(subst .o,.swiftdoc,$@) \
 		-emit-dependencies-path ./tmp/$(subst .swift,.d,$<) \
 		-emit-reference-dependencies-path ./tmp/$(subst .swift,.swiftdeps,$<) \
-		$(SWIFTC_FLAGS) $(SWIFTC_FLAGS) \
+		$(SWIFTC_FLAGS) \
 		-o $@
