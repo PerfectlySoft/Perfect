@@ -254,7 +254,7 @@ public class NetTCP : Closeable {
 			// no data available. wait
 			self.readBytesFullyIncomplete(into, read: read, remaining: remaining, timeoutSeconds: timeoutSeconds, completion: completion)
 			
-		} else if readCount == -1 {
+		} else if readCount < 0 {
 			completion(nil) // networking or other error
 		} else {
 			
