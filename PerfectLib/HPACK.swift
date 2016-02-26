@@ -805,19 +805,16 @@ public class HPACKEncoder {
 		self.capacity = maxCapacity
 		self.head.after = self.head
 		self.head.before = self.head
-		self.headerFields = [HeaderEntry?]()
-		for _ in 0..<HPACKEncoder.bucketSize {
-			self.headerFields.append(nil)
-		}
+		self.headerFields = [HeaderEntry?](count: HPACKEncoder.bucketSize, repeatedValue: nil)
 	}
 	
 	/// Encodes a new header field and value, writing the results to out Bytes.
-	public func encodeHeader(out: Bytes, name: String, value: String, sensitive: Bool = false) throws {
-		return try encodeHeader(out, name: UTF8Encoding.decode(name), value: UTF8Encoding.decode(value), sensitive: sensitive)
+	public func encodeHeader(out: Bytes, name: String, value: String, sensitive: Bool = false, incrementalIndexing: Bool = true) throws {
+		return try encodeHeader(out, name: UTF8Encoding.decode(name), value: UTF8Encoding.decode(value), sensitive: sensitive, incrementalIndexing: incrementalIndexing)
 	}
 	
 	/// Encodes a new header field and value, writing the results to out Bytes.
-	public func encodeHeader(out: Bytes, name: [UInt8], value: [UInt8], sensitive: Bool = false) throws {
+	public func encodeHeader(out: Bytes, name: [UInt8], value: [UInt8], sensitive: Bool = false, incrementalIndexing: Bool = true) throws {
 		if sensitive {
 			let nameIndex = getNameIndex(name)
 			try encodeLiteral(out, name: name, value: value, indexType: .Never, nameIndex: nameIndex)
@@ -847,7 +844,7 @@ public class HPACKEncoder {
 			} else {
 				let nameIndex = getNameIndex(name)
 				ensureCapacity(headerSize)
-				let indexType = IndexType.Incremental
+				let indexType = incrementalIndexing ? IndexType.Incremental : IndexType.None
 				try encodeLiteral(out, name: name, value: value, indexType: indexType, nameIndex: nameIndex)
 				add(name, value: value)
 			}
