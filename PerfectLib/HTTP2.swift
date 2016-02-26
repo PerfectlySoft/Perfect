@@ -48,6 +48,13 @@ let HTTP2_END_HEADERS = UInt8(0x4)
 let HTTP2_PADDED = UInt8(0x8)
 let HTTP2_FLAG_PRIORITY = UInt8(0x20)
 
+let SETTINGS_HEADER_TABLE_SIZE = UInt16(0x1)
+let SETTINGS_ENABLE_PUSH = UInt16(0x2)
+let SETTINGS_MAX_CONCURRENT_STREAMS = UInt16(0x3)
+let SETTINGS_INITIAL_WINDOW_SIZE = UInt16(0x4)
+let SETTINGS_MAX_FRAME_SIZE = UInt16(0x5)
+let SETTINGS_MAX_HEADER_LIST_SIZE = UInt16(0x6)
+
 public struct HTTP2Frame {
 	let length: UInt32 // 24-bit
 	let type: UInt8
@@ -145,7 +152,11 @@ public class HTTP2Client {
 	var ssl = true
 	var streams = [UInt32:StreamState]()
 	var streamCounter = UInt32(0)
-
+	
+	var encoder = HPACKEncoder()
+	
+	let closeLock = Threading.Lock()
+	
 	let frameReadEvent = Threading.Event()
 	var frameQueue = [HTTP2Frame]()
 	var frameReadOK = false
@@ -198,12 +209,29 @@ public class HTTP2Client {
 	}
 
 	func processSettingsPayload(b: Bytes) {
-//		while b.availableExportBytes >= 6 {
-//			let identifier = ntohs(b.export16Bits())
-//			let value = ntohl(b.export32Bits())
-//
-//			print("Setting \(identifier) \(value)")
-//		}
+		while b.availableExportBytes >= 6 {
+			let identifier = ntohs(b.export16Bits())
+			let value = ntohl(b.export32Bits())
+
+			print("Setting \(identifier) \(value)")
+			
+			switch identifier {
+			case SETTINGS_HEADER_TABLE_SIZE:
+				()//self.encoder = HPACKEncoder(maxCapacity: Int(value))
+			case SETTINGS_ENABLE_PUSH:
+				()
+			case SETTINGS_MAX_CONCURRENT_STREAMS:
+				()
+			case SETTINGS_INITIAL_WINDOW_SIZE:
+				()
+			case SETTINGS_MAX_FRAME_SIZE:
+				()
+			case SETTINGS_MAX_HEADER_LIST_SIZE:
+				()
+			default:
+				()
+			}
+		}
 	}
 
 	func readOneFrame() {
@@ -212,6 +240,12 @@ public class HTTP2Client {
 				f in
 
 				if let frame = f {
+					
+					print("Read frame \(frame.type) \(frame.flags) \(frame.streamId)")
+					if frame.length > 0 {
+						print("Read frame payload \(UTF8Encoding.encode(frame.payload!))")
+					}
+					
 					self?.frameReadEvent.doWithLock {
 
 						switch frame.type {
@@ -260,7 +294,7 @@ public class HTTP2Client {
 					}
 				} else { // network error
 					self?.frameReadEvent.doWithLock {
-						self?.net.close()
+						self?.close()
 						self?.frameReadOK = false
 						self?.frameReadEvent.broadcast()
 					}
@@ -291,7 +325,7 @@ public class HTTP2Client {
 							}
 						}
 						if !s.frameReadOK {
-							net.close()
+							s.close()
 							break
 						}
 
@@ -305,7 +339,9 @@ public class HTTP2Client {
 	}
 
 	public func close() {
-		net.close()
+		self.closeLock.doWithLock {
+			self.net.close()
+		}
 	}
 
 	public var isConnected: Bool {
@@ -429,7 +465,6 @@ public class HTTP2Client {
 		self.streams[streamId] = .Idle
 
 		let headerBytes = Bytes()
-		let encoder = HPACKEncoder()
 
 		let method = request.requestMethod()
 		let scheme = ssl ? "https" : "http"
@@ -439,15 +474,21 @@ public class HTTP2Client {
 
 			try encoder.encodeHeader(headerBytes, name: ":method", value: method)
 			try encoder.encodeHeader(headerBytes, name: ":scheme", value: scheme)
-			try encoder.encodeHeader(headerBytes, name: ":path", value: path, sensitive: true)
+			try encoder.encodeHeader(headerBytes, name: ":path", value: path, sensitive: false, incrementalIndexing: false)
 			try encoder.encodeHeader(headerBytes, name: "host", value: self.host)
 			try encoder.encodeHeader(headerBytes, name: "content-length", value: "\(request.postBodyBytes.count)")
 
 			for (name, value) in request.headers {
-				let n = UTF8Encoding.decode(name.lowercaseString)
+				let lowered  = name.lowercaseString
+				var inc = true
+				// this is APNS specific in that Apple wants the apns-id and apns-expiration headers to be indexed on the first request but not indexed on subsequent requests
+				// !FIX! need to enable the caller to indicate policies such as this
+				let n = UTF8Encoding.decode(lowered)
 				let v = UTF8Encoding.decode(value)
-
-				try encoder.encodeHeader(headerBytes, name: n, value: v, sensitive: false)
+				if streamId > 1 { // at least the second request
+					inc = !(lowered == "apns-id" || lowered == "apns-expiration")
+				}
+				try encoder.encodeHeader(headerBytes, name: n, value: v, sensitive: false, incrementalIndexing: inc)
 			}
 
 		} catch {
@@ -555,6 +596,7 @@ public class HTTP2Client {
 		} else if !net.writeBytesFully(frame.headerBytes()) {
 			callback(false)
 		} else {
+			print("Wrote frame \(frame.type) \(frame.flags) \(frame.streamId)")
 			if let p = frame.payload {
 				callback(net.writeBytesFully(p))
 			} else {
@@ -565,7 +607,7 @@ public class HTTP2Client {
 
 	func encodeHeaders(headers: [(String, String)]) -> Bytes {
 		let b = Bytes()
-		let encoder = HPACKEncoder()
+		let encoder = HPACKEncoder(maxCapacity: 4096)
 		for header in headers {
 			let n = UTF8Encoding.decode(header.0)
 			let v = UTF8Encoding.decode(header.1)

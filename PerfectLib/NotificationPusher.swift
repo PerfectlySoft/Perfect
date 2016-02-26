@@ -59,7 +59,7 @@ let deviceId = "hex string device id"
 let ary = [IOSNotificationItem.AlertBody("This is the message"), IOSNotificationItem.Sound("default")]
 let n = NotificationPusher()
 
-n.pushIOS(configurationName, deviceToken: deviceId, identifier: 1, expiration: 0, priority: 10, notificationItems: ary) {
+n.pushIOS(configurationName, deviceToken: deviceId, expiration: 0, priority: 10, notificationItems: ary) {
 	errorMessage in
 
 	print("\(errorMessage)")
@@ -254,6 +254,8 @@ public struct NotificationPusher {
 					net.sendRequest(request) {
 						response, msg in
 						
+						NotificationPusher.releaseStreamIOS(configurationName, net: net)
+						
 						if let r = response {
 							let code = r.getStatus().0
 							if code != 200 {
@@ -261,7 +263,6 @@ public struct NotificationPusher {
 							} else {
 								callback(errorMessage: nil)
 							}
-							NotificationPusher.releaseStreamIOS(configurationName, net: net)
 						} else {
 							callback(errorMessage: msg)
 						}
