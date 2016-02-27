@@ -263,6 +263,8 @@ public class NotificationPusher {
 				self.pushIOS(c, deviceTokens: [deviceToken], expiration: expiration, priority: priority, notificationItems: notificationItems) {
 					responses in
 					
+					NotificationPusher.releaseStreamIOS(configurationName, net: client)
+					
 					if responses.count == 1 {
 						callback(responses.first!)
 					} else {
@@ -287,6 +289,8 @@ public class NotificationPusher {
 			if let c = client {
 				self.pushIOS(c, deviceTokens: deviceTokens, expiration: expiration, priority: priority, notificationItems: notificationItems) {
 					responses in
+					
+					NotificationPusher.releaseStreamIOS(configurationName, net: client)
 					
 					if responses.count == 1 {
 						callback(responses)
