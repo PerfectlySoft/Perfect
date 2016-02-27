@@ -123,14 +123,33 @@ class NotificationHTTP2Client: HTTP2Client {
 	}
 }
 
+public struct NotificationResponse {
+	public let code: Int
+	public let body: [UInt8]
+	public var jsonObjectBody: [String:Any] {
+		do {
+			if let json = try self.stringBody.jsonDecode() as? [String:Any] {
+				return json
+			}
+		}
+		catch {}
+		return [String:Any]()
+	}
+	public var stringBody: String {
+		return UTF8Encoding.encode(self.body)
+	}
+}
+
 /// The interface for APNS notifications.
-public struct NotificationPusher {
+public class NotificationPusher {
 	
 	/// On-demand configuration for SSL related functions.
 	public typealias netConfigurator = (NetTCPSSL) -> ()
 	
 	/// Toggle development or production on a global basis.
 	public static var development = false
+	
+	var responses = [NotificationResponse]()
 	
 	static var idCounter = 0
 	
@@ -226,14 +245,114 @@ public struct NotificationPusher {
 
 	}
 	
+	func resetResponses() {
+		self.responses.removeAll()
+	}
+	
 	/// Push one message to one device.
 	/// Provide the previously set configuration name, device token.
 	/// Provide the expiration and priority as described here:
 	///		https://developer.apple.com/library/mac/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/APNsProviderAPI.html
 	/// Provide a list of IOSNotificationItems.
+	/// Provide a callback with which to receive the response.
+	public func pushIOS(configurationName: String, deviceToken: String, expiration: UInt32, priority: UInt8, notificationItems: [IOSNotificationItem], callback: (NotificationResponse) -> ()) {
+		
+		NotificationPusher.getStreamIOS(configurationName) {
+			client in
+			if let c = client {
+				self.pushIOS(c, deviceTokens: [deviceToken], expiration: expiration, priority: priority, notificationItems: notificationItems) {
+					responses in
+					
+					if responses.count == 1 {
+						callback(responses.first!)
+					} else {
+						callback(NotificationResponse(code: -1, body: [UInt8]()))
+					}
+				}
+			} else {
+				callback(NotificationResponse(code: -1, body: [UInt8]()))
+			}
+		}
+	}
+	/// Push multiple messages to one device.
+	/// Provide the previously set configuration name, and zero or more device tokens. The same message will be sent to each device.
+	/// Provide the expiration and priority as described here:
+	///		https://developer.apple.com/library/mac/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/APNsProviderAPI.html
+	/// Provide a list of IOSNotificationItems.
+	/// Provide a callback with which to receive the responses.
+	public func pushIOS(configurationName: String, deviceTokens: [String], expiration: UInt32, priority: UInt8, notificationItems: [IOSNotificationItem], callback: ([NotificationResponse]) -> ()) {
+		
+		NotificationPusher.getStreamIOS(configurationName) {
+			client in
+			if let c = client {
+				self.pushIOS(c, deviceTokens: deviceTokens, expiration: expiration, priority: priority, notificationItems: notificationItems) {
+					responses in
+					
+					if responses.count == 1 {
+						callback(responses)
+					} else {
+						callback([NotificationResponse(code: -1, body: [UInt8]())])
+					}
+				}
+			} else {
+				callback([NotificationResponse(code: -1, body: [UInt8]())])
+			}
+		}
+	}
+	
+	func pushIOS(net: HTTP2Client, deviceToken: String, expiration: UInt32, priority: UInt8, notificationJson: [UInt8], callback: (NotificationResponse) -> ()) {
+		
+		let request = net.createRequest()
+		request.setRequestMethod("POST")
+		request.postBodyBytes = notificationJson
+		request.headers["content-type"] = "application/json; charset=utf-8"
+		request.headers["apns-expiration"] = "\(expiration)"
+		request.headers["apns-priority"] = "\(priority)"
+		request.headers["apns-topic"] = "ca.treefrog.Smirkee"
+		request.setRequestURI("/3/device/\(deviceToken)")
+		net.sendRequest(request) {
+			response, msg in
+			
+			if let r = response {
+				let code = r.getStatus().0
+				callback(NotificationResponse(code: code, body: r.bodyData))
+			} else {
+				callback(NotificationResponse(code: -1, body: UTF8Encoding.decode("No response")))
+			}
+		}
+	}
+	
+	func pushIOS(client: HTTP2Client, deviceTokens: IndexingGenerator<[String]>, expiration: UInt32, priority: UInt8, notificationJson: [UInt8], callback: ([NotificationResponse]) -> ()) {
+
+		var g = deviceTokens
+		if let next = g.next() {
+			pushIOS(client, deviceToken: next, expiration: expiration, priority: priority, notificationJson: notificationJson) {
+				response in
+				
+				self.responses.append(response)
+				
+				self.pushIOS(client, deviceTokens: g, expiration: expiration, priority: priority, notificationJson: notificationJson, callback: callback)
+			}
+		} else {
+			callback(self.responses)
+		}
+	}
+	
+	func pushIOS(client: HTTP2Client, deviceTokens: [String], expiration: UInt32, priority: UInt8, notificationItems: [IOSNotificationItem], callback: ([NotificationResponse]) -> ()) {
+		self.resetResponses()
+		let g = deviceTokens.generate()
+		let jsond = UTF8Encoding.decode(self.itemsToPayloadString(notificationItems))
+		self.pushIOS(client, deviceTokens: g, expiration: expiration, priority: priority, notificationJson: jsond, callback: callback)
+	}
+	
+	/// Push multiple messages to one device.
+	/// Provide the previously set configuration name, and zero or more device tokens. The same message will be sent to each device.
+	/// Provide the expiration and priority as described here:
+	///		https://developer.apple.com/library/mac/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/APNsProviderAPI.html
+	/// Provide a list of IOSNotificationItems.
 	/// Provide a callback with which to receive any errors which may have occurred.
 	/// nil is passed to the callback if the push was successful.
-	public func pushIOS(configurationName: String, deviceToken: String, expiration: UInt32, priority: UInt8, notificationItems: [IOSNotificationItem], callback: (errorMessage: String?) -> ()) {
+/*	public func pushIOS(configurationName: String, deviceTokens: [String], expiration: UInt32, priority: UInt8, notificationItems: [IOSNotificationItem], callback: (errorMessage: String?) -> ()) {
 		
 		do {
 			let jsond = try self.itemsToPayloadString(notificationItems)
@@ -277,8 +396,8 @@ public struct NotificationPusher {
 			callback(errorMessage: "\(e)")
 		}
 	}
-	
-	func itemsToPayloadString(notificationItems: [IOSNotificationItem]) throws -> String {
+	*/
+	func itemsToPayloadString(notificationItems: [IOSNotificationItem]) -> String {
 		var dict = [String:Any]()
 		var aps = [String:Any]()
 		var alert = [String:Any]()
@@ -327,8 +446,11 @@ public struct NotificationPusher {
 		}
 		
 		dict["aps"] = aps
-		
-		return try dict.jsonEncodedString()
+		do {
+			return try dict.jsonEncodedString()
+		}
+		catch {}
+		return "{}"
 	}
 }
 
