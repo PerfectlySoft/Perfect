@@ -47,8 +47,6 @@ public enum MySQLOpt {
 		MYSQL_OPT_CAN_HANDLE_EXPIRED_PASSWORDS
 }
 
-let _UNSIGNED_FLAG = UInt32(UNSIGNED_FLAG)
-
 public final class MySQL {
 	
 	static private var dispatchOnce = Threading.ThreadOnce()
@@ -627,6 +625,7 @@ public final class MySQLStmt {
 	}
 	
 	public final class Results: GeneratorType {
+        let _UNSIGNED_FLAG = UInt32(UNSIGNED_FLAG)
 		public typealias Element = [Any?]
 		
 		let stmt: MySQLStmt
