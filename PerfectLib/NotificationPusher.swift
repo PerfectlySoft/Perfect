@@ -60,9 +60,9 @@ let ary = [IOSNotificationItem.AlertBody("This is the message"), IOSNotification
 let n = NotificationPusher()
 
 n.pushIOS(configurationName, deviceToken: deviceId, expiration: 0, priority: 10, notificationItems: ary) {
-	errorMessage in
+	response in
 
-	print("\(errorMessage)")
+	print("NotificationResponse: \(response.code) \(response.body)")
 }
 
 // END - individual notification push
@@ -123,9 +123,13 @@ class NotificationHTTP2Client: HTTP2Client {
 	}
 }
 
+/// The response object given after a push attempt.
 public struct NotificationResponse {
+	/// The response code for the request.
 	public let code: Int
+	/// The response body data bytes.
 	public let body: [UInt8]
+	/// The body data bytes interpreted as JSON and decoded into a Dictionary.
 	public var jsonObjectBody: [String:Any] {
 		do {
 			if let json = try self.stringBody.jsonDecode() as? [String:Any] {
@@ -135,6 +139,7 @@ public struct NotificationResponse {
 		catch {}
 		return [String:Any]()
 	}
+	/// The body data bytes converted to String.
 	public var stringBody: String {
 		return UTF8Encoding.encode(self.body)
 	}
