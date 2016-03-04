@@ -442,8 +442,37 @@ class MySQLTests: XCTestCase {
 		XCTAssert(vers >= 50627) // YMMV
 	}
 	
-	
-	
+    func testQueryInt() {
+        let mysql = MySQL()
+        defer {
+            mysql.close()
+        }
+        let res = mysql.connect(HOST, user: USER, password: PASSWORD)
+        XCTAssert(res)
+        if !res {
+            print(mysql.errorMessage())
+        }
+
+        let sres = mysql.selectDatabase(SCHEMA)
+        XCTAssert(sres == true)
+
+        let qres = mysql.query("CREATE TABLE IF NOT EXISTS int_test (a TINYINT, au TINYINT UNSIGNED, b SMALLINT, bu SMALLINT UNSIGNED, c MEDIUMINT, cu MEDIUMINT UNSIGNED, d INT, du INT UNSIGNED, e BIGINT, eu BIGINT UNSIGNED)")
+        XCTAssert(qres == true, mysql.errorMessage())
+
+        let qres2 = mysql.query("INSERT INTO int_test (a, au, b, bu, c, cu, d, du, e, eu) VALUES (-1, 1, -2, 2, -3, 3, -4, 4, -5, 5)")
+        XCTAssert(qres2 == true, mysql.errorMessage())
+        
+        let qres3 =  mysql.query("SELECT * FROM int_test")
+        XCTAssert(qres3 == true, mysql.errorMessage())
+
+        let results = mysql.storeResults()
+        if let results = results {
+            defer { results.close() }
+            while let row = results.next() {
+                print(row)
+            }
+        }
+    }
 }
 
 
