@@ -848,7 +848,7 @@ public final class MySQLStmt {
 					return false
 				}
 				
-				var row = [Any?]()
+				var row = Element()
 				
 				for i in 0..<numFields {
 					var bind = binds[i]
@@ -967,14 +967,6 @@ public final class MySQLStmt {
 			case .Null:
 				return bindToNull()
 			}
-		}
-		
-		func bindToDouble() -> MYSQL_BIND {
-			return bindToIntegral(MYSQL_TYPE_DOUBLE)
-		}
-		
-		func bindToInteger() -> MYSQL_BIND {
-			return bindToIntegral(MYSQL_TYPE_LONGLONG)
 		}
 		
 		func bindToBlob() -> MYSQL_BIND {
