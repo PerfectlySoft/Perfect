@@ -32,15 +32,26 @@ let PASSWORD = ""
 let SCHEMA = "test"
 
 class MySQLTests: XCTestCase {
-    
+    var mysql: MySQL!
+
     override func setUp() {
         super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+
+        //  connect and select DB
+        mysql = MySQL()
+        XCTAssert(mysql.connect(HOST, user: USER, password: PASSWORD), mysql.errorMessage())
+        if mysql.selectDatabase(SCHEMA) == false {
+            XCTAssert(mysql.query("CREATE SCHEMA `\(SCHEMA)` DEFAULT CHARACTER SET utf8mb4"), mysql.errorMessage())
+        }
     }
     
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
+
+        //  close
+        if let mysql = mysql {
+            mysql.close()
+        }
     }
     
     func testConnect() {
@@ -443,34 +454,295 @@ class MySQLTests: XCTestCase {
 	}
 	
     func testQueryInt() {
-        let mysql = MySQL()
-        defer {
-            mysql.close()
-        }
-        let res = mysql.connect(HOST, user: USER, password: PASSWORD)
-        XCTAssert(res)
-        if !res {
-            print(mysql.errorMessage())
-        }
+        XCTAssert(mysql.query("DROP TABLE IF EXISTS int_test"), mysql.errorMessage())
+        XCTAssert(mysql.query("CREATE TABLE int_test (a TINYINT, au TINYINT UNSIGNED, b SMALLINT, bu SMALLINT UNSIGNED, c MEDIUMINT, cu MEDIUMINT UNSIGNED, d INT, du INT UNSIGNED, e BIGINT, eu BIGINT UNSIGNED)"), mysql.errorMessage())
 
-        let sres = mysql.selectDatabase(SCHEMA)
-        XCTAssert(sres == true)
-
-        let qres = mysql.query("CREATE TABLE IF NOT EXISTS int_test (a TINYINT, au TINYINT UNSIGNED, b SMALLINT, bu SMALLINT UNSIGNED, c MEDIUMINT, cu MEDIUMINT UNSIGNED, d INT, du INT UNSIGNED, e BIGINT, eu BIGINT UNSIGNED)")
+        var qres = mysql.query("INSERT INTO int_test (a, au, b, bu, c, cu, d, du, e, eu) VALUES "
+            + "(-1, 1, -2, 2, -3, 3, -4, 4, -5, 5)")
         XCTAssert(qres == true, mysql.errorMessage())
-
-        let qres2 = mysql.query("INSERT INTO int_test (a, au, b, bu, c, cu, d, du, e, eu) VALUES (-1, 1, -2, 2, -3, 3, -4, 4, -5, 5)")
-        XCTAssert(qres2 == true, mysql.errorMessage())
         
-        let qres3 =  mysql.query("SELECT * FROM int_test")
-        XCTAssert(qres3 == true, mysql.errorMessage())
+        qres =  mysql.query("SELECT * FROM int_test")
+        XCTAssert(qres == true, mysql.errorMessage())
 
         let results = mysql.storeResults()
         if let results = results {
             defer { results.close() }
             while let row = results.next() {
-                print(row)
+                XCTAssertEqual(row[0], "-1")
+                XCTAssertEqual(row[1], "1")
+                XCTAssertEqual(row[2], "-2")
+                XCTAssertEqual(row[3], "2")
+                XCTAssertEqual(row[4], "-3")
+                XCTAssertEqual(row[5], "3")
+                XCTAssertEqual(row[6], "-4")
+                XCTAssertEqual(row[7], "4")
+                XCTAssertEqual(row[8], "-5")
+                XCTAssertEqual(row[9], "5")
             }
+        }
+    }
+ 
+    func testQueryIntMin() {
+        XCTAssert(mysql.query("DROP TABLE IF EXISTS int_test"), mysql.errorMessage())
+        XCTAssert(mysql.query("CREATE TABLE int_test (a TINYINT, au TINYINT UNSIGNED, b SMALLINT, bu SMALLINT UNSIGNED, c MEDIUMINT, cu MEDIUMINT UNSIGNED, d INT, du INT UNSIGNED, e BIGINT, eu BIGINT UNSIGNED)"), mysql.errorMessage())
+        
+        var qres = mysql.query("INSERT INTO int_test (a, au, b, bu, c, cu, d, du, e, eu) VALUES "
+            + "(-128, 0, -32768, 0, -8388608, 0, -2147483648, 0, -9223372036854775808, 0)")
+        XCTAssert(qres == true, mysql.errorMessage())
+        
+        qres =  mysql.query("SELECT * FROM int_test")
+        XCTAssert(qres == true, mysql.errorMessage())
+        
+        let results = mysql.storeResults()
+        if let results = results {
+            defer { results.close() }
+            while let row = results.next() {
+                XCTAssertEqual(row[0], "-128")
+                XCTAssertEqual(row[1], "0")
+                XCTAssertEqual(row[2], "-32768")
+                XCTAssertEqual(row[3], "0")
+                XCTAssertEqual(row[4], "-8388608")
+                XCTAssertEqual(row[5], "0")
+                XCTAssertEqual(row[6], "-2147483648")
+                XCTAssertEqual(row[7], "0")
+                XCTAssertEqual(row[8], "-9223372036854775808")
+                XCTAssertEqual(row[9], "0")
+            }
+        }
+    }
+    
+    func testQueryIntMax() {
+        XCTAssert(mysql.query("DROP TABLE IF EXISTS int_test"), mysql.errorMessage())
+        XCTAssert(mysql.query("CREATE TABLE int_test (a TINYINT, au TINYINT UNSIGNED, b SMALLINT, bu SMALLINT UNSIGNED, c MEDIUMINT, cu MEDIUMINT UNSIGNED, d INT, du INT UNSIGNED, e BIGINT, eu BIGINT UNSIGNED)"), mysql.errorMessage())
+        
+        var qres = mysql.query("INSERT INTO int_test (a, au, b, bu, c, cu, d, du, e, eu) VALUES "
+            + "(127, 255, 32767, 65535, 8388607, 16777215, 2147483647, 4294967295, 9223372036854775807, 18446744073709551615)")
+        XCTAssert(qres == true, mysql.errorMessage())
+        
+        qres =  mysql.query("SELECT * FROM int_test")
+        XCTAssert(qres == true, mysql.errorMessage())
+        
+        let results = mysql.storeResults()
+        if let results = results {
+            defer { results.close() }
+            while let row = results.next() {
+                XCTAssertEqual(row[0], "127")
+                XCTAssertEqual(row[1], "255")
+                XCTAssertEqual(row[2], "32767")
+                XCTAssertEqual(row[3], "65535")
+                XCTAssertEqual(row[4], "8388607")
+                XCTAssertEqual(row[5], "16777215")
+                XCTAssertEqual(row[6], "2147483647")
+                XCTAssertEqual(row[7], "4294967295")
+                XCTAssertEqual(row[8], "9223372036854775807")
+                XCTAssertEqual(row[9], "18446744073709551615")
+            }
+        }
+    }
+    
+    func testQueryDecimal() {
+        XCTAssert(mysql.query("DROP TABLE IF EXISTS decimal_test"), mysql.errorMessage())
+        XCTAssert(mysql.query("CREATE TABLE decimal_test (f FLOAT, fm FLOAT, d DOUBLE, dm DOUBLE, de DECIMAL(2,1), dem DECIMAL(2,1))"), mysql.errorMessage())
+        
+        var qres = mysql.query("INSERT INTO decimal_test (f, fm, d, dm, de, dem) VALUES "
+            + "(1.1, -1.1, 2.2, -2.2, 3.3, -3.3)")
+        XCTAssert(qres == true, mysql.errorMessage())
+        
+        qres =  mysql.query("SELECT * FROM decimal_test")
+        XCTAssert(qres == true, mysql.errorMessage())
+        
+        let results = mysql.storeResults()
+        if let results = results {
+            defer { results.close() }
+            while let row = results.next() {
+                XCTAssertEqual(row[0], "1.1")
+                XCTAssertEqual(row[1], "-1.1")
+                XCTAssertEqual(row[2], "2.2")
+                XCTAssertEqual(row[3], "-2.2")
+                XCTAssertEqual(row[4], "3.3")
+                XCTAssertEqual(row[5], "-3.3")
+            }
+        }
+    }
+    
+    func testStmtInt() {
+        XCTAssert(mysql.query("DROP TABLE IF EXISTS int_test"), mysql.errorMessage())
+        XCTAssert(mysql.query("CREATE TABLE int_test (a TINYINT, au TINYINT UNSIGNED, b SMALLINT, bu SMALLINT UNSIGNED, c MEDIUMINT, cu MEDIUMINT UNSIGNED, d INT, du INT UNSIGNED, e BIGINT, eu BIGINT UNSIGNED)"), mysql.errorMessage())
+        
+        let stmt = MySQLStmt(mysql)
+        defer { stmt.close() }
+        var res = stmt.prepare("INSERT INTO int_test (a, au, b, bu, c, cu, d, du, e, eu) VALUES "
+            + "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+        XCTAssert(res == true, stmt.errorMessage())
+
+        stmt.bindParam(-1)
+        stmt.bindParam(1)
+        stmt.bindParam(-2)
+        stmt.bindParam(2)
+        stmt.bindParam(-3)
+        stmt.bindParam(3)
+        stmt.bindParam(-4)
+        stmt.bindParam(4)
+        stmt.bindParam(-5)
+        stmt.bindParam(5)
+
+        res = stmt.execute()
+        XCTAssert(res == true, stmt.errorMessage())
+
+        stmt.reset()
+        res = stmt.prepare("SELECT * FROM int_test")
+        XCTAssert(res == true, stmt.errorMessage())
+
+        res = stmt.execute()
+        XCTAssert(res == true, stmt.errorMessage())
+        
+        let results = stmt.results()
+        defer { results.close() }
+        results.forEachRow { row in
+            XCTAssertEqual(row[0] as? Int8, -1)
+            XCTAssertEqual(row[1] as? UInt8, 1)
+            XCTAssertEqual(row[2] as? Int16, -2)
+            XCTAssertEqual(row[3] as? UInt16, 2)
+            XCTAssertEqual(row[4] as? Int32, -3)
+            XCTAssertEqual(row[5] as? UInt32, 3)
+            XCTAssertEqual(row[6] as? Int32, -4)
+            XCTAssertEqual(row[7] as? UInt32, 4)
+            XCTAssertEqual(row[8] as? Int64, -5)
+            XCTAssertEqual(row[9] as? UInt64, 5)
+        }
+    }
+
+    func testStmtIntMin() {
+        XCTAssert(mysql.query("DROP TABLE IF EXISTS int_test"), mysql.errorMessage())
+        XCTAssert(mysql.query("CREATE TABLE int_test (a TINYINT, au TINYINT UNSIGNED, b SMALLINT, bu SMALLINT UNSIGNED, c MEDIUMINT, cu MEDIUMINT UNSIGNED, d INT, du INT UNSIGNED, e BIGINT, eu BIGINT UNSIGNED)"), mysql.errorMessage())
+        
+        let stmt = MySQLStmt(mysql)
+        defer { stmt.close() }
+        var res = stmt.prepare("INSERT INTO int_test (a, au, b, bu, c, cu, d, du, e, eu) VALUES "
+            + "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+        XCTAssert(res == true, stmt.errorMessage())
+
+        stmt.bindParam(-128)
+        stmt.bindParam(0)
+        stmt.bindParam(-32768)
+        stmt.bindParam(0)
+        stmt.bindParam(-8388608)
+        stmt.bindParam(0)
+        stmt.bindParam(-2147483648)
+        stmt.bindParam(0)
+        stmt.bindParam(-9223372036854775808)
+        stmt.bindParam(0)
+        
+        res = stmt.execute()
+        XCTAssert(res == true, stmt.errorMessage())
+        
+        stmt.reset()
+        res = stmt.prepare("SELECT * FROM int_test")
+        XCTAssert(res == true, stmt.errorMessage())
+        
+        res = stmt.execute()
+        XCTAssert(res == true, stmt.errorMessage())
+        
+        let results = stmt.results()
+        defer { results.close() }
+        results.forEachRow { row in
+            XCTAssertEqual(row[0] as? Int8, -128)
+            XCTAssertEqual(row[1] as? UInt8, 0)
+            XCTAssertEqual(row[2] as? Int16, -32768)
+            XCTAssertEqual(row[3] as? UInt16, 0)
+            XCTAssertEqual(row[4] as? Int32, -8388608)
+            XCTAssertEqual(row[5] as? UInt32, 0)
+            XCTAssertEqual(row[6] as? Int32, -2147483648)
+            XCTAssertEqual(row[7] as? UInt32, 0)
+            XCTAssertEqual(row[8] as? Int64, -9223372036854775808)
+            XCTAssertEqual(row[9] as? UInt64, 0)
+        }
+    }
+    
+    func testStmtIntMax() {
+        XCTAssert(mysql.query("DROP TABLE IF EXISTS int_test"), mysql.errorMessage())
+        XCTAssert(mysql.query("CREATE TABLE int_test (a TINYINT, au TINYINT UNSIGNED, b SMALLINT, bu SMALLINT UNSIGNED, c MEDIUMINT, cu MEDIUMINT UNSIGNED, d INT, du INT UNSIGNED, e BIGINT, eu BIGINT UNSIGNED)"), mysql.errorMessage())
+        
+        let stmt = MySQLStmt(mysql)
+        defer { stmt.close() }
+        var res = stmt.prepare("INSERT INTO int_test (a, au, b, bu, c, cu, d, du, e, eu) VALUES "
+            + "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+        XCTAssert(res == true, stmt.errorMessage())
+        
+        stmt.bindParam(127)
+        stmt.bindParam(255)
+        stmt.bindParam(32767)
+        stmt.bindParam(65535)
+        stmt.bindParam(8388607)
+        stmt.bindParam(16777215)
+        stmt.bindParam(2147483647)
+        stmt.bindParam(4294967295)
+        stmt.bindParam(9223372036854775807)
+        stmt.bindParam(18446744073709551615 as UInt64)
+        
+        res = stmt.execute()
+        XCTAssert(res == true, stmt.errorMessage())
+        
+        stmt.reset()
+        res = stmt.prepare("SELECT * FROM int_test")
+        XCTAssert(res == true, stmt.errorMessage())
+        
+        res = stmt.execute()
+        XCTAssert(res == true, stmt.errorMessage())
+        
+        let results = stmt.results()
+        defer { results.close() }
+        results.forEachRow { row in
+            XCTAssertEqual(row[0] as? Int8, 127)
+            XCTAssertEqual(row[1] as? UInt8, 255)
+            XCTAssertEqual(row[2] as? Int16, 32767)
+            XCTAssertEqual(row[3] as? UInt16, 65535)
+            XCTAssertEqual(row[4] as? Int32, 8388607)
+            XCTAssertEqual(row[5] as? UInt32, 16777215)
+            XCTAssertEqual(row[6] as? Int32, 2147483647)
+            XCTAssertEqual(row[7] as? UInt32, 4294967295)
+            XCTAssertEqual(row[8] as? Int64, 9223372036854775807)
+            XCTAssertEqual(row[9] as? UInt64, 18446744073709551615)
+        }
+    }
+    
+    func testStmtDecimal() {
+        XCTAssert(mysql.query("DROP TABLE IF EXISTS decimal_test"), mysql.errorMessage())
+        XCTAssert(mysql.query("CREATE TABLE decimal_test (f FLOAT, fm FLOAT, d DOUBLE, dm DOUBLE, de DECIMAL(2,1), dem DECIMAL(2,1))"), mysql.errorMessage())
+        
+        let stmt = MySQLStmt(mysql)
+        defer { stmt.close() }
+        var res = stmt.prepare("INSERT INTO decimal_test (f, fm, d, dm, de, dem) VALUES "
+            + "(?, ?, ?, ?, ?, ?)")
+        XCTAssert(res == true, stmt.errorMessage())
+        
+        stmt.bindParam(1.1)
+        stmt.bindParam(-1.1)
+        stmt.bindParam(2.2)
+        stmt.bindParam(-2.2)
+        stmt.bindParam(3.3)
+        stmt.bindParam(-3.3)
+        
+        res = stmt.execute()
+        XCTAssert(res == true, stmt.errorMessage())
+        
+        stmt.reset()
+        res = stmt.prepare("SELECT * FROM decimal_test")
+        XCTAssert(res == true, stmt.errorMessage())
+        
+        res = stmt.execute()
+        XCTAssert(res == true, stmt.errorMessage())
+        
+        let results = stmt.results()
+        defer { results.close() }
+        results.forEachRow { row in
+            print(row)
+            XCTAssertEqual(row[0] as? Float, 1.1)
+            XCTAssertEqual(row[1] as? Float, -1.1)
+            XCTAssertEqual(row[2] as? Double, 2.2)
+            XCTAssertEqual(row[3] as? Double, -2.2)
+            XCTAssertEqual(row[4] as? String, "3.3")
+            XCTAssertEqual(row[5] as? String, "-3.3")
         }
     }
 }
