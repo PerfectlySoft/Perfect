@@ -724,11 +724,12 @@ public final class MySQLStmt {
 			return bind
 		}
 		
-        func bindBuffer<T>(var bind: MYSQL_BIND, type: T) -> MYSQL_BIND {
-            bind.buffer = UnsafeMutablePointer<()>(UnsafeMutablePointer<T>.alloc(1))
-            bind.buffer_length = UInt(sizeof(T))
-            return bind
-        }
+		func bindBuffer<T>(sourceBind: MYSQL_BIND, type: T) -> MYSQL_BIND {
+			var bind = sourceBind
+			bind.buffer = UnsafeMutablePointer<()>(UnsafeMutablePointer<T>.alloc(1))
+			bind.buffer_length = UInt(sizeof(T))
+			return bind
+		}
         
 		public func forEachRow(callback: Element -> ()) -> Bool {
 			
