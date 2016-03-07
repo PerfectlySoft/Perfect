@@ -25,14 +25,21 @@
 
 import libmongoc
 
+public enum MongoDatabaseError: ErrorType {
+    case InitError(String)
+}
+
 public class MongoDatabase {
 
 	var ptr: COpaquePointer
 
 	public typealias Result = MongoResult
 
-	public init(client: MongoClient, databaseName: String) {
+	public init(client: MongoClient, databaseName: String) throws {
 		self.ptr = mongoc_client_get_database(client.ptr, databaseName)
+        if ptr == nil {
+            throw MongoDatabaseError.InitError("Could not access database '\(databaseName)'")
+        }
 	}
 
 	public func close() {
