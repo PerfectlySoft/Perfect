@@ -41,22 +41,14 @@ public enum MongoResult {
 	}
 }
 
-public enum MongoClientError: ErrorType {
-    case InitError(String)
-}
-
 public class MongoClient {
 
 	var ptr: COpaquePointer
 
 	public typealias Result = MongoResult
 
-	public init(uri: String) throws {
+	public init(uri: String) {
 		self.ptr = mongoc_client_new(uri)
-        
-        if ptr == nil {
-            throw MongoClientError.InitError("Could not parse URI '\(uri)'")
-        }
 	}
     
     deinit {
@@ -74,8 +66,8 @@ public class MongoClient {
 		return try MongoCollection(client: self, databaseName: databaseName, collectionName: collectionName)
 	}
 
-	public func getDatabase(databaseName: String) throws -> MongoDatabase {
-		return try MongoDatabase(client: self, databaseName: databaseName)
+	public func getDatabase(databaseName: String) -> MongoDatabase {
+		return MongoDatabase(client: self, databaseName: databaseName)
 	}
 
 	public func serverStatus() -> Result {
