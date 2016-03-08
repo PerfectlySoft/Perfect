@@ -70,7 +70,7 @@ public class MongoClient {
 		}
 	}
 
-	public func getCollection(databaseName: String, collectionName: String) throws -> MongoCollection {
+	public func getCollection(databaseName: String, collectionName: String) -> MongoCollection {
 		return MongoCollection(client: self, databaseName: databaseName, collectionName: collectionName)
 	}
 
