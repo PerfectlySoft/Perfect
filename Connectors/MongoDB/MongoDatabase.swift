@@ -41,6 +41,10 @@ public class MongoDatabase {
             throw MongoDatabaseError.InitError("Could not access database '\(databaseName)'")
         }
 	}
+    
+    deinit {
+        close()
+    }
 
 	public func close() {
 		if self.ptr != nil {
@@ -70,9 +74,13 @@ public class MongoDatabase {
 		return .ReplyCollection(MongoCollection(rawPtr: col))
 	}
 
-	public func getCollection(collectionName: String) -> MongoCollection {
+	public func getCollection(collectionName: String) throws -> MongoCollection {
 		let col = mongoc_database_get_collection(self.ptr, collectionName)
-		return MongoCollection(rawPtr: col)
+        if col != nil {
+            return MongoCollection(rawPtr: col)
+        } else {
+            throw MongoCollectionError.InitError("Could not access collection '\(collectionName)'.")
+        }
 	}
 
 	public func collectionNames() -> [String] {
