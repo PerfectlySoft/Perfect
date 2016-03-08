@@ -58,6 +58,10 @@ public class MongoClient {
             throw MongoClientError.InitError("Could not parse URI '\(uri)'")
         }
 	}
+    
+    deinit {
+        close()
+    }
 
 	public func close() {
 		if self.ptr != nil {
