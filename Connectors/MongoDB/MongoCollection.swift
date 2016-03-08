@@ -101,10 +101,6 @@ public enum MongoRemoveFlag: Int {
 	}
 }
 
-public enum MongoCollectionError: ErrorType {
-    case InitError(String)
-}
-
 public class MongoIndexOptionsGeo {
 	var rawOpt = UnsafeMutablePointer<mongoc_index_opt_geo_t>.alloc(1)
 
@@ -233,11 +229,8 @@ public class MongoCollection {
 
 	public typealias Result = MongoResult
 
-	public init(client: MongoClient, databaseName: String, collectionName: String) throws {
+	public init(client: MongoClient, databaseName: String, collectionName: String) {
 		self.ptr = mongoc_client_get_collection(client.ptr, databaseName, collectionName)
-        if ptr == nil {
-            throw MongoCollectionError.InitError("Could not access collection '\(collectionName)' of database '\(databaseName)'.")
-        }
 	}
 
 	init(rawPtr: COpaquePointer) {
