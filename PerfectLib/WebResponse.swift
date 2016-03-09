@@ -122,11 +122,11 @@ public class WebResponse {
 	
 	func respond(completion: () -> ()) {
 		
-		self.requestCompletedCallback = {
+		self.requestCompletedCallback = { [weak self] in
 			
-			self.doSessionHeaders()
-			self.sendResponse()
-			self.commitSessions()
+			self?.doSessionHeaders()
+			self?.sendResponse()
+			self?.commitSessions()
 			
 			completion()
 		}
