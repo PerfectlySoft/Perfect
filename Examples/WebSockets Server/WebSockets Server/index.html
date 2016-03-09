@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta charset="utf-8">
 <title>WebSocket Echo Test</title>
 <script language="javascript" type="text/javascript">
 	var wsUri = "ws://localhost:8181/echo";
@@ -50,10 +51,11 @@
 </head>
 
 <body>
-<h2>WebSocket Test</h2>
-<p>Click the send button to transmit the text to the WebSocket server. The server will echo back the text.</p>
-<textarea id="input">Sample Text</textarea>
-<button onclick="doSend()">Send</button>
-<div id="output"</div>
+<h1>WebSocket Test</h1>
+<p>When text is entered, it’s messaged over a websocket to server. The server echoes your text over the websocket.</p>
+<label for="input">Enter text</label><br>
+<textarea id="input" onkeyup="doSend()" placeholder="Type here"></textarea>
+<p>Websocket status:</p>
+<div id="output"></div>
 </body>
 </html>
