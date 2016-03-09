@@ -63,6 +63,10 @@ public class BSON: CustomStringConvertible {
 	init(rawBson: UnsafeMutablePointer<bson_t>) {
 		self.doc = rawBson
 	}
+    
+    deinit {
+        close()
+    }
 
 	public func close() {
 		if self.doc != nil {
