@@ -32,6 +32,10 @@ public class MongoCursor {
 	init(rawPtr: COpaquePointer) {
 		self.ptr = rawPtr
 	}
+    
+    deinit {
+        close()
+    }
 
 	public func close() {
 		if self.ptr != nil {
