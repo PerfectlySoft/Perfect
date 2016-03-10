@@ -34,6 +34,10 @@ public class MongoDatabase {
 	public init(client: MongoClient, databaseName: String) {
 		self.ptr = mongoc_client_get_database(client.ptr, databaseName)
 	}
+    
+    deinit {
+        close()
+    }
 
 	public func close() {
 		if self.ptr != nil {
@@ -65,7 +69,7 @@ public class MongoDatabase {
 
 	public func getCollection(collectionName: String) -> MongoCollection {
 		let col = mongoc_database_get_collection(self.ptr, collectionName)
-		return MongoCollection(rawPtr: col)
+        return MongoCollection(rawPtr: col)
 	}
 
 	public func collectionNames() -> [String] {
