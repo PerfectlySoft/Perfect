@@ -3,7 +3,7 @@
 
 [![Swift 2.2](https://img.shields.io/badge/Swift-2.2-orange.svg?style=flat)](https://developer.apple.com/swift/)
 [![Platforms OS X | iOS | Linux](https://img.shields.io/badge/Platforms-OS%20X%20%7C%20iOS%20%7C%20Linux%20-lightgray.svg?style=flat)](https://developer.apple.com/swift/)
-[![License AGPL](https://img.shields.io/badge/License-AGPL-lightgrey.svg?style=flat)](http://www.perfect.org/AGPL_3_0_With_Perfect_Additional_Terms.txt)
+[![License Apache](https://img.shields.io/badge/License-Apache-lightgrey.svg?style=flat)](http://perfect.org/licensing.html)
 [![Docs](https://img.shields.io/badge/docs-83%-yellow.svg?style=flat)](http://www.perfect.org/docs/)
 [![Issues](https://img.shields.io/github/issues-raw/PerfectlySoft/Perfect.svg?style=flat)](https://github.com/PerfectlySoft/Perfect/issues)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg?style=flat)](https://paypal.me/perfectlysoft)
