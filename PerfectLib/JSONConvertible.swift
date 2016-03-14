@@ -150,6 +150,12 @@ extension Int: JSONConvertible {
 	}
 }
 
+extension UInt: JSONConvertible {
+	public func jsonEncodedString() throws -> String {
+		return String(self)
+    }
+}
+
 extension Double: JSONConvertible {
 	public func jsonEncodedString() throws -> String {
 		return String(self)
@@ -187,6 +193,8 @@ func jsonEncodedStringWorkAround(o: Any) throws -> String {
 	case let jsonAble as String:
 		return try jsonAble.jsonEncodedString()
 	case let jsonAble as Int:
+		return try jsonAble.jsonEncodedString()
+	case let jsonAble as UInt:
 		return try jsonAble.jsonEncodedString()
 	case let jsonAble as Double:
 		return try jsonAble.jsonEncodedString()
