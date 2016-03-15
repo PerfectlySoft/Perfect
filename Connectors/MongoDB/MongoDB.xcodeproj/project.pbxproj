@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EF1F71C31C98420F00824616 /* MongoConnectionPool.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1F71C21C98420F00824616 /* MongoConnectionPool.swift */; };
+		EF1F71C41C98420F00824616 /* MongoConnectionPool.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1F71C21C98420F00824616 /* MongoConnectionPool.swift */; };
 		F8CA67D11BFF6EF700F2C1B5 /* MongoDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8CA67D01BFF6EF700F2C1B5 /* MongoDatabase.swift */; };
 		F8FD0CC01BFD079600F49A96 /* MongoDB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8FD0CB51BFD079600F49A96 /* MongoDB.framework */; };
 		F8FD0CC51BFD079600F49A96 /* MongoDBTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FD0CC41BFD079600F49A96 /* MongoDBTests.swift */; };
@@ -33,6 +35,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		EF1F71C21C98420F00824616 /* MongoConnectionPool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MongoConnectionPool.swift; sourceTree = "<group>"; };
 		F8CA67D01BFF6EF700F2C1B5 /* MongoDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MongoDatabase.swift; sourceTree = "<group>"; };
 		F8FD0CB51BFD079600F49A96 /* MongoDB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MongoDB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8FD0CB81BFD079600F49A96 /* MongoDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MongoDB.h; sourceTree = "<group>"; };
@@ -123,6 +126,7 @@
 				F8FD0CDB1BFE1DFD00F49A96 /* MongoCollection.swift */,
 				F8FD0CE41BFE2F0400F49A96 /* MongoCursor.swift */,
 				F8CA67D01BFF6EF700F2C1B5 /* MongoDatabase.swift */,
+				EF1F71C21C98420F00824616 /* MongoConnectionPool.swift */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -249,6 +253,7 @@
 			files = (
 				F8FD0CDC1BFE1DFD00F49A96 /* MongoCollection.swift in Sources */,
 				F8FD0CD21BFD098000F49A96 /* BSON.swift in Sources */,
+				EF1F71C31C98420F00824616 /* MongoConnectionPool.swift in Sources */,
 				F8FD0CE51BFE2F0400F49A96 /* MongoCursor.swift in Sources */,
 				F8FD0CDA1BFE1D0900F49A96 /* MongoClient.swift in Sources */,
 				F8CA67D11BFF6EF700F2C1B5 /* MongoDatabase.swift in Sources */,
@@ -259,6 +264,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EF1F71C41C98420F00824616 /* MongoConnectionPool.swift in Sources */,
 				F8FD0CC51BFD079600F49A96 /* MongoDBTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
