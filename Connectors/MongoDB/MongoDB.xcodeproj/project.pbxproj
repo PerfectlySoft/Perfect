@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EF11603A1C957C0E0019F7EB /* BSONObjectId.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1160391C957C0E0019F7EB /* BSONObjectId.swift */; };
+		EFA1308A1C934E3C00CDDE65 /* MongoClientPool.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFA130891C934E3C00CDDE65 /* MongoClientPool.swift */; };
 		F8CA67D11BFF6EF700F2C1B5 /* MongoDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8CA67D01BFF6EF700F2C1B5 /* MongoDatabase.swift */; };
 		F8FD0CC01BFD079600F49A96 /* MongoDB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8FD0CB51BFD079600F49A96 /* MongoDB.framework */; };
 		F8FD0CC51BFD079600F49A96 /* MongoDBTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FD0CC41BFD079600F49A96 /* MongoDBTests.swift */; };
@@ -33,6 +35,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		EF1160391C957C0E0019F7EB /* BSONObjectId.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BSONObjectId.swift; sourceTree = "<group>"; };
+		EFA130891C934E3C00CDDE65 /* MongoClientPool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MongoClientPool.swift; sourceTree = "<group>"; };
 		F8CA67D01BFF6EF700F2C1B5 /* MongoDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MongoDatabase.swift; sourceTree = "<group>"; };
 		F8FD0CB51BFD079600F49A96 /* MongoDB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MongoDB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8FD0CB81BFD079600F49A96 /* MongoDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MongoDB.h; sourceTree = "<group>"; };
@@ -123,6 +127,8 @@
 				F8FD0CDB1BFE1DFD00F49A96 /* MongoCollection.swift */,
 				F8FD0CE41BFE2F0400F49A96 /* MongoCursor.swift */,
 				F8CA67D01BFF6EF700F2C1B5 /* MongoDatabase.swift */,
+				EFA130891C934E3C00CDDE65 /* MongoClientPool.swift */,
+				EF1160391C957C0E0019F7EB /* BSONObjectId.swift */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -252,6 +258,8 @@
 				F8FD0CE51BFE2F0400F49A96 /* MongoCursor.swift in Sources */,
 				F8FD0CDA1BFE1D0900F49A96 /* MongoClient.swift in Sources */,
 				F8CA67D11BFF6EF700F2C1B5 /* MongoDatabase.swift in Sources */,
+				EFA1308A1C934E3C00CDDE65 /* MongoClientPool.swift in Sources */,
+				EF11603A1C957C0E0019F7EB /* BSONObjectId.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

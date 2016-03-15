@@ -190,3 +190,53 @@ class NoDestroyBSON: BSON {
 	}
 
 }
+
+// Parsing
+extension BSON {
+    
+    public func append(key: String, oid: BSONObjectId) -> Bool {
+        return bson_append_oid(self.doc, key, -1, oid.oid)
+    }
+    
+    public func getString(key: String) -> String? {
+        
+        let iter = UnsafeMutablePointer<bson_iter_t>.alloc(1)
+        defer {
+            iter.dealloc(1)
+        }
+        
+        if bson_iter_init_find(iter, doc, key) && bson_iter_type(iter) == BSON_TYPE_UTF8 {
+            return String.fromCString(bson_iter_utf8(iter, nil))
+        }
+        
+        return nil
+    }
+    
+    public func getObjectId() -> BSONObjectId? {
+        
+        let iter = UnsafeMutablePointer<bson_iter_t>.alloc(1)
+        defer {
+            iter.dealloc(1)
+        }
+        
+        if bson_iter_init_find(iter, doc, "_id") && bson_iter_type(iter) == BSON_TYPE_OID {
+            return BSONObjectId(oid: bson_iter_oid(iter))
+        }
+        
+        return nil
+    }
+    
+    public func getDateTime(key: String) -> Int64? {
+        
+        let iter = UnsafeMutablePointer<bson_iter_t>.alloc(1)
+        defer {
+            iter.dealloc(1)
+        }
+        
+        if bson_iter_init_find(iter, doc, key) && bson_iter_type(iter) == BSON_TYPE_DATE_TIME {
+            return bson_iter_int64(iter)
+        }
+        
+        return nil
+    }
+}
