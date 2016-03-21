@@ -130,10 +130,10 @@ public class SessionManager {
 		}
 	}
 	
-	public typealias Key = JSONDictionaryType.Key
-	public typealias Value = JSONDictionaryType.Value
+	public typealias Key = String
+	public typealias Value = Any
 	
-	var dictionary: JSONDictionaryType?
+	var dictionary: [Key:Value]?
 	var configuration: SessionConfiguration
 	var result = SessionResult.None
 	
@@ -173,7 +173,7 @@ public class SessionManager {
 							} else {
 								self.result = .Load
 								let data = stmt.columnText(0)
-								self.dictionary = try JSONDecoder().decode(data) as? JSONDictionaryType
+								self.dictionary = try data.jsonDecode() as? [String:Any]
 							}
 						} catch {}
 					})
@@ -182,7 +182,7 @@ public class SessionManager {
 			
 		}
 		if self.dictionary == nil {
-			self.dictionary = JSONDictionaryType()
+			self.dictionary = [String:Any]()
 			if self.result == .None {
 				self.result = .New
 			}
@@ -222,7 +222,7 @@ public class SessionManager {
 	func commit() throws {
 		// save values
 		let fullKey = self.configuration.name + ":" + self.configuration.id
-		let encoded = try JSONEncoder().encode(self.dictionary!)
+		let encoded = try self.dictionary.jsonEncodedString()
 		let sqlite = try SQLite(PerfectServer.staticPerfectServer.homeDir() + serverSQLiteDBs + perfectSessionDB)
 		defer { sqlite.close() }
 		
