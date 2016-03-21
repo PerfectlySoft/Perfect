@@ -53,6 +53,10 @@ public class MongoClient {
         }
 	}
     
+    init(pointer: COpaquePointer) {
+        ptr = pointer
+    }
+    
     deinit {
         close()
     }
