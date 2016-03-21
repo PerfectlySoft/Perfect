@@ -11,18 +11,19 @@
 [![Join the chat at https://gitter.im/PerfectlySoft/Perfect](https://img.shields.io/badge/Gitter-Join%20Chat-brightgreen.svg)](https://gitter.im/PerfectlySoft/Perfect?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 **Perfect now runs on Linux!**
-Perfect now builds and runs on Linux with the [open source release of Swift](https://github.com/apple/swift). We've currently been working only with Ubuntu 15.10. Consult the readmes for the individual components for build instructions.
+Perfect now builds and runs on Linux with the [open source release of Swift](https://github.com/apple/swift). Consult the readmes of the individual components for build instructions.
 
 Perfect is an application server which provides a framework for developing web and other REST services in the Swift programming language. Its primary focus is on facilitating mobile apps which require backend server software. It enables you to use one language for both front and back ends.
 
-Perfect operates using either its own stand-alone HTTP server or through FastCGI with Apache 2.4. It provides a system for loading your own Swift based modules at startup and for interfacing those modules with its built-in mustache template processing system.
+Perfect operates using either its own stand-alone HTTP server or through FastCGI with Apache 2.4. It provides a system for loading your own Swift based modules at startup and for interfacing those modules with its built-in request/response objects or the mustache template processing system.
+
+Perfect now also includes a **WebSockets** server and support for handling your own server-side **iOS push notifications**.
 
 Perfect consists of the following components:
 
-* [PerfectLib](PerfectLib/#perfectlib) - Framework components and utilities for client and server.
+* [PerfectLib](PerfectLib/#perfectlib) - Framework components and utilities for server development.
 	* [PerfectLib Reference](http://www.perfect.org/docs/)
 	* OS X / Linux
-	* iOS
 * [Perfect Server](PerfectServer/#perfectserver) - Backend server supporting FastCGI or stand-alone HTTP.
 	* Perfect Server FastCGI - Server process which accepts connections over FastCGI.
 	* Perfect Server HTTP - Stand-alone HTTP server.
@@ -35,7 +36,7 @@ Perfect consists of the following components:
 * [Examples](Examples/#examples) - A set of examples which show how to utilize Perfect.
 	* Mobile iOS Examples
 	* Web Site Examples
-	* Game Examples (coming soon!)
+	* WebSockets
 
 ## Getting Started
 Check the [README](Examples/#examples) in the Examples directory for further instructions.
