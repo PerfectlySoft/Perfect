@@ -147,7 +147,10 @@ public class NotificationPusher {
 	
 	/// Toggle development or production on a global basis.
 	public static var development = false
-	
+
+	/// apns-topic
+	public var apnsTopic: String?
+
 	var responses = [NotificationResponse]()
 	
 	static var idCounter = 0
@@ -243,7 +246,11 @@ public class NotificationPusher {
 	public init() {
 
 	}
-	
+
+	public init(apnsTopic: String) {
+		self.apnsTopic = apnsTopic
+	}
+
 	func resetResponses() {
 		self.responses.removeAll()
 	}
@@ -311,7 +318,9 @@ public class NotificationPusher {
 		request.headers["content-type"] = "application/json; charset=utf-8"
 		request.headers["apns-expiration"] = "\(expiration)"
 		request.headers["apns-priority"] = "\(priority)"
-		request.headers["apns-topic"] = "ca.treefrog.Smirkee"
+		if let apnsTopic = apnsTopic {
+			request.headers["apns-topic"] = apnsTopic
+		}
 		request.setRequestURI("/3/device/\(deviceToken)")
 		net.sendRequest(request) {
 			response, msg in
