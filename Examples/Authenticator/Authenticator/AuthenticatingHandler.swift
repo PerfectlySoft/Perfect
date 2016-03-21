@@ -38,16 +38,16 @@ class AuthenticatingHandler: PageHandler {
 		
 		if let response = context.webResponse, let request = context.webRequest {
 		
-			let auth = request.httpAuthorization()
+			let auth = request.httpAuthorization
 			if let digest = auth["type"] where digest == "Digest" {
 				
 				let username = auth["username"] ?? ""
 				let nonce = auth["nonce"]
 				let nc = auth["nc"]
-				let uri = auth["uri"] ?? request.requestURI()
+				let uri = auth["uri"] ?? request.requestURI!
 				let cnonce = auth["cnonce"]
 				let qop = "auth"
-				let method = auth["method"] ?? request.requestMethod()
+				let method = auth["method"] ?? request.requestMethod!
 				let authResponse = auth["response"]
 				
 				if authResponse != nil && nonce != nil && nc != nil && cnonce != nil {
@@ -66,7 +66,7 @@ class AuthenticatingHandler: PageHandler {
 			if self.authenticatedUser == nil {
 				
 				let nonce = SessionManager.generateSessionKey()
-				let headerValue = "Digest realm=\"\(AUTH_REALM)\", qop=\"auth\", nonce=\"\(nonce)\", uri=\"\(request.requestURI())\", algorithm=\"md5\""
+				let headerValue = "Digest realm=\"\(AUTH_REALM)\", qop=\"auth\", nonce=\"\(nonce)\", uri=\"\(request.requestURI)\", algorithm=\"md5\""
 								
 				response.setStatus(401, message: "Unauthorized")
 				response.replaceHeader("WWW-Authenticate", value: headerValue)

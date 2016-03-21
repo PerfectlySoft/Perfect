@@ -102,7 +102,7 @@ class TTHandler: PageHandler { // all template handlers must inherit from PageHa
 			}
 
 			// If the user is posting a new tap for tracking purposes...
-			if request.requestMethod() == "POST" {
+			if request.requestMethod == "POST" {
 				// Adding a new ta[ instance
 				if let lat = request.param("lat"), let long = request.param("long") {
 

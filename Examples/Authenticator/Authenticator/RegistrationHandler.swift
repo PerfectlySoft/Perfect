@@ -31,7 +31,7 @@ class RegistrationHandler: PageHandler { // all template handlers must inherit f
 	func valuesForResponse(context: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) throws -> MustacheEvaluationContext.MapType {
 		
 		var json = false
-		if let acceptStr = context.webRequest?.httpAccept() {
+		if let acceptStr = context.webRequest?.httpAccept {
 			if acceptStr.contains("json") {
 				json = true
 			}
