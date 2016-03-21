@@ -23,7 +23,7 @@ public class StaticFileHandler: RequestHandler {
 	
 	public func handleRequest(request: WebRequest, response: WebResponse) {
 		
-		var requestUri = request.requestURI()
+		var requestUri = request.requestURI ?? ""
 		if requestUri.hasSuffix("/") {
 			requestUri.appendContentsOf("index.html") // !FIX! needs to be configurable
 		}

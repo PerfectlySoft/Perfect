@@ -68,16 +68,17 @@ public class WebRequest {
 	/// A tuple array containing each incoming cookie name/value pair
 	public lazy var cookies: [(String, String)] = {
 		var c = [(String, String)]()
-		let rawCookie = self.httpCookie()
-		let semiSplit = rawCookie.characters.split(";").map { String($0.filter { $0 != " " }) }
-		for cookiePair in semiSplit {
-			
-			let cookieSplit = cookiePair.characters.split("=", allowEmptySlices: true).map { String($0.filter { $0 != " " }) }
-			if cookieSplit.count == 2 {
-				let name = cookieSplit[0].stringByDecodingURL
-				let value = cookieSplit[1].stringByDecodingURL
-				if let n = name {
-					c.append((n, value ?? ""))
+		if let rawCookie = self.httpCookie {
+			let semiSplit = rawCookie.characters.split(";").map { String($0.filter { $0 != " " }) }
+			for cookiePair in semiSplit {
+				
+				let cookieSplit = cookiePair.characters.split("=", allowEmptySlices: true).map { String($0.filter { $0 != " " }) }
+				if cookieSplit.count == 2 {
+					let name = cookieSplit[0].stringByDecodingURL
+					let value = cookieSplit[1].stringByDecodingURL
+					if let n = name {
+						c.append((n, value ?? ""))
+					}
 				}
 			}
 		}
@@ -87,16 +88,17 @@ public class WebRequest {
 	/// A tuple array containing each GET/search/query parameter name/value pair
 	public lazy var queryParams: [(String, String)] = {
 		var c = [(String, String)]()
-		let qs = self.queryString()
-		let semiSplit = qs.characters.split("&").map { String($0) }
-		for paramPair in semiSplit {
-			
-			let paramSplit = paramPair.characters.split("=", allowEmptySlices: true).map { String($0) }
-			if paramSplit.count == 2 {
-				let name = paramSplit[0].stringByDecodingURL
-				let value = paramSplit[1].stringByDecodingURL
-				if let n = name {
-					c.append((n, value ?? ""))
+		if let qs = self.queryString {
+			let semiSplit = qs.characters.split("&").map { String($0) }
+			for paramPair in semiSplit {
+				
+				let paramSplit = paramPair.characters.split("=", allowEmptySlices: true).map { String($0) }
+				if paramSplit.count == 2 {
+					let name = paramSplit[0].stringByDecodingURL
+					let value = paramSplit[1].stringByDecodingURL
+					if let n = name {
+						c.append((n, value ?? ""))
+					}
 				}
 			}
 		}
@@ -218,99 +220,125 @@ public class WebRequest {
 		return a.count > 0 ? a : nil
 	}
 	
+	private func get(named: String) -> String? {
+		return connection.requestParams[named]
+	}
+	
+	private func set(named: String, value: String?) {
+		if let v = value {
+			connection.requestParams[named] = v
+		} else {
+			connection.requestParams.removeValueForKey(named)
+		}
+	}
+	
+	private func get(named: String) -> Int? {
+		if let i = connection.requestParams[named] {
+			return Int(i)
+		}
+		return nil
+	}
+	
+	private func set(named: String, value: Int?) {
+		if let v = value {
+			connection.requestParams[named] = String(v)
+		} else {
+			connection.requestParams.removeValueForKey(named)
+		}
+	}
+	
 	/// Provides access to the HTTP_CONNECTION parameter.
-	public func httpConnection() -> String { return connection.requestParams["HTTP_CONNECTION"] ?? "" }
+	public var httpConnection: String? { get { return get("HTTP_CONNECTION") } set { set("HTTP_CONNECTION", value: newValue) } }
 	/// Provides access to the HTTP_COOKIE parameter.
-	public func httpCookie() -> String { return connection.requestParams["HTTP_COOKIE"] ?? "" }
+	public var httpCookie: String? { get { return get("HTTP_COOKIE") } set { set("HTTP_COOKIE", value: newValue) } }
 	/// Provides access to the HTTP_HOST parameter.
-	public func httpHost() -> String { return connection.requestParams["HTTP_HOST"] ?? "" }
+	public var httpHost: String? { get { return get("HTTP_HOST") } set { set("HTTP_HOST", value: newValue) } }
 	/// Provides access to the HTTP_USER_AGENT parameter.
-	public func httpUserAgent() -> String { return connection.requestParams["HTTP_USER_AGENT"] ?? "" }
+	public var httpUserAgent: String? { get { return get("HTTP_USER_AGENT") } set { set("HTTP_USER_AGENT", value: newValue) } }
 	/// Provides access to the HTTP_CACHE_CONTROL parameter.
-	public func httpCacheControl() -> String { return connection.requestParams["HTTP_CACHE_CONTROL"] ?? "" }
+	public var httpCacheControl: String? { get { return get("HTTP_CACHE_CONTROL") } set { set("HTTP_CACHE_CONTROL", value: newValue) } }
 	/// Provides access to the HTTP_REFERER parameter.
-	public func httpReferer() -> String { return connection.requestParams["HTTP_REFERER"] ?? "" }
+	public var httpReferer: String? { get { return get("HTTP_REFERER") } set { set("HTTP_REFERER", value: newValue) } }
 	/// Provides access to the HTTP_REFERER parameter but using the proper "referrer" spelling for pedants.
-	public func httpReferrer() -> String { return connection.requestParams["HTTP_REFERER"] ?? "" }
+	public var httpReferrer: String? { get { return get("HTTP_REFERER") } set { set("HTTP_REFERER", value: newValue) } }
 	/// Provides access to the HTTP_ACCEPT parameter.
-	public func httpAccept() -> String { return connection.requestParams["HTTP_ACCEPT"] ?? "" }
+	public var httpAccept: String? { get { return get("HTTP_ACCEPT") } set { set("HTTP_ACCEPT", value: newValue) } }
 	/// Provides access to the HTTP_ACCEPT_ENCODING parameter.
-	public func httpAcceptEncoding() -> String { return connection.requestParams["HTTP_ACCEPT_ENCODING"] ?? "" }
+	public var httpAcceptEncoding: String? { get { return get("HTTP_ACCEPT_ENCODING") } set { set("HTTP_ACCEPT_ENCODING", value: newValue) } }
 	/// Provides access to the HTTP_ACCEPT_LANGUAGE parameter.
-	public func httpAcceptLanguage() -> String { return connection.requestParams["HTTP_ACCEPT_LANGUAGE"] ?? "" }
+	public var httpAcceptLanguage: String? { get { return get("HTTP_ACCEPT_LANGUAGE") } set { set("HTTP_ACCEPT_LANGUAGE", value: newValue) } }
 	/// Provides access to the HTTP_AUTHORIZATION with all elements having been parsed using the `String.parseAuthentication` extension function.
-	public func httpAuthorization() -> [String:String] {
+	public var httpAuthorization: [String:String] {
 		guard cachedHttpAuthorization == nil else {
 			return cachedHttpAuthorization!
 		}
 		let auth = connection.requestParams["HTTP_AUTHORIZATION"] ?? connection.requestParams["Authorization"] ?? ""
 		var ret = auth.parseAuthentication()
 		if ret.count > 0 {
-			ret["method"] = self.requestMethod()
+			ret["method"] = self.requestMethod
 		}
 		self.cachedHttpAuthorization = ret
 		return ret
 	}
 	/// Provides access to the CONTENT_LENGTH parameter.
-	public func contentLength() -> Int { return Int(connection.requestParams["CONTENT_LENGTH"] ?? "0") ?? 0 }
+	public var contentLength: Int? { get { return get("CONTENT_LENGTH") } set { set("CONTENT_LENGTH", value: newValue) } }
 	/// Provides access to the CONTENT_TYPE parameter.
-	public func contentType() -> String { return connection.requestParams["CONTENT_TYPE"] ?? "" }
+	public var contentType: String? { get { return get("CONTENT_TYPE") } set { set("CONTENT_TYPE", value: newValue) } }
 	/// Provides access to the PATH parameter.
-	public func path() -> String { return connection.requestParams["PATH"] ?? "" }
+	public var path: String? { get { return get("PATH") } set { set("PATH", value: newValue) } }
 	/// Provides access to the PATH_TRANSLATED parameter.
-	public func pathTranslated() -> String { return connection.requestParams["PATH_TRANSLATED"] ?? "" }
+	public var pathTranslated: String? { get { return get("PATH_TRANSLATED") } set { set("PATH_TRANSLATED", value: newValue) } }
 	/// Provides access to the QUERY_STRING parameter.
-	public func queryString() -> String { return connection.requestParams["QUERY_STRING"] ?? "" }
+	public var queryString: String? { get { return get("QUERY_STRING") } set { set("QUERY_STRING", value: newValue) } }
 	/// Provides access to the REMOTE_ADDR parameter.
-	public func remoteAddr() -> String { return connection.requestParams["REMOTE_ADDR"] ?? "" }
+	public var remoteAddr: String? { get { return get("REMOTE_ADDR") } set { set("REMOTE_ADDR", value: newValue) } }
 	/// Provides access to the REMOTE_PORT parameter.
-	public func remotePort() -> Int { return Int(connection.requestParams["REMOTE_PORT"] ?? "0") ?? 0 }
+	public var remotePort: Int? { get { return get("REMOTE_PORT") } set { set("REMOTE_PORT", value: newValue) } }
 	/// Provides access to the REQUEST_METHOD parameter.
-	public func requestMethod() -> String { return connection.requestParams["REQUEST_METHOD"] ?? "" }
+	public var requestMethod: String? { get { return get("REQUEST_METHOD") } set { set("REQUEST_METHOD", value: newValue) } }
 	/// Provides access to the REQUEST_URI parameter.
-	public func requestURI() -> String { return connection.requestParams["REQUEST_URI"] ?? "" }
+	public var requestURI: String? { get { return get("REQUEST_URI") } set { set("REQUEST_URI", value: newValue) } }
 	/// Provides access to the SCRIPT_FILENAME parameter.
-	public func scriptFilename() -> String { return connection.requestParams["SCRIPT_FILENAME"] ?? "" }
+	public var scriptFilename: String? { get { return get("SCRIPT_FILENAME") } set { set("SCRIPT_FILENAME", value: newValue) } }
 	/// Provides access to the SCRIPT_NAME parameter.
-	public func scriptName() -> String { return connection.requestParams["SCRIPT_NAME"] ?? "" }
+	public var scriptName: String? { get { return get("SCRIPT_NAME") } set { set("SCRIPT_NAME", value: newValue) } }
 	/// Provides access to the SCRIPT_URI parameter.
-	public func scriptURI() -> String { return connection.requestParams["SCRIPT_URI"] ?? "" }
+	public var scriptURI: String? { get { return get("SCRIPT_URI") } set { set("SCRIPT_URI", value: newValue) } }
 	/// Provides access to the SCRIPT_URL parameter.
-	public func scriptURL() -> String { return connection.requestParams["SCRIPT_URL"] ?? "" }
+	public var scriptURL: String? { get { return get("SCRIPT_URL") } set { set("SCRIPT_URL", value: newValue) } }
 	/// Provides access to the SERVER_ADDR parameter.
-	public func serverAddr() -> String { return connection.requestParams["SERVER_ADDR"] ?? "" }
+	public var serverAddr: String? { get { return get("SERVER_ADDR") } set { set("SERVER_ADDR", value: newValue) } }
 	/// Provides access to the SERVER_ADMIN parameter.
-	public func serverAdmin() -> String { return connection.requestParams["SERVER_ADMIN"] ?? "" }
+	public var serverAdmin: String? { get { return get("SERVER_ADMIN") } set { set("SERVER_ADMIN", value: newValue) } }
 	/// Provides access to the SERVER_NAME parameter.
-	public func serverName() -> String { return connection.requestParams["SERVER_NAME"] ?? "" }
+	public var serverName: String? { get { return get("SERVER_NAME") } set { set("SERVER_NAME", value: newValue) } }
 	/// Provides access to the SERVER_PORT parameter.
-	public func serverPort() -> Int { return Int(connection.requestParams["SERVER_PORT"] ?? "0") ?? 0 }
+	public var serverPort: Int? { get { return get("SERVER_PORT") } set { set("SERVER_PORT", value: newValue) } }
 	/// Provides access to the SERVER_PROTOCOL parameter.
-	public func serverProtocol() -> String { return connection.requestParams["SERVER_PROTOCOL"] ?? "" }
+	public var serverProtocol: String? { get { return get("SERVER_PROTOCOL") } set { set("SERVER_PROTOCOL", value: newValue) } }
 	/// Provides access to the SERVER_SIGNATURE parameter.
-	public func serverSignature() -> String { return connection.requestParams["SERVER_SIGNATURE"] ?? "" }
+	public var serverSignature: String? { get { return get("SERVER_SIGNATURE") } set { set("SERVER_SIGNATURE", value: newValue) } }
 	/// Provides access to the SERVER_SOFTWARE parameter.
-	public func serverSoftware() -> String { return connection.requestParams["SERVER_SOFTWARE"] ?? "" }
+	public var serverSoftware: String? { get { return get("SERVER_SOFTWARE") } set { set("SERVER_SOFTWARE", value: newValue) } }
 	/// Provides access to the PATH_INFO parameter if it exists or else the SCRIPT_NAME parameter.
-	public func pathInfo() -> String { return connection.requestParams["PATH_INFO"] ?? connection.requestParams["SCRIPT_NAME"] ?? "" }
+	public var pathInfo: String? { get { return get("PATH_INFO") ?? get("SCRIPT_NAME") } set { set("PATH_INFO", value: newValue) } }
 	/// Provides access to the GATEWAY_INTERFACE parameter.
-	public func gatewayInterface() -> String { return connection.requestParams["GATEWAY_INTERFACE"] ?? "" }
+	public var gatewayInterface: String? { get { return get("GATEWAY_INTERFACE") } set { set("GATEWAY_INTERFACE", value: newValue) } }
 	/// Returns true if the request was encrypted over HTTPS.
-	public func isHttps() -> Bool { return connection.requestParams["HTTPS"] ?? "" == "on" }
+	public var isHttps: Bool {
+		get {
+			return "on" == get("HTTPS")
+		}
+		set {
+			set("HTTPS", value: newValue ? "on" : nil)
+		}
+	}
 	/// Returns the indicated HTTP header.
 	public func header(named: String) -> String? { return self.headers[named.uppercaseString] }
 	/// Returns the raw request parameter header
 	public func rawHeader(named: String) -> String? { return self.connection.requestParams[named] }
 	/// Returns a Dictionary containing all raw request parameters.
 	public func raw() -> Dictionary<String, String> { return self.connection.requestParams }
-	
-	public func setRequestMethod(method: String) {
-		connection.requestParams["REQUEST_METHOD"] = method
-	}
-	
-	public func setRequestURI(uri: String) {
-		connection.requestParams["REQUEST_URI"] = uri
-	}
 	
 	internal init(_ c: WebConnection) {
 		self.connection = c

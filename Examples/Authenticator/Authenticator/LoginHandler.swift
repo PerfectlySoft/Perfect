@@ -32,7 +32,7 @@ class LoginHandler: AuthenticatingHandler { // all template handlers must inheri
 		
 		var values = try super.valuesForResponse(context, collector: collector)
 		
-		if let acceptStr = context.webRequest?.httpAccept() {
+		if let acceptStr = context.webRequest?.httpAccept {
 			if acceptStr.contains("json") {
 				values["json"] = true
 			}

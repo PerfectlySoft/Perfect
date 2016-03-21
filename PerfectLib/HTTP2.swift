@@ -500,15 +500,15 @@ public class HTTP2Client {
 
 		let headerBytes = Bytes()
 
-		let method = request.requestMethod()
+		let method = request.requestMethod
 		let scheme = ssl ? "https" : "http"
-		let path = request.requestURI()
+		let path = request.requestURI
 
 		do {
 
-			try encoder.encodeHeader(headerBytes, name: ":method", value: method)
+			try encoder.encodeHeader(headerBytes, name: ":method", value: method ?? "GET")
 			try encoder.encodeHeader(headerBytes, name: ":scheme", value: scheme)
-			try encoder.encodeHeader(headerBytes, name: ":path", value: path, sensitive: false, incrementalIndexing: false)
+			try encoder.encodeHeader(headerBytes, name: ":path", value: path ?? "/", sensitive: false, incrementalIndexing: false)
 			try encoder.encodeHeader(headerBytes, name: "host", value: self.host)
 			try encoder.encodeHeader(headerBytes, name: "content-length", value: "\(request.postBodyBytes.count)")
 

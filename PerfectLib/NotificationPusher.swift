@@ -318,7 +318,7 @@ public class NotificationPusher {
 	func pushIOS(net: HTTP2Client, deviceToken: String, expiration: UInt32, priority: UInt8, notificationJson: [UInt8], callback: (NotificationResponse) -> ()) {
 		
 		let request = net.createRequest()
-		request.setRequestMethod("POST")
+		request.requestMethod = "POST"
 		request.postBodyBytes = notificationJson
 		request.headers["content-type"] = "application/json; charset=utf-8"
 		request.headers["apns-expiration"] = "\(expiration)"
@@ -326,7 +326,7 @@ public class NotificationPusher {
 		if let apnsTopic = apnsTopic {
 			request.headers["apns-topic"] = apnsTopic
 		}
-		request.setRequestURI("/3/device/\(deviceToken)")
+		request.requestURI = "/3/device/\(deviceToken)"
 		net.sendRequest(request) {
 			response, msg in
 			

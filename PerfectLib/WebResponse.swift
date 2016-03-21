@@ -235,7 +235,7 @@ public class WebResponse {
 		
 		do {
 		
-			return try include(request.pathInfo(), local: false)
+			return try include(request.pathInfo ?? "error", local: false)
 			
 		} catch PerfectError.FileError(let code, let msg) {
 			
@@ -340,7 +340,7 @@ public class WebResponse {
 		if local {
 			return includeStack.last!.stringByDeletingLastPathComponent + "/" + path
 		}
-		return request.pathInfo().stringByDeletingLastPathComponent + "/" + path
+		return request.pathInfo!.stringByDeletingLastPathComponent + "/" + path
 	}
 	
 	
