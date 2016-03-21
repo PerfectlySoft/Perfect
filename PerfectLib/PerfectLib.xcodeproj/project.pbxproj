@@ -32,7 +32,6 @@
 		F8F28A001BD5427000367249 /* FastCGIServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E01BD5427000367249 /* FastCGIServer.swift */; };
 		F8F28A011BD5427000367249 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E11BD5427000367249 /* File.swift */; };
 		F8F28A021BD5427000367249 /* ICU.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E21BD5427000367249 /* ICU.swift */; };
-		F8F28A031BD5427000367249 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E31BD5427000367249 /* JSON.swift */; };
 		F8F28A041BD5427000367249 /* PerfectError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E41BD5427000367249 /* PerfectError.swift */; };
 		F8F28A071BD5427000367249 /* PerfectServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E71BD5427000367249 /* PerfectServer.swift */; };
 		F8F28A081BD5427000367249 /* LibEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E81BD5427000367249 /* LibEvent.swift */; };
@@ -60,7 +59,6 @@
 		F8F28A401BD5636F00367249 /* Closeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DB1BD5427000367249 /* Closeable.swift */; };
 		F8F28A421BD5638500367249 /* Bytes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DA1BD5427000367249 /* Bytes.swift */; };
 		F8F28A431BD5638B00367249 /* cURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289DC1BD5427000367249 /* cURL.swift */; };
-		F8F28A441BD5639400367249 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E31BD5427000367249 /* JSON.swift */; };
 		F8F28A461BD563B300367249 /* curl_support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8F28A2A1BD5545000367249 /* curl_support.cpp */; };
 		F8F28A471BD563BB00367249 /* PerfectError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289E41BD5427000367249 /* PerfectError.swift */; };
 		F8F28A491BD563E500367249 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F28A481BD563E500367249 /* libz.tbd */; };
@@ -112,7 +110,6 @@
 		F8F289E01BD5427000367249 /* FastCGIServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FastCGIServer.swift; sourceTree = "<group>"; };
 		F8F289E11BD5427000367249 /* File.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		F8F289E21BD5427000367249 /* ICU.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ICU.swift; sourceTree = "<group>"; };
-		F8F289E31BD5427000367249 /* JSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
 		F8F289E41BD5427000367249 /* PerfectError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PerfectError.swift; sourceTree = "<group>"; };
 		F8F289E71BD5427000367249 /* PerfectServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PerfectServer.swift; sourceTree = "<group>"; };
 		F8F289E81BD5427000367249 /* LibEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibEvent.swift; sourceTree = "<group>"; };
@@ -241,7 +238,6 @@
 				F8E752EB1BDA956500BFC36A /* HTTPServer.swift */,
 				F8F289E11BD5427000367249 /* File.swift */,
 				F8F289E21BD5427000367249 /* ICU.swift */,
-				F8F289E31BD5427000367249 /* JSON.swift */,
 				F8BC99071C590F5F00303688 /* JSONConvertible.swift */,
 				F8F289E41BD5427000367249 /* PerfectError.swift */,
 				F8F289E71BD5427000367249 /* PerfectServer.swift */,
@@ -459,7 +455,6 @@
 				F8F28A081BD5427000367249 /* LibEvent.swift in Sources */,
 				F8F28A161BD5427000367249 /* WebConnection.swift in Sources */,
 				F8E752EC1BDA956500BFC36A /* HTTPServer.swift in Sources */,
-				F8F28A031BD5427000367249 /* JSON.swift in Sources */,
 				F8F28A2B1BD5545000367249 /* curl_support.cpp in Sources */,
 				F8F289FF1BD5427000367249 /* FastCGI.swift in Sources */,
 				F8F28A101BD5427000367249 /* PageHandler.swift in Sources */,
@@ -507,7 +502,6 @@
 			files = (
 				F804E2B61C1A0F9C00B0F393 /* Threading.swift in Sources */,
 				F8F28A401BD5636F00367249 /* Closeable.swift in Sources */,
-				F8F28A441BD5639400367249 /* JSON.swift in Sources */,
 				F8F28A461BD563B300367249 /* curl_support.cpp in Sources */,
 				F8F28A421BD5638500367249 /* Bytes.swift in Sources */,
 				F8F28A4C1BD566C000367249 /* Utilities.swift in Sources */,
