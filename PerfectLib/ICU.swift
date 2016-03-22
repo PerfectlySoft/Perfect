@@ -85,8 +85,8 @@ public class ICU {
 	public static func parseDate(dateStr: String, format: String, timezone inTimezone: String? = nil, locale inLocale: String? = nil) throws -> Double {
 		var status = UErrorCode(0)
 		let utf16Chars = format.utf16
-		var locale = UnsafePointer<Int8>(())
-		var timezone = UnsafeMutablePointer<UInt16>(())
+		var locale = UnsafePointer<Int8>(nil)
+		var timezone = UnsafeMutablePointer<UInt16>(nil)
 		var timeZoneLength: Int32 = 0
 		
 		if let tz = inTimezone {
@@ -129,8 +129,8 @@ public class ICU {
 	public static func formatDate(date: Double, format: String, timezone inTimezone: String? = nil, locale inLocale: String? = nil) throws -> String {
 		var status = UErrorCode(0)
 		let utf16Chars = format.utf16
-		var locale = UnsafePointer<Int8>(())
-		var timezone = UnsafeMutablePointer<UInt16>(())
+		var locale = UnsafePointer<Int8>(nil)
+		var timezone = UnsafeMutablePointer<UInt16>(nil)
 		var timeZoneLength: Int32 = 0
 		
 		if let tz = inTimezone {

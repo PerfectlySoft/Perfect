@@ -45,7 +45,7 @@ public class NetTCPSSL : NetTCP {
 		public var publicKeyBytes: [UInt8] {
 			let pk = X509_get_pubkey(self.ptr)
 			let len = Int(i2d_PUBKEY(pk, nil))
-			var mp = UnsafeMutablePointer<UInt8>()
+			var mp = UnsafeMutablePointer<UInt8>(nil)
 			defer {
 				free(mp)
 				EVP_PKEY_free(pk)

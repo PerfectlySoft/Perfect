@@ -347,7 +347,7 @@ public class WebSocketHandler : RequestHandler {
 		BIO_write(bio, a, Int32(a.count))
 		BIO_ctrl(bio, BIO_CTRL_FLUSH, 0, nil)
 
-		var mem = UnsafeMutablePointer<BUF_MEM>()
+		var mem = UnsafeMutablePointer<BUF_MEM>(nil)
 		BIO_ctrl(bio, BIO_C_GET_BUF_MEM_PTR, 0, &mem)
 		BIO_ctrl(bio, BIO_CTRL_SET_CLOSE, Int(BIO_NOCLOSE), nil)
 		BIO_free_all(bio)

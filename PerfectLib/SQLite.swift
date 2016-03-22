@@ -36,7 +36,7 @@ public class SQLite : Closeable {
 	/// Create or open a SQLite database given a file path.
 	public init(_ path: String, readOnly: Bool = false) throws {
 		self.path = path
-		self.sqlite3 = COpaquePointer()
+		self.sqlite3 = COpaquePointer(nilLiteral: ())
 		let flags = readOnly ? SQLITE_OPEN_READONLY : SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE
 		let res = sqlite3_open_v2(path, &self.sqlite3, flags, nil)
 		if res != SQLITE_OK {
@@ -59,8 +59,8 @@ public class SQLite : Closeable {
 	/// Compile the SQL statement.
 	/// - returns: A SQLiteStmt object representing the compiled statement.
 	public func prepare(stat: String) throws -> SQLiteStmt {
-		var statPtr = COpaquePointer()
-		let tail = UnsafeMutablePointer<UnsafePointer<Int8>>()
+		var statPtr = COpaquePointer(nilLiteral: ())
+		let tail = UnsafeMutablePointer<UnsafePointer<Int8>>(nil)
 		let res = sqlite3_prepare_v2(self.sqlite3, stat, Int32(stat.utf8.count), &statPtr, tail)
 		try checkRes(res)
 		return SQLiteStmt(db: self.sqlite3, stat: statPtr)

@@ -272,7 +272,7 @@ public class WebResponse {
 			do {
 				try session.commit()
 			} catch let e {
-				LogManager.logMessage("Exception while committing session \(name) \(e)")
+				Log.error("Exception while committing session \(name) \(e)")
 			}
 		}
 	}

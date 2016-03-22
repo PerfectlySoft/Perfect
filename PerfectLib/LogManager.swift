@@ -17,14 +17,22 @@
 //===----------------------------------------------------------------------===//
 //
 
-public class LogManager {
+public class Log {
 	
-	static func logMessage(msg: String) {
+	static func info(msg: String) {
 		print(msg)
 	}
 	
-	static func logMessageCode(msg: String, code: Int) {
-		print("\(msg) \(code)")
+	static func warning(msg: String) {
+		print(msg)
+	}
+	
+	static func error(msg: String) {
+		print(msg)
+	}
+	
+	static func critical(msg: String) {
+		print(msg)
 	}
 	
 }
