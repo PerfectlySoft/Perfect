@@ -51,7 +51,7 @@ public class SysProcess : Closeable {
 		defer { cArgs.destroy() ; cArgs.dealloc(cArgsCount + 2) }
 		
 		cArgs[0] = strdup(cmd)
-		cArgs[cArgsCount + 1] = UnsafeMutablePointer<CChar>(())
+		cArgs[cArgsCount + 1] = UnsafeMutablePointer<CChar>(nil)
 		var idx = 0
 		while idx < cArgsCount {
 			cArgs[idx+1] = strdup(args![idx])
@@ -63,7 +63,7 @@ public class SysProcess : Closeable {
 		
 		defer { cEnv.destroy() ; cEnv.dealloc(cEnvCount + 1) }
 		
-		cEnv[cEnvCount] = UnsafeMutablePointer<CChar>(())
+		cEnv[cEnvCount] = UnsafeMutablePointer<CChar>(nil)
 		idx = 0
 		while idx < cEnvCount {
 			cEnv[idx] = strdup(env![idx].0 + "=" + env![idx].1)
@@ -84,7 +84,7 @@ public class SysProcess : Closeable {
 		pipe(fSTDOUT)
 		pipe(fSTDERR)
 		
-		var action = posix_spawn_file_actions_t()
+		var action = posix_spawn_file_actions_t(nil)
 		
 		posix_spawn_file_actions_init(&action);
 		posix_spawn_file_actions_adddup2(&action, fSTDOUT[1], STDOUT_FILENO);
@@ -99,7 +99,7 @@ public class SysProcess : Closeable {
 		posix_spawn_file_actions_addclose(&action, fSTDERR[1]);
   
 		var procPid = pid_t()
-		let spawnRes = posix_spawnp(&procPid, cmd, &action, UnsafeMutablePointer<posix_spawnattr_t>(()), cArgs, cEnv)
+		let spawnRes = posix_spawnp(&procPid, cmd, &action, UnsafeMutablePointer<posix_spawnattr_t>(nil), cArgs, cEnv)
 		posix_spawn_file_actions_destroy(&action)
 		
 		idx = 0

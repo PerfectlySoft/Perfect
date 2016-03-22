@@ -39,7 +39,7 @@ public class PerfectServer {
 		do {
 			try SessionManager.initializeSessionsDatabase()
 		} catch let e {
-			LogManager.logMessage("Exception while initializing SQLite sessions database \(e)")
+			Log.critical("Exception while initializing SQLite sessions database \(e)")
 		}
 		
 		let dl = DynamicLoader()
@@ -49,7 +49,7 @@ public class PerfectServer {
         } else {
             baseDir = Dir(homeDir() + serverPerfectLibraries)
         }
-        print("Load libs from: \(baseDir.realPath())");
+        Log.info("Load libs from: \(baseDir.realPath())");
 		do {
 			try baseDir.forEachEntry { (name: String) -> () in
 				if name.hasSuffix(".framework") || name.hasSuffix(".framework/") {

@@ -119,7 +119,7 @@ public class MimeReader {
 				}
 				let endIndex = contentType.endIndex
 				
-				let boundaryString = contentType.substringWith(Range(start: startIndex, end: endIndex))
+				let boundaryString = contentType.substringWith(startIndex..<endIndex)
 				self.boundary.appendContentsOf("--")
 				self.boundary.appendContentsOf(boundaryString)
 				self.state = .StateBoundary
@@ -390,7 +390,7 @@ public class MimeReader {
 						let length = position.distanceTo(writeEnd)
 						spec.fileSize += try spec.file!.writeBytes(bytes, dataPosition: position, length: length)
 					} catch let e {
-						print("Exception while writing file upload data: \(e)")
+						Log.error("Exception while writing file upload data: \(e)")
 						self.state = .StateNone
 						break
 					}
