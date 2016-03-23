@@ -244,7 +244,7 @@ public class NetNamedPipe : NetTCP {
 		nothingPtr.memory.iov_base = UnsafeMutablePointer<Void>(nothing)
 		nothingPtr.memory.iov_len = 1
 
-		msghdr.memory.msg_name = UnsafeMutablePointer<Void>(())
+		msghdr.memory.msg_name = UnsafeMutablePointer<Void>(nil)
 		msghdr.memory.msg_namelen = 0
 		msghdr.memory.msg_flags = 0
 		msghdr.memory.msg_iov = nothingPtr
