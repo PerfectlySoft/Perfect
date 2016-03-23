@@ -206,7 +206,7 @@ public class Threading {
 #if USE_LIBDISPATCH
 		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), closure)
 #else
-		var thrdSlf = pthread_t(nil)
+		var thrdSlf = pthread_t()
 		var attr = pthread_attr_t()
 		pthread_attr_init(&attr)
 		pthread_attr_setdetachstate(&attr, Int32(PTHREAD_CREATE_DETACHED))
