@@ -429,7 +429,7 @@ extension String {
 				}
 				
 				if findIdx == findEndIdx { // match
-					return Range(start: idx, end: newIdx)
+					return idx..<newIdx
 				}
 			}
 			idx = idx.advancedBy(1)
@@ -563,7 +563,7 @@ extension String {
 		guard endIndex != startIndex else {
 			return ""
 		}
-		return self.substringWith(Range(start:endIndex.successor(), end:noTrailsIndex))
+		return self.substringWith(endIndex.successor()..<noTrailsIndex)
 	}
 
 	var stringByResolvingSymlinksInPath: String {
