@@ -202,6 +202,8 @@ func jsonEncodedStringWorkAround(o: Any) throws -> String {
 		return try jsonAble.jsonEncodedString()
 	case let jsonAble as [Any]:
 		return try jsonAble.jsonEncodedString()
+	case let jsonAble as [[String:Any]]:
+		return try jsonAble.jsonEncodedString()
 	case let jsonAble as [String:Any]:
 		return try jsonAble.jsonEncodedString()
 	default:
