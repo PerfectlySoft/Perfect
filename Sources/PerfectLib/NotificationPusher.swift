@@ -317,26 +317,26 @@ public class NotificationPusher {
 	
 	func pushIOS(net: HTTP2Client, deviceToken: String, expiration: UInt32, priority: UInt8, notificationJson: [UInt8], callback: (NotificationResponse) -> ()) {
 		
-//		let request = net.createRequest()
-//		request.requestMethod = "POST"
-//		request.postBodyBytes = notificationJson
-//		request.headers["content-type"] = "application/json; charset=utf-8"
-//		request.headers["apns-expiration"] = "\(expiration)"
-//		request.headers["apns-priority"] = "\(priority)"
-//		if let apnsTopic = apnsTopic {
-//			request.headers["apns-topic"] = apnsTopic
-//		}
-//		request.requestURI = "/3/device/\(deviceToken)"
-//		net.sendRequest(request) {
-//			response, msg in
-//			
-//			if let r = response {
-//				let code = r.getStatus().0
-//				callback(NotificationResponse(code: code, body: r.bodyData))
-//			} else {
-//				callback(NotificationResponse(code: -1, body: UTF8Encoding.decode("No response")))
-//			}
-//		}
+		let request = net.createRequest()
+		request.requestMethod = "POST"
+		request.postBodyBytes = notificationJson
+		request.headers["content-type"] = "application/json; charset=utf-8"
+		request.headers["apns-expiration"] = "\(expiration)"
+		request.headers["apns-priority"] = "\(priority)"
+		if let apnsTopic = apnsTopic {
+			request.headers["apns-topic"] = apnsTopic
+		}
+		request.requestURI = "/3/device/\(deviceToken)"
+		net.sendRequest(request) {
+			response, msg in
+			
+			if let r = response {
+				let code = r.getStatus().0
+				callback(NotificationResponse(code: code, body: r.bodyData))
+			} else {
+				callback(NotificationResponse(code: -1, body: UTF8Encoding.decode("No response")))
+			}
+		}
 	}
 	
 	func pushIOS(client: HTTP2Client, deviceTokens: IndexingIterator<[String]>, expiration: UInt32, priority: UInt8, notificationJson: [UInt8], callback: ([NotificationResponse]) -> ()) {

@@ -50,9 +50,19 @@ public class WebRequest {
 	/// Variables set by the URL routing process
 	public var urlVariables = [String:String]()
 	
+	// !FIX! This had previously been lazy but utilizing .headers was crashing the Swift 3.0-dev compiler
+	// Temp work around is to be indirect
 	/// A `Dictionary` containing all HTTP header names and values
 	/// Only HTTP headers are included in the result. Any "meta" headers, i.e. those provided by the web server, are discarded.
-	public lazy var headers: [String:String] = {
+	public var headers: [String:String] {
+		get {
+			return self.work_around_headers
+		}
+		set {
+			self.work_around_headers = newValue
+		}
+	}
+	private lazy var work_around_headers: [String:String] = {
 		var d = Dictionary<String, String>()
 		for (key, value) in self.connection.requestParams {
 			if key.hasPrefix("HTTP_") {
