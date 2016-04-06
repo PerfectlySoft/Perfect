@@ -1,0 +1,609 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F83FE6EE1CB4C77E0043B621 /* libcrypto-x86_64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F83FE6EC1CB4C77E0043B621 /* libcrypto-x86_64.a */; };
+		F83FE6EF1CB4C77E0043B621 /* libssl-x86_64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F83FE6ED1CB4C77E0043B621 /* libssl-x86_64.a */; };
+		F83FE6F31CB4C7CB0043B621 /* libicudata.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F83FE6F01CB4C7CB0043B621 /* libicudata.a */; };
+		F83FE6F41CB4C7CB0043B621 /* libicui18n.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F83FE6F11CB4C7CB0043B621 /* libicui18n.a */; };
+		F83FE6F51CB4C7CB0043B621 /* libicuuc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F83FE6F21CB4C7CB0043B621 /* libicuuc.a */; };
+		F88D0FC21CB327C6000D499D /* PerfectLib.h in Headers */ = {isa = PBXBuildFile; fileRef = F88D0FC11CB327C6000D499D /* PerfectLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F88D0FC41CB32D72000D499D /* libstdc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F88D0FC31CB32D72000D499D /* libstdc++.tbd */; };
+		F88D0FC81CB32E56000D499D /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F88D0FC71CB32E56000D499D /* libcurl.tbd */; };
+		F8C714711CB49D3E005B0A4C /* Bytes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C7144C1CB49D3E005B0A4C /* Bytes.swift */; };
+		F8C714721CB49D3E005B0A4C /* Closeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C7144D1CB49D3E005B0A4C /* Closeable.swift */; };
+		F8C714731CB49D3E005B0A4C /* cURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C7144E1CB49D3E005B0A4C /* cURL.swift */; };
+		F8C714741CB49D3E005B0A4C /* Dir.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C7144F1CB49D3E005B0A4C /* Dir.swift */; };
+		F8C714751CB49D3E005B0A4C /* DynamicLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C714501CB49D3E005B0A4C /* DynamicLoader.swift */; };
+		F8C714761CB49D3E005B0A4C /* FastCGI.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C714511CB49D3E005B0A4C /* FastCGI.swift */; };
+		F8C714771CB49D3E005B0A4C /* FastCGIServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C714521CB49D3E005B0A4C /* FastCGIServer.swift */; };
+		F8C714781CB49D3E005B0A4C /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C714531CB49D3E005B0A4C /* File.swift */; };
+		F8C714791CB49D3E005B0A4C /* HPACK.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C714541CB49D3E005B0A4C /* HPACK.swift */; };
+		F8C7147A1CB49D3E005B0A4C /* HTTP2.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C714551CB49D3E005B0A4C /* HTTP2.swift */; };
+		F8C7147B1CB49D3E005B0A4C /* HTTPServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C714561CB49D3E005B0A4C /* HTTPServer.swift */; };
+		F8C7147C1CB49D3E005B0A4C /* ICU.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C714571CB49D3E005B0A4C /* ICU.swift */; };
+		F8C7147D1CB49D3E005B0A4C /* JSONConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C714581CB49D3E005B0A4C /* JSONConvertible.swift */; };
+		F8C7147E1CB49D3E005B0A4C /* LogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C714591CB49D3E005B0A4C /* LogManager.swift */; };
+		F8C7147F1CB49D3E005B0A4C /* MimeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C7145A1CB49D3E005B0A4C /* MimeReader.swift */; };
+		F8C714801CB49D3E005B0A4C /* MimeType.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C7145B1CB49D3E005B0A4C /* MimeType.swift */; };
+		F8C714811CB49D3E005B0A4C /* Mustache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C7145C1CB49D3E005B0A4C /* Mustache.swift */; };
+		F8C714821CB49D3E005B0A4C /* Net.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C7145D1CB49D3E005B0A4C /* Net.swift */; };
+		F8C714831CB49D3E005B0A4C /* NetEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C7145E1CB49D3E005B0A4C /* NetEvent.swift */; };
+		F8C714841CB49D3E005B0A4C /* NetNamedPipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C7145F1CB49D3E005B0A4C /* NetNamedPipe.swift */; };
+		F8C714851CB49D3E005B0A4C /* NetTCP.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C714601CB49D3E005B0A4C /* NetTCP.swift */; };
+		F8C714861CB49D3E005B0A4C /* NetTCPSSL.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C714611CB49D3E005B0A4C /* NetTCPSSL.swift */; };
+		F8C714871CB49D3E005B0A4C /* NotificationPusher.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C714621CB49D3E005B0A4C /* NotificationPusher.swift */; };
+		F8C714881CB49D3E005B0A4C /* PageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C714631CB49D3E005B0A4C /* PageHandler.swift */; };
+		F8C714891CB49D3E005B0A4C /* PerfectError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C714641CB49D3E005B0A4C /* PerfectError.swift */; };
+		F8C7148A1CB49D3E005B0A4C /* PerfectServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C714651CB49D3E005B0A4C /* PerfectServer.swift */; };
+		F8C7148B1CB49D3E005B0A4C /* Routing.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C714661CB49D3E005B0A4C /* Routing.swift */; };
+		F8C7148D1CB49D3E005B0A4C /* StaticFileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C714681CB49D3E005B0A4C /* StaticFileHandler.swift */; };
+		F8C7148E1CB49D3E005B0A4C /* SysProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C714691CB49D3E005B0A4C /* SysProcess.swift */; };
+		F8C7148F1CB49D3E005B0A4C /* Threading.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C7146A1CB49D3E005B0A4C /* Threading.swift */; };
+		F8C714901CB49D3E005B0A4C /* Utilities-Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C7146B1CB49D3E005B0A4C /* Utilities-Server.swift */; };
+		F8C714911CB49D3E005B0A4C /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C7146C1CB49D3E005B0A4C /* Utilities.swift */; };
+		F8C714921CB49D3E005B0A4C /* WebConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C7146D1CB49D3E005B0A4C /* WebConnection.swift */; };
+		F8C714931CB49D3E005B0A4C /* WebRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C7146E1CB49D3E005B0A4C /* WebRequest.swift */; };
+		F8C714941CB49D3E005B0A4C /* WebResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C7146F1CB49D3E005B0A4C /* WebResponse.swift */; };
+		F8C714951CB49D3E005B0A4C /* WebSocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C714701CB49D3E005B0A4C /* WebSocketHandler.swift */; };
+		F8F289C91BD53CF000367249 /* PerfectLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F289BE1BD53CF000367249 /* PerfectLib.framework */; };
+		F8F289CE1BD53CF000367249 /* PerfectLibTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F289CD1BD53CF000367249 /* PerfectLibTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F8F289CA1BD53CF000367249 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F8F289B51BD53CF000367249 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F8F289BD1BD53CF000367249;
+			remoteInfo = PerfectLib;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		F83FE6EC1CB4C77E0043B621 /* libcrypto-x86_64.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libcrypto-x86_64.a"; path = "linked/osx/libcrypto-x86_64.a"; sourceTree = "<group>"; };
+		F83FE6ED1CB4C77E0043B621 /* libssl-x86_64.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libssl-x86_64.a"; path = "linked/osx/libssl-x86_64.a"; sourceTree = "<group>"; };
+		F83FE6F01CB4C7CB0043B621 /* libicudata.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libicudata.a; path = linked/osx/libicudata.a; sourceTree = "<group>"; };
+		F83FE6F11CB4C7CB0043B621 /* libicui18n.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libicui18n.a; path = linked/osx/libicui18n.a; sourceTree = "<group>"; };
+		F83FE6F21CB4C7CB0043B621 /* libicuuc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libicuuc.a; path = linked/osx/libicuuc.a; sourceTree = "<group>"; };
+		F88D0FC11CB327C6000D499D /* PerfectLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerfectLib.h; sourceTree = "<group>"; };
+		F88D0FC31CB32D72000D499D /* libstdc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.tbd"; path = "usr/lib/libstdc++.tbd"; sourceTree = SDKROOT; };
+		F88D0FC71CB32E56000D499D /* libcurl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcurl.tbd; path = usr/lib/libcurl.tbd; sourceTree = SDKROOT; };
+		F8C7144C1CB49D3E005B0A4C /* Bytes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Bytes.swift; path = ../Sources/PerfectLib/Bytes.swift; sourceTree = "<group>"; };
+		F8C7144D1CB49D3E005B0A4C /* Closeable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Closeable.swift; path = ../Sources/PerfectLib/Closeable.swift; sourceTree = "<group>"; };
+		F8C7144E1CB49D3E005B0A4C /* cURL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = cURL.swift; path = ../Sources/PerfectLib/cURL.swift; sourceTree = "<group>"; };
+		F8C7144F1CB49D3E005B0A4C /* Dir.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Dir.swift; path = ../Sources/PerfectLib/Dir.swift; sourceTree = "<group>"; };
+		F8C714501CB49D3E005B0A4C /* DynamicLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DynamicLoader.swift; path = ../Sources/PerfectLib/DynamicLoader.swift; sourceTree = "<group>"; };
+		F8C714511CB49D3E005B0A4C /* FastCGI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FastCGI.swift; path = ../Sources/PerfectLib/FastCGI.swift; sourceTree = "<group>"; };
+		F8C714521CB49D3E005B0A4C /* FastCGIServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FastCGIServer.swift; path = ../Sources/PerfectLib/FastCGIServer.swift; sourceTree = "<group>"; };
+		F8C714531CB49D3E005B0A4C /* File.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = File.swift; path = ../Sources/PerfectLib/File.swift; sourceTree = "<group>"; };
+		F8C714541CB49D3E005B0A4C /* HPACK.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HPACK.swift; path = ../Sources/PerfectLib/HPACK.swift; sourceTree = "<group>"; };
+		F8C714551CB49D3E005B0A4C /* HTTP2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HTTP2.swift; path = ../Sources/PerfectLib/HTTP2.swift; sourceTree = "<group>"; };
+		F8C714561CB49D3E005B0A4C /* HTTPServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HTTPServer.swift; path = ../Sources/PerfectLib/HTTPServer.swift; sourceTree = "<group>"; };
+		F8C714571CB49D3E005B0A4C /* ICU.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ICU.swift; path = ../Sources/PerfectLib/ICU.swift; sourceTree = "<group>"; };
+		F8C714581CB49D3E005B0A4C /* JSONConvertible.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = JSONConvertible.swift; path = ../Sources/PerfectLib/JSONConvertible.swift; sourceTree = "<group>"; };
+		F8C714591CB49D3E005B0A4C /* LogManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LogManager.swift; path = ../Sources/PerfectLib/LogManager.swift; sourceTree = "<group>"; };
+		F8C7145A1CB49D3E005B0A4C /* MimeReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MimeReader.swift; path = ../Sources/PerfectLib/MimeReader.swift; sourceTree = "<group>"; };
+		F8C7145B1CB49D3E005B0A4C /* MimeType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MimeType.swift; path = ../Sources/PerfectLib/MimeType.swift; sourceTree = "<group>"; };
+		F8C7145C1CB49D3E005B0A4C /* Mustache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Mustache.swift; path = ../Sources/PerfectLib/Mustache.swift; sourceTree = "<group>"; };
+		F8C7145D1CB49D3E005B0A4C /* Net.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Net.swift; path = ../Sources/PerfectLib/Net.swift; sourceTree = "<group>"; };
+		F8C7145E1CB49D3E005B0A4C /* NetEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NetEvent.swift; path = ../Sources/PerfectLib/NetEvent.swift; sourceTree = "<group>"; };
+		F8C7145F1CB49D3E005B0A4C /* NetNamedPipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NetNamedPipe.swift; path = ../Sources/PerfectLib/NetNamedPipe.swift; sourceTree = "<group>"; };
+		F8C714601CB49D3E005B0A4C /* NetTCP.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NetTCP.swift; path = ../Sources/PerfectLib/NetTCP.swift; sourceTree = "<group>"; };
+		F8C714611CB49D3E005B0A4C /* NetTCPSSL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NetTCPSSL.swift; path = ../Sources/PerfectLib/NetTCPSSL.swift; sourceTree = "<group>"; };
+		F8C714621CB49D3E005B0A4C /* NotificationPusher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NotificationPusher.swift; path = ../Sources/PerfectLib/NotificationPusher.swift; sourceTree = "<group>"; };
+		F8C714631CB49D3E005B0A4C /* PageHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PageHandler.swift; path = ../Sources/PerfectLib/PageHandler.swift; sourceTree = "<group>"; };
+		F8C714641CB49D3E005B0A4C /* PerfectError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PerfectError.swift; path = ../Sources/PerfectLib/PerfectError.swift; sourceTree = "<group>"; };
+		F8C714651CB49D3E005B0A4C /* PerfectServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PerfectServer.swift; path = ../Sources/PerfectLib/PerfectServer.swift; sourceTree = "<group>"; };
+		F8C714661CB49D3E005B0A4C /* Routing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Routing.swift; path = ../Sources/PerfectLib/Routing.swift; sourceTree = "<group>"; };
+		F8C714681CB49D3E005B0A4C /* StaticFileHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StaticFileHandler.swift; path = ../Sources/PerfectLib/StaticFileHandler.swift; sourceTree = "<group>"; };
+		F8C714691CB49D3E005B0A4C /* SysProcess.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SysProcess.swift; path = ../Sources/PerfectLib/SysProcess.swift; sourceTree = "<group>"; };
+		F8C7146A1CB49D3E005B0A4C /* Threading.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Threading.swift; path = ../Sources/PerfectLib/Threading.swift; sourceTree = "<group>"; };
+		F8C7146B1CB49D3E005B0A4C /* Utilities-Server.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Utilities-Server.swift"; path = "../Sources/PerfectLib/Utilities-Server.swift"; sourceTree = "<group>"; };
+		F8C7146C1CB49D3E005B0A4C /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Utilities.swift; path = ../Sources/PerfectLib/Utilities.swift; sourceTree = "<group>"; };
+		F8C7146D1CB49D3E005B0A4C /* WebConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WebConnection.swift; path = ../Sources/PerfectLib/WebConnection.swift; sourceTree = "<group>"; };
+		F8C7146E1CB49D3E005B0A4C /* WebRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WebRequest.swift; path = ../Sources/PerfectLib/WebRequest.swift; sourceTree = "<group>"; };
+		F8C7146F1CB49D3E005B0A4C /* WebResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WebResponse.swift; path = ../Sources/PerfectLib/WebResponse.swift; sourceTree = "<group>"; };
+		F8C714701CB49D3E005B0A4C /* WebSocketHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WebSocketHandler.swift; path = ../Sources/PerfectLib/WebSocketHandler.swift; sourceTree = "<group>"; };
+		F8C714971CB49D77005B0A4C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F8F289BE1BD53CF000367249 /* PerfectLib.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PerfectLib.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F8F289C81BD53CF000367249 /* PerfectLibTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PerfectLibTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F8F289CD1BD53CF000367249 /* PerfectLibTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerfectLibTests.swift; sourceTree = "<group>"; };
+		F8F289CF1BD53CF000367249 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F8F289BA1BD53CF000367249 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F88D0FC81CB32E56000D499D /* libcurl.tbd in Frameworks */,
+				F88D0FC41CB32D72000D499D /* libstdc++.tbd in Frameworks */,
+				F83FE6EE1CB4C77E0043B621 /* libcrypto-x86_64.a in Frameworks */,
+				F83FE6EF1CB4C77E0043B621 /* libssl-x86_64.a in Frameworks */,
+				F83FE6F31CB4C7CB0043B621 /* libicudata.a in Frameworks */,
+				F83FE6F41CB4C7CB0043B621 /* libicui18n.a in Frameworks */,
+				F83FE6F51CB4C7CB0043B621 /* libicuuc.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8F289C51BD53CF000367249 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F8F289C91BD53CF000367249 /* PerfectLib.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F8C714961CB49D5B005B0A4C /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				F8C714971CB49D77005B0A4C /* Info.plist */,
+				F88D0FC11CB327C6000D499D /* PerfectLib.h */,
+			);
+			name = Support;
+			sourceTree = "<group>";
+		};
+		F8F289B41BD53CF000367249 = {
+			isa = PBXGroup;
+			children = (
+				F8F289D81BD53EC800367249 /* Source */,
+				F8C714961CB49D5B005B0A4C /* Support */,
+				F8F289CC1BD53CF000367249 /* PerfectLibTests */,
+				F8F28A291BD544B700367249 /* Linked */,
+				F8F289BF1BD53CF000367249 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F8F289BF1BD53CF000367249 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F8F289BE1BD53CF000367249 /* PerfectLib.framework */,
+				F8F289C81BD53CF000367249 /* PerfectLibTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F8F289CC1BD53CF000367249 /* PerfectLibTests */ = {
+			isa = PBXGroup;
+			children = (
+				F8F289CD1BD53CF000367249 /* PerfectLibTests.swift */,
+				F8F289CF1BD53CF000367249 /* Info.plist */,
+			);
+			path = PerfectLibTests;
+			sourceTree = "<group>";
+		};
+		F8F289D81BD53EC800367249 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				F8C7144C1CB49D3E005B0A4C /* Bytes.swift */,
+				F8C7144D1CB49D3E005B0A4C /* Closeable.swift */,
+				F8C7144E1CB49D3E005B0A4C /* cURL.swift */,
+				F8C7144F1CB49D3E005B0A4C /* Dir.swift */,
+				F8C714501CB49D3E005B0A4C /* DynamicLoader.swift */,
+				F8C714511CB49D3E005B0A4C /* FastCGI.swift */,
+				F8C714521CB49D3E005B0A4C /* FastCGIServer.swift */,
+				F8C714531CB49D3E005B0A4C /* File.swift */,
+				F8C714541CB49D3E005B0A4C /* HPACK.swift */,
+				F8C714551CB49D3E005B0A4C /* HTTP2.swift */,
+				F8C714561CB49D3E005B0A4C /* HTTPServer.swift */,
+				F8C714571CB49D3E005B0A4C /* ICU.swift */,
+				F8C714581CB49D3E005B0A4C /* JSONConvertible.swift */,
+				F8C714591CB49D3E005B0A4C /* LogManager.swift */,
+				F8C7145A1CB49D3E005B0A4C /* MimeReader.swift */,
+				F8C7145B1CB49D3E005B0A4C /* MimeType.swift */,
+				F8C7145C1CB49D3E005B0A4C /* Mustache.swift */,
+				F8C7145D1CB49D3E005B0A4C /* Net.swift */,
+				F8C7145E1CB49D3E005B0A4C /* NetEvent.swift */,
+				F8C7145F1CB49D3E005B0A4C /* NetNamedPipe.swift */,
+				F8C714601CB49D3E005B0A4C /* NetTCP.swift */,
+				F8C714611CB49D3E005B0A4C /* NetTCPSSL.swift */,
+				F8C714621CB49D3E005B0A4C /* NotificationPusher.swift */,
+				F8C714631CB49D3E005B0A4C /* PageHandler.swift */,
+				F8C714641CB49D3E005B0A4C /* PerfectError.swift */,
+				F8C714651CB49D3E005B0A4C /* PerfectServer.swift */,
+				F8C714661CB49D3E005B0A4C /* Routing.swift */,
+				F8C714681CB49D3E005B0A4C /* StaticFileHandler.swift */,
+				F8C714691CB49D3E005B0A4C /* SysProcess.swift */,
+				F8C7146A1CB49D3E005B0A4C /* Threading.swift */,
+				F8C7146B1CB49D3E005B0A4C /* Utilities-Server.swift */,
+				F8C7146C1CB49D3E005B0A4C /* Utilities.swift */,
+				F8C7146D1CB49D3E005B0A4C /* WebConnection.swift */,
+				F8C7146E1CB49D3E005B0A4C /* WebRequest.swift */,
+				F8C7146F1CB49D3E005B0A4C /* WebResponse.swift */,
+				F8C714701CB49D3E005B0A4C /* WebSocketHandler.swift */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		F8F28A291BD544B700367249 /* Linked */ = {
+			isa = PBXGroup;
+			children = (
+				F88D0FC71CB32E56000D499D /* libcurl.tbd */,
+				F88D0FC31CB32D72000D499D /* libstdc++.tbd */,
+				F83FE6EC1CB4C77E0043B621 /* libcrypto-x86_64.a */,
+				F83FE6ED1CB4C77E0043B621 /* libssl-x86_64.a */,
+				F83FE6F01CB4C7CB0043B621 /* libicudata.a */,
+				F83FE6F11CB4C7CB0043B621 /* libicui18n.a */,
+				F83FE6F21CB4C7CB0043B621 /* libicuuc.a */,
+			);
+			name = Linked;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		F8F289BB1BD53CF000367249 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F88D0FC21CB327C6000D499D /* PerfectLib.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		F8F289BD1BD53CF000367249 /* PerfectLib */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F8F289D21BD53CF000367249 /* Build configuration list for PBXNativeTarget "PerfectLib" */;
+			buildPhases = (
+				F8F289B91BD53CF000367249 /* Sources */,
+				F8F289BA1BD53CF000367249 /* Frameworks */,
+				F8F289BB1BD53CF000367249 /* Headers */,
+				F8F289BC1BD53CF000367249 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PerfectLib;
+			productName = PerfectLib;
+			productReference = F8F289BE1BD53CF000367249 /* PerfectLib.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		F8F289C71BD53CF000367249 /* PerfectLibTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F8F289D51BD53CF000367249 /* Build configuration list for PBXNativeTarget "PerfectLibTests" */;
+			buildPhases = (
+				F8F289C41BD53CF000367249 /* Sources */,
+				F8F289C51BD53CF000367249 /* Frameworks */,
+				F8F289C61BD53CF000367249 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F8F289CB1BD53CF000367249 /* PBXTargetDependency */,
+			);
+			name = PerfectLibTests;
+			productName = PerfectLibTests;
+			productReference = F8F289C81BD53CF000367249 /* PerfectLibTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F8F289B51BD53CF000367249 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0730;
+				LastUpgradeCheck = 0730;
+				ORGANIZATIONNAME = PerfectlySoft;
+				TargetAttributes = {
+					F8F289BD1BD53CF000367249 = {
+						CreatedOnToolsVersion = 7.0;
+					};
+					F8F289C71BD53CF000367249 = {
+						CreatedOnToolsVersion = 7.0;
+					};
+				};
+			};
+			buildConfigurationList = F8F289B81BD53CF000367249 /* Build configuration list for PBXProject "PerfectLib" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = F8F289B41BD53CF000367249;
+			productRefGroup = F8F289BF1BD53CF000367249 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F8F289BD1BD53CF000367249 /* PerfectLib */,
+				F8F289C71BD53CF000367249 /* PerfectLibTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F8F289BC1BD53CF000367249 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8F289C61BD53CF000367249 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F8F289B91BD53CF000367249 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F8C7147F1CB49D3E005B0A4C /* MimeReader.swift in Sources */,
+				F8C714941CB49D3E005B0A4C /* WebResponse.swift in Sources */,
+				F8C7147B1CB49D3E005B0A4C /* HTTPServer.swift in Sources */,
+				F8C7147C1CB49D3E005B0A4C /* ICU.swift in Sources */,
+				F8C714801CB49D3E005B0A4C /* MimeType.swift in Sources */,
+				F8C714721CB49D3E005B0A4C /* Closeable.swift in Sources */,
+				F8C714731CB49D3E005B0A4C /* cURL.swift in Sources */,
+				F8C714831CB49D3E005B0A4C /* NetEvent.swift in Sources */,
+				F8C714881CB49D3E005B0A4C /* PageHandler.swift in Sources */,
+				F8C714891CB49D3E005B0A4C /* PerfectError.swift in Sources */,
+				F8C714811CB49D3E005B0A4C /* Mustache.swift in Sources */,
+				F8C7148F1CB49D3E005B0A4C /* Threading.swift in Sources */,
+				F8C714821CB49D3E005B0A4C /* Net.swift in Sources */,
+				F8C714771CB49D3E005B0A4C /* FastCGIServer.swift in Sources */,
+				F8C714751CB49D3E005B0A4C /* DynamicLoader.swift in Sources */,
+				F8C714921CB49D3E005B0A4C /* WebConnection.swift in Sources */,
+				F8C7148E1CB49D3E005B0A4C /* SysProcess.swift in Sources */,
+				F8C714871CB49D3E005B0A4C /* NotificationPusher.swift in Sources */,
+				F8C714951CB49D3E005B0A4C /* WebSocketHandler.swift in Sources */,
+				F8C714841CB49D3E005B0A4C /* NetNamedPipe.swift in Sources */,
+				F8C714791CB49D3E005B0A4C /* HPACK.swift in Sources */,
+				F8C714901CB49D3E005B0A4C /* Utilities-Server.swift in Sources */,
+				F8C714711CB49D3E005B0A4C /* Bytes.swift in Sources */,
+				F8C7147A1CB49D3E005B0A4C /* HTTP2.swift in Sources */,
+				F8C714781CB49D3E005B0A4C /* File.swift in Sources */,
+				F8C714861CB49D3E005B0A4C /* NetTCPSSL.swift in Sources */,
+				F8C7147E1CB49D3E005B0A4C /* LogManager.swift in Sources */,
+				F8C714851CB49D3E005B0A4C /* NetTCP.swift in Sources */,
+				F8C714911CB49D3E005B0A4C /* Utilities.swift in Sources */,
+				F8C714741CB49D3E005B0A4C /* Dir.swift in Sources */,
+				F8C7148D1CB49D3E005B0A4C /* StaticFileHandler.swift in Sources */,
+				F8C714761CB49D3E005B0A4C /* FastCGI.swift in Sources */,
+				F8C714931CB49D3E005B0A4C /* WebRequest.swift in Sources */,
+				F8C7148B1CB49D3E005B0A4C /* Routing.swift in Sources */,
+				F8C7148A1CB49D3E005B0A4C /* PerfectServer.swift in Sources */,
+				F8C7147D1CB49D3E005B0A4C /* JSONConvertible.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8F289C41BD53CF000367249 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F8F289CE1BD53CF000367249 /* PerfectLibTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F8F289CB1BD53CF000367249 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F8F289BD1BD53CF000367249 /* PerfectLib */;
+			targetProxy = F8F289CA1BD53CF000367249 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		F8F289D01BD53CF000367249 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		F8F289D11BD53CF000367249 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		F8F289D31BD53CF000367249 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				FRAMEWORK_VERSION = A;
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/linked/ICU/osx",
+					"$(PROJECT_DIR)/linked/OpenSSL/osx",
+					"$(PROJECT_DIR)/linked/cURL",
+					"$(PROJECT_DIR)/linked/osx",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_BUNDLE_IDENTIFIER = ca.perfectlysoft.PerfectLib;
+				PRODUCT_NAME = PerfectLib;
+				SKIP_INSTALL = YES;
+				SWIFT_INCLUDE_PATHS = "${SRCROOT}/../Sources/OpenSSL/include ${SRCROOT}/../Sources/ICU/include ${SRCROOT}/../Sources/cURL/include";
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		F8F289D41BD53CF000367249 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				FRAMEWORK_VERSION = A;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/linked/ICU/osx",
+					"$(PROJECT_DIR)/linked/OpenSSL/osx",
+					"$(PROJECT_DIR)/linked/cURL",
+					"$(PROJECT_DIR)/linked/osx",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_BUNDLE_IDENTIFIER = ca.perfectlysoft.PerfectLib;
+				PRODUCT_NAME = PerfectLib;
+				SKIP_INSTALL = YES;
+				SWIFT_INCLUDE_PATHS = "${SRCROOT}/../Sources/OpenSSL/include ${SRCROOT}/../Sources/ICU/include ${SRCROOT}/../Sources/cURL/include";
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+			};
+			name = Release;
+		};
+		F8F289D61BD53CF000367249 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = PerfectLibTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = ca.perfectlysoft.PerfectLibTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		F8F289D71BD53CF000367249 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = PerfectLibTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = ca.perfectlysoft.PerfectLibTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F8F289B81BD53CF000367249 /* Build configuration list for PBXProject "PerfectLib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F8F289D01BD53CF000367249 /* Debug */,
+				F8F289D11BD53CF000367249 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F8F289D21BD53CF000367249 /* Build configuration list for PBXNativeTarget "PerfectLib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F8F289D31BD53CF000367249 /* Debug */,
+				F8F289D41BD53CF000367249 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F8F289D51BD53CF000367249 /* Build configuration list for PBXNativeTarget "PerfectLibTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F8F289D61BD53CF000367249 /* Debug */,
+				F8F289D71BD53CF000367249 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F8F289B51BD53CF000367249 /* Project object */;
+}

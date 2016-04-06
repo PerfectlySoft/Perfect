@@ -1,4 +1,0 @@
-module libmysqlclient [system] {
-    header "include/mysql.h"
-    export *
-}

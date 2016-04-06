@@ -1,0 +1,4 @@
+module OpenSSL {
+    header "p_openssl.h"
+    export *
+}

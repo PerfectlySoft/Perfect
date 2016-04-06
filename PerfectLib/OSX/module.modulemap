@@ -1,8 +1,0 @@
-framework module PerfectLib {
-	umbrella header "PerfectLib.h"
-
-    export *
-    module * { export * }
-}
-
-

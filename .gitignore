@@ -50,3 +50,6 @@ Carthage/Build
 # Perfect binaries
 PerfectServer/perfectserverfcgi
 PerfectServer/perfectserverhttp
+
+# SwiftPM
+.build/
