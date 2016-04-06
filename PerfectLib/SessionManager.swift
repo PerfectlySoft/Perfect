@@ -218,7 +218,17 @@ public class SessionManager {
 	func getNowSeconds() -> Double {
 		return Double(ICU.icuDateToSeconds(ICU.getNow()))
 	}
-	
+
+	func abandon() throws {
+		//delete this session
+		let fullKey = self.configuration.name + ":" + self.configuration.id
+		let encoded = try JSONEncoder().encode(self.dictionary!)
+		let sqlite = try SQLite(PerfectServer.staticPerfectServer.homeDir() + serverSQLiteDBs + perfectSessionDB)
+		defer { sqlite.close() }
+
+		try sqlite.execute("DELETE FROM sessions where session_key = '\(fullKey)'")
+	}
+
 	func commit() throws {
 		// save values
 		let fullKey = self.configuration.name + ":" + self.configuration.id
