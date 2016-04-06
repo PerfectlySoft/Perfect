@@ -7,14 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F83FE6EE1CB4C77E0043B621 /* libcrypto-x86_64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F83FE6EC1CB4C77E0043B621 /* libcrypto-x86_64.a */; };
-		F83FE6EF1CB4C77E0043B621 /* libssl-x86_64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F83FE6ED1CB4C77E0043B621 /* libssl-x86_64.a */; };
-		F83FE6F31CB4C7CB0043B621 /* libicudata.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F83FE6F01CB4C7CB0043B621 /* libicudata.a */; };
-		F83FE6F41CB4C7CB0043B621 /* libicui18n.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F83FE6F11CB4C7CB0043B621 /* libicui18n.a */; };
-		F83FE6F51CB4C7CB0043B621 /* libicuuc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F83FE6F21CB4C7CB0043B621 /* libicuuc.a */; };
 		F88D0FC21CB327C6000D499D /* PerfectLib.h in Headers */ = {isa = PBXBuildFile; fileRef = F88D0FC11CB327C6000D499D /* PerfectLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F88D0FC41CB32D72000D499D /* libstdc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F88D0FC31CB32D72000D499D /* libstdc++.tbd */; };
 		F88D0FC81CB32E56000D499D /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F88D0FC71CB32E56000D499D /* libcurl.tbd */; };
+		F8B7EFB91CB556C10016400B /* libcrypto-x86_64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F83FE6EC1CB4C77E0043B621 /* libcrypto-x86_64.a */; };
+		F8B7EFBA1CB556C10016400B /* libssl-x86_64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F83FE6ED1CB4C77E0043B621 /* libssl-x86_64.a */; };
+		F8B7EFBC1CB558EE0016400B /* libicucore.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F8B7EFBB1CB558EE0016400B /* libicucore.tbd */; };
 		F8C714711CB49D3E005B0A4C /* Bytes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C7144C1CB49D3E005B0A4C /* Bytes.swift */; };
 		F8C714721CB49D3E005B0A4C /* Closeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C7144D1CB49D3E005B0A4C /* Closeable.swift */; };
 		F8C714731CB49D3E005B0A4C /* cURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C7144E1CB49D3E005B0A4C /* cURL.swift */; };
@@ -68,12 +66,10 @@
 /* Begin PBXFileReference section */
 		F83FE6EC1CB4C77E0043B621 /* libcrypto-x86_64.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libcrypto-x86_64.a"; path = "linked/osx/libcrypto-x86_64.a"; sourceTree = "<group>"; };
 		F83FE6ED1CB4C77E0043B621 /* libssl-x86_64.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libssl-x86_64.a"; path = "linked/osx/libssl-x86_64.a"; sourceTree = "<group>"; };
-		F83FE6F01CB4C7CB0043B621 /* libicudata.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libicudata.a; path = linked/osx/libicudata.a; sourceTree = "<group>"; };
-		F83FE6F11CB4C7CB0043B621 /* libicui18n.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libicui18n.a; path = linked/osx/libicui18n.a; sourceTree = "<group>"; };
-		F83FE6F21CB4C7CB0043B621 /* libicuuc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libicuuc.a; path = linked/osx/libicuuc.a; sourceTree = "<group>"; };
 		F88D0FC11CB327C6000D499D /* PerfectLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerfectLib.h; sourceTree = "<group>"; };
 		F88D0FC31CB32D72000D499D /* libstdc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.tbd"; path = "usr/lib/libstdc++.tbd"; sourceTree = SDKROOT; };
 		F88D0FC71CB32E56000D499D /* libcurl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcurl.tbd; path = usr/lib/libcurl.tbd; sourceTree = SDKROOT; };
+		F8B7EFBB1CB558EE0016400B /* libicucore.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libicucore.tbd; path = usr/lib/libicucore.tbd; sourceTree = SDKROOT; };
 		F8C7144C1CB49D3E005B0A4C /* Bytes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Bytes.swift; path = ../Sources/PerfectLib/Bytes.swift; sourceTree = "<group>"; };
 		F8C7144D1CB49D3E005B0A4C /* Closeable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Closeable.swift; path = ../Sources/PerfectLib/Closeable.swift; sourceTree = "<group>"; };
 		F8C7144E1CB49D3E005B0A4C /* cURL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = cURL.swift; path = ../Sources/PerfectLib/cURL.swift; sourceTree = "<group>"; };
@@ -122,13 +118,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F8B7EFBC1CB558EE0016400B /* libicucore.tbd in Frameworks */,
+				F8B7EFB91CB556C10016400B /* libcrypto-x86_64.a in Frameworks */,
+				F8B7EFBA1CB556C10016400B /* libssl-x86_64.a in Frameworks */,
 				F88D0FC81CB32E56000D499D /* libcurl.tbd in Frameworks */,
 				F88D0FC41CB32D72000D499D /* libstdc++.tbd in Frameworks */,
-				F83FE6EE1CB4C77E0043B621 /* libcrypto-x86_64.a in Frameworks */,
-				F83FE6EF1CB4C77E0043B621 /* libssl-x86_64.a in Frameworks */,
-				F83FE6F31CB4C7CB0043B621 /* libicudata.a in Frameworks */,
-				F83FE6F41CB4C7CB0043B621 /* libicui18n.a in Frameworks */,
-				F83FE6F51CB4C7CB0043B621 /* libicuuc.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -227,13 +221,11 @@
 		F8F28A291BD544B700367249 /* Linked */ = {
 			isa = PBXGroup;
 			children = (
+				F8B7EFBB1CB558EE0016400B /* libicucore.tbd */,
 				F88D0FC71CB32E56000D499D /* libcurl.tbd */,
 				F88D0FC31CB32D72000D499D /* libstdc++.tbd */,
 				F83FE6EC1CB4C77E0043B621 /* libcrypto-x86_64.a */,
 				F83FE6ED1CB4C77E0043B621 /* libssl-x86_64.a */,
-				F83FE6F01CB4C7CB0043B621 /* libicudata.a */,
-				F83FE6F11CB4C7CB0043B621 /* libicui18n.a */,
-				F83FE6F21CB4C7CB0043B621 /* libicuuc.a */,
 			);
 			name = Linked;
 			sourceTree = "<group>";
