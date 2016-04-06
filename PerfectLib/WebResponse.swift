@@ -163,6 +163,11 @@ public class WebResponse {
 	
 	/// Discards a previously started session. The session will not be propagated and any changes to the session's variables will be discarded.
 	public func abandonSession(named: String) {
+		do {
+			try self.sessions[named]?.abandon()
+		} catch let e{
+			LogManager.logMessage("Exception while abandoning session \(named) \(e)")
+		}
 		self.sessions.removeValueForKey(named)
 	}
 	

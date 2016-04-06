@@ -289,7 +289,7 @@ public class WebSocketHandler : RequestHandler {
 			connection = request.header("Connection"),
 			secWebSocketKey = request.header("Sec-WebSocket-Key"),
 			secWebSocketVersion = request.header("Sec-WebSocket-Version")
-			where upgrade.lowercaseString == "websocket" && connection.lowercaseString == "upgrade" else {
+			where upgrade.lowercaseString == "websocket" && connection.lowercaseString.contains("upgrade") else {
 
 				response.setStatus(400, message: "Bad Request")
 				response.requestCompletedCallback()
