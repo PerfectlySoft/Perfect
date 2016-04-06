@@ -1,4 +1,5 @@
 module ICU {
     header "p_icu.h"
+    link "icucore"
     export *
 }
