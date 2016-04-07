@@ -25,7 +25,7 @@ import Darwin
 
 /// This class represents a directory on the file system. 
 /// It can be used for creating & inspecting directories and enumerating directory contents.
-public class Dir {
+public struct Dir {
 	
 	var internalPath = ""
 	

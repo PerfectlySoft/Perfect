@@ -17,7 +17,8 @@
 //===----------------------------------------------------------------------===//
 //
 
-public class Log {
+/// Placeholder functions for logging system
+public struct Log {
 	
 	static func info(msg: String) {
 		print(msg)

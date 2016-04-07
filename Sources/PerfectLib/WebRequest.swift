@@ -26,7 +26,6 @@
 /// - Establishing the document root, from which response files are located
 ///
 /// Access to the current WebRequest object is generally provided through the corresponding WebResponse object
-
 public class WebRequest {
 	
 	var connection: WebConnection
@@ -67,7 +66,7 @@ public class WebRequest {
 		for (key, value) in self.connection.requestParams {
 			if key.hasPrefix("HTTP_") {
 				let utf16 = key.utf16
-				let index = key.utf16.startIndex + 5
+				let index = key.utf16.startIndex.advanced(by: 5)
 				let nKey = String(key.utf16.suffix(from: index))!
 				d[nKey.stringByReplacingString("_", withString: "-")] = value
 			}

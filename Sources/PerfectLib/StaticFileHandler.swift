@@ -17,7 +17,7 @@
 //===----------------------------------------------------------------------===//
 //
 
-public class StaticFileHandler: RequestHandler {
+public struct StaticFileHandler: RequestHandler {
 	
 	public init() {}
 	

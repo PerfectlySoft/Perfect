@@ -23,7 +23,7 @@ import SwiftGlibc
 import Darwin
 #endif
 
-class DynamicLoader {
+struct DynamicLoader {
 	
 	// sketchy! PerfectServerModuleInit is not defined as convention(c)
 	// but it does not seem to matter provided it is Void->Void

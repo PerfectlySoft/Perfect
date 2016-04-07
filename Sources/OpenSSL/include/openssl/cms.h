@@ -55,7 +55,7 @@
 #ifndef HEADER_CMS_H
 # define HEADER_CMS_H
 
-# include <openssl/x509.h>
+# include "x509.h"
 
 # ifdef OPENSSL_NO_CMS
 #  error CMS is disabled.

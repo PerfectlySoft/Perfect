@@ -58,13 +58,13 @@
 #ifndef HEADER_HMAC_H
 # define HEADER_HMAC_H
 
-# include <openssl/opensslconf.h>
+# include "opensslconf.h"
 
 # ifdef OPENSSL_NO_HMAC
 #  error HMAC is disabled.
 # endif
 
-# include <openssl/evp.h>
+# include "evp.h"
 
 # define HMAC_MAX_MD_CBLOCK      128/* largest known is SHA512 */
 

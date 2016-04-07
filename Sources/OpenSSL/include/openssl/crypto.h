@@ -119,26 +119,26 @@
 
 # include <stdlib.h>
 
-# include <openssl/e_os2.h>
+# include "e_os2.h"
 
 # ifndef OPENSSL_NO_FP_API
 #  include <stdio.h>
 # endif
 
-# include <openssl/stack.h>
-# include <openssl/safestack.h>
-# include <openssl/opensslv.h>
-# include <openssl/ossl_typ.h>
+# include "stack.h"
+# include "safestack.h"
+# include "opensslv.h"
+# include "ossl_typ.h"
 
 # ifdef CHARSET_EBCDIC
-#  include <openssl/ebcdic.h>
+#  include "ebcdic.h"
 # endif
 
 /*
  * Resolve problems on some operating systems with symbol names that clash
  * one way or another
  */
-# include <openssl/symhacks.h>
+# include "symhacks.h"
 
 #ifdef  __cplusplus
 extern "C" {

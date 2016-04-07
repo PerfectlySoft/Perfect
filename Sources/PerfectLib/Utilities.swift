@@ -51,7 +51,7 @@ public struct GenerateFromPointer<T> : IteratorProtocol {
 }
 
 /// A generalized wrapper around the Unicode codec operations.
-public class Encoding {
+public struct Encoding {
 	
 	/// Return a String given a character generator.
 	public static func encode<D : UnicodeCodec, G : IteratorProtocol where G.Element == D.CodeUnit>(decoder : D, generator: G) -> String {
@@ -76,7 +76,7 @@ public class Encoding {
 }
 
 /// Utility wrapper permitting a UTF-16 character generator to encode a String.
-public class UTF16Encoding {
+public struct UTF16Encoding {
 	
 	/// Use a UTF-16 character generator to create a String.
 	public static func encode<G : IteratorProtocol where G.Element == UTF16.CodeUnit>(generator: G) -> String {
@@ -85,7 +85,7 @@ public class UTF16Encoding {
 }
 
 /// Utility wrapper permitting a UTF-8 character generator to encode a String. Also permits a String to be converted into a UTF-8 byte array.
-public class UTF8Encoding {
+public struct UTF8Encoding {
 	
 	/// Use a character generator to create a String.
 	public static func encode<G : IteratorProtocol where G.Element == UTF8.CodeUnit>(generator: G) -> String {

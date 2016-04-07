@@ -60,8 +60,8 @@
 #ifndef HEADER_DTLS1_H
 # define HEADER_DTLS1_H
 
-# include <openssl/buffer.h>
-# include <openssl/pqueue.h>
+# include "buffer.h"
+# include "pqueue.h"
 # ifdef OPENSSL_SYS_VMS
 #  include <resource.h>
 #  include <sys/timeb.h>
