@@ -93,7 +93,7 @@
 #ifndef HEADER_DES_H
 # define HEADER_DES_H
 
-# include <openssl/e_os2.h>     /* OPENSSL_EXTERN, OPENSSL_NO_DES, DES_LONG */
+# include "e_os2.h"     /* OPENSSL_EXTERN, OPENSSL_NO_DES, DES_LONG */
 
 # ifdef OPENSSL_NO_DES
 #  error DES is disabled.
@@ -104,10 +104,10 @@
 # endif
 
 # ifdef _KERBEROS_DES_H
-#  error <openssl/des_old.h> replaces <kerberos/des.h>.
+#  error "des_old.h" replaces <kerberos/des.h>.
 # endif
 
-# include <openssl/symhacks.h>
+# include "symhacks.h"
 
 # ifdef OPENSSL_BUILD_SHLIBCRYPTO
 #  undef OPENSSL_EXTERN
@@ -492,6 +492,6 @@ void _ossl_096_des_random_seed(des_cblock *key);
 #endif
 
 /* for DES_read_pw_string et al */
-# include <openssl/ui_compat.h>
+# include "ui_compat.h"
 
 #endif

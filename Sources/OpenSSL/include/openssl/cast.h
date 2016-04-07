@@ -63,7 +63,7 @@
 extern "C" {
 #endif
 
-# include <openssl/opensslconf.h>
+# include "opensslconf.h"
 
 # ifdef OPENSSL_NO_CAST
 #  error CAST is disabled.

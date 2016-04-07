@@ -151,7 +151,7 @@
 #ifndef HEADER_TLS1_H
 # define HEADER_TLS1_H
 
-# include <openssl/buffer.h>
+# include "buffer.h"
 
 #ifdef  __cplusplus
 extern "C" {

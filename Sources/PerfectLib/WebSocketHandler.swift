@@ -275,7 +275,7 @@ private let webSocketGUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
 
 /// This request handler accepts WebSocket requests from client.
 /// It will initialize the session and then deliver it to the `WebSocketSessionHandler`.
-public class WebSocketHandler : RequestHandler {
+public struct WebSocketHandler : RequestHandler {
 
 	public typealias HandlerProducer = (request: WebRequest, protocols: [String]) -> WebSocketSessionHandler?
 

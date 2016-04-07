@@ -62,7 +62,7 @@
 # define USE_OBJ_MAC
 
 # ifdef USE_OBJ_MAC
-#  include <openssl/obj_mac.h>
+#  include "obj_mac.h"
 # else
 #  define SN_undef                        "UNDEF"
 #  define LN_undef                        "undefined"
@@ -961,8 +961,8 @@
 #  define OBJ_OCSP_sign                   OBJ_id_kp,9L
 # endif                         /* USE_OBJ_MAC */
 
-# include <openssl/bio.h>
-# include <openssl/asn1.h>
+# include "bio.h"
+# include "asn1.h"
 
 # define OBJ_NAME_TYPE_UNDEF             0x00
 # define OBJ_NAME_TYPE_MD_METH           0x01

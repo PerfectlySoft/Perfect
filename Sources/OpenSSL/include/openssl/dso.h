@@ -60,7 +60,7 @@
 #ifndef HEADER_DSO_H
 # define HEADER_DSO_H
 
-# include <openssl/crypto.h>
+# include "crypto.h"
 
 #ifdef __cplusplus
 extern "C" {

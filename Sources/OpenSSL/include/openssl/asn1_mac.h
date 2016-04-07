@@ -59,7 +59,7 @@
 #ifndef HEADER_ASN1_MAC_H
 # define HEADER_ASN1_MAC_H
 
-# include <openssl/asn1.h>
+# include "asn1.h"
 
 #ifdef  __cplusplus
 extern "C" {

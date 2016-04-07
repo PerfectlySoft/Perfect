@@ -15,7 +15,7 @@ import Darwin
 #endif
 
 /// A wrapper around a variety of threading related functions and classes.
-public class Threading {
+public struct Threading {
 	
 	/// Non-instantiable.
 	private init() {}
