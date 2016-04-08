@@ -97,6 +97,8 @@
 				<string>A</string>
 				<key>COMBINE_HIDPI_IMAGES</key>
 				<string>YES</string>
+				<key>EMBEDDED_CONTENT_CONTAINS_SWIFT</key>
+				<string>YES</string>
 			</dict>
 		</dict>
 	</array>
