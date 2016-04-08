@@ -166,6 +166,53 @@ public final class PGResult {
 		}
 		return ret
 	}
+	
+	/// Returns a string of the tupples formated like psql results to be used while debugging
+	public func debugStringOfTuples() -> String {
+		var outputString = ""
+		if status() == .TuplesOK && numTuples() > 0{
+			// Get Values and determine biggest per column
+			var outputArray:[String] = []
+			var biggestString:[String] = Array<String>(count: numFields(), repeatedValue: "")
+			for columnNumber in 0...numFields() - 1 {
+				let name = String.fromCString(PQfname(res, Int32(columnNumber))) ?? ""
+				if (name.characters.count > biggestString[columnNumber].characters.count) {biggestString[columnNumber] = name}
+				outputArray.append(name)
+			}
+			for tupleIndex in 0...numTuples() - 1 {
+				for columnNumber in 0...numFields() - 1 {
+					let field = getFieldString(tupleIndex, fieldIndex: columnNumber)
+					if (field.characters.count > biggestString[columnNumber].characters.count) {biggestString[columnNumber] = field}
+					outputArray.append(field)
+				}
+			}
+			
+			// Construct the string
+			var currentArrayIndex = 0
+			var lineCreated = false
+			for row in 0...numTuples(){
+				if row == 1 && !lineCreated {
+					for columnForDashes in 0...numFields() - 1 {
+						var dashes = ""
+						for _ in 0...biggestString[columnForDashes].characters.count + 1 {dashes = dashes + "-"}
+						outputString = outputString + dashes + "+"
+					}
+					outputString = outputString + "\n"
+					lineCreated = true
+				}
+				
+				for column in 0...numFields() - 1 {
+					outputString = outputString + " " + outputArray[currentArrayIndex]
+					for _ in 0...biggestString[column].characters.count - outputArray[currentArrayIndex].characters.count {outputString = outputString + " "}
+					outputString = outputString + "|"
+					currentArrayIndex = currentArrayIndex + 1
+				}
+				outputString = outputString + "\n"
+			}
+		}
+		else { outputString = errorMessage() }
+		return outputString
+	}
 }
 
 public final class PGConnection {

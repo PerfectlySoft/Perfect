@@ -107,4 +107,24 @@ class PostgreSQLTests: XCTestCase {
 		res.clear()
 		p.finish()
 	}
+	
+	func testDebugStringOfTuples() {
+		let p = PGConnection()
+		p.connectdb("dbname = postgres")
+		let status = p.status()
+		XCTAssert(status == .OK)
+		
+		var res = p.exec("select * from pg_database")
+		XCTAssertEqual(res.status(), PGResult.StatusType.TuplesOK)
+		
+		let debugSting = res.debugStringOfTuples()
+		print(debugSting)
+		
+		let arrayOfValues = debugSting.componentsSeparatedByString("|")
+		let numberOfValues = res.numFields() * res.numTuples() + res.numFields() + 1 // columns * rows + columnNames + dashesRow
+		XCTAssertEqual(numberOfValues, arrayOfValues.count)
+		
+		res = p.exec("This should produce a error message")
+		XCTAssert(res.debugStringOfTuples().containsString("ERROR"))
+	}
 }
