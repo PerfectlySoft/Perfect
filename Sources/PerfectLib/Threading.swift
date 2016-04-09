@@ -197,11 +197,11 @@ public struct Threading {
 #endif
 	}
 	
-	public static func sleep(millisesonds: Int) {
+	public static func sleep(milliseconds: Int) {
 		
 		var tv = timeval()
-		tv.tv_sec = millisesonds/1000
-		tv.tv_usec = Int32((millisesonds%1000)*1000)
+		tv.tv_sec = milliseconds/1000
+		tv.tv_usec = Int32((milliseconds%1000)*1000)
 		
 		select(0, nil, nil, nil, &tv)
 	}
