@@ -24,8 +24,7 @@ public struct Threading {
 	public typealias ThreadOnceFunction = @convention(c) () -> ()
 	/// The function type which can be given to `Threading.dispatchBlock`.
 	public typealias ThreadClosure = () -> ()
-	/// A thread queue type. Note that only concurrent queues are supported.
-	public typealias ThreadQueue = Int // bogus
+	
 	/// The key type used for `Threading.once`.
 	public typealias ThreadOnce = pthread_once_t
 	typealias ThreadFunction = @convention(c) (UnsafeMutablePointer<Void>) -> UnsafeMutablePointer<Void>
@@ -187,30 +186,6 @@ public struct Threading {
 		}
 	}
 	
-	/// Call the given closure on a new thread.
-	/// Returns immediately.
-	public static func dispatchBlock(closure: ThreadClosure) {
-		var thrdSlf = pthread_t(nil)
-		var attr = pthread_attr_t()
-		pthread_attr_init(&attr)
-		pthread_attr_setdetachstate(&attr, Int32(PTHREAD_CREATE_DETACHED))
-		
-		let holderObject = IsThisRequired(closure: closure)
-		
-		let pthreadFunc: ThreadFunction = {
-			p in
-			
-			let unleakyObject = Unmanaged<IsThisRequired>.fromOpaque(OpaquePointer(p)).takeRetainedValue()
-			
-			unleakyObject.closure()
-			
-			return nil
-		}
-		
-		let leakyObject = UnsafeMutablePointer<Void>(OpaquePointer(bitPattern: Unmanaged.passRetained(holderObject)))
-		pthread_create(&thrdSlf, &attr, pthreadFunc, leakyObject)
-	}
-	
 	/// Call the provided closure on the current thread, but only if it has not been called before.
 	/// This is useful for ensuring that initialization code is only called once in a multi-threaded process.
 	/// Upon returning from `Threading.once` it is guaranteed that the closure has been executed and has completed.
@@ -220,6 +195,15 @@ public struct Threading {
 #else
 		pthread_once(&threadOnce, onceFunc)
 #endif
+	}
+	
+	public static func sleep(millisesonds: Int) {
+		
+		var tv = timeval()
+		tv.tv_sec = millisesonds/1000
+		tv.tv_usec = Int32((millisesonds%1000)*1000)
+		
+		select(0, nil, nil, nil, &tv)
 	}
 }
 

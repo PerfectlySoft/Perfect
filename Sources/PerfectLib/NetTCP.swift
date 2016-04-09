@@ -178,7 +178,7 @@ public class NetTCP : Closeable {
 			Darwin.close(fd.fd)
 		#endif
 			
-			NetEvent.remove(fd.fd)
+			NetEvent.removeOnClose(fd.fd)
 			
 			fd.fd = invalidSocket
 			
