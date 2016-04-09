@@ -93,7 +93,6 @@ public class File : Closeable {
 	public func realPath() -> String {
 		if isLink() {
 			let buffer = UnsafeMutablePointer<Int8>(allocatingCapacity: 2048)
-			defer { buffer.deallocateCapacity(2048) }
 			let res = readlink(internalPath, buffer, 2048)
 			if res != -1 {
 				let ary = completeArray(buffer, count: res)
@@ -102,6 +101,8 @@ public class File : Closeable {
 					return internalPath.stringByDeletingLastPathComponent + "/" + trailPath
 				}
 				return trailPath
+			} else {
+				buffer.deallocateCapacity(2048)
 			}
 		}
 		return internalPath
@@ -408,11 +409,13 @@ public class File : Closeable {
 		}
 		let bSize = min(count, self.sizeOr(count))
 		let ptr = UnsafeMutablePointer<UInt8>(allocatingCapacity: bSize)
-		defer {
-			ptr.deallocateCapacity(bSize)
-		}
+
 		let readCount = read(CInt(fd), ptr, bSize)
 		guard readCount >= 0 else {
+			
+			ptr.deinitialize(count: bSize)
+			ptr.deallocateCapacity(bSize)
+			
 			try ThrowFileError()
 		}
 		return completeArray(ptr, count: readCount)

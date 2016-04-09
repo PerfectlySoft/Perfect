@@ -66,6 +66,10 @@ public struct ICU {
 		return status.rawValue <= U_ZERO_ERROR.rawValue
 	}
 	
+	static func U_FAILURE(status: UErrorCode) -> Bool {
+		return status.rawValue > U_ZERO_ERROR.rawValue
+	}
+	
 	@noreturn
 	static func ThrowICUError(code: UErrorCode) throws {
 		let msg = String(validatingUTF8: u_errorName(code))!

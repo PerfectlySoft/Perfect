@@ -67,7 +67,6 @@ class NetEvent {
 	private let kq: Int32
 	private let lock = Threading.Lock()
 	private var queuedSockets = [SocketType:QueuedSocket]()
-	private var changedSockets = [SocketType:QueuedSocket]()
 	
 	private var numEvents = 64
 	private var chlist: UnsafeMutablePointer<mykevent>
@@ -92,90 +91,55 @@ class NetEvent {
 	
 	static func initialize() {
 		Threading.once(&NetEvent.initOnce) {
-			Threading.dispatchBlock {
-				NetEvent.staticEvent = NetEvent()
-				NetEvent.staticEvent.runLoop()
-			}
+			NetEvent.staticEvent = NetEvent()
+			NetEvent.staticEvent.runLoop()
 		}
 	}
 	
 	private func runLoop() {
 		
-		var idx = 0
-		while true {
-			// process changes
-			self.lock.doWithLock {
+		let q = Threading.getQueue("NetEvent", type: .Serial)
+		q.dispatch {
+			var idx = 0
+			while true {
 				
-				for (key, value) in self.changedSockets {
-					if idx + 2 > self.numEvents {
-						self.growLists()
-					}
-					if value.what == .Delete {
-						if let found = self.queuedSockets[key] {
-							let kvt = mykevent(ident: UInt(key), filter: found.what.rawValue, flags: UInt16(EV_DELETE), fflags: 0, data: 0, udata: nil)
-							self.chlist[idx] = kvt
-							idx += 1
-							self.queuedSockets.removeValue(forKey: key)
-						}
-					} else {
-						self.queuedSockets[key] = value
-						if value.what != .Timer {
-							
-							print("adding for sock: \(key) what: \(value.what.rawValue) timeout: \(value.timeoutSeconds)")
-							
-							let kvt = mykevent(ident: UInt(key), filter: value.what.rawValue, flags: UInt16(EV_ADD | EV_ONESHOT), fflags: 0, data: 0, udata: nil)
-							self.chlist[idx] = kvt
-							idx += 1
-						}
-						if value.what == .Timer || value.timeoutSeconds != NetEvent.noTimeout {
-							let kvt = mykevent(ident: UInt(key), filter: Int16(EVFILT_TIMER), flags: UInt16(EV_ADD | EV_ONESHOT), fflags: 0, data: Int(1000.0 * value.timeoutSeconds), udata: nil)
-							self.chlist[idx] = kvt
-							idx += 1
-						}
-					}
+	//			let inTime = ICU.getNow()
+				let nev = Int(kevent(self.kq, self.chlist, Int32(idx), self.evlist, Int32(self.numEvents), nil))
+	//			print("Out of kqueue \(nev) \(ICU.getNow() - inTime)")
+				
+				idx = 0
+				
+				guard self.kq != -1 else {
+					Log.terminal("kqueue returned less than zero \(nev).")
 				}
-				self.changedSockets.removeAll()
-			}
-			
-			var tmout = timespec(tv_sec: 0, tv_nsec: 10)
-			let nev = Int(kevent(kq, chlist, Int32(idx), evlist, Int32(numEvents), &tmout))
-			
-			idx = 0
-			
-			guard self.kq != -1 else {
-				Log.terminal("kqueue returned less than zero \(nev).")
-			}
-			
-			// process results
-			self.lock.doWithLock {
 				
-				for n in 0..<nev {
-					let kevt = self.evlist[n]
-					let sock = SocketType(kevt.ident)
-					if let qitm = self.queuedSockets.removeValue(forKey: sock) {
+				// process results
+				self.lock.doWithLock {
+					
+					for n in 0..<nev {
+						let kevt = self.evlist[n]
+						let sock = SocketType(kevt.ident)
 						
-						Log.info("kevent result sock: \(kevt.ident) filter: \(kevt.filter) flags: \(kevt.flags) data: \(kevt.data)")
+	//					Log.info("kevent result sock: \(kevt.ident) filter: \(kevt.filter) flags: \(kevt.flags) data: \(kevt.data)")
 						
-						if kevt.filter == Int16(EVFILT_TIMER) && qitm.what != .Timer {
-							let kvt = mykevent(ident: kevt.ident, filter: qitm.what.rawValue, flags: UInt16(EV_DELETE), fflags: 0, data: 0, udata: nil)
-							self.chlist[idx] = kvt
-							idx += 1
-						} else if kevt.filter != Int16(EVFILT_TIMER) && qitm.timeoutSeconds != NetEvent.noTimeout {
-							let kvt = mykevent(ident: kevt.ident, filter: Int16(EVFILT_TIMER), flags: UInt16(EV_DELETE), fflags: 0, data: 0, udata: nil)
-							self.chlist[idx] = kvt
-							idx += 1
-						}
-						
-						if (Int32(kevt.flags) & EV_ERROR) != 0 {
-							qitm.callback(sock, Filter(rawValue: Filter.Error.rawValue, data: kevt.data))
+						if let qitm = self.queuedSockets.removeValue(forKey: sock) {
+							
+							if idx + 1 > self.numEvents {
+								self.growLists()
+							}
+							
+							if (Int32(kevt.flags) & EV_ERROR) != 0 {
+								qitm.callback(sock, Filter(rawValue: Filter.Error.rawValue, data: kevt.data))
+							} else {
+								qitm.callback(sock, Filter(rawValue: kevt.filter))
+							}
 						} else {
-							qitm.callback(sock, Filter(rawValue: kevt.filter))
+							print("not found!")
 						}
 					}
+					
 				}
-				
 			}
-			
 		}
 	}
 	
@@ -213,17 +177,15 @@ class NetEvent {
 		}
 		
 		if let n = NetEvent.staticEvent {
-			n.lock.doWithLock {
-				var newWhat = what
-				if let found = n.changedSockets[socket] {
-					// augment the event or clear it out if it was a delete
-					if what == .Delete {
-						newWhat = .Delete
-					} else {
-						newWhat = newWhat.union(found.what)
-					}
+			if what == .Delete {
+				NetEvent.remove(socket)
+			} else {
+				n.lock.doWithLock {
+					n.queuedSockets[socket] = QueuedSocket(socket: socket, what: what, timeoutSeconds: timeoutSeconds < 0.0 ? noTimeout : timeoutSeconds, callback: threadingCallback)
+					var kvt = mykevent(ident: UInt(socket), filter: what.rawValue, flags: UInt16(EV_ADD | EV_ENABLE | EV_ONESHOT), fflags: 0, data: 0, udata: nil)
+					var tmout = timespec(tv_sec: 0, tv_nsec: 0)
+					kevent(n.kq, &kvt, 1, nil, 0, &tmout)
 				}
-				n.changedSockets[socket] = QueuedSocket(socket: socket, what: what, timeoutSeconds: timeoutSeconds < 0.0 ? noTimeout : timeoutSeconds, callback: threadingCallback)
 			}
 		}
 	}
@@ -232,13 +194,20 @@ class NetEvent {
 		if let n = NetEvent.staticEvent {
 			n.lock.doWithLock {
 				if let _ = n.queuedSockets[socket] {
-					n.changedSockets[socket] = QueuedSocket(socket: socket, what: .Delete, timeoutSeconds: 0.0, callback: NetEvent.emptyCallback)
+					var kvt = mykevent(ident: UInt(socket), filter: Filter.Delete.rawValue, flags: UInt16(EV_DELETE), fflags: 0, data: 0, udata: nil)
+					var tmout = timespec(tv_sec: 0, tv_nsec: 0)
+					kevent(n.kq, &kvt, 1, nil, 0, &tmout)
+					n.queuedSockets.removeValue(forKey: socket)
 				}
 			}
 		}
 	}
 	
 	
+	
+	static func removeOnClose(socket: SocketType) {
+		
+	}
 }
 
 

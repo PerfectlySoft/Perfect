@@ -10,8 +10,10 @@ typedef int8_t UBool;
 typedef void* UDateFormat;
 typedef double UDate;
 typedef uint16_t UChar;
+
 typedef enum UErrorCode {
-		U_ZERO_ERROR = 0
+	U_USING_FALLBACK_WARNING  = -128,
+	U_ZERO_ERROR = 0
 } UErrorCode;
 
 extern UBool u_isWhitespace(uint32_t);
