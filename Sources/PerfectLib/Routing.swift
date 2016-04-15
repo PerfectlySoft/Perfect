@@ -131,7 +131,7 @@ public struct RouteMap: CustomStringConvertible {
 public class Routing {
 	
 	/// The routes which have been configured.
-	static public let Routes = RouteMap()
+	static public var Routes = RouteMap()
 	
 	private init() {}
 	
