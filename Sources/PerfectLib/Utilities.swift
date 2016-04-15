@@ -437,9 +437,9 @@ extension String {
 		return nil
 	}
 
-	public func contains(string: String) -> Bool {
-		return nil != self.rangeOf(string)
-	}
+//	public func contains(string: String) -> Bool {
+//		return nil != self.rangeOf(string)
+//	}
 }
 
 extension String {
