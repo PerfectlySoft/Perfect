@@ -7,7 +7,7 @@ In your `PerfectServerModuleInit` function, which all Perfect modules must have,
 
 The following code is taken from the example project and shows how to enable the system and add a WebSocket handler.
 
-```
+``` swift
 public func PerfectServerModuleInit() {
 	
 	// Initialize the routing system
@@ -54,7 +54,7 @@ public func PerfectServerModuleInit() {
 
 The example `EchoHandler` consists of the following.
 
-```
+``` swift
 class EchoHandler: WebSocketSessionHandler {
 	
 	// The name of the super-protocol we implement.
