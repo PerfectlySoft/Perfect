@@ -415,7 +415,7 @@ public class HTTPServer {
 		}
 		
 		var httpOneOne: Bool {
-			return (self.requestParams["SERVER_PROTOCOL"] ?? "").contains("1.1")
+			return (self.requestParams["SERVER_PROTOCOL"] ?? "").containsString("1.1")
 		}
 		
 		var httpVersion: String {
@@ -423,7 +423,7 @@ public class HTTPServer {
 		}
 		
 		var httpKeepAlive: Bool {
-			return (self.requestParams["HTTP_CONNECTION"] ?? "").lowercased().contains("keep-alive")
+			return (self.requestParams["HTTP_CONNECTION"] ?? "").lowercased().containsString("keep-alive")
 		}
 		
 		init(net: NetTCP, server: HTTPServer) {
