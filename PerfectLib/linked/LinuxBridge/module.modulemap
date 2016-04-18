@@ -1,5 +1,0 @@
-module LinuxBridge [system] {
-    header "../../LinuxBridge.h"
-    export linux_open
-    export linux_errno
-}

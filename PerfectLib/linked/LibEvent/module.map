@@ -1,6 +1,0 @@
-module LibEvent [system] {
-    header "event2/event.h"
-    header "event2/util.h"
-    header "event2/thread.h"
-    export *
-}
