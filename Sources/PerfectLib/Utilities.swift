@@ -436,10 +436,11 @@ extension String {
 		}
 		return nil
 	}
-
-//	public func contains(string: String) -> Bool {
-//		return nil != self.rangeOf(string)
-//	}
+	
+	// For compatibility due to shifting swift
+	public func containsString(string: String) -> Bool {
+		return nil != self.rangeOf(string)
+	}
 }
 
 extension String {

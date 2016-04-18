@@ -28,7 +28,7 @@ let package = Package(
 										.Target(name: "cURL")]),
 		Target(name: "OpenSSL"),
 		Target(name: "ICU"),
-		Target(name: "cURL")
-	],
+		Target(name: "cURL"),
+		Target(name: "PerfectLibTests", dependencies: [.Target(name: "PerfectLib")])],
 	dependencies: []
 )
