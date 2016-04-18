@@ -19,6 +19,12 @@
 
 import PackageDescription
 
+#if os(Linux)
+	let excludes = [String]()
+#else
+	let excludes = ["Sources/LinuxBridge"]
+#endif
+
 let package = Package(
 	name: "PerfectLib",
 	targets: [
@@ -30,5 +36,5 @@ let package = Package(
 		Target(name: "ICU"),
 		Target(name: "cURL"),
 		Target(name: "PerfectLibTests", dependencies: [.Target(name: "PerfectLib")])],
-	dependencies: []
+	exclude: excludes
 )

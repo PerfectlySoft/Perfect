@@ -291,7 +291,7 @@ public struct WebSocketHandler : RequestHandler {
 			connection = request.header("Connection"),
 			secWebSocketKey = request.header("Sec-WebSocket-Key"),
 			secWebSocketVersion = request.header("Sec-WebSocket-Version")
-			where upgrade.lowercased() == "websocket" && connection.lowercased().contains("upgrade") else {
+			where upgrade.lowercased() == "websocket" && connection.lowercased().containsString("upgrade") else {
 
 				response.setStatus(400, message: "Bad Request")
 				response.requestCompletedCallback()
