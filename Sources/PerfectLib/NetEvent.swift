@@ -18,200 +18,218 @@
 //
 
 #if os(Linux)
-	
+
+import LinuxBridge
+
+private let ONESHOT = EPOLLONESHOT.rawValue
+private let ADD = EPOLL_CTL_ADD
+private let DELETE = EPOLL_CTL_DEL
+private let FILT_READ = EPOLLIN.rawValue
+private let FILT_WRITE = EPOLLOUT.rawValue
+private let FILT_TIMER = EPOLLWAKEUP.rawValue // used as marker, not actually passed into epoll
+private let ERROR = EPOLLERR.rawValue
+private let FLAG_NONE = 0
+
 #else
-	import Darwin
+
+import Darwin
+
+private let ONESHOT = EPOLLONESHOT
+private let ADD = EV_ADD
+private let DELETE = EV_DELETE
+private let FILT_READ = EVFILT_READ
+private let FILT_WRITE = EVFILT_WRITE
+private let FILT_TIMER = EVFILT_TIMER
+private let ERROR = EV_ERROR
+private let FLAG_NONE = KEVENT_FLAG_NONE
+
 #endif
 
 class NetEvent {
-	
+
 	struct Filter: OptionSet {
-		let rawValue: Int16
+		let rawValue: UInt32
 		let data: Int
-		init(rawValue: Int16) {
+		init(rawValue: UInt32) {
 			self.rawValue = rawValue
 			self.data = 0
 		}
-		
-		init(rawValue: Int16, data: Int) {
+
+		init(rawValue: UInt32, data: Int) {
 			self.rawValue = rawValue
 			self.data = data
 		}
-		
+
 		func isTimeout() -> Bool {
 			return self == .Timer
 		}
-		
-		static let None = Filter(rawValue: Int16(KEVENT_FLAG_NONE))
-		static let Error = Filter(rawValue: Int16(EV_ERROR))
-		static let Delete = Filter(rawValue: Int16(EV_DELETE))
-		static let Read = Filter(rawValue: Int16(EVFILT_READ))
-		static let Write = Filter(rawValue: Int16(EVFILT_WRITE))
-		static let Timer = Filter(rawValue: Int16(EVFILT_TIMER))
+
+		static let None = Filter(rawValue: UInt32(FLAG_NONE))
+		static let Error = Filter(rawValue: UInt32(ERROR))
+		static let Delete = Filter(rawValue: UInt32(DELETE))
+		static let Read = Filter(rawValue: UInt32(FILT_READ))
+		static let Write = Filter(rawValue: UInt32(FILT_WRITE))
+		static let Timer = Filter(rawValue: UInt32(FILT_TIMER))
 	}
-	
+
 	typealias EventCallback = (SocketType, Filter) -> ()
 	private static let emptyCallback:EventCallback = { (SocketType, Filter) -> () in }
-	
-	private typealias mykevent = kevent
-	
+
+#if os(Linux)
+	private typealias event = epoll_event
+#else
+	private typealias event = kevent
+#endif
+
 	private struct QueuedSocket {
 		let socket: SocketType
 		let what: Filter
 		let timeoutSeconds: Double
 		let callback: EventCallback
+		let associated: SocketType // unused for kevent
 	}
-	
+
 	private static var staticEvent: NetEvent!
-	
+
 	private let kq: Int32
 	private let lock = Threading.Lock()
 	private var queuedSockets = [SocketType:QueuedSocket]()
-	
+
 	private var numEvents = 64
-	private var chlist: UnsafeMutablePointer<mykevent>
-	private var evlist: UnsafeMutablePointer<mykevent>
-	
+	private var evlist: UnsafeMutablePointer<event>
+
 	private static var initOnce = Threading.ThreadOnce()
-	
+
 	static let noTimeout = 0.0
-	
+
 	private init() {
+#if os(Linux)
+		self.kq = epoll_create(0xFEC7)
+#else
 		self.kq = kqueue()
+#endif
 		guard self.kq != -1 else {
-			Log.terminal("Unable to initialize kqueue.")
+			Log.terminal("Unable to initialize event listener.")
 		}
-		
-		self.chlist = UnsafeMutablePointer<mykevent>(allocatingCapacity: self.numEvents)
-		self.evlist = UnsafeMutablePointer<mykevent>(allocatingCapacity: self.numEvents)
-		
-		memset(self.chlist, 0, sizeof(kevent.self) * self.numEvents)
-		memset(self.evlist, 0, sizeof(kevent.self) * self.numEvents)
+		self.evlist = UnsafeMutablePointer<event>(allocatingCapacity: self.numEvents)
+		memset(self.evlist, 0, sizeof(event.self) * self.numEvents)
 	}
-	
+
 	static func initialize() {
 		Threading.once(&NetEvent.initOnce) {
 			NetEvent.staticEvent = NetEvent()
 			NetEvent.staticEvent.runLoop()
 		}
 	}
-	
+
 	private func runLoop() {
-		
+
 		let q = Threading.getQueue("NetEvent", type: .Serial)
 		q.dispatch {
-			var idx = 0
 			while true {
-				
 	//			let inTime = ICU.getNow()
-				let nev = Int(kevent(self.kq, self.chlist, Int32(idx), self.evlist, Int32(self.numEvents), nil))
+#if os(Linux)
+				let nev = Int(epoll_wait(self.kq, self.evlist, Int32(self.numEvents), -1))
+#else
+				let nev = Int(kevent(self.kq, nil, 0, self.evlist, Int32(self.numEvents), nil))
+#endif
 	//			print("Out of kqueue \(nev) \(ICU.getNow() - inTime)")
-				
-				idx = 0
-				
-				guard self.kq != -1 else {
+
+				guard nev >= 0 else {
 					Log.terminal("kqueue returned less than zero \(nev).")
 				}
-				
+
 				// process results
 				self.lock.doWithLock {
-					
+
 					for n in 0..<nev {
-						let kevt = self.evlist[n]
-						let sock = SocketType(kevt.ident)
-						
+						let evt = self.evlist[n]
+#if os(Linux)
+						let sock = SocketType(evt.data.fd)
+						let filter = evt.events
+						let error = (evt.events & ERROR) != 0
+
+						var errData = Int32(0)
+						if error {
+							var errLen = socklen_t(sizeof(Int32))
+							getsockopt(sock, SOL_SOCKET, SO_ERROR, &errData, &errLen)
+						}
+#else
+						let sock = SocketType(evt.ident)
+						let filter = evt.filter
+						let error = (evt.flags & ERROR) != 0
+						let errData = evt.data
+#endif
 	//					Log.info("kevent result sock: \(kevt.ident) filter: \(kevt.filter) flags: \(kevt.flags) data: \(kevt.data)")
-						
+
 						if let qitm = self.queuedSockets.removeValue(forKey: sock) {
-							
-							if idx + 1 > self.numEvents {
-								self.growLists()
-							}
-							
-							if (Int32(kevt.flags) & EV_ERROR) != 0 {
-								qitm.callback(sock, Filter(rawValue: Filter.Error.rawValue, data: kevt.data))
+							if error {
+								qitm.callback(sock, Filter(rawValue: Filter.Error.rawValue, data: Int(errData)))
 							} else {
-								qitm.callback(sock, Filter(rawValue: kevt.filter))
+								qitm.callback(sock, Filter(rawValue: filter))
 							}
 						} else {
 							print("not found!")
 						}
 					}
-					
 				}
 			}
 		}
 	}
-	
-	private func growLists() {
-		let newSz = self.numEvents * 2
-		
-		let chlist = UnsafeMutablePointer<mykevent>(allocatingCapacity: newSz)
-		let evlist = UnsafeMutablePointer<mykevent>(allocatingCapacity: newSz)
-		
-		memset(chlist, 0, sizeof(mykevent) * newSz)
-		memset(evlist, 0, sizeof(mykevent) * newSz)
-		
-		chlist.initializeFrom(self.chlist, count: self.numEvents)
-		evlist.initializeFrom(self.evlist, count: self.numEvents)
-		
-		self.chlist.deallocateCapacity(self.numEvents)
-		self.evlist.deallocateCapacity(self.numEvents)
-		
-		self.chlist = chlist
-		self.evlist = evlist
-		
-		self.numEvents = newSz
-	}
-	
+
 	// socket can only be queued with one callback at a time
 	// but can be waiting for multiple event types
 	//
 	static func add(socket: SocketType, what: Filter, timeoutSeconds: Double, callback: EventCallback) {
-		
+
 		let threadingCallback:EventCallback = {
 			s, f in
 			Threading.dispatchBlock {
 				callback(s, f)
 			}
 		}
-		
+
 		if let n = NetEvent.staticEvent {
 			if what == .Delete {
 				NetEvent.remove(socket)
 			} else {
 				n.lock.doWithLock {
-					n.queuedSockets[socket] = QueuedSocket(socket: socket, what: what, timeoutSeconds: timeoutSeconds < 0.0 ? noTimeout : timeoutSeconds, callback: threadingCallback)
-					var kvt = mykevent(ident: UInt(socket), filter: what.rawValue, flags: UInt16(EV_ADD | EV_ENABLE | EV_ONESHOT), fflags: 0, data: 0, udata: nil)
+					n.queuedSockets[socket] = QueuedSocket(socket: socket, what: what, timeoutSeconds: timeoutSeconds < 0.0 ? noTimeout : timeoutSeconds, callback: threadingCallback, associated: 0)
+#if os(Linux)
+					var evt = event()
+					evt.events = what.rawValue | ONESHOT | EPOLLET.rawValue
+					evt.data.fd = socket
+					epoll_ctl(n.kq, ADD, socket, &evt)
+#else
+					var kvt = event(ident: UInt(socket), filter: what.rawValue, flags: UInt16(EV_ADD | EV_ENABLE | EV_ONESHOT), fflags: 0, data: 0, udata: nil)
 					var tmout = timespec(tv_sec: 0, tv_nsec: 0)
 					kevent(n.kq, &kvt, 1, nil, 0, &tmout)
+#endif
 				}
 			}
 		}
 	}
-	
+
 	static func remove(socket: SocketType) {
 		if let n = NetEvent.staticEvent {
 			n.lock.doWithLock {
 				if let _ = n.queuedSockets[socket] {
+#if os(Linux)
+					epoll_ctl(n.kq, DELETE, socket, nil)
+#else
 					var kvt = mykevent(ident: UInt(socket), filter: Filter.Delete.rawValue, flags: UInt16(EV_DELETE), fflags: 0, data: 0, udata: nil)
 					var tmout = timespec(tv_sec: 0, tv_nsec: 0)
 					kevent(n.kq, &kvt, 1, nil, 0, &tmout)
+#endif
 					n.queuedSockets.removeValue(forKey: socket)
 				}
 			}
 		}
 	}
-	
-	
-	
+
+
+
 	static func removeOnClose(socket: SocketType) {
-		
+
 	}
 }
-
-
-
-
-
-

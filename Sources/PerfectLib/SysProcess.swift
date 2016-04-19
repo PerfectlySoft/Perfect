@@ -29,7 +29,7 @@
 /// This class permits an external process to be launched given a set of command line arguments and environment variables.
 /// The standard in, out and err file streams are made available. The process can be terminated or permitted to be run to completion.
 public class SysProcess : Closeable {
-	
+
 	/// The standard in file stream.
 	public var stdin: File?
 	/// The standard out file stream.
@@ -38,7 +38,7 @@ public class SysProcess : Closeable {
 	public var stderr: File?
 	/// The process identifier.
 	public var pid = pid_t(-1)
-	
+
 	/// Initialize the object and launch the process.
 	/// - parameter cmd: The path to the process which will be launched.
 	/// - parameter args: An optional array of String arguments which will be given to the process.
@@ -47,9 +47,9 @@ public class SysProcess : Closeable {
 	public init(_ cmd: String, args: [String]?, env: [(String,String)]?) throws {
 		let cArgsCount = args != nil ? args!.count : 0
 		let cArgs = UnsafeMutablePointer<UnsafeMutablePointer<CChar>>(allocatingCapacity: cArgsCount + 2)
-		
+
 		defer { cArgs.deinitialize(count: cArgsCount + 2) ; cArgs.deallocateCapacity(cArgsCount + 2) }
-		
+
 		cArgs[0] = strdup(cmd)
 		cArgs[cArgsCount + 1] = UnsafeMutablePointer<CChar>(nil)
 		var idx = 0
@@ -57,57 +57,59 @@ public class SysProcess : Closeable {
 			cArgs[idx+1] = strdup(args![idx])
 			idx += 1
 		}
-		
+
 		let cEnvCount = env != nil ? env!.count : 0
 		let cEnv = UnsafeMutablePointer<UnsafeMutablePointer<CChar>>(allocatingCapacity: cEnvCount + 1)
-		
+
 		defer { cEnv.deinitialize(count: cEnvCount + 1) ; cEnv.deallocateCapacity(cEnvCount + 1) }
-		
+
 		cEnv[cEnvCount] = UnsafeMutablePointer<CChar>(nil)
 		idx = 0
 		while idx < cEnvCount {
 			cEnv[idx] = strdup(env![idx].0 + "=" + env![idx].1)
 			idx += 1
 		}
-		
+
 		let fSTDIN = UnsafeMutablePointer<Int32>(allocatingCapacity: 2)
 		let fSTDOUT = UnsafeMutablePointer<Int32>(allocatingCapacity: 2)
 		let fSTDERR = UnsafeMutablePointer<Int32>(allocatingCapacity: 2)
-		
+
 		defer {
 			fSTDIN.deinitialize(count: 2) ; fSTDIN.deallocateCapacity(2)
 			fSTDOUT.deinitialize(count: 2) ; fSTDOUT.deallocateCapacity(2)
 			fSTDERR.deinitialize(count: 2) ; fSTDERR.deallocateCapacity(2)
 		}
-		
+
 		pipe(fSTDIN)
 		pipe(fSTDOUT)
 		pipe(fSTDERR)
-		
+#if os(Linux)
+		var action = posix_spawn_file_actions_t()
+#else
 		var action = posix_spawn_file_actions_t(nil)
-		
+#endif
 		posix_spawn_file_actions_init(&action);
 		posix_spawn_file_actions_adddup2(&action, fSTDOUT[1], STDOUT_FILENO);
 		posix_spawn_file_actions_adddup2(&action, fSTDIN[0], STDIN_FILENO);
 		posix_spawn_file_actions_adddup2(&action, fSTDERR[1], STDERR_FILENO);
-		
+
 		posix_spawn_file_actions_addclose(&action, fSTDOUT[0]);
 		posix_spawn_file_actions_addclose(&action, fSTDIN[0]);
 		posix_spawn_file_actions_addclose(&action, fSTDERR[0]);
 		posix_spawn_file_actions_addclose(&action, fSTDOUT[1]);
 		posix_spawn_file_actions_addclose(&action, fSTDIN[1]);
 		posix_spawn_file_actions_addclose(&action, fSTDERR[1]);
-  
+
 		var procPid = pid_t()
 		let spawnRes = posix_spawnp(&procPid, cmd, &action, UnsafeMutablePointer<posix_spawnattr_t>(nil), cArgs, cEnv)
 		posix_spawn_file_actions_destroy(&action)
-		
+
 		idx = 0
 		while idx < cArgsCount {
 			free(cArgs[idx])
 			idx += 1
 		}
-		
+
 		idx = 0
 		while idx < cEnvCount {
 			free(cEnv[idx])
@@ -140,17 +142,17 @@ public class SysProcess : Closeable {
 		self.stdout = File(fd: fSTDOUT[0], path: "")
 		self.stderr = File(fd: fSTDERR[0], path: "")
 	}
-	
+
 	deinit {
 		self.close()
 	}
-	
+
 	/// Returns true if the process was opened and was running at some point.
 	/// Note that the process may not be currently running. Use `wait(false)` to check if the process is currently running.
 	public func isOpen() -> Bool {
 		return self.pid != -1
 	}
-	
+
 	/// Terminate the process and clean up.
 	public func close() {
 		if self.stdin != nil {
@@ -166,7 +168,7 @@ public class SysProcess : Closeable {
 			do {
 				try self.kill()
 			} catch {
-			
+
 			}
 		}
 		self.stdin = nil
@@ -174,12 +176,12 @@ public class SysProcess : Closeable {
 		self.stderr = nil
 		self.pid = -1
 	}
-	
+
 	/// Detach from the process such that it will not be manually terminated when this object is deinitialized.
 	public func detach() {
 		self.pid = -1
 	}
-	
+
 	/// Determine if the process has completed running and retrieve its result code.
 	public func wait(hang: Bool = true) throws -> Int32 {
 		var code = Int32(0)
@@ -191,7 +193,7 @@ public class SysProcess : Closeable {
 		close()
 		return code
 	}
-	
+
 	/// Terminate the process and return its result code.
 	public func kill(signal: Int32 = SIGTERM) throws -> Int32 {
 	#if os(Linux)
@@ -205,7 +207,3 @@ public class SysProcess : Closeable {
 		return try self.wait()
 	}
 }
-
-
-
-

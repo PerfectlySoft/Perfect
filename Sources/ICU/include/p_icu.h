@@ -6,19 +6,19 @@
 
 // This file contains several imports from the ICU libraries.
 
-typedef int8_t UBool;
+typedef char UBool;
 typedef void* UDateFormat;
 typedef double UDate;
-typedef uint16_t UChar;
+typedef unsigned short UChar;
 
 typedef enum UErrorCode {
 	U_USING_FALLBACK_WARNING  = -128,
 	U_ZERO_ERROR = 0
 } UErrorCode;
 
-extern UBool u_isWhitespace(uint32_t);
-extern UBool u_isdigit(uint32_t);
-extern UBool u_isalnum(uint32_t);
+extern UBool u_isWhitespace(unsigned int);
+extern UBool u_isdigit(unsigned int);
+extern UBool u_isalnum(unsigned int);
 
 extern double ucal_getNow();
 
@@ -43,23 +43,23 @@ extern UDateFormat * udat_open(UDateFormatStyle  timeStyle,
 							   UDateFormatStyle  dateStyle,
 							   const char        *locale,
 							   const UChar       *tzID,
-							   int32_t           tzIDLength,
+							   int           tzIDLength,
 							   const UChar       *pattern,
-							   int32_t           patternLength,
+							   int           patternLength,
 							   enum UErrorCode        *status);
 
 extern void udat_close(UDateFormat* format);
 
 extern UDate udat_parse(const  UDateFormat*    format,
 						   const  UChar*          text,
-						   int32_t         textLength,
-						   int32_t         *parsePos,
+						   int         textLength,
+						   int         *parsePos,
 						   enum UErrorCode      *status);
 
-extern int32_t udat_format(const UDateFormat*    format,
+extern int udat_format(const UDateFormat*    format,
 							UDate           dateToFormat,
 							UChar*          result,
-							int32_t         resultLength,
+							int         resultLength,
 							void * position,
 							enum UErrorCode*     status);
 

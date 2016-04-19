@@ -22,7 +22,7 @@ import ICU
 /// This class provides a series of class functions which expose some of the ICU
 /// library's functionality
 public struct ICU {
-	
+
 	/// Returns true if the UnicodeScalar is a white space character
 	public static func isWhiteSpace(e: UnicodeScalar) -> Bool {
 		return 1 == u_isWhitespace(e.value)
@@ -61,24 +61,24 @@ public struct ICU {
 	public static func secondsToICUDate(seconds: Int) -> Double {
 		return Double(seconds * 1000)
 	}
-	
+
 	static func U_SUCCESS(status: UErrorCode) -> Bool {
 		return status.rawValue <= U_ZERO_ERROR.rawValue
 	}
-	
+
 	static func U_FAILURE(status: UErrorCode) -> Bool {
 		return status.rawValue > U_ZERO_ERROR.rawValue
 	}
-	
+
 	@noreturn
 	static func ThrowICUError(code: UErrorCode) throws {
 		let msg = String(validatingUTF8: u_errorName(code))!
-		
+
 		print("ICUError: \(code.rawValue) \(msg)")
-		
+
 		throw PerfectError.SystemError(Int32(code.rawValue), msg)
 	}
-	
+
 	/// Parse a date string according to the indicated format string and return an ICU date.
 	/// - parameter dateStr: The date string
 	/// - parameter format: The format by which the date string will be parsed
@@ -93,36 +93,36 @@ public struct ICU {
 		var locale = UnsafePointer<Int8>(nil)
 		var timezone = UnsafeMutablePointer<UInt16>(nil)
 		var timeZoneLength: Int32 = 0
-		
+
 		if let tz = inTimezone {
 			let tzUtf16 = tz.utf16
 			timezone = UnsafeMutablePointer<UInt16>(Array<UInt16>(tzUtf16))
 			timeZoneLength = Int32(tzUtf16.count)
 		}
-		
+
 		if let loc = inLocale {
 			let utf8Chars = loc.utf8
 			locale = UnsafePointer<Int8>(Array<UInt8>(utf8Chars))
 		}
-		
+
 		let dateFormat = udat_open(UDAT_PATTERN, UDAT_PATTERN, locale, timezone, timeZoneLength, Array<UInt16>(utf16Chars), Int32(utf16Chars.count), &status)
-		
+
 		guard U_SUCCESS(status) else {
 			try ThrowICUError(status)
 		}
-		
+
 		defer { udat_close(dateFormat) }
-		
+
 		let srcUtf16Chars = dateStr.utf16
 		let date = udat_parse(dateFormat, Array<UInt16>(srcUtf16Chars), Int32(srcUtf16Chars.count), nil, &status)
-		
+
 		guard U_SUCCESS(status) else {
 			try ThrowICUError(status)
 		}
-		
+
 		return date
 	}
-	
+
 	/// Format a date value according to the indicated format string and return a date string.
 	/// - parameter date: The date value
 	/// - parameter format: The format by which the date will be formatted
@@ -137,43 +137,36 @@ public struct ICU {
 		var locale = UnsafePointer<Int8>(nil)
 		var timezone = UnsafeMutablePointer<UInt16>(nil)
 		var timeZoneLength: Int32 = 0
-		
+
 		if let tz = inTimezone {
 			let tzUtf16 = tz.utf16
 			timezone = UnsafeMutablePointer<UInt16>(Array<UInt16>(tzUtf16))
 			timeZoneLength = Int32(tzUtf16.count)
 		}
-		
+
 		if let loc = inLocale {
 			let utf8Chars = loc.utf8
 			locale = UnsafePointer<Int8>(Array<UInt8>(utf8Chars))
 		}
-		
+
 		let dateFormat = udat_open(UDAT_PATTERN, UDAT_PATTERN, locale, timezone, timeZoneLength, Array<UInt16>(utf16Chars), Int32(utf16Chars.count), &status)
-		
+
 		guard U_SUCCESS(status) else {
 			try ThrowICUError(status)
 		}
-		
+
 		defer { udat_close(dateFormat) }
-		
+
 		let buffer = UnsafeMutablePointer<UInt16>(allocatingCapacity: 1024)
 		defer { buffer.deallocateCapacity(1024) }
 		let formatResult = udat_format(dateFormat, date, buffer, 1024, nil, &status)
-		
+
 		guard formatResult > 0 && U_SUCCESS(status) else {
 			try ThrowICUError(status)
 		}
-		
+
 		let res = Encoding.encode(UTF16(), generator: GenerateFromPointer(from: buffer, count: Int(formatResult)))
-		
+
 		return res
 	}
 }
-
-
-
-
-
-
-
