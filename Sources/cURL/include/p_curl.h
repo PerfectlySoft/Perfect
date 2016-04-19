@@ -16,7 +16,7 @@ extern inline CURLcode curl_easy_setopt_cstr(CURL *handle, CURLoption option, co
 	return curl_easy_setopt(handle, option, value);
 }
 
-extern inline CURLcode curl_easy_setopt_int64(CURL *handle, CURLoption option, int64_t value)
+extern inline CURLcode curl_easy_setopt_int64(CURL *handle, CURLoption option, long long value)
 {
 	return curl_easy_setopt(handle, option, value);
 }

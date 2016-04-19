@@ -20,41 +20,41 @@ public protocol ThreadQueue {
 }
 
 public extension Threading {
-	
+
 	private static var serialQueues = [String:ThreadQueue]()
 	private static var concurrentQueues = [String:ThreadQueue]()
 	private static let queuesLock = Threading.Lock()
-	
+
 	public enum QueueType {
 		case Serial
 		case Concurrent
 	}
-	
+
 	private class SerialQueue: ThreadQueue {
 		let name: String
 		let type = Threading.QueueType.Serial
-		
+
 		private typealias ThreadFunc = Threading.ThreadClosure
 		private let lock = Threading.Event()
 		private var q = [ThreadFunc]()
-		
+
 		init(name: String) {
 			self.name = name
 			self.startLoop()
 		}
-		
+
 		func dispatch(closure: Threading.ThreadClosure) {
 			self.lock.doWithLock {
 				self.q.append(closure)
 				self.lock.signal()
 			}
 		}
-		
+
 		private func startLoop() {
 			Threading.dispatchOnNewThread {
-				
+
 				while true {
-					
+
 					var block: SerialQueue.ThreadFunc?
 					self.lock.doWithLock {
 						if self.q.count > 0 {
@@ -63,7 +63,7 @@ public extension Threading {
 							self.lock.wait()
 						}
 					}
-					
+
 					if let b = block {
 						b()
 					}
@@ -71,33 +71,33 @@ public extension Threading {
 			}
 		}
 	}
-	
+
 	private class ConcurrentQueue: ThreadQueue {
 		let name: String
 		let type = Threading.QueueType.Serial
-		
+
 		private typealias ThreadFunc = Threading.ThreadClosure
 		private let lock = Threading.Event()
 		private var q = [ThreadFunc]()
-		
+
 		init(name: String) {
 			self.name = name
 			self.startLoop()
 		}
-		
+
 		func dispatch(closure: Threading.ThreadClosure) {
 			self.lock.doWithLock {
 				self.q.append(closure)
 				self.lock.signal()
 			}
 		}
-		
+
 		private func startLoop() {
 			for _ in 0..<max(4, Threading.processorCount) {
 				Threading.dispatchOnNewThread {
-					
+
 					while true {
-						
+
 						var block: SerialQueue.ThreadFunc?
 						self.lock.doWithLock {
 							if self.q.count > 0 {
@@ -106,7 +106,7 @@ public extension Threading {
 								self.lock.wait()
 							}
 						}
-						
+
 						if let b = block {
 							b()
 						}
@@ -115,12 +115,16 @@ public extension Threading {
 			}
 		}
 	}
-	
+
 	static var processorCount: Int {
+#if os(Linux)
+		let num = sysconf(Int32(_SC_NPROCESSORS_ONLN))
+#else
 		let num = sysconf(_SC_NPROCESSORS_ONLN)
+#endif
 		return num
 	}
-	
+
 	static func getQueue(name: String, type: QueueType) -> ThreadQueue {
 		var q: ThreadQueue?
 		Threading.queuesLock.doWithLock {
@@ -149,29 +153,32 @@ public extension Threading {
 		let q = Threading.getQueue("default", type: .Concurrent)
 		q.dispatch(closure)
 	}
-	
+
 	// This is a lower level function which does not utilize the ThreadQueue system.
 	private static func dispatchOnNewThread(closure: ThreadClosure) {
+#if os(Linux)
+		var thrdSlf = pthread_t()
+#else
 		var thrdSlf = pthread_t(nil)
+#endif
 		var attr = pthread_attr_t()
 		pthread_attr_init(&attr)
 		pthread_attr_setdetachstate(&attr, Int32(PTHREAD_CREATE_DETACHED))
-		
+
 		let holderObject = IsThisRequired(closure: closure)
-		
+
 		let pthreadFunc: ThreadFunction = {
 			p in
-			
+
 			let unleakyObject = Unmanaged<IsThisRequired>.fromOpaque(OpaquePointer(p)).takeRetainedValue()
-			
+
 			unleakyObject.closure()
-			
+
 			return nil
 		}
-		
+
 		let leakyObject = UnsafeMutablePointer<Void>(OpaquePointer(bitPattern: Unmanaged.passRetained(holderObject)))
 		pthread_create(&thrdSlf, &attr, pthreadFunc, leakyObject)
 	}
-	
-}
 
+}
