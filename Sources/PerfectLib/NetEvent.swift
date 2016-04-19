@@ -184,14 +184,14 @@ class NetEvent {
 		}
 
 		if let n = NetEvent.staticEvent {
-			
+
 			n.lock.doWithLock {
 				n.queuedSockets[socket] = QueuedSocket(socket: socket, what: what, timeoutSeconds: timeoutSeconds < 0.0 ? noTimeout : timeoutSeconds, callback: threadingCallback, associated: 0)
 #if os(Linux)
 				var evt = event()
-				evt.events = what.rawValue | ONESHOT | EPOLLET.rawValue
+				evt.events = what.rawValue | EPOLLONESHOT.rawValue | EPOLLET.rawValue
 				evt.data.fd = socket
-				epoll_ctl(n.kq, ADD, socket, &evt)
+				epoll_ctl(n.kq, EPOLL_CTL_ADD, socket, &evt)
 #else
 				var kvt = event(ident: UInt(socket), filter: Int16(what.rawValue), flags: UInt16(EV_ADD | EV_ENABLE | EV_ONESHOT), fflags: 0, data: 0, udata: nil)
 				var tmout = timespec(tv_sec: 0, tv_nsec: 0)
