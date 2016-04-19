@@ -21,9 +21,6 @@
 
 import LinuxBridge
 
-private let ONESHOT = EPOLLONESHOT.rawValue
-private let ADD = EPOLL_CTL_ADD
-private let DELETE = EPOLL_CTL_DEL
 private let FILT_READ = EPOLLIN.rawValue
 private let FILT_WRITE = EPOLLOUT.rawValue
 private let FILT_TIMER = EPOLLWAKEUP.rawValue // used as marker, not actually passed into epoll
@@ -34,9 +31,6 @@ private let FLAG_NONE = 0
 
 import Darwin
 
-private let ONESHOT = EPOLLONESHOT
-private let ADD = EV_ADD
-private let DELETE = EV_DELETE
 private let FILT_READ = EVFILT_READ
 private let FILT_WRITE = EVFILT_WRITE
 private let FILT_TIMER = EVFILT_TIMER
@@ -66,7 +60,7 @@ class NetEvent {
 
 		static let None = Filter(rawValue: UInt32(FLAG_NONE))
 		static let Error = Filter(rawValue: UInt32(ERROR))
-		static let Delete = Filter(rawValue: UInt32(DELETE))
+//		static let Delete = Filter(rawValue: UInt32(DELETE))
 		static let Read = Filter(rawValue: UInt32(FILT_READ))
 		static let Write = Filter(rawValue: UInt32(FILT_WRITE))
 		static let Timer = Filter(rawValue: UInt32(FILT_TIMER))
@@ -156,8 +150,8 @@ class NetEvent {
 						}
 #else
 						let sock = SocketType(evt.ident)
-						let filter = evt.filter
-						let error = (evt.flags & ERROR) != 0
+						let filter = UInt32(evt.filter)
+						let error = (Int32(evt.flags) & ERROR) != 0
 						let errData = evt.data
 #endif
 	//					Log.info("kevent result sock: \(kevt.ident) filter: \(kevt.filter) flags: \(kevt.flags) data: \(kevt.data)")
@@ -190,22 +184,19 @@ class NetEvent {
 		}
 
 		if let n = NetEvent.staticEvent {
-			if what == .Delete {
-				NetEvent.remove(socket)
-			} else {
-				n.lock.doWithLock {
-					n.queuedSockets[socket] = QueuedSocket(socket: socket, what: what, timeoutSeconds: timeoutSeconds < 0.0 ? noTimeout : timeoutSeconds, callback: threadingCallback, associated: 0)
+			
+			n.lock.doWithLock {
+				n.queuedSockets[socket] = QueuedSocket(socket: socket, what: what, timeoutSeconds: timeoutSeconds < 0.0 ? noTimeout : timeoutSeconds, callback: threadingCallback, associated: 0)
 #if os(Linux)
-					var evt = event()
-					evt.events = what.rawValue | ONESHOT | EPOLLET.rawValue
-					evt.data.fd = socket
-					epoll_ctl(n.kq, ADD, socket, &evt)
+				var evt = event()
+				evt.events = what.rawValue | ONESHOT | EPOLLET.rawValue
+				evt.data.fd = socket
+				epoll_ctl(n.kq, ADD, socket, &evt)
 #else
-					var kvt = event(ident: UInt(socket), filter: what.rawValue, flags: UInt16(EV_ADD | EV_ENABLE | EV_ONESHOT), fflags: 0, data: 0, udata: nil)
-					var tmout = timespec(tv_sec: 0, tv_nsec: 0)
-					kevent(n.kq, &kvt, 1, nil, 0, &tmout)
+				var kvt = event(ident: UInt(socket), filter: Int16(what.rawValue), flags: UInt16(EV_ADD | EV_ENABLE | EV_ONESHOT), fflags: 0, data: 0, udata: nil)
+				var tmout = timespec(tv_sec: 0, tv_nsec: 0)
+				kevent(n.kq, &kvt, 1, nil, 0, &tmout)
 #endif
-				}
 			}
 		}
 	}
@@ -215,9 +206,9 @@ class NetEvent {
 			n.lock.doWithLock {
 				if let _ = n.queuedSockets[socket] {
 #if os(Linux)
-					epoll_ctl(n.kq, DELETE, socket, nil)
+					epoll_ctl(n.kq, EPOLL_CTL_DEL, socket, nil)
 #else
-					var kvt = mykevent(ident: UInt(socket), filter: Filter.Delete.rawValue, flags: UInt16(EV_DELETE), fflags: 0, data: 0, udata: nil)
+					var kvt = event(ident: UInt(socket), filter: Int16(EV_DELETE), flags: UInt16(EV_DELETE), fflags: 0, data: 0, udata: nil)
 					var tmout = timespec(tv_sec: 0, tv_nsec: 0)
 					kevent(n.kq, &kvt, 1, nil, 0, &tmout)
 #endif
