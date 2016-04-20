@@ -238,13 +238,19 @@ class NetEvent {
 	static func remove(socket: SocketType) {
 		if let n = NetEvent.staticEvent {
 			n.lock.doWithLock {
-				if let _ = n.queuedSockets[socket] {
+				if let old = n.queuedSockets[socket] {
 #if os(Linux)
 					epoll_ctl(n.kq, EPOLL_CTL_DEL, socket, nil)
 #else
-					var kvt = event(ident: UInt(socket), filter: Int16(EV_DELETE), flags: UInt16(EV_DELETE), fflags: 0, data: 0, udata: nil)
+					// ensure any associate timer is deleted
+					// these two calls could be conglomerated but would require allocation. revisit
+					var kvt = event(ident: UInt(socket), filter: old.what.kqueueFilter, flags: UInt16(EV_DELETE), fflags: 0, data: 0, udata: nil)
 					var tmout = timespec(tv_sec: 0, tv_nsec: 0)
 					kevent(n.kq, &kvt, 1, nil, 0, &tmout)
+					if old.timeoutSeconds > 0.0 {
+						kvt = event(ident: UInt(socket), filter: Int16(EVFILT_TIMER), flags: UInt16(EV_DELETE), fflags: 0, data: 0, udata: nil)
+						kevent(n.kq, &kvt, 1, nil, 0, &tmout)
+					}
 #endif
 					n.queuedSockets.removeValue(forKey: socket)
 				}
