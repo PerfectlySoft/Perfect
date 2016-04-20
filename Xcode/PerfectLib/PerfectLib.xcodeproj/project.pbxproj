@@ -17,7 +17,6 @@
 		F80C63D81CC1590F0002F3C9 /* HPACK.swift in Sources */ = {isa = PBXBuildFile; fileRef = F80C63B51CC1590E0002F3C9 /* HPACK.swift */; };
 		F80C63D91CC1590F0002F3C9 /* HTTP2.swift in Sources */ = {isa = PBXBuildFile; fileRef = F80C63B61CC1590E0002F3C9 /* HTTP2.swift */; };
 		F80C63DA1CC1590F0002F3C9 /* HTTPServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F80C63B71CC1590E0002F3C9 /* HTTPServer.swift */; };
-		F80C63DB1CC1590F0002F3C9 /* ICU.swift in Sources */ = {isa = PBXBuildFile; fileRef = F80C63B81CC1590E0002F3C9 /* ICU.swift */; };
 		F80C63DC1CC1590F0002F3C9 /* JSONConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = F80C63B91CC1590E0002F3C9 /* JSONConvertible.swift */; };
 		F80C63DD1CC1590F0002F3C9 /* LogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F80C63BA1CC1590E0002F3C9 /* LogManager.swift */; };
 		F80C63DE1CC1590F0002F3C9 /* MimeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F80C63BB1CC1590E0002F3C9 /* MimeReader.swift */; };
@@ -50,7 +49,6 @@
 		F88D0FC21CB327C6000D499D /* PerfectLib.h in Headers */ = {isa = PBXBuildFile; fileRef = F88D0FC11CB327C6000D499D /* PerfectLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F88D0FC41CB32D72000D499D /* libstdc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F88D0FC31CB32D72000D499D /* libstdc++.tbd */; };
 		F88D0FC81CB32E56000D499D /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F88D0FC71CB32E56000D499D /* libcurl.tbd */; };
-		F8B7EFBC1CB558EE0016400B /* libicucore.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F8B7EFBB1CB558EE0016400B /* libicucore.tbd */; };
 		F8F289C91BD53CF000367249 /* PerfectLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F289BE1BD53CF000367249 /* PerfectLib.framework */; };
 /* End PBXBuildFile section */
 
@@ -75,7 +73,6 @@
 		F80C63B51CC1590E0002F3C9 /* HPACK.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HPACK.swift; path = ../../Sources/PerfectLib/HPACK.swift; sourceTree = "<group>"; };
 		F80C63B61CC1590E0002F3C9 /* HTTP2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HTTP2.swift; path = ../../Sources/PerfectLib/HTTP2.swift; sourceTree = "<group>"; };
 		F80C63B71CC1590E0002F3C9 /* HTTPServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HTTPServer.swift; path = ../../Sources/PerfectLib/HTTPServer.swift; sourceTree = "<group>"; };
-		F80C63B81CC1590E0002F3C9 /* ICU.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ICU.swift; path = ../../Sources/PerfectLib/ICU.swift; sourceTree = "<group>"; };
 		F80C63B91CC1590E0002F3C9 /* JSONConvertible.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = JSONConvertible.swift; path = ../../Sources/PerfectLib/JSONConvertible.swift; sourceTree = "<group>"; };
 		F80C63BA1CC1590E0002F3C9 /* LogManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LogManager.swift; path = ../../Sources/PerfectLib/LogManager.swift; sourceTree = "<group>"; };
 		F80C63BB1CC1590E0002F3C9 /* MimeReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MimeReader.swift; path = ../../Sources/PerfectLib/MimeReader.swift; sourceTree = "<group>"; };
@@ -104,7 +101,7 @@
 		F80C63F51CC159720002F3C9 /* Closeable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Closeable.swift; path = ../../Sources/PerfectLib/Closeable.swift; sourceTree = "<group>"; };
 		F870D8BD1CB815680042F449 /* libcrypto-x86_64.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libcrypto-x86_64.a"; path = "../../PerfectLib/Sources/OpenSSL/osx/libcrypto-x86_64.a"; sourceTree = "<group>"; };
 		F870D8BE1CB815680042F449 /* libssl-x86_64.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libssl-x86_64.a"; path = "../../PerfectLib/Sources/OpenSSL/osx/libssl-x86_64.a"; sourceTree = "<group>"; };
-		F870D8CC1CB981F90042F449 /* PerfectLibTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PerfectLibTests.swift; path = ../../PerfectLib/Sources/PerfectLibTests/PerfectLibTests.swift; sourceTree = "<group>"; };
+		F870D8CC1CB981F90042F449 /* PerfectLibTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PerfectLibTests.swift; path = ../../Sources/PerfectLibTests/PerfectLibTests.swift; sourceTree = "<group>"; };
 		F870D8CE1CB982000042F449 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = PerfectLibTests/Info.plist; sourceTree = "<group>"; };
 		F88D0FC11CB327C6000D499D /* PerfectLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerfectLib.h; sourceTree = "<group>"; };
 		F88D0FC31CB32D72000D499D /* libstdc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.tbd"; path = "usr/lib/libstdc++.tbd"; sourceTree = SDKROOT; };
@@ -120,7 +117,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F8B7EFBC1CB558EE0016400B /* libicucore.tbd in Frameworks */,
 				F88D0FC81CB32E56000D499D /* libcurl.tbd in Frameworks */,
 				F870D8BF1CB815680042F449 /* libcrypto-x86_64.a in Frameworks */,
 				F870D8C01CB815680042F449 /* libssl-x86_64.a in Frameworks */,
@@ -191,7 +187,6 @@
 				F80C63B51CC1590E0002F3C9 /* HPACK.swift */,
 				F80C63B61CC1590E0002F3C9 /* HTTP2.swift */,
 				F80C63B71CC1590E0002F3C9 /* HTTPServer.swift */,
-				F80C63B81CC1590E0002F3C9 /* ICU.swift */,
 				F80C63B91CC1590E0002F3C9 /* JSONConvertible.swift */,
 				F80C63BA1CC1590E0002F3C9 /* LogManager.swift */,
 				F80C63BB1CC1590E0002F3C9 /* MimeReader.swift */,
@@ -342,7 +337,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F80C63F11CC1590F0002F3C9 /* WebConnection.swift in Sources */,
-				F80C63DB1CC1590F0002F3C9 /* ICU.swift in Sources */,
 				F80C63E31CC1590F0002F3C9 /* NetNamedPipe.swift in Sources */,
 				F80C63EA1CC1590F0002F3C9 /* Routing.swift in Sources */,
 				F80C63AE1CC158F40002F3C9 /* Bytes.swift in Sources */,
@@ -504,7 +498,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = ca.perfectlysoft.PerfectLib;
 				PRODUCT_NAME = PerfectLib;
 				SKIP_INSTALL = YES;
-				SWIFT_INCLUDE_PATHS = "${SRCROOT}/../../Sources/OpenSSL/include ${SRCROOT}/../../Sources/ICU/include ${SRCROOT}/../../Sources/cURL/include";
+				SWIFT_INCLUDE_PATHS = "${SRCROOT}/../../Sources/OpenSSL/include ${SRCROOT}/../../Sources/cURL/include";
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -530,7 +524,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = ca.perfectlysoft.PerfectLib;
 				PRODUCT_NAME = PerfectLib;
 				SKIP_INSTALL = YES;
-				SWIFT_INCLUDE_PATHS = "${SRCROOT}/../../Sources/OpenSSL/include ${SRCROOT}/../../Sources/ICU/include ${SRCROOT}/../../Sources/cURL/include";
+				SWIFT_INCLUDE_PATHS = "${SRCROOT}/../../Sources/OpenSSL/include ${SRCROOT}/../../Sources/cURL/include";
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 			};
 			name = Release;

@@ -192,7 +192,7 @@ public class NetNamedPipe : NetTCP {
 			NetEvent.add(fd.fd, what: .Write, timeoutSeconds: timeoutSeconds) {
 				fd, w in
 			
-				if w == .Timer {
+				if case .Timer = w {
 					callBack(nil)
 				} else {
 					callBack(self)

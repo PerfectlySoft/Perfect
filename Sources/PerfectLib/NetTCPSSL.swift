@@ -235,18 +235,6 @@ public class NetTCPSSL : NetTCP {
 		return super.isEAgain(err)
 	}
 	
-	override func evWhatFor(operation: Int32) -> Int32 {
-		if self.usingSSL {
-			let sslErr = SSL_get_error(self.ssl!, -1)
-			if sslErr == SSL_ERROR_WANT_READ {
-				return Int32(NetEvent.Filter.Read.rawValue)
-			} else if sslErr == SSL_ERROR_WANT_WRITE {
-				return Int32(NetEvent.Filter.Write.rawValue)
-			}
-		}
-		return super.evWhatFor(operation)
-	}
-	
 	override func recv(buf: UnsafeMutablePointer<Void>, count: Int) -> Int {
 		if self.usingSSL {
 			let i = Int(SSL_read(self.ssl!, buf, Int32(count)))
@@ -276,10 +264,10 @@ public class NetTCPSSL : NetTCP {
 		NetEvent.add(fd.fd, what: what, timeoutSeconds: 0.0) {
 			fd, w in
 			
-			if !w.isTimeout() {
-				self.readBytesFully(into, read: read, remaining: remaining, timeoutSeconds: timeoutSeconds, completion: completion)
-			} else {
+			if case .Timer = w {
 				completion(nil) // timeout or error
+			} else {
+				self.readBytesFully(into, read: read, remaining: remaining, timeoutSeconds: timeoutSeconds, completion: completion)
 			}
 		}
 	}
@@ -347,7 +335,7 @@ public class NetTCPSSL : NetTCP {
 				NetEvent.add(fd.fd, what: .Write, timeoutSeconds: timeout) { [weak self]
 					fd, w in
 					
-					if w == .Write {
+					if case .Write = w {
 						self?.beginSSL(timeout, closure: closure)
 					} else {
 						closure(false)
@@ -358,8 +346,8 @@ public class NetTCPSSL : NetTCP {
 				
 				NetEvent.add(fd.fd, what: .Read, timeoutSeconds: timeout) { [weak self]
 					fd, w in
-					print("\(w.rawValue) \(NetEvent.Filter.Read.rawValue)")
-					if w == .Read {
+					
+					if case .Read = w {
 						self?.beginSSL(timeout, closure: closure)
 					} else {
 						closure(false)
@@ -504,7 +492,7 @@ public class NetTCPSSL : NetTCP {
 				NetEvent.add(net.fd.fd, what: .Write, timeoutSeconds: timeoutSeconds) { [weak self]
 					fd, w in
 					
-					if w.isTimeout() {
+					if case .Timer = w {
 						callBack(nil)
 					} else {
 						self?.finishAccept(timeoutSeconds, net: net, callBack: callBack)
@@ -516,7 +504,7 @@ public class NetTCPSSL : NetTCP {
 				NetEvent.add(net.fd.fd, what: .Read, timeoutSeconds: timeoutSeconds) { [weak self]
 					fd, w in
 					
-					if w.isTimeout() {
+					if case .Timer = w {
 						callBack(nil)
 					} else {
 						self?.finishAccept(timeoutSeconds, net: net, callBack: callBack)
