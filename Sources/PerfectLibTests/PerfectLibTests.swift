@@ -508,6 +508,74 @@ class PerfectLibTests: XCTestCase {
 			XCTAssert(false, "Exception: \(e)")
 		}
 	}
+
+	func testThreadSleep() {
+		let now = getNow()
+		Threading.sleep(1900)
+		let nower = getNow()
+		XCTAssert(nower - now >= 2.0)
+	}
+	
+	func testClientServerReadTimeout() {
+		
+		let port = UInt16(6500)
+		
+		do {
+			
+			let server = NetTCP()
+			let client = NetTCP()
+			
+			try server.bind(port, address: "127.0.0.1")
+			server.listen()
+			
+			let serverExpectation = self.expectation(withDescription: "server")
+			let clientExpectation = self.expectation(withDescription: "client")
+			
+			try server.accept(NetEvent.noTimeout) {
+				(inn: NetTCP?) -> () in
+				guard let _ = inn else {
+					XCTAssertNotNil(inn)
+					return
+				}
+				Threading.sleep(5000)
+				serverExpectation.fulfill()
+			}
+			
+			var once = false
+			try client.connect("127.0.0.1", port: port, timeoutSeconds: 5) {
+				(inn: NetTCP?) -> () in
+				guard let n = inn else {
+					XCTAssertNotNil(inn)
+					return
+				}
+				let b = Bytes()
+				b.import8Bits(1)
+				do {
+					n.readBytesFully(1, timeoutSeconds: 2.0) {
+						read in
+						
+						XCTAssert(read == nil)
+						XCTAssert(once == false)
+						once = !once
+						Threading.sleep(7000)
+						XCTAssert(once == true)
+						clientExpectation.fulfill()
+					}
+				}
+			}
+			
+			self.waitForExpectations(withTimeout: 10000, handler: {
+				(_: NSError?) in
+				server.close()
+				client.close()
+			})
+			
+		} catch PerfectError.NetworkError(let code, let msg) {
+			XCTAssert(false, "Exception: \(code) \(msg)")
+		} catch let e {
+			XCTAssert(false, "Exception: \(e)")
+		}
+	}
 	
 	func testNetSendFile() {
 		
