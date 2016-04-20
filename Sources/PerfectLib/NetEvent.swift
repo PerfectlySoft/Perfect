@@ -133,7 +133,7 @@ class NetEvent {
 				guard nev >= 0 else {
 					Log.terminal("event returned less than zero \(nev).")
 				}
-
+//				print("epoll_wait returned \(nev)")
 				// process results
 				self.lock.doWithLock {
 
@@ -152,6 +152,7 @@ class NetEvent {
 						} else if (evt.events & EPOLLOUT.rawValue) != 0 {
 							filter = .Write
 						}
+//						print("event rcv \(sock) \(evt.events)")
 #else
 						let sock = SocketType(evt.ident)
 						var filter = Filter.None
@@ -165,14 +166,14 @@ class NetEvent {
 #endif
 						if let qitm = self.queuedSockets.removeValue(forKey: sock) {
 #if os(Linux)
-							var evt = event()
-							evt.events = qitm.what.epollEvent
-							epoll_ctl(self.kq, EPOLL_CTL_DEL, sock, &evt)
+							epoll_ctl(self.kq, EPOLL_CTL_DEL, sock, nil)
 #endif
 							qitm.callback(sock, filter)
 						} else {
 #if os(Linux)
 							print("event socket not found \(sock) \(evt.events)")
+#else
+							print("event socket not found \(sock) \(evt.filter)")
 #endif
 						}
 					}
@@ -183,7 +184,6 @@ class NetEvent {
 
 	// socket can only be queued with one callback at a time
 	static func add(socket: SocketType, what: Filter, timeoutSeconds: Double, callback: EventCallback) {
-
 		let threadingCallback:EventCallback = {
 			s, f in
 			Threading.dispatchBlock {
@@ -198,7 +198,10 @@ class NetEvent {
 #if os(Linux)
 				var evt = event()
 				evt.events = what.epollEvent | EPOLLONESHOT.rawValue | EPOLLET.rawValue
+				evt.data.fd = socket
 				epoll_ctl(n.kq, EPOLL_CTL_ADD, socket, &evt)
+
+//				print("event add \(socket) \(evt.events)")
 #else
 				var kvt = event(ident: UInt(socket), filter: what.kqueueFilter, flags: UInt16(EV_ADD | EV_ENABLE | EV_ONESHOT), fflags: 0, data: 0, udata: nil)
 				var tmout = timespec(tv_sec: 0, tv_nsec: 0)
@@ -211,12 +214,9 @@ class NetEvent {
 	static func remove(socket: SocketType) {
 		if let n = NetEvent.staticEvent {
 			n.lock.doWithLock {
-				if let fnd = n.queuedSockets[socket] {
+				if let _ = n.queuedSockets[socket] {
 #if os(Linux)
-					var evt = event()
-					evt.events = fnd.what.epollEvent
-					evt.data.fd = socket
-					epoll_ctl(n.kq, EPOLL_CTL_DEL, socket, &evt)
+					epoll_ctl(n.kq, EPOLL_CTL_DEL, socket, nil)
 #else
 					var kvt = event(ident: UInt(socket), filter: Int16(EV_DELETE), flags: UInt16(EV_DELETE), fflags: 0, data: 0, udata: nil)
 					var tmout = timespec(tv_sec: 0, tv_nsec: 0)
