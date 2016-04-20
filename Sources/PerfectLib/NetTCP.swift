@@ -123,10 +123,6 @@ public class NetTCP : Closeable {
 		return err == -1 && errno == EAGAIN
 	}
 	
-	func evWhatFor(operation: Int32) -> Int32 {
-		return operation
-	}
-	
 	/// Bind the socket on the given port and optional local address
 	/// - parameter port: The port on which to bind
 	/// - parameter address: The the local address, given as a string, on which to bind. Defaults to "0.0.0.0".
@@ -177,8 +173,6 @@ public class NetTCP : Closeable {
 			shutdown(fd.fd, SHUT_RDWR)
 			Darwin.close(fd.fd)
 		#endif
-			
-			NetEvent.removeOnClose(fd.fd)
 			
 			fd.fd = invalidSocket
 			
@@ -262,7 +256,7 @@ public class NetTCP : Closeable {
 		NetEvent.add(fd.fd, what: .Read, timeoutSeconds: timeoutSeconds) { [weak self]
 			fd, w in
 			
-			if w != .Timer {
+			if case .Read = w {
 				self?.readBytesFully(into, read: read, remaining: remaining, timeoutSeconds: timeoutSeconds, completion: completion)
 			} else {
 				completion(nil) // timeout or error
@@ -375,7 +369,9 @@ public class NetTCP : Closeable {
 			
 			s!.wait()
 			s!.unlock()
-			if what != .Write {
+			if case .Write = what {
+			
+			} else {
 				break
 			}
 		}
@@ -452,7 +448,7 @@ public class NetTCP : Closeable {
 			}
 			NetEvent.add(fd.fd, what: .Write, timeoutSeconds: timeoutSeconds) {
 				fd, w in
-				if w == .Timer {
+				if case .Timer = w {
 					callBack(nil)
 				} else {
 					callBack(self)
@@ -482,7 +478,7 @@ public class NetTCP : Closeable {
 			NetEvent.add(fd.fd, what: .Read, timeoutSeconds: timeoutSeconds) {
 				fd, w in
 			
-				if w == .Timer {
+				if case .Timer = w {
 					callBack(nil)
 				} else {
 					do {

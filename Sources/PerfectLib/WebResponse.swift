@@ -17,8 +17,6 @@
 //===----------------------------------------------------------------------===//
 //
 
-import ICU
-
 /// This class bundles together the values which will be used to set a cookie in the outgoing response
 public struct Cookie {
 	public let name: String?
@@ -141,14 +139,14 @@ public class WebResponse {
 		// cookies
 		if self.cookiesArray.count > 0 {
 			let standardDateFormat = "';expires='E, dd-LLL-yyyy HH:mm:ss 'GMT'"
-			let now = ICU.getNow()
+			let now = getNow()
 			for cookie in self.cookiesArray {
 				var cookieLine = "Set-Cookie: "
 				cookieLine.append(cookie.name!.stringByEncodingURL)
 				cookieLine.append("=")
 				cookieLine.append(cookie.value!.stringByEncodingURL)
 				if cookie.expiresIn != 0.0 {
-					let formattedDate = try! ICU.formatDate(now + ICU.secondsToICUDate(Int(cookie.expiresIn)*60),
+					let formattedDate = try! formatDate(now + secondsToICUDate(Int(cookie.expiresIn)*60),
 						format: standardDateFormat, timezone: "GMT")
 					cookieLine.append(formattedDate)
 				}

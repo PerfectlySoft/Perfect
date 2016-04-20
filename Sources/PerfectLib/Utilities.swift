@@ -603,7 +603,48 @@ extension String {
 	#endif
 }
 
+/// Returns the current time according to ICU
+/// ICU dates are the number of milliseconds since the reference date of Thu, 01-Jan-1970 00:00:00 GMT
+public func getNow() -> Double {
+	
+	var posixTime = timeval()
+	gettimeofday(&posixTime, nil)
+	return Double((posixTime.tv_sec * 1000) + (Int(posixTime.tv_usec)/1000))
+}
+/// Converts the milliseconds based ICU date to seconds since the epoch
+public func icuDateToSeconds(icuDate: Double) -> Int {
+	return Int(icuDate / 1000)
+}
+/// Converts the seconds since the epoch into the milliseconds based ICU date
+public func secondsToICUDate(seconds: Int) -> Double {
+	return Double(seconds * 1000)
+}
 
+/// Format a date value according to the indicated format string and return a date string.
+/// - parameter date: The date value
+/// - parameter format: The format by which the date will be formatted
+/// - parameter timezone: The optional timezone in which the date is expected to be based. Default is the local timezone.
+/// - parameter locale: The optional locale which will be used when parsing the date. Default is the current global locale.
+/// - returns: The resulting date string
+/// - throws: `PerfectError.ICUError`
+/// - Seealso [Date Time Format Syntax](http://userguide.icu-project.org/formatparse/datetime#TOC-Date-Time-Format-Syntax)
+public func formatDate(date: Double, format: String, timezone inTimezone: String? = nil, locale inLocale: String? = nil) throws -> String {
+	
+	var t = tm()
+	var time = time_t(date / 1000.0)
+	gmtime_r(&time, &t)
+	let maxResults = 1024
+	let results = UnsafeMutablePointer<Int8>(allocatingCapacity: maxResults)
+	defer {
+		results.deallocateCapacity(maxResults)
+	}
+	let res = strftime(results, maxResults, format, &t)
+	if res > 0 {
+		let formatted = String(validatingUTF8: results)
+		return formatted!
+	}
+	try ThrowSystemError()
+}
 
 
 

@@ -17,8 +17,6 @@
 //===----------------------------------------------------------------------===//
 //
 
-import ICU
-
 let mustacheExtension = "mustache"
 
 enum MustacheTagType {
@@ -734,7 +732,7 @@ public class MustacheParser {
 		var scalars = s.unicodeScalars
 		var idx = scalars.endIndex.predecessor()
 		
-		while ICU.isWhiteSpace(scalars[idx]) {
+		while scalars[idx].isWhiteSpace() {
 			scalars.remove(at: idx)
 			idx = idx.predecessor()
 		}
@@ -745,7 +743,7 @@ public class MustacheParser {
 	func skipWhiteSpace() -> UnicodeScalar? {
 		var e = next()
 		while e != nil {
-			if !ICU.isWhiteSpace(e!) {
+			if !(e!).isWhiteSpace() {
 				return e
 			}
 			e = next()
@@ -763,20 +761,20 @@ public class MustacheParser {
 			while true {
 				
 				e = next()
-				if e != nil && !ICU.isWhiteSpace(e!) {
+				if e != nil && !(e!).isWhiteSpace() {
 					openD.append(e!)
 				} else {
 					break
 				}
 			}
 			
-			guard e != nil && ICU.isWhiteSpace(e!) else {
+			guard e != nil && (e!).isWhiteSpace() else {
 				throw MustacheError.SyntaxError(errorMsg)
 			}
 			
 			e = skipWhiteSpace()
 			
-			guard e != nil && !ICU.isWhiteSpace(e!) else {
+			guard e != nil && !(e!).isWhiteSpace() else {
 				throw MustacheError.SyntaxError(errorMsg)
 			}
 			
@@ -785,14 +783,14 @@ public class MustacheParser {
 			while true {
 				
 				e = next()
-				if e != nil && !ICU.isWhiteSpace(e!) && e! != "=" {
+				if e != nil && !(e!).isWhiteSpace() && e! != "=" {
 					closeD.append(e!)
 				} else {
 					break
 				}
 			}
 			
-			if e != nil && ICU.isWhiteSpace(e!) {
+			if e != nil && (e!).isWhiteSpace() {
 				e = skipWhiteSpace()
 				guard e != nil && e! == "=" else {
 					throw MustacheError.SyntaxError(errorMsg)

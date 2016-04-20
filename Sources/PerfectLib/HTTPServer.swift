@@ -595,7 +595,7 @@ public class HTTPServer {
 					let headerKey = transformHeaderName(UTF8Encoding.encode(h[h.startIndex..<i]))
 					var i2 = i + 1
 					while i2 < h.endIndex {
-						if !ICU.isWhiteSpace(UnicodeScalar(h[i2])) {
+						if !UnicodeScalar(h[i2]).isWhiteSpace() {
 							break
 						}
 						i2 += 1
@@ -617,7 +617,7 @@ public class HTTPServer {
 				return false
 			}
 			for i in 0..<h.count {
-				if !ICU.isWhiteSpace(UnicodeScalar(h[i])) {
+				if !UnicodeScalar(h[i]).isWhiteSpace() {
 					let extens = UTF8Encoding.encode(h[i..<h.count])
 					self.requestParams[self.lastHeaderKey] = found + " " + extens
 					return true
@@ -660,7 +660,7 @@ public class HTTPServer {
 					if segment.count == 0 {
 						callback(true)
 						return
-					} else if ICU.isWhiteSpace(UnicodeScalar(segment.first!)) {
+					} else if UnicodeScalar(segment.first!).isWhiteSpace() {
 						if !self.processHeaderContinuation(segment) {
 							callback(false)
 							return
