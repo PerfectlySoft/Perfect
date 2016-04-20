@@ -27,7 +27,7 @@ public struct Cookie {
 	public let path: String?
 	public let secure: Bool?
 	public let httpOnly: Bool?
-	
+
 	public init(name: String?,
 		value: String?,
 		domain: String?,
@@ -53,74 +53,74 @@ public struct Cookie {
 /// - Locating the response template file, parsing it, evaluating it and returning the resulting data.
 /// - Provides access to the WebRequest object.
 public class WebResponse {
-	
+
 	var connection: WebConnection
-	
+
 	/// The WebRequest for this response
 	public var request: WebRequest
 	/// The output encoding for a textual response. Defaults to UTF-8.
 	public var outputEncoding = "UTF-8"
-	
+
 	var headersArray = [(String, String)]()
 	var cookiesArray = [Cookie]()
 	var includeStack = [String]()
-	
+
 	var appStatus = 0
 	var appMessage = ""
-	
+
 	var bodyData = [UInt8]()
-	
+
 	public var requestCompletedCallback: () -> () = {}
-	
+
 	internal init(_ c: WebConnection, request: WebRequest) {
 		self.connection = c
 		self.request = request
 	}
-	
+
 	/// Set the response status code and message. For example, 200, "OK".
 	public func setStatus(code: Int, message: String) {
 		self.connection.setStatus(code, msg: message)
 	}
-	
+
 	/// Get the response status code and message.
 	public func getStatus() -> (Int, String) {
 		return self.connection.getStatus()
 	}
-	
+
 	/// Adds the cookie object to the response
 	public func addCookie(cookie: Cookie) {
 		self.cookiesArray.append(cookie)
 	}
-	
+
 	public func appendBodyBytes(bytes: [UInt8]) {
 		self.bodyData.append(contentsOf: bytes)
 	}
-	
+
 	public func appendBodyString(string: String) {
 		self.bodyData.append(contentsOf: [UInt8](string.utf8))
 	}
-	
+
 	func respond(completion: () -> ()) {
-		
+
 		self.requestCompletedCallback = { [weak self] in
 			self?.sendResponse()
 			completion()
 		}
-		
+
 		doMainBody()
 	}
-	
+
 	/// Perform a 302 redirect to the given url
 	public func redirectTo(url: String) {
 		self.setStatus(302, message: "FOUND")
 		self.replaceHeader("Location", value: url)
 	}
-	
+
 	/// Add an outgoing HTTP header
 	public func addHeader(name: String, value: String) {
 		self.headersArray.append( (name, value) )
 	}
-	
+
 	/// Set a HTTP header, replacing all existing instances of said header
 	public func replaceHeader(name: String, value: String) {
 		for i in 0..<self.headersArray.count {
@@ -130,7 +130,7 @@ public class WebResponse {
 		}
 		self.addHeader(name, value: value)
 	}
-	
+
 	// directly called by the WebSockets impl
 	func sendResponse() {
 		for (key, value) in headersArray {
@@ -138,7 +138,6 @@ public class WebResponse {
 		}
 		// cookies
 		if self.cookiesArray.count > 0 {
-			let standardDateFormat = "';expires='E, dd-LLL-yyyy HH:mm:ss 'GMT'"
 			let now = getNow()
 			for cookie in self.cookiesArray {
 				var cookieLine = "Set-Cookie: "
@@ -147,8 +146,8 @@ public class WebResponse {
 				cookieLine.append(cookie.value!.stringByEncodingURL)
 				if cookie.expiresIn != 0.0 {
 					let formattedDate = try! formatDate(now + secondsToICUDate(Int(cookie.expiresIn)*60),
-						format: standardDateFormat, timezone: "GMT")
-					cookieLine.append(formattedDate)
+						format: "%a, %d-%b-%Y %T GMT", timezone: "GMT")
+					cookieLine.append(";expires=" + formattedDate)
 				}
 				if let path = cookie.path {
 					cookieLine.append("; path=" + path)
@@ -171,49 +170,49 @@ public class WebResponse {
 			}
 		}
 		connection.writeHeaderLine("Content-Length: \(bodyData.count)")
-		
+
 		connection.writeBodyBytes(bodyData)
 	}
-	
+
 	private func doMainBody() {
-		
+
 		do {
-		
+
 			return try include(request.pathInfo ?? "error", local: false)
-			
+
 		} catch PerfectError.FileError(let code, let msg) {
-			
+
 			print("File exception \(code) \(msg)")
 			self.setStatus(code == 404 ? Int(code) : 500, message: msg)
 			self.bodyData = [UInt8]("File exception \(code) \(msg)".utf8)
-			
+
 		} catch MustacheError.SyntaxError(let msg) {
-		
+
 			print("MustacheError.SyntaxError \(msg)")
 			self.setStatus(500, message: msg)
 			self.bodyData = [UInt8]("Mustache syntax error \(msg)".utf8)
-			
+
 		} catch MustacheError.EvaluationError(let msg) {
-			
+
 			print("MustacheError.EvaluationError exception \(msg)")
 			self.setStatus(500, message: msg)
 			self.bodyData = [UInt8]("Mustache evaluation error \(msg)".utf8)
-			
+
 		} catch let e {
 			print("Unexpected exception \(e)")
 		}
 		self.requestCompletedCallback()
 	}
-	
+
 	func includeVirtual(path: String) throws {
 		guard let handler = PageHandlerRegistry.getRequestHandler(self) else {
 			throw PerfectError.FileError(404, "The path \(path) had no associated handler")
 		}
 		handler.handleRequest(self.request, response: self)
 	}
-	
+
 	func include(path: String, local: Bool) throws {
-		
+
 		var fullPath = path
         if let decodedPath = path.stringByDecodingURL {
             fullPath = decodedPath
@@ -222,45 +221,45 @@ public class WebResponse {
 			fullPath = makeNonRelative(path, local: local)
 		}
 		fullPath = request.documentRoot + fullPath
-		
+
 		let file = File(fullPath)
-		
+
 		if PageHandlerRegistry.hasGlobalHandler() && (!path.hasSuffix("."+mustacheExtension) || !file.exists()) {
 			return try self.includeVirtual(path)
 		}
-		
+
 		if !path.hasSuffix("."+mustacheExtension) {
 			throw PerfectError.FileError(404, "The file \(path) was not a mustache template file")
 		}
-		
+
 		do {
 			guard file.exists() else {
 				throw PerfectError.FileError(404, "Not Found")
 			}
-			
+
 			try file.openRead()
 			defer { file.close() }
 			let bytes = try file.readSomeBytes(file.size())
-			
+
 			let parser = MustacheParser()
 			let str = UTF8Encoding.encode(bytes)
 			let template = try parser.parse(str)
-			
+
 			let context = MustacheEvaluationContext(webResponse: self)
 			context.filePath = fullPath
-			
+
 			let collector = MustacheEvaluationOutputCollector()
 			template.templateName = path
 
 			try template.evaluatePragmas(context, collector: collector)
 			template.evaluate(context, collector: collector)
-			
+
 			let fullString = collector.asString()
 			self.bodyData += Array(fullString.utf8)
 		}
 		self.requestCompletedCallback()
 	}
-	
+
 	private func makeNonRelative(path: String, local: Bool = false) -> String {
 		if includeStack.count == 0 {
 			return "/" + path
@@ -271,9 +270,3 @@ public class WebResponse {
 		return request.pathInfo!.stringByDeletingLastPathComponent + "/" + path
 	}
 }
-
-
-
-
-
-
