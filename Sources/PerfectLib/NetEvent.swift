@@ -131,7 +131,7 @@ class NetEvent {
 				let nev = Int(kevent(self.kq, nil, 0, self.evlist, Int32(self.numEvents), nil))
 #endif
 				guard nev >= 0 else {
-					Log.terminal("kqueue returned less than zero \(nev).")
+					Log.terminal("event returned less than zero \(nev).")
 				}
 
 				// process results
@@ -165,6 +165,11 @@ class NetEvent {
 #endif
 						if let qitm = self.queuedSockets.removeValue(forKey: sock) {
 							qitm.callback(sock, filter)
+#if os(Linux)
+							var evt = event()
+							evt.events = qitm.what.epollEvent
+							epoll_ctl(self.kq, EPOLL_CTL_DEL, sock, &evt)
+#endif
 						} else {
 							print("not found!")
 						}
@@ -191,7 +196,6 @@ class NetEvent {
 #if os(Linux)
 				var evt = event()
 				evt.events = what.epollEvent | EPOLLONESHOT.rawValue | EPOLLET.rawValue
-				evt.data.fd = socket
 				epoll_ctl(n.kq, EPOLL_CTL_ADD, socket, &evt)
 #else
 				var kvt = event(ident: UInt(socket), filter: what.kqueueFilter, flags: UInt16(EV_ADD | EV_ENABLE | EV_ONESHOT), fflags: 0, data: 0, udata: nil)
@@ -205,9 +209,12 @@ class NetEvent {
 	static func remove(socket: SocketType) {
 		if let n = NetEvent.staticEvent {
 			n.lock.doWithLock {
-				if let _ = n.queuedSockets[socket] {
+				if let fnd = n.queuedSockets[socket] {
 #if os(Linux)
-					epoll_ctl(n.kq, EPOLL_CTL_DEL, socket, nil)
+					var evt = event()
+					evt.events = fnd.what.epollEvent
+					evt.data.fd = socket
+					epoll_ctl(n.kq, EPOLL_CTL_DEL, socket, &evt)
 #else
 					var kvt = event(ident: UInt(socket), filter: Int16(EV_DELETE), flags: UInt16(EV_DELETE), fflags: 0, data: 0, udata: nil)
 					var tmout = timespec(tv_sec: 0, tv_nsec: 0)
