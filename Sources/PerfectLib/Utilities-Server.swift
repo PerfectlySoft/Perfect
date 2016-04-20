@@ -17,6 +17,10 @@
 //===----------------------------------------------------------------------===//
 //
 
+#if os(Linux)
+import SwiftGlibc
+#endif
+
 extension UnicodeScalar {
 
 	/// Returns true if the UnicodeScalar is a white space character
@@ -44,4 +48,3 @@ extension UnicodeScalar {
 		}
 	}
 }
-

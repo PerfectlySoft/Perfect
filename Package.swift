@@ -25,11 +25,9 @@ let package = Package(
 	targets: [
 		Target(name: "PerfectLib", dependencies: [
 										.Target(name: "OpenSSL"),
-										.Target(name: "ICU"),
 										.Target(name: "cURL"),
 										.Target(name: "LinuxBridge")]),
 		Target(name: "OpenSSL"),
-		Target(name: "ICU"),
 		Target(name: "cURL"),
 		Target(name: "LinuxBridge")
 		],
@@ -41,10 +39,8 @@ let package = Package(
 	targets: [
 		Target(name: "PerfectLib", dependencies: [
 										.Target(name: "OpenSSL"),
-										.Target(name: "ICU"),
 										.Target(name: "cURL")]),
 		Target(name: "OpenSSL"),
-		Target(name: "ICU"),
 		Target(name: "cURL"),
 		Target(name: "PerfectLibTests", dependencies: [.Target(name: "PerfectLib")])
 		],

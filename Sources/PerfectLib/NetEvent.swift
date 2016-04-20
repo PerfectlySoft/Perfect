@@ -43,9 +43,9 @@ class NetEvent {
 
 	enum Filter {
 		case None, Error(Int32), Read, Write, Timer
-		
+
 		#if os(Linux)
-		var epollEvent: UInt3 {
+		var epollEvent: UInt32 {
 			switch self {
 				case .Read:
 					return EPOLLIN.rawValue
@@ -124,7 +124,7 @@ class NetEvent {
 		let q = Threading.getQueue("NetEvent", type: .Serial)
 		q.dispatch {
 			while true {
-				
+
 #if os(Linux)
 				let nev = Int(epoll_wait(self.kq, self.evlist, Int32(self.numEvents), -1))
 #else
@@ -142,16 +142,14 @@ class NetEvent {
 #if os(Linux)
 						let sock = SocketType(evt.data.fd)
 						var filter = Filter.None
-						if (evt.events & EPOLLERR) != 0 {
+						if (evt.events & EPOLLERR.rawValue) != 0 {
 							var errData = Int32(0)
-							if error {
-								var errLen = socklen_t(sizeof(Int32))
-								getsockopt(sock, SOL_SOCKET, SO_ERROR, &errData, &errLen)
-							}
+							var errLen = socklen_t(sizeof(Int32))
+							getsockopt(sock, SOL_SOCKET, SO_ERROR, &errData, &errLen)
 							filter = .Error(errData)
-						} else if (evt.events & EPOLLIN) != 0 {
+						} else if (evt.events & EPOLLIN.rawValue) != 0 {
 							filter = .Read
-						} else if (evt.events & EPOLLOUT) != 0 {
+						} else if (evt.events & EPOLLOUT.rawValue) != 0 {
 							filter = .Write
 						}
 #else

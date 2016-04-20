@@ -1,4 +1,0 @@
-module ICU {
-    header "p_icu.h"
-    export *
-}
