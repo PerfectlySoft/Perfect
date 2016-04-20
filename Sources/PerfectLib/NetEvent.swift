@@ -164,14 +164,16 @@ class NetEvent {
 						}
 #endif
 						if let qitm = self.queuedSockets.removeValue(forKey: sock) {
-							qitm.callback(sock, filter)
 #if os(Linux)
 							var evt = event()
 							evt.events = qitm.what.epollEvent
 							epoll_ctl(self.kq, EPOLL_CTL_DEL, sock, &evt)
 #endif
+							qitm.callback(sock, filter)
 						} else {
-							print("not found!")
+#if os(Linux)
+							print("event socket not found \(sock) \(evt.events)")
+#endif
 						}
 					}
 				}
