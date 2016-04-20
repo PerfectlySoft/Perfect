@@ -41,9 +41,8 @@ let package = Package(
 										.Target(name: "OpenSSL"),
 										.Target(name: "cURL")]),
 		Target(name: "OpenSSL"),
-		Target(name: "cURL"),
-		Target(name: "PerfectLibTests", dependencies: [.Target(name: "PerfectLib")])
+		Target(name: "cURL")
 		],
-	exclude: ["Sources/LinuxBridge"]
+	exclude: ["Sources/LinuxBridge", "Sources/PerfectLibTests"]
 )
 #endif
