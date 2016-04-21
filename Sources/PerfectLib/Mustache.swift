@@ -50,8 +50,8 @@ public enum MustacheError : ErrorProtocol {
 /// A mustache template handler will return a `MustacheEvaluationContext.MapType` object as a result from its `PageHandler.valuesForResponse` function.
 public class MustacheEvaluationContext {
 	
-	public typealias MapType = Dictionary<String, Any>
-	public typealias SequenceType = Array<MapType>
+	public typealias MapType = [String:Any]
+	public typealias SequenceType = [MapType]
 	
 	/// The parent of this context
 	public var parent: MustacheEvaluationContext? = nil
@@ -64,7 +64,6 @@ public class MustacheEvaluationContext {
 		}
 		return nil
 	}
-	
 	
 	/// Complete path to the file being processed
 	/// Potentially nil in cases of dynamic file generation(?)
@@ -794,8 +793,36 @@ public class MustacheParser {
 	}
 }
 
+public protocol MustachePageHandler {
+	func valuesForResponse(context: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) throws -> MustacheEvaluationContext.MapType
+}
 
-
-
+public func mustacheRequest(request: WebRequest, response: WebResponse, handler: MustachePageHandler, path: String) throws {
+	let file = File(path)
+	
+	try file.openRead()
+	defer { file.close() }
+	let bytes = try file.readSomeBytes(file.size())
+	
+	let parser = MustacheParser()
+	let str = UTF8Encoding.encode(bytes)
+	let template = try parser.parse(str)
+	
+	let context = MustacheEvaluationContext(webResponse: response)
+	context.filePath = path
+	
+	let collector = MustacheEvaluationOutputCollector()
+	template.templateName = path.lastPathComponent
+	
+	try template.evaluatePragmas(context, collector: collector)
+	
+	let values = try handler.valuesForResponse(context, collector: collector)
+	context.extendValues(values)
+	
+	template.evaluate(context, collector: collector)
+	
+	let fullString = collector.asString()
+	response.appendBodyString(fullString)
+}
 
 
