@@ -18,9 +18,9 @@
 //
 
 #if os(Linux)
-import SwiftGlibc
+	import SwiftGlibc
 #else
-import Darwin
+	import Darwin
 #endif
 
 struct DynamicLoader {
@@ -48,14 +48,12 @@ struct DynamicLoader {
 	}
 	
 	func loadLibrary(atPath: String) -> Bool {
-		let resolvedPath = atPath.stringByResolvingSymlinksInPath
-		let moduleName = resolvedPath.lastPathComponent.stringByDeletingPathExtension
-		let file = File(resolvedPath)
-		if file.exists() {
-			let realPath = file.realPath()
-			return self.loadRealPath(realPath, moduleName: moduleName)
+		var fileName = atPath.lastPathComponent
+		if fileName.hasPrefix("lib") {
+			fileName.characters.removeFirst(3)
 		}
-		return false
+		let moduleName = fileName.stringByDeletingPathExtension
+		return self.loadRealPath(atPath, moduleName: moduleName)
 	}
 	
 	private func loadRealPath(realPath: String, moduleName: String) -> Bool {
