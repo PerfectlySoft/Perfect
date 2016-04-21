@@ -17,10 +17,11 @@
 //===----------------------------------------------------------------------===//
 //
 
-public typealias RequestHandlerGenerator = PageHandlerRegistry.RequestHandlerGenerator
 
 /// Holds the registered routes.
 public struct RouteMap: CustomStringConvertible {
+	
+	public typealias RequestHandler = (WebRequest, WebResponse) -> ()
 	
 	/// Pretty prints all route information.
 	public var description: String {
@@ -34,9 +35,9 @@ public struct RouteMap: CustomStringConvertible {
 	private let root = RouteNode() // root node for any request method
 	private var methodRoots = [String:RouteNode]() // by convention, use all upper cased method names for inserts/lookups
 	
-	/// Lookup a route based on the URL path.
-	/// Returns the handler generator if found.
-	subscript(path: String, webResponse: WebResponse) -> RequestHandlerGenerator? {
+	// Lookup a route based on the URL path.
+	// Returns the handler generator if found.
+	subscript(path: String, webResponse: WebResponse) -> RequestHandler? {
 		get {
 			let components = path.lowercased().pathComponents
 			var g = components.makeIterator()
@@ -54,7 +55,7 @@ public struct RouteMap: CustomStringConvertible {
 	
 	/// Add a route to the system.
 	/// `Routing.Routes["/foo/*/baz"] = { _ in return ExampleHandler() }`
-	public subscript(path: String) -> RequestHandlerGenerator? {
+	public subscript(path: String) -> RequestHandler? {
 		get {
 			return nil // Swift does not currently allow set-only subscripts
 		}
@@ -65,7 +66,7 @@ public struct RouteMap: CustomStringConvertible {
 	
 	/// Add an array of routes for a given handler.
 	/// `Routing.Routes[ ["/", "index.html"] ] = { _ in return ExampleHandler() }`
-	public subscript(paths: [String]) -> RequestHandlerGenerator? {
+	public subscript(paths: [String]) -> RequestHandler? {
 		get {
 			return nil
 		}
@@ -78,7 +79,7 @@ public struct RouteMap: CustomStringConvertible {
 	
 	/// Add a route to the system using the indicated HTTP request method.
 	/// `Routing.Routes["GET", "/foo/*/baz"] = { _ in return ExampleHandler() }`
-	public subscript(method: String, path: String) -> RequestHandlerGenerator? {
+	public subscript(method: String, path: String) -> RequestHandler? {
 		get {
 			return nil // Swift does not currently allow set-only subscripts
 		}
@@ -96,7 +97,7 @@ public struct RouteMap: CustomStringConvertible {
 	
 	/// Add an array of routes for a given handler using the indicated HTTP request method.
 	/// `Routing.Routes["GET", ["/", "index.html"] ] = { _ in return ExampleHandler() }`
-	public subscript(method: String, paths: [String]) -> RequestHandlerGenerator? {
+	public subscript(method: String, paths: [String]) -> RequestHandler? {
 		get {
 			return nil // Swift does not currently allow set-only subscripts
 		}
@@ -126,7 +127,7 @@ public struct RouteMap: CustomStringConvertible {
 /// ```
 /// The closure you provide should return an instance of `PageHandler`. It is provided the WebResponse object to permit further customization.
 /// Variables set by the routing process can be accessed through the `WebRequest.urlVariables` dictionary.
-/// Note that a PageHandler *MUST* call `WebResponse.requestCompletedCallback()` when the request has completed.
+/// Note that a PageHandler *MUST* call `WebResponse.requestCompleted()` when the request has completed.
 /// This does not need to be done within the `handleRequest` method.
 public class Routing {
 	
@@ -135,32 +136,18 @@ public class Routing {
 	
 	private init() {}
 	
-	/// This is the main handler for the logic of the URL routing system.
-	/// If must be enabled by calling `Routing.Handler.registerGlobally`
-	public class Handler: RequestHandler {
+	/// Handle the request, triggering the routing system.
+	/// If a route is discovered the request is sent to the new handler.
+	public static func handleRequest(request: WebRequest, response: WebResponse) {
+		let pathInfo = request.requestURI?.characters.split(separator: "?").map { String($0) }.first ?? "/"
 		
-		/// Install the URL routing system.
-		/// This is required if this system is to be utilized, otherwise it will not be available.
-		static public func registerGlobally() {
-			PageHandlerRegistry.addRequestHandler { (_:WebResponse) -> RequestHandler in
-				return Routing.Handler()
-			}
+		if let handler = Routing.Routes[pathInfo, response] {
+			handler(request, response)
+		} else {
+			response.setStatus(404, message: "NOT FOUND")
+			response.appendBodyString("The file \(pathInfo) was not found.")
+			response.requestCompleted()
 		}
-		
-		/// Handle the request, triggering the routing system.
-		/// If a route is discovered the request is sent to the new handler.
-		public func handleRequest(request: WebRequest, response: WebResponse) {
-			let pathInfo = request.requestURI?.characters.split(separator: "?").map { String($0) }.first ?? "/"
-			
-			if let handler = Routing.Routes[pathInfo, response] {
-				handler(response).handleRequest(request, response: response)
-			} else {
-				response.setStatus(404, message: "NOT FOUND")
-				response.appendBodyString("The file \(pathInfo) was not found.")
-				response.requestCompletedCallback()
-			}
-		}
-		
 	}
 	
 }
@@ -197,19 +184,19 @@ class RouteNode: CustomStringConvertible {
 	
 	func descriptionTabbed(tabCount: Int) -> String {
 		var s = ""
-		if let _ = self.handlerGenerator {
+		if let _ = self.handler {
 			s.append("/+h\n")
 		}
 		s.append(self.descriptionTabbedInner(tabCount))
 		return s
 	}
 	
-	var handlerGenerator: RequestHandlerGenerator?
+	var handler: RouteMap.RequestHandler?
 	var wildCard: RouteNode?
 	var variables = [RouteNode]()
 	var subNodes = [String:RouteNode]()
 	
-	func findHandler(currentComponent: String, generator: ComponentGenerator, webResponse: WebResponse) -> RequestHandlerGenerator? {
+	func findHandler(currentComponent: String, generator: ComponentGenerator, webResponse: WebResponse) -> RouteMap.RequestHandler? {
 		var m = generator
 		if let p = m.next() where p != "/" {
 			
@@ -234,9 +221,9 @@ class RouteNode: CustomStringConvertible {
 				}
 			}
 			
-		} else if self.handlerGenerator != nil {
+		} else if self.handler != nil {
 			
-			return self.handlerGenerator
+			return self.handler
 			
 		} else {
 			// wildcards
@@ -249,11 +236,11 @@ class RouteNode: CustomStringConvertible {
 		return nil
 	}
 	
-	func successfulRoute(currentComponent: String, handler: RequestHandlerGenerator, webResponse: WebResponse) -> RequestHandlerGenerator {
+	func successfulRoute(currentComponent: String, handler: RouteMap.RequestHandler, webResponse: WebResponse) -> RouteMap.RequestHandler {
 		return handler
 	}
 	
-	func addPathSegments(g: ComponentGenerator, h: RequestHandlerGenerator) {
+	func addPathSegments(g: ComponentGenerator, h: RouteMap.RequestHandler) {
 		var m = g
 		if let p = m.next() {
 			if p == "/" {
@@ -262,11 +249,11 @@ class RouteNode: CustomStringConvertible {
 				self.addPathSegment(p, g: m, h: h)
 			}
 		} else {
-			self.handlerGenerator = h
+			self.handler = h
 		}
 	}
 	
-	private func addPathSegment(component: String, g: ComponentGenerator, h: RequestHandlerGenerator) {
+	private func addPathSegment(component: String, g: ComponentGenerator, h: RouteMap.RequestHandler) {
 		if let node = self.nodeForComponent(component) {
 			node.addPathSegments(g, h: h)
 		}
@@ -307,7 +294,7 @@ class RoutePath: RouteNode {
 	override func descriptionTabbed(tabCount: Int) -> String {
 		var s = "/\(self.name)"
 		
-		if let _ = self.handlerGenerator {
+		if let _ = self.handler {
 			s.append("+h\n")
 		} else {
 			s.append("\n")
@@ -325,7 +312,7 @@ class RouteWildCard: RouteNode {
 	override func descriptionTabbed(tabCount: Int) -> String {
 		var s = "/*"
 		
-		if let _ = self.handlerGenerator {
+		if let _ = self.handler {
 			s.append("+h\n")
 		} else {
 			s.append("\n")
@@ -346,7 +333,7 @@ class RouteVariable: RouteNode {
 	override func descriptionTabbed(tabCount: Int) -> String {
 		var s = "/{\(self.name)}"
 		
-		if let _ = self.handlerGenerator {
+		if let _ = self.handler {
 			s.append("+h\n")
 		} else {
 			s.append("\n")
@@ -355,13 +342,13 @@ class RouteVariable: RouteNode {
 		return s
 	}
 	
-	override func successfulRoute(currentComponent: String, handler: RequestHandlerGenerator, webResponse: WebResponse) -> RequestHandlerGenerator {
+	override func successfulRoute(currentComponent: String, handler: RouteMap.RequestHandler, webResponse: WebResponse) -> RouteMap.RequestHandler {
 		let request = webResponse.request
 		if let decodedComponent = currentComponent.stringByDecodingURL {
 			request.urlVariables[self.name] = decodedComponent
-        } else {
+		} else {
 			request.urlVariables[self.name] = currentComponent
-        }
+		}
 		return handler
 	}
 	

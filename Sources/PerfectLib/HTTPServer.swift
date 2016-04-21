@@ -290,74 +290,13 @@ public class HTTPServer {
 	// and the request was properly handled
 	func runRequest(req: HTTPWebConnection, withPathInfo: String, completion: (Bool) -> ()) {
 		
-		if PageHandlerRegistry.hasGlobalHandler() {
-			req.requestParams["PATH_INFO"] = withPathInfo
+		req.requestParams["PATH_INFO"] = withPathInfo
 			
-			let request = WebRequest(req)
-			let response = WebResponse(req, request: request)
-			return response.respond() {
-				return completion(true)
-			}
+		let request = WebRequest(req)
+		let response = WebResponse(req, request: request)
+		return response.respond() {
+			return completion(true)
 		}
-		
-        var filePath: String
-        if let decodedPathInfo = withPathInfo.stringByDecodingURL {
-            filePath = self.documentRoot + decodedPathInfo
-        } else {
-            filePath = self.documentRoot + withPathInfo
-        }
-		let ext = withPathInfo.pathExtension.lowercased()
-		if ext == mustacheExtension {
-			
-			if !File(filePath).exists() {
-				return completion(false)
-			}
-			
-			// PATH_INFO may have been altered. set it to this version
-			req.requestParams["PATH_INFO"] = withPathInfo
-			
-			let request = WebRequest(req)
-			let response = WebResponse(req, request: request)
-			return response.respond() {
-				return completion(true)
-			}
-			
-		} else if ext.isEmpty {
-			
-			if !withPathInfo.hasSuffix(".") {
-				return self.runRequest(req, withPathInfo: withPathInfo + ".\(mustacheExtension)") {
-					b in
-					if b {
-						return completion(true)
-					}
-					let pathDir = Dir(filePath)
-					if pathDir.exists() {
-						
-						self.runRequest(req, withPathInfo: withPathInfo + "/index.\(mustacheExtension)") {
-							b in
-							if b {
-								return completion(true)
-							}
-							self.runRequest(req, withPathInfo: withPathInfo + "/index.html") {
-								b in
-								return completion(b)
-							}
-						}
-					} else {
-						return completion(false)
-					}
-				}
-			}
-			
-		} else {
-			
-			let file = File(filePath)
-			if file.exists() {
-				self.sendFile(req, file: file)
-				return completion(true)
-			}
-		}
-		return completion(false)
 	}
 	
 	func runRequest(req: HTTPWebConnection) {

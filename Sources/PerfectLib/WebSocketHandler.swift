@@ -275,7 +275,7 @@ private let webSocketGUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
 
 /// This request handler accepts WebSocket requests from client.
 /// It will initialize the session and then deliver it to the `WebSocketSessionHandler`.
-public struct WebSocketHandler : RequestHandler {
+public struct WebSocketHandler {
 
 	public typealias HandlerProducer = (request: WebRequest, protocols: [String]) -> WebSocketSessionHandler?
 
@@ -294,7 +294,7 @@ public struct WebSocketHandler : RequestHandler {
 			where upgrade.lowercased() == "websocket" && connection.lowercased().containsString("upgrade") else {
 
 				response.setStatus(400, message: "Bad Request")
-				response.requestCompletedCallback()
+				response.requestCompleted()
 				return
 		}
 
@@ -302,7 +302,7 @@ public struct WebSocketHandler : RequestHandler {
 			response.setStatus(400, message: "Bad Request")
 			response.addHeader("Sec-WebSocket-Version", value: "\(acceptableProtocolVersions[0])")
 			response.appendBodyString("WebSocket protocol version \(secWebSocketVersion) not supported. Supported protocol versions are: \(acceptableProtocolVersions)")
-			response.requestCompletedCallback()
+			response.requestCompleted()
 			return
 		}
 
@@ -319,11 +319,11 @@ public struct WebSocketHandler : RequestHandler {
 		guard let handler = self.handlerProducer(request: request, protocols: protocolList) else {
 			response.setStatus(400, message: "Bad Request")
 			response.appendBodyString("WebSocket protocols not supported.")
-			response.requestCompletedCallback()
+			response.requestCompleted()
 			return
 		}
 
-		response.requestCompletedCallback = {} // this is no longer a normal request, eligible for keep-alive
+		response.requestCompleted = {} // this is no longer a normal request, eligible for keep-alive
 
 		response.setStatus(101, message: "Switching Protocols")
 		response.addHeader("Upgrade", value: "websocket")

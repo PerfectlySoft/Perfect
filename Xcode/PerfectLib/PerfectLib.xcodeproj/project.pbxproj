@@ -28,7 +28,6 @@
 		F80C63E41CC1590F0002F3C9 /* NetTCP.swift in Sources */ = {isa = PBXBuildFile; fileRef = F80C63C11CC1590E0002F3C9 /* NetTCP.swift */; };
 		F80C63E51CC1590F0002F3C9 /* NetTCPSSL.swift in Sources */ = {isa = PBXBuildFile; fileRef = F80C63C21CC1590E0002F3C9 /* NetTCPSSL.swift */; };
 		F80C63E61CC1590F0002F3C9 /* NotificationPusher.swift in Sources */ = {isa = PBXBuildFile; fileRef = F80C63C31CC1590E0002F3C9 /* NotificationPusher.swift */; };
-		F80C63E71CC1590F0002F3C9 /* PageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F80C63C41CC1590E0002F3C9 /* PageHandler.swift */; };
 		F80C63E81CC1590F0002F3C9 /* PerfectError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F80C63C51CC1590E0002F3C9 /* PerfectError.swift */; };
 		F80C63E91CC1590F0002F3C9 /* PerfectServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F80C63C61CC1590E0002F3C9 /* PerfectServer.swift */; };
 		F80C63EA1CC1590F0002F3C9 /* Routing.swift in Sources */ = {isa = PBXBuildFile; fileRef = F80C63C71CC1590E0002F3C9 /* Routing.swift */; };
@@ -84,7 +83,6 @@
 		F80C63C11CC1590E0002F3C9 /* NetTCP.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NetTCP.swift; path = ../../Sources/PerfectLib/NetTCP.swift; sourceTree = "<group>"; };
 		F80C63C21CC1590E0002F3C9 /* NetTCPSSL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NetTCPSSL.swift; path = ../../Sources/PerfectLib/NetTCPSSL.swift; sourceTree = "<group>"; };
 		F80C63C31CC1590E0002F3C9 /* NotificationPusher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NotificationPusher.swift; path = ../../Sources/PerfectLib/NotificationPusher.swift; sourceTree = "<group>"; };
-		F80C63C41CC1590E0002F3C9 /* PageHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PageHandler.swift; path = ../../Sources/PerfectLib/PageHandler.swift; sourceTree = "<group>"; };
 		F80C63C51CC1590E0002F3C9 /* PerfectError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PerfectError.swift; path = ../../Sources/PerfectLib/PerfectError.swift; sourceTree = "<group>"; };
 		F80C63C61CC1590E0002F3C9 /* PerfectServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PerfectServer.swift; path = ../../Sources/PerfectLib/PerfectServer.swift; sourceTree = "<group>"; };
 		F80C63C71CC1590E0002F3C9 /* Routing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Routing.swift; path = ../../Sources/PerfectLib/Routing.swift; sourceTree = "<group>"; };
@@ -198,7 +196,6 @@
 				F80C63C11CC1590E0002F3C9 /* NetTCP.swift */,
 				F80C63C21CC1590E0002F3C9 /* NetTCPSSL.swift */,
 				F80C63C31CC1590E0002F3C9 /* NotificationPusher.swift */,
-				F80C63C41CC1590E0002F3C9 /* PageHandler.swift */,
 				F80C63C51CC1590E0002F3C9 /* PerfectError.swift */,
 				F80C63C61CC1590E0002F3C9 /* PerfectServer.swift */,
 				F80C63C71CC1590E0002F3C9 /* Routing.swift */,
@@ -357,7 +354,6 @@
 				F80C63DA1CC1590F0002F3C9 /* HTTPServer.swift in Sources */,
 				F80C63D71CC1590F0002F3C9 /* File.swift in Sources */,
 				F80C63F21CC1590F0002F3C9 /* WebRequest.swift in Sources */,
-				F80C63E71CC1590F0002F3C9 /* PageHandler.swift in Sources */,
 				F80C63E91CC1590F0002F3C9 /* PerfectServer.swift in Sources */,
 				F80C63D21CC1590F0002F3C9 /* cURL.swift in Sources */,
 				F80C63D41CC1590F0002F3C9 /* DynamicLoader.swift in Sources */,
