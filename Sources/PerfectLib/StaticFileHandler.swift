@@ -17,7 +17,7 @@
 //===----------------------------------------------------------------------===//
 //
 
-public struct StaticFileHandler: RequestHandler {
+public struct StaticFileHandler {
 	
 	public init() {}
 	
@@ -34,12 +34,12 @@ public struct StaticFileHandler: RequestHandler {
 			response.setStatus(404, message: "Not Found")
 			response.appendBodyString("The file \(requestUri) was not found.")
 			// !FIX! need 404.html or some such thing
-			response.requestCompletedCallback()
+			response.requestCompleted()
 			return
 		}
 		
 		self.sendFile(response, file: file)
-		response.requestCompletedCallback()
+		response.requestCompleted()
 	}
 	
 	func sendFile(response: WebResponse, file: File) {

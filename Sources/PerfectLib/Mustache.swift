@@ -440,31 +440,10 @@ public class MustacheTemplate : MustacheGroupTag {
 	/// - parameter requireHandler: If true, the pragmas must contain a PageHandler pragma which must indicate a previously registered handler object. If a global page handler has been registered then it will be utilized. If `requireHandler` is false, the global handler will NOT be sought.
 	/// - throws: If `requireHandler` is true and the a handler pragma does not exist or does not indicate a properly registered handler object, then this function will throw `MustacheError.EvaluationError`.
 	public func evaluatePragmas(context: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector, requireHandler: Bool = true) throws {
-		
-		var foundHandler = false
-		
-		for pragma in pragmas {
-			let d = pragma.parsePragma()
-			if let handler = d["handler"] {
-				if let handler = PageHandlerRegistry.getPageHandler(handler, forResponse: context.webResponse!) {
-					foundHandler = true
-					let values = try handler.valuesForResponse(context, collector: collector)
-					context.extendValues(values)
-				}
-			}
-		}
-		
-//		if requireHandler && !foundHandler {
-//			if let handler = PageHandlerRegistry.getPageHandler(context.webResponse!) {
-//				foundHandler = true
-//				let values = try handler.valuesForResponse(context, collector: collector)
-//				context.extendValues(values)
-//			}
+//		for pragma in pragmas {
+//			let d = pragma.parsePragma()
+//			...
 //		}
-		
-		if requireHandler && !foundHandler {
-			throw MustacheError.EvaluationError("No valid PageHandler was specified in the template's pragmas.")
-		}
 	}
 	
 	/// Evaluate the template using the given context and output collector.

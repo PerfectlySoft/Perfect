@@ -70,7 +70,7 @@ public class WebResponse {
 
 	var bodyData = [UInt8]()
 
-	public var requestCompletedCallback: () -> () = {}
+	public var requestCompleted: () -> () = {}
 
 	internal init(_ c: WebConnection, request: WebRequest) {
 		self.connection = c
@@ -102,7 +102,7 @@ public class WebResponse {
 
 	func respond(completion: () -> ()) {
 
-		self.requestCompletedCallback = { [weak self] in
+		self.requestCompleted = { [weak self] in
 			self?.sendResponse()
 			completion()
 		}
@@ -201,63 +201,15 @@ public class WebResponse {
 		} catch let e {
 			print("Unexpected exception \(e)")
 		}
-		self.requestCompletedCallback()
+		self.requestCompleted()
 	}
 
 	func includeVirtual(path: String) throws {
-		guard let handler = PageHandlerRegistry.getRequestHandler(self) else {
-			throw PerfectError.FileError(404, "The path \(path) had no associated handler")
-		}
-		handler.handleRequest(self.request, response: self)
+		Routing.handleRequest(self.request, response: self)
 	}
 
 	func include(path: String, local: Bool) throws {
-
-		var fullPath = path
-        if let decodedPath = path.stringByDecodingURL {
-            fullPath = decodedPath
-        }
-		if !path.hasPrefix("/") {
-			fullPath = makeNonRelative(path, local: local)
-		}
-		fullPath = request.documentRoot + fullPath
-
-		let file = File(fullPath)
-
-		if PageHandlerRegistry.hasGlobalHandler() && (!path.hasSuffix("."+mustacheExtension) || !file.exists()) {
-			return try self.includeVirtual(path)
-		}
-
-		if !path.hasSuffix("."+mustacheExtension) {
-			throw PerfectError.FileError(404, "The file \(path) was not a mustache template file")
-		}
-
-		do {
-			guard file.exists() else {
-				throw PerfectError.FileError(404, "Not Found")
-			}
-
-			try file.openRead()
-			defer { file.close() }
-			let bytes = try file.readSomeBytes(file.size())
-
-			let parser = MustacheParser()
-			let str = UTF8Encoding.encode(bytes)
-			let template = try parser.parse(str)
-
-			let context = MustacheEvaluationContext(webResponse: self)
-			context.filePath = fullPath
-
-			let collector = MustacheEvaluationOutputCollector()
-			template.templateName = path
-
-			try template.evaluatePragmas(context, collector: collector)
-			template.evaluate(context, collector: collector)
-
-			let fullString = collector.asString()
-			self.bodyData += Array(fullString.utf8)
-		}
-		self.requestCompletedCallback()
+		return try self.includeVirtual(path)
 	}
 
 	private func makeNonRelative(path: String, local: Bool = false) -> String {
