@@ -9,11 +9,9 @@
 #if swift(>=3.0)
 
 	extension UnsafeMutablePointer {
-		
 		public static func alloc(num: Int) -> UnsafeMutablePointer<Pointee> {
-			return UnsafeMutablePointer<Pointee>.alloc(num)
+			return UnsafeMutablePointer<Pointee>(allocatingCapacity: num)
 		}
-	
 	}
 	
 #else

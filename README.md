@@ -11,8 +11,9 @@
 [![Twitter](https://img.shields.io/badge/Twitter-@PerfectlySoft-brightgreen.svg?style=flat)](http://twitter.com/PerfectlySoft)
 [![Join the chat at https://gitter.im/PerfectlySoft/Perfect](https://img.shields.io/badge/Gitter-Join%20Chat-brightgreen.svg)](https://gitter.im/PerfectlySoft/Perfect?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-**The master branch of this project currently requires the Swift 3.0-dev toolchain.**
-**Download [release-1.0](https://github.com/PerfectlySoft/Perfect/releases/tag/v1.0.0) if you are using Xcode 7.3 with Swift 2.2.**
+**The master branch of this project currently compiles with Swift 2.2 and with the 3.0-dev March toolchain.**
+
+**Download [release-1.0](https://github.com/PerfectlySoft/Perfect/releases/tag/v1.0.0) for the stable 1.0 API.**
 
 Perfect is an application server for Linux or OS X which provides a framework for developing web and other REST services in the Swift programming language. Its primary focus is on facilitating mobile apps which require backend server software, enabling you to use one language for both front and back ends.
 
@@ -38,7 +39,7 @@ Perfect is built on its own high performance completely asynchronous networking 
 
 The database connectors are all stand-alone and can be used outside of the Perfect framework and server.
 
-Note that we are still making some tweaks to this layout and are currently ensuring that everything builds properly on Linux and OS X using SPM and Xcode. This new code **requires** a Swift 3.0 toolchain and is currently being built against the *March 24, 2016* snapshot. It will **not** compile with Swift 2.2.
+Note that we are still making some tweaks to this layout and are currently ensuring that everything builds properly on Linux and OS X using SPM and Xcode. This new code is currently being built against the *March 24, 2016* snapshot.
 
 (2016-04-05) We are **refactoring** the Perfect project repository with the ultimate goal of supporting the Swift Package Manager. The various modules, such as the PerfectLib, server, database connectors and examples pack are being split off into their own repositories. This change will also include some API streamlining and fewer 3rd party dependencies resulting in easier installation and deployment. Once this task has completed we will release as v1.1 and continue from there. We hope to have these changes solidified by the end of the week and we appreciate all the feedback we've received along the way. 
 
