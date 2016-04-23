@@ -49,8 +49,8 @@ public class NetNamedPipe : NetTCP {
 	}
 
 	public override func sockName() -> (String, UInt16) {
-		var addr = UnsafeMutablePointer<sockaddr_un>(allocatingCapacity: 1)
-		var len = UnsafeMutablePointer<socklen_t>(allocatingCapacity: 1)
+		var addr = UnsafeMutablePointer<sockaddr_un>.alloc(1)
+		var len = UnsafeMutablePointer<socklen_t>.alloc(1)
 		defer {
 			addr.deallocateCapacity(1)
 			len.deallocateCapacity(1)
@@ -60,7 +60,11 @@ public class NetNamedPipe : NetTCP {
 
 		var nameBuf = [CChar]()
 		let mirror = Mirror(reflecting: addr.pointee.sun_path)
+	#if swift(>=3.0)
 		let childGen = mirror.children.makeIterator()
+	#else
+		let childGen = mirror.children.generate()
+	#endif
 		for _ in 0..<1024 {
 			let (_, elem) = childGen.next()!
 			if (elem as! Int8) == 0 {
@@ -76,8 +80,8 @@ public class NetNamedPipe : NetTCP {
 	}
 
 	public override func peerName() -> (String, UInt16) {
-		var addr = UnsafeMutablePointer<sockaddr_un>(allocatingCapacity: 1)
-		var len = UnsafeMutablePointer<socklen_t>(allocatingCapacity: 1)
+		var addr = UnsafeMutablePointer<sockaddr_un>.alloc(1)
+		var len = UnsafeMutablePointer<socklen_t>.alloc(1)
 		defer {
 			addr.deallocateCapacity(1)
 			len.deallocateCapacity(1)
@@ -87,7 +91,11 @@ public class NetNamedPipe : NetTCP {
 
 		var nameBuf = [CChar]()
 		let mirror = Mirror(reflecting: addr.pointee.sun_path)
+	#if swift(>=3.0)
 		let childGen = mirror.children.makeIterator()
+	#else
+		let childGen = mirror.children.generate()
+	#endif
 		for _ in 0..<1024 {
 			let (_, elem) = childGen.next()!
 			if (elem as! Int8) == 0 {
@@ -115,7 +123,7 @@ public class NetNamedPipe : NetTCP {
 #else
 		let addrLen = sizeof(UInt8) + sizeof(sa_family_t) + utf8.count + 1
 #endif
-		let addrPtr = UnsafeMutablePointer<UInt8>(allocatingCapacity: addrLen)
+		let addrPtr = UnsafeMutablePointer<UInt8>.alloc(addrLen)
 		defer { addrPtr.deallocateCapacity(addrLen) }
 
 		var memLoc = 0
@@ -160,7 +168,7 @@ public class NetNamedPipe : NetTCP {
 
 		let utf8 = address.utf8
 		let addrLen = sizeof(UInt8) + sizeof(sa_family_t) + utf8.count + 1
-		let addrPtr = UnsafeMutablePointer<UInt8>(allocatingCapacity: addrLen)
+		let addrPtr = UnsafeMutablePointer<UInt8>.alloc(addrLen)
 
 		defer { addrPtr.deallocateCapacity(addrLen) }
 
@@ -208,13 +216,13 @@ public class NetNamedPipe : NetTCP {
 	public func sendFd(fd: Int32, callBack: (Bool) -> ()) throws {
 		let length = sizeof(cmsghdr) + sizeof(Int32)
 	#if os(Linux)
-		let msghdr = UnsafeMutablePointer<SwiftGlibc.msghdr>(allocatingCapacity: 1)
+		var msghdr = UnsafeMutablePointer<SwiftGlibc.msghdr>.alloc(1)
 	#else
-		let msghdr = UnsafeMutablePointer<Darwin.msghdr>(allocatingCapacity: 1)
+		var msghdr = UnsafeMutablePointer<Darwin.msghdr>.alloc(1)
 	#endif
-		let nothingPtr = UnsafeMutablePointer<iovec>(allocatingCapacity: 1)
-		let nothing = UnsafeMutablePointer<CChar>(allocatingCapacity: 1)
-		let buffer = UnsafeMutablePointer<CChar>(allocatingCapacity: length)
+		var nothingPtr = UnsafeMutablePointer<iovec>.alloc(1)
+		var nothing = UnsafeMutablePointer<CChar>.alloc(1)
+		let buffer = UnsafeMutablePointer<CChar>.alloc(length)
 		defer {
 			msghdr.deallocateCapacity(1)
 			buffer.deallocateCapacity(length)
@@ -230,8 +238,8 @@ public class NetNamedPipe : NetTCP {
 	#endif
 		cmsg.pointee.cmsg_level = SOL_SOCKET
 		cmsg.pointee.cmsg_type = SCM_RIGHTS
-
-		let asInts = UnsafeMutablePointer<Int32>(cmsg.advanced(by: 1))
+		// swift 2.2 compat
+		var asInts = UnsafeMutablePointer<Int32>(cmsg.advanced(by: 1))
 		asInts.pointee = fd
 
 		nothing.pointee = 33
@@ -277,9 +285,9 @@ public class NetNamedPipe : NetTCP {
 	public func receiveFd(callBack: (Int32) -> ()) throws {
 		let length = sizeof(cmsghdr) + sizeof(Int32)
 		var msghdrr = msghdr()
-		let nothingPtr = UnsafeMutablePointer<iovec>(allocatingCapacity: 1)
-		let nothing = UnsafeMutablePointer<CChar>(allocatingCapacity: 1)
-		let buffer = UnsafeMutablePointer<CChar>(allocatingCapacity: length)
+		var nothingPtr = UnsafeMutablePointer<iovec>.alloc(1)
+		var nothing = UnsafeMutablePointer<CChar>.alloc(1)
+		let buffer = UnsafeMutablePointer<CChar>.alloc(length)
 		defer {
 			buffer.deallocateCapacity(length)
 			nothingPtr.deallocateCapacity(1)
@@ -300,7 +308,7 @@ public class NetNamedPipe : NetTCP {
 		msghdrr.msg_controllen = socklen_t(length)
 	#endif
 
-		let cmsg = UnsafeMutablePointer<cmsghdr>(buffer)
+		var cmsg = UnsafeMutablePointer<cmsghdr>(buffer)
 	#if os(Linux)
 		cmsg.pointee.cmsg_len = Int(socklen_t(length))
 	#else
@@ -308,8 +316,8 @@ public class NetNamedPipe : NetTCP {
 	#endif
 		cmsg.pointee.cmsg_level = SOL_SOCKET
 		cmsg.pointee.cmsg_type = SCM_RIGHTS
-
-		let asInts = UnsafeMutablePointer<Int32>(cmsg.advanced(by: 1))
+		// swift 2.2 compat
+		var asInts = UnsafeMutablePointer<Int32>(cmsg.advanced(by: 1))
 		asInts.pointee = -1
 
 		let res = recvmsg(Int32(self.fd.fd), &msghdrr, 0)

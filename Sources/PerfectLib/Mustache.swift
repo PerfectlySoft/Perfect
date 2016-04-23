@@ -688,15 +688,13 @@ public class MustacheParser {
 		return consumeTagName(&s)
 	}
 	
+	#if swift(>=3.0)
 	func consumeTagName(s: inout String) -> String {
-		
 		while let e = next() {
-			
 			if handlingUnencodedName && e == "}" {
 				handlingUnencodedName = false
 				continue
 			}
-			
 			if e == closeDelimiters[0] {
 				testingPutback = String(e)
 				if consumePossibleCloseDelimiter(1) {
@@ -709,14 +707,38 @@ public class MustacheParser {
 		}
 		var scalars = s.unicodeScalars
 		var idx = scalars.endIndex.predecessor()
-		
 		while scalars[idx].isWhiteSpace() {
 			scalars.remove(at: idx)
 			idx = idx.predecessor()
 		}
-		
 		return String(scalars)
 	}
+	#else
+	func consumeTagName(inout s: String) -> String {
+		while let e = next() {
+			if handlingUnencodedName && e == "}" {
+				handlingUnencodedName = false
+				continue
+			}
+			if e == closeDelimiters[0] {
+				testingPutback = String(e)
+				if consumePossibleCloseDelimiter(1) {
+					break
+				}
+				s.append(testingPutback!)
+			} else {
+				s.append(e)
+			}
+		}
+		var scalars = s.unicodeScalars
+		var idx = scalars.endIndex.predecessor()
+		while scalars[idx].isWhiteSpace() {
+			scalars.remove(at: idx)
+			idx = idx.predecessor()
+		}
+		return String(scalars)
+	}
+	#endif
 	
 	func skipWhiteSpace() -> UnicodeScalar? {
 		var e = next()

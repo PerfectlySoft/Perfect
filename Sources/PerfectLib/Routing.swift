@@ -154,7 +154,11 @@ public class Routing {
 
 class RouteNode: CustomStringConvertible {
 	
+	#if swift(>=3.0)
 	typealias ComponentGenerator = IndexingIterator<[String]>
+	#else
+	typealias ComponentGenerator = IndexingGenerator<[String]>
+	#endif
 	
 	var description: String {
 		return self.descriptionTabbed(0)

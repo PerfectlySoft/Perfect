@@ -363,7 +363,7 @@ public struct WebSocketHandler {
 
 extension String.UTF8View {
 	var sha1: [UInt8] {
-		let bytes = UnsafeMutablePointer<UInt8>(allocatingCapacity: Int(SHA_DIGEST_LENGTH))
+		let bytes = UnsafeMutablePointer<UInt8>.alloc(Int(SHA_DIGEST_LENGTH))
 		defer { bytes.deallocateCapacity(Int(SHA_DIGEST_LENGTH)) }
 
 		SHA1(Array<UInt8>(self), (self.count), bytes)

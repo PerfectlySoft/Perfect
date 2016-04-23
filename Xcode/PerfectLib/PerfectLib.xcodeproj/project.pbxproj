@@ -48,6 +48,7 @@
 		F88D0FC21CB327C6000D499D /* PerfectLib.h in Headers */ = {isa = PBXBuildFile; fileRef = F88D0FC11CB327C6000D499D /* PerfectLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F88D0FC41CB32D72000D499D /* libstdc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F88D0FC31CB32D72000D499D /* libstdc++.tbd */; };
 		F88D0FC81CB32E56000D499D /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F88D0FC71CB32E56000D499D /* libcurl.tbd */; };
+		F8AB3D941CCAB763002CE7A0 /* SwiftCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8AB3D931CCAB763002CE7A0 /* SwiftCompatibility.swift */; };
 		F8F289C91BD53CF000367249 /* PerfectLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F289BE1BD53CF000367249 /* PerfectLib.framework */; };
 /* End PBXBuildFile section */
 
@@ -104,6 +105,7 @@
 		F88D0FC11CB327C6000D499D /* PerfectLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerfectLib.h; sourceTree = "<group>"; };
 		F88D0FC31CB32D72000D499D /* libstdc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.tbd"; path = "usr/lib/libstdc++.tbd"; sourceTree = SDKROOT; };
 		F88D0FC71CB32E56000D499D /* libcurl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcurl.tbd; path = usr/lib/libcurl.tbd; sourceTree = SDKROOT; };
+		F8AB3D931CCAB763002CE7A0 /* SwiftCompatibility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SwiftCompatibility.swift; path = ../../Sources/PerfectLib/SwiftCompatibility.swift; sourceTree = "<group>"; };
 		F8B7EFBB1CB558EE0016400B /* libicucore.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libicucore.tbd; path = usr/lib/libicucore.tbd; sourceTree = SDKROOT; };
 		F8C714971CB49D77005B0A4C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F8F289BE1BD53CF000367249 /* PerfectLib.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PerfectLib.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -209,6 +211,7 @@
 				F80C63CF1CC1590E0002F3C9 /* WebRequest.swift */,
 				F80C63D01CC1590E0002F3C9 /* WebResponse.swift */,
 				F80C63D11CC1590F0002F3C9 /* WebSocketHandler.swift */,
+				F8AB3D931CCAB763002CE7A0 /* SwiftCompatibility.swift */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -355,6 +358,7 @@
 				F80C63D71CC1590F0002F3C9 /* File.swift in Sources */,
 				F80C63F21CC1590F0002F3C9 /* WebRequest.swift in Sources */,
 				F80C63E91CC1590F0002F3C9 /* PerfectServer.swift in Sources */,
+				F8AB3D941CCAB763002CE7A0 /* SwiftCompatibility.swift in Sources */,
 				F80C63D21CC1590F0002F3C9 /* cURL.swift in Sources */,
 				F80C63D41CC1590F0002F3C9 /* DynamicLoader.swift in Sources */,
 				F80C63EB1CC1590F0002F3C9 /* StaticFileHandler.swift in Sources */,

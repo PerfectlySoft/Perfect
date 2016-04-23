@@ -189,13 +189,15 @@ public struct Threading {
 	/// Call the provided closure on the current thread, but only if it has not been called before.
 	/// This is useful for ensuring that initialization code is only called once in a multi-threaded process.
 	/// Upon returning from `Threading.once` it is guaranteed that the closure has been executed and has completed.
+	#if swift(>=3.0)
 	public static func once(threadOnce: inout ThreadOnce, onceFunc: ThreadOnceFunction) {
-#if USE_LIBDISPATCH
-		dispatch_once(&threadOnce, onceFunc)
-#else
 		pthread_once(&threadOnce, onceFunc)
-#endif
 	}
+	#else
+	public static func once(inout threadOnce: ThreadOnce, onceFunc: ThreadOnceFunction) {
+		pthread_once(&threadOnce, onceFunc)
+	}
+	#endif
 
 	public static func sleep(milliseconds: Int) {
 

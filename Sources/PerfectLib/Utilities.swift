@@ -61,6 +61,7 @@ public struct Encoding {
 		var mutableGenerator = generator
 		repeat {
 			let decodingResult = mutableDecoder.decode(&mutableGenerator)
+			#if swift(>=3.0)
 			switch decodingResult {
 			case .scalarValue(let char):
 				encodedString.append(char)
@@ -70,6 +71,17 @@ public struct Encoding {
 			case .error:
 				finished = true
 			}
+			#else
+			switch decodingResult {
+				case .Result(let char):
+					encodedString.append(char)
+				case .EmptyInput:
+					finished = true
+					/* ignore errors and unexpected values */
+				case .Error:
+					finished = true
+			}
+			#endif
 		} while !finished
 		return encodedString
 	}
@@ -92,10 +104,17 @@ public struct UTF8Encoding {
 		return Encoding.encode(UTF8(), generator: generator)
 	}
 	
+	#if swift(>=3.0)
 	/// Use a character sequence to create a String.
 	public static func encode<S : Sequence where S.Iterator.Element == UTF8.CodeUnit>(bytes: S) -> String {
 		return encode(bytes.makeIterator())
 	}
+	#else
+	/// Use a character sequence to create a String.
+	public static func encode<S : SequenceType where S.Generator.Element == UTF8.CodeUnit>(bytes: S) -> String {
+		return encode(bytes.generate())
+	}
+	#endif
 	
 	/// Decode a String into an array of UInt8.
 	public static func decode(str: String) -> Array<UInt8> {
@@ -263,7 +282,7 @@ extension String {
 	/// Parse uuid string
 	/// Results undefined if the string is not a valid UUID
 	public func asUUID() -> uuid_t {
-		let u = UnsafeMutablePointer<UInt8>(allocatingCapacity: sizeof(uuid_t))
+		let u = UnsafeMutablePointer<UInt8>.alloc(sizeof(uuid_t))
 		defer {
 			u.deallocateCapacity(sizeof(uuid_t))
 		}
@@ -272,8 +291,8 @@ extension String {
 	}
 	
 	public static func fromUUID(uuid: uuid_t) -> String {
-		let u = UnsafeMutablePointer<UInt8>(allocatingCapacity: sizeof(uuid_t))
-		let unu = UnsafeMutablePointer<Int8>(allocatingCapacity: 37) // as per spec. 36 + null
+		let u = UnsafeMutablePointer<UInt8>.alloc(sizeof(uuid_t))
+		let unu = UnsafeMutablePointer<Int8>.alloc(37) // as per spec. 36 + null
 		
 		defer {
 			u.deallocateCapacity(sizeof(uuid_t))
@@ -292,7 +311,7 @@ public func empty_uuid() -> uuid_t {
 }
 
 public func random_uuid() -> uuid_t {
-	let u = UnsafeMutablePointer<UInt8>(allocatingCapacity: sizeof(uuid_t))
+	let u = UnsafeMutablePointer<UInt8>.alloc(sizeof(uuid_t))
 	defer {
 		u.deallocateCapacity(sizeof(uuid_t))
 	}
@@ -634,7 +653,7 @@ public func formatDate(date: Double, format: String, timezone inTimezone: String
 	var time = time_t(date / 1000.0)
 	gmtime_r(&time, &t)
 	let maxResults = 1024
-	let results = UnsafeMutablePointer<Int8>(allocatingCapacity: maxResults)
+	let results = UnsafeMutablePointer<Int8>.alloc(maxResults)
 	defer {
 		results.deallocateCapacity(maxResults)
 	}
