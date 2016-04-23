@@ -108,7 +108,7 @@ class NetEvent {
 		guard self.kq != -1 else {
 			Log.terminal("Unable to initialize event listener.")
 		}
-		self.evlist = UnsafeMutablePointer<event>(allocatingCapacity: self.numEvents)
+		self.evlist = UnsafeMutablePointer<event>.alloc(self.numEvents)
 		memset(self.evlist, 0, sizeof(event.self) * self.numEvents)
 	}
 

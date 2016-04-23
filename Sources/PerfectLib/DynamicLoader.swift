@@ -50,7 +50,11 @@ struct DynamicLoader {
 	func loadLibrary(atPath: String) -> Bool {
 		var fileName = atPath.lastPathComponent
 		if fileName.hasPrefix("lib") {
+		#if swift(>=3.0)
 			fileName.characters.removeFirst(3)
+		#else
+			fileName.removeRange(fileName.startIndex..<fileName.startIndex.advancedBy(3))
+		#endif
 		}
 		let moduleName = fileName.stringByDeletingPathExtension
 		return self.loadRealPath(atPath, moduleName: moduleName)

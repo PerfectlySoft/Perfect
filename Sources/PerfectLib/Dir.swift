@@ -111,7 +111,7 @@ public struct Dir {
 		defer { closedir(dir) }
 		
 		var ent = dirent()
-		let entPtr = UnsafeMutablePointer<UnsafeMutablePointer<dirent>>(allocatingCapacity: 1)
+		let entPtr = UnsafeMutablePointer<UnsafeMutablePointer<dirent>>.alloc(1)
 		defer { entPtr.deallocateCapacity(1) }
 		
 		while readdir_r(dir, &ent, entPtr) == 0 && entPtr.pointee != nil {
@@ -125,7 +125,11 @@ public struct Dir {
 			
 			var nameBuf = [CChar]()
 			let mirror = Mirror(reflecting: name)
+		#if swift(>=3.0)
 			let childGen = mirror.children.makeIterator()
+		#else
+			let childGen = mirror.children.generate()
+		#endif
 			for _ in 0..<nameLen {
 				let (_, elem) = childGen.next()!
 				if (elem as! Int8) == 0 {

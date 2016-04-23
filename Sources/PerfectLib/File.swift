@@ -70,7 +70,7 @@ public class File : Closeable {
 	public convenience init(tempFilePrefix: String) {
 		let template = tempFilePrefix + "XXXXXX"
 		let utf8 = template.utf8
-		let name = UnsafeMutablePointer<Int8>(allocatingCapacity: utf8.count + 1)
+		let name = UnsafeMutablePointer<Int8>.alloc(utf8.count + 1)
 		var i = utf8.startIndex
 		for index in 0..<utf8.count {
 			name[index] = Int8(utf8[i])
@@ -92,7 +92,7 @@ public class File : Closeable {
 	/// Returns the file path. If the file is a symbolic link, the link will be resolved.
 	public func realPath() -> String {
 		if isLink() {
-			let buffer = UnsafeMutablePointer<Int8>(allocatingCapacity: 2048)
+			let buffer = UnsafeMutablePointer<Int8>.alloc(2048)
 			let res = readlink(internalPath, buffer, 2048)
 			if res != -1 {
 				let ary = completeArray(buffer, count: res)
@@ -408,7 +408,7 @@ public class File : Closeable {
 			try openRead()
 		}
 		let bSize = min(count, self.sizeOr(count))
-		let ptr = UnsafeMutablePointer<UInt8>(allocatingCapacity: bSize)
+		let ptr = UnsafeMutablePointer<UInt8>.alloc(bSize)
 
 		let readCount = read(CInt(fd), ptr, bSize)
 		guard readCount >= 0 else {

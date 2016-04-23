@@ -39,7 +39,7 @@ public class NetTCP : Closeable {
 		let size: Int
 		init(size: Int) {
 			self.size = size
-			self.b = UnsafeMutablePointer<UInt8>(allocatingCapacity: size)
+			self.b = UnsafeMutablePointer<UInt8>.alloc(size)
 		}
 		
 		deinit {
@@ -81,9 +81,9 @@ public class NetTCP : Closeable {
 	
 	public func sockName() -> (String, UInt16) {
 		let staticBufferSize = 1024
-		var addr = UnsafeMutablePointer<sockaddr_in>(allocatingCapacity: 1)
-		var len = UnsafeMutablePointer<socklen_t>(allocatingCapacity: 1)
-		let buffer = UnsafeMutablePointer<Int8>(allocatingCapacity: staticBufferSize)
+		var addr = UnsafeMutablePointer<sockaddr_in>.alloc(1)
+		var len = UnsafeMutablePointer<socklen_t>.alloc(1)
+		let buffer = UnsafeMutablePointer<Int8>.alloc(staticBufferSize)
 		defer {
 			addr.deallocateCapacity(1)
 			len.deallocateCapacity(1)
@@ -101,9 +101,9 @@ public class NetTCP : Closeable {
 	
 	public func peerName() -> (String, UInt16) {
 		let staticBufferSize = 1024
-		var addr = UnsafeMutablePointer<sockaddr_in>(allocatingCapacity: 1)
-		let len = UnsafeMutablePointer<socklen_t>(allocatingCapacity: 1)
-		let buffer = UnsafeMutablePointer<Int8>(allocatingCapacity: staticBufferSize)
+		var addr = UnsafeMutablePointer<sockaddr_in>.alloc(1)
+		var len = UnsafeMutablePointer<socklen_t>.alloc(1)
+		let buffer = UnsafeMutablePointer<Int8>.alloc(staticBufferSize)
 		defer {
 			addr.deallocateCapacity(1)
 			len.deallocateCapacity(1)
@@ -199,7 +199,8 @@ public class NetTCP : Closeable {
 		return Darwin.send(self.fd.fd, buf, count, 0)
 	#endif
 	}
-	
+
+	#if swift(>=3.0)
 	private func makeAddress(sin: inout sockaddr_in, host: String, port: UInt16) -> Int {
 		let theHost: UnsafeMutablePointer<hostent> = gethostbyname(host)
 		if theHost == nil {
@@ -219,6 +220,27 @@ public class NetTCP : Closeable {
 		endhostent()
 		return 0
 	}
+	#else
+	private func makeAddress(inout sin: sockaddr_in, host: String, port: UInt16) -> Int {
+		let theHost: UnsafeMutablePointer<hostent> = gethostbyname(host)
+		if theHost == nil {
+			if inet_addr(host) == INADDR_NONE {
+				endhostent()
+				return -1
+			}
+		}
+		let bPort = port.bigEndian
+		sin.sin_port = in_port_t(bPort)
+		sin.sin_family = sa_family_t(AF_INET)
+		if theHost != nil {
+			sin.sin_addr.s_addr = UnsafeMutablePointer<UInt32>(theHost.pointee.h_addr_list.pointee).pointee
+		} else {
+			sin.sin_addr.s_addr = inet_addr(host)
+		}
+		endhostent()
+		return 0
+	}
+	#endif
 	
 	private func completeArray(from: ReferenceBuffer, count: Int) -> [UInt8] {
 		

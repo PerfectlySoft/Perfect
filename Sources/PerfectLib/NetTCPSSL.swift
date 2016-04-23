@@ -73,8 +73,11 @@ public class NetTCPSSL : NetTCP {
 			if !self.keyFilePassword.isEmpty {
 				
 				self.initSocket()
-
+			#if swift(>=3.0)
 				let opaqueMe = UnsafeMutablePointer<Void>(OpaquePointer(bitPattern: Unmanaged.passUnretained(self)))
+			#else
+				let opaqueMe = UnsafeMutablePointer<Void>(Unmanaged.passUnretained(self).toOpaque())
+			#endif
 				let callback: passwordCallbackFunc = {
 					
 					(buf, size, rwflag, userData) -> Int32 in
@@ -210,7 +213,7 @@ public class NetTCPSSL : NetTCP {
 	
 	public func errorStr(errorCode: Int32) -> String {
 		let maxLen = 1024
-		let buf = UnsafeMutablePointer<Int8>(allocatingCapacity: maxLen)
+		let buf = UnsafeMutablePointer<Int8>.alloc(maxLen)
 		defer {
 			buf.deallocateCapacity(maxLen)
 		}
@@ -522,7 +525,7 @@ public class NetTCPSSL : NetTCP {
 //	private func throwSSLNetworkError(err: Int32) throws {
 //		if err != 0 {
 //			let maxLen = 1024
-//			let buf = UnsafeMutablePointer<Int8>(allocatingCapacity: maxLen)
+//			let buf = UnsafeMutablePointer<Int8>.alloc(maxLen)
 //			defer {
 //				buf.destroy() ; buf.dealloc(maxLen)
 //			}

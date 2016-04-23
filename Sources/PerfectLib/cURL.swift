@@ -74,7 +74,11 @@ public class CURL {
 	
 	func setCurlOpts() {
 		curl_easy_setopt_long(self.curl!, CURLOPT_NOSIGNAL, 1)
+	#if swift(>=3.0)
 		let opaqueMe = UnsafeMutablePointer<Void>(OpaquePointer(bitPattern: Unmanaged.passUnretained(self)))
+	#else
+		let opaqueMe = UnsafeMutablePointer<Void>(Unmanaged.passUnretained(self).toOpaque())
+	#endif
 	#if Ubuntu_14_04
 		setOption(CURLOPT_WRITEHEADER, v: opaqueMe)
 		setOption(CURLOPT_FILE, v: opaqueMe)
@@ -256,7 +260,7 @@ public class CURL {
 	
 	/// Returns the String value for the given CURLINFO.
 	public func getInfo(info: CURLINFO) -> (String, CURLcode) {
-		let i = UnsafeMutablePointer<UnsafePointer<Int8>>(allocatingCapacity: 1)
+		let i = UnsafeMutablePointer<UnsafePointer<Int8>>.alloc(1)
 		defer { i.deinitialize(count: 1); i.deallocateCapacity(1) }
 		let code = curl_easy_getinfo_cstr(self.curl!, info, i)
 		return (code != CURLE_OK ? "" : String(validatingUTF8: i.pointee)!, code)

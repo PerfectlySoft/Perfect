@@ -144,6 +144,12 @@ public struct NotificationResponse {
 /// The interface for APNS notifications.
 public class NotificationPusher {
 	
+	#if swift(>=3.0)
+	typealias ComponentGenerator = IndexingIterator<[String]>
+	#else
+	typealias ComponentGenerator = IndexingGenerator<[String]>
+	#endif
+	
 	/// On-demand configuration for SSL related functions.
 	public typealias netConfigurator = (NetTCPSSL) -> ()
 	
@@ -339,8 +345,7 @@ public class NotificationPusher {
 		}
 	}
 	
-	func pushIOS(client: HTTP2Client, deviceTokens: IndexingIterator<[String]>, expiration: UInt32, priority: UInt8, notificationJson: [UInt8], callback: ([NotificationResponse]) -> ()) {
-
+	func pushIOS(client: HTTP2Client, deviceTokens: ComponentGenerator, expiration: UInt32, priority: UInt8, notificationJson: [UInt8], callback: ([NotificationResponse]) -> ()) {
 		var g = deviceTokens
 		if let next = g.next() {
 			pushIOS(client, deviceToken: next, expiration: expiration, priority: priority, notificationJson: notificationJson) {
