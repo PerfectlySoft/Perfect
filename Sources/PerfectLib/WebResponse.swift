@@ -47,6 +47,32 @@ public struct Cookie {
 	}
 }
 
+extension Cookie {
+    func serialize(timeStamp: Double) -> String {
+        var cookieLine = [String]()
+        
+        cookieLine.append("Set-Cookie: \(self.name!.stringByEncodingURL)=\(self.value!.stringByEncodingURL)")
+        if self.expiresIn != 0.0 {
+            let formattedDate = try! formatDate(timeStamp + secondsToICUDate(Int(self.expiresIn)*60),
+                                                format: "%a, %d-%b-%Y %T GMT", timezone: "GMT")
+            cookieLine.append("expires=\(formattedDate)")
+        }
+        if let path = self.path {
+            cookieLine.append("path=\(path)")
+        }
+        if let domain = self.domain {
+            cookieLine.append("domain=\(domain)")
+        }
+        if let secure = self.secure where secure == true {
+            cookieLine.append("secure")
+        }
+        if let httpOnly = self.httpOnly where httpOnly == true {
+            cookieLine.append("HttpOnly")
+        }
+        return cookieLine.joined(separator: ";")
+    }
+}
+
 /// Represents an outgoing web response. Handles the following tasks:
 /// - Management of sessions
 /// - Collecting HTTP response headers & cookies.
@@ -139,38 +165,12 @@ public class WebResponse {
 		// cookies
 		if self.cookiesArray.count > 0 {
 			let now = getNow()
+            
 			for cookie in self.cookiesArray {
-				var cookieLine = "Set-Cookie: "
-				cookieLine.append(cookie.name!.stringByEncodingURL)
-				cookieLine.append("=")
-				cookieLine.append(cookie.value!.stringByEncodingURL)
-				if cookie.expiresIn != 0.0 {
-					let formattedDate = try! formatDate(now + secondsToICUDate(Int(cookie.expiresIn)*60),
-						format: "%a, %d-%b-%Y %T GMT", timezone: "GMT")
-					cookieLine.append(";expires=" + formattedDate)
-				}
-				if let path = cookie.path {
-					cookieLine.append("; path=" + path)
-				}
-				if let domain = cookie.domain {
-					cookieLine.append("; domain=" + domain)
-				}
-				if let secure = cookie.secure {
-					if secure == true {
-						cookieLine.append("; secure")
-					}
-				}
-				if let httpOnly = cookie.httpOnly {
-					if httpOnly == true {
-						cookieLine.append("; HttpOnly")
-					}
-				}
-                // etc...
-                connection.writeHeaderLine(cookieLine)
+                connection.writeHeaderLine(cookie.serialize(now))
 			}
 		}
 		connection.writeHeaderLine("Content-Length: \(bodyData.count)")
-
 		connection.writeBodyBytes(bodyData)
 	}
 
