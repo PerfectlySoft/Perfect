@@ -79,7 +79,7 @@ public class CURL {
 	#else
 		let opaqueMe = UnsafeMutablePointer<Void>(Unmanaged.passUnretained(self).toOpaque())
 	#endif
-	#if Ubuntu_14_04
+	#if os(Linux)
 		setOption(CURLOPT_WRITEHEADER, v: opaqueMe)
 		setOption(CURLOPT_FILE, v: opaqueMe)
 		setOption(CURLOPT_INFILE, v: opaqueMe)
@@ -165,8 +165,8 @@ public class CURL {
 		if perf.0 == false { // done
 			closure(perf.1, header.data, body.data)
 		} else {
-			Threading.dispatchBlock { [weak self] in
-				self?.performInner(header, body: body, closure: closure)
+			Threading.dispatchBlock {
+				self.performInner(header, body: body, closure: closure)
 			}
 		}
 	}
