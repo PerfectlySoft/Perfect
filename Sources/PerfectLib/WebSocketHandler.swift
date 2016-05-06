@@ -275,7 +275,7 @@ private let webSocketGUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
 
 /// This request handler accepts WebSocket requests from client.
 /// It will initialize the session and then deliver it to the `WebSocketSessionHandler`.
-public struct WebSocketHandler {
+public struct WebSocketHandler: Responder {
 
 	public typealias HandlerProducer = (request: WebRequest, protocols: [String]) -> WebSocketSessionHandler?
 
@@ -285,25 +285,25 @@ public struct WebSocketHandler {
 		self.handlerProducer = handlerProducer
 	}
 
-	public func handleRequest(request: WebRequest, response: WebResponse) {
-
+    
+    
+//	public func handleRequest(request: WebRequest, response: WebResponse) {
+    func respond(to request: WebRequest) -> Response {
+        
 		guard let upgrade = request.header("Upgrade"),
 			connection = request.header("Connection"),
 			secWebSocketKey = request.header("Sec-WebSocket-Key"),
 			secWebSocketVersion = request.header("Sec-WebSocket-Version")
 			where upgrade.lowercased() == "websocket" && connection.lowercased().containsString("upgrade") else {
-
-				response.setStatus(400, message: "Bad Request")
-				response.requestCompleted()
-				return
+                
+                return Response(statusCode: (400, "Bad Request"), body: "")
 		}
 
 		guard acceptableProtocolVersions.contains(Int(secWebSocketVersion) ?? 0) else {
-			response.setStatus(400, message: "Bad Request")
-			response.addHeader("Sec-WebSocket-Version", value: "\(acceptableProtocolVersions[0])")
-			response.appendBodyString("WebSocket protocol version \(secWebSocketVersion) not supported. Supported protocol versions are: \(acceptableProtocolVersions)")
-			response.requestCompleted()
-			return
+            var response = Response(statusCode: (400, "Bad Request"),
+                                    body: "WebSocket protocol version \(secWebSocketVersion) not supported. Supported protocol versions are: \(acceptableProtocolVersions)")
+            response.headers["Sec-WebSocket-Version"] = "\(acceptableProtocolVersions[0])"
+            return response
 		}
 
 		let secWebSocketProtocol = request.header("Sec-WebSocket-Protocol") ?? ""
@@ -317,29 +317,24 @@ public struct WebSocketHandler {
 		}
 
 		guard let handler = self.handlerProducer(request: request, protocols: protocolList) else {
-			response.setStatus(400, message: "Bad Request")
-			response.appendBodyString("WebSocket protocols not supported.")
-			response.requestCompleted()
-			return
+            return Response(statusCode: (400, "Bad Request"), body: "WebSocket protocols not supported.")
 		}
 
-		response.requestCompleted = {} // this is no longer a normal request, eligible for keep-alive
+//		response.requestCompleted = {} // this is no longer a normal request, eligible for keep-alive
+        
 
-		response.setStatus(101, message: "Switching Protocols")
-		response.addHeader("Upgrade", value: "websocket")
-		response.addHeader("Connection", value: "Upgrade")
-		response.addHeader("Sec-WebSocket-Accept", value: self.base64((secWebSocketKey + webSocketGUID).utf8.sha1))
+        var response = Response(statusCode: (101, "Switching Protocols"), body: "")
+		response.headers["Upgrade"] = "websocket"
+		response.headers["Connection"] = "Upgrade"
+		response.headers["Sec-WebSocket-Accept"] = self.base64((secWebSocketKey + webSocketGUID).utf8.sha1)
+		response.keepAlive = true
 
 		if let chosenProtocol = handler.socketProtocol {
-			response.addHeader("Sec-WebSocket-Protocol", value: chosenProtocol)
+			response.headers["Sec-WebSocket-Protocol"] = chosenProtocol
 		}
 
-		for (key, value) in response.headersArray {
-			response.connection.writeHeaderLine(key + ": " + value)
-		}
-		response.connection.writeBodyBytes([UInt8]())
-
-		handler.handleSession(request, socket: WebSocket(connection: response.connection))
+		handler.handleSession(request, socket: WebSocket(connection: request.connection))
+        return response
 	}
 
 	private func base64(a: [UInt8]) -> String {

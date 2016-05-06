@@ -21,7 +21,7 @@
 /// Holds the registered routes.
 public struct RouteMap: CustomStringConvertible {
 	
-	public typealias RequestHandler = (WebRequest, WebResponse) -> ()
+	public typealias RequestHandler = (WebRequest, WebResponse) -> Response
 	
 	/// Pretty prints all route information.
 	public var description: String {
@@ -138,15 +138,13 @@ public class Routing {
 	
 	/// Handle the request, triggering the routing system.
 	/// If a route is discovered the request is sent to the new handler.
-	public static func handleRequest(request: WebRequest, response: WebResponse) {
+	public static func handleRequest(request: WebRequest, response: WebResponse) -> Response {
 		let pathInfo = request.requestURI?.characters.split(separator: "?").map { String($0) }.first ?? "/"
 		
 		if let handler = Routing.Routes[pathInfo, response] {
-			handler(request, response)
+			return handler(request, response)
 		} else {
-			response.setStatus(404, message: "NOT FOUND")
-			response.appendBodyString("The file \(pathInfo) was not found.")
-			response.requestCompleted()
+            return .NotFound("The file \(pathInfo) was not found.")
 		}
 	}
 	
@@ -362,5 +360,448 @@ class RouteVariable: RouteNode {
 
 
 
+
+
+
+struct HTTPMethod {
+    let methodString: String
+    
+    init(_ methodString: String) {
+        self.methodString = methodString
+    }
+    
+    static let GET = HTTPMethod("GET")
+    static let POST = HTTPMethod("POST")
+    static let PUT = HTTPMethod("PUT")
+    static let PATCH = HTTPMethod("PATCH")
+    static let DELETE = HTTPMethod("DELETE")
+}
+
+
+
+public final class Router: Responder {
+    
+    private let routeMatcher: RouteMatcher
+    
+    init(matcherType: RouteMatcher.Type, buildFunc: (RouterBuilder)->()) throws {
+        let builder = RouterBuilder()
+        buildFunc(builder)
+        self.routeMatcher = try builder.build(matcherType)
+    }
+    
+    
+    func respond(to request: WebRequest) -> Response {
+        
+        return self.routeMatcher.matchRoute(request)
+            .map { $0.handler.respond(request, params: $0.params) } ?? .InternalError("Handler not found")
+    }
+    
+}
+
+typealias HandlerGenerator = () -> RouteResponder
+
+
+enum RouteMethodKey {
+    case Any
+    case Specific(HTTPMethod)
+}
+
+struct RouteKey {
+    let method: RouteMethodKey
+    let pattern: String
+}
+
+
+protocol RouteMatcher {
+    
+    init(routes: [RouteKey: HandlerGenerator]) throws
+    func matchRoute(request: WebRequest) -> (handler: RouteResponder, params: [String:String])?
+}
+
+extension RouteMethodKey: Hashable {
+    var hashValue: Int {
+        switch self {
+        case .Any: return 0
+        case .Specific(let method): return method.methodString.hashValue
+        }
+    }
+}
+
+func ==(lhs: RouteMethodKey, rhs: RouteMethodKey) -> Bool {
+    switch (lhs, rhs) {
+    case (.Any, .Any): return true
+    case (.Specific(let method1), .Specific(let method2)): return method1.methodString == method2.methodString
+    default: return false
+    }
+}
+
+extension RouteKey: Hashable {
+    var hashValue: Int {
+        return self.method.hashValue ^ self.pattern.hashValue
+    }
+}
+
+func ==(lhs: RouteKey, rhs: RouteKey) -> Bool {
+    return lhs.method == rhs.method && lhs.pattern == rhs.pattern
+}
+
+public class RouterBuilder {
+    
+    private var routes = [RouteKey: HandlerGenerator]()
+    
+    func addRoute(method: RouteMethodKey, pathPattern: String, handlerGenerator: HandlerGenerator) {
+        routes[RouteKey(method: method, pattern: pathPattern)] = handlerGenerator
+    }
+    
+    func addRoute(method: HTTPMethod, pathPattern: String, handlerGenerator: HandlerGenerator) {
+        self.addRoute(.Specific(method), pathPattern: pathPattern, handlerGenerator: handlerGenerator)
+    }
+    
+    func addRoute(methods: [HTTPMethod], pathPattern: String, handlerGenerator: HandlerGenerator) {
+        for method in methods {
+            self.addRoute(.Specific(method), pathPattern: pathPattern, handlerGenerator: handlerGenerator)
+        }
+    }
+    
+    private func build(matcherType: RouteMatcher.Type) throws -> RouteMatcher {
+        return try matcherType.init(routes: self.routes)
+    }
+}
+
+extension RouterBuilder {
+    
+    func GET(pattern: String, handler: RouteResponder) {
+        self.addRoute(.GET, pathPattern: pattern) { handler }
+    }
+    
+    func GET(pattern: String, handlerGenerator: () -> RouteResponder) {
+        self.addRoute(.GET, pathPattern: pattern, handlerGenerator: handlerGenerator)
+    }
+    
+    func POST(pattern: String, handlerGenerator: () -> RouteResponder) {
+        self.addRoute(.POST, pathPattern: pattern, handlerGenerator: handlerGenerator)
+    }
+    
+    func POST(pattern: String, handler: RouteResponder) {
+        self.POST(pattern) { handler }
+    }
+    
+    func DELETE(pattern: String, handlerGenerator: () -> RouteResponder) {
+        self.addRoute(.DELETE, pathPattern: pattern, handlerGenerator: handlerGenerator)
+    }
+    
+    func DELETE(pattern: String, handler: RouteResponder) {
+        self.DELETE(pattern) { handler }
+    }
+    
+    func PATCH(pattern: String, handlerGenerator: () -> RouteResponder) {
+        self.addRoute(.PATCH, pathPattern: pattern, handlerGenerator: handlerGenerator)
+    }
+    
+    func PATCH(pattern: String, handler: RouteResponder) {
+        self.PATCH(pattern) { handler }
+    }
+    
+    
+}
+
+
+protocol RouteResponder {
+    func respond(request: WebRequest, params: [String:String]) -> Response
+}
+
+
+private protocol TrieNode: class {
+    var children: [protocol<TrieNode, NonRootTrieNode>] { get set }
+    var handler: HandlerGenerator? { get set}
+    var path: [String] { get set }
+    var segment: String { get }
+    
+    func matchPathSegment(path: String) -> Bool
+    func updateContext(path: String, inout context: [String: String])
+}
+
+private protocol NonRootTrieNode {}
+
+enum TrieNodeBuildError: ErrorType {
+    case OverridingHandler
+    case ConflictingRoutes(paths: [String])
+    case EmptyRoutePath
+}
+
+extension TrieNode {
+    
+    
+    func evaluate(pathSegments: [String], inout context: [String: String]) -> ([String:String], HandlerGenerator)? {
+        
+        var strippedPathSegments = pathSegments
+        let segment = strippedPathSegments.removeFirst()
+        
+        if self.matchPathSegment(segment) {
+            self.updateContext(segment, context: &context)
+            if strippedPathSegments.count > 0 {
+                for node in self.children {
+                    if let (context, handler) = node.evaluate(strippedPathSegments, context: &context) {
+                        return (context, handler)
+                    }
+                }
+                return nil
+            } else {
+                return self.handler.map { (context, $0) }
+            }
+        } else {
+            return nil
+        }
+    }
+    
+    
+    func matchTrie(node: TrieNode) -> (TrieNode, TrieNode)? {
+        if self.matchPathSegment(node.segment) || node.matchPathSegment(self.segment) {
+            if node.children.count > 0 || self.children.count > 0 {
+                var found:(TrieNode, TrieNode)? = nil
+                for myChild in self.children {
+                    for hisChild in node.children {
+                        found = myChild.matchTrie(hisChild)
+                        if found != nil { break }
+                    }
+                    if found != nil { break }
+                }
+                return found
+            } else {
+                return (self, node)
+            }
+        } else {
+            return nil
+        }
+    }
+    
+    func addNode(newNode: protocol<TrieNode, NonRootTrieNode>) throws {
+        
+        newNode.setParentPath(self.path)
+        
+        for node in self.children {
+            if let pair = newNode.matchTrie(node) {
+                throw TrieNodeBuildError.ConflictingRoutes(paths: [
+                    pair.0.path.joinWithSeparator("/"),
+                    pair.1.path.joinWithSeparator("/")
+                    ])
+            }
+        }
+        self.children.append(newNode)
+    }
+    
+    func setParentPath(path: [String]) {
+        self.path = Array([path, [self.segment]].flatten())
+        for child in self.children {
+            child.setParentPath(self.path)
+        }
+    }
+    
+    func updateContext(path: String, inout context: [String: String]) {
+        
+    }
+}
+
+private extension TrieNode where Self: NonRootTrieNode {
+    func addHandler(handler: HandlerGenerator, path: [String],
+                    nodeBuilder: (path: String) -> protocol<TrieNode,NonRootTrieNode>) throws {
+        var found = false
+        if path.count == 0 {
+            if self.handler != nil {
+                throw TrieNodeBuildError.OverridingHandler
+            }
+            self.handler = handler
+        } else {
+            
+            var newPath = path
+            let firstComp = newPath.removeFirst()
+            
+            for child in self.children {
+                if child.segment == firstComp {
+                    try child.addHandler(handler, path: newPath, nodeBuilder: nodeBuilder)
+                    found = true
+                    break
+                }
+            }
+            if !found {
+                
+                let node = nodeBuilder(path: firstComp)
+                try node.addHandler(handler, path: newPath, nodeBuilder: nodeBuilder)
+                try self.addNode(node)
+            }
+        }
+    }
+}
+
+
+private class PathNode: TrieNode, NonRootTrieNode {
+    
+    private var path: [String]
+    
+    let segment: String
+    var children: [protocol<TrieNode, NonRootTrieNode>] = []
+    var handler: HandlerGenerator? = nil
+    
+    
+    init(segment: String) {
+        self.segment = segment
+        self.path = [segment]
+    }
+    
+    func matchPathSegment(segment: String) -> Bool {
+        return self.segment == segment
+    }
+    
+    
+}
+
+
+
+private class WildcardNode: TrieNode, NonRootTrieNode {
+    var children: [protocol<TrieNode, NonRootTrieNode>] = []
+    var handler: HandlerGenerator? = nil
+    var segment: String {
+        return "*"
+    }
+    
+    var path: [String]
+    
+    init() {
+        self.path = ["*"]
+    }
+    
+    func matchPathSegment(path: String) -> Bool {
+        return true
+    }
+}
+
+private class VariableNode: TrieNode, NonRootTrieNode {
+    let name: String
+    var segment: String {
+        return ":\(self.name)"
+    }
+    
+    private var path: [String]
+    
+    var children: [protocol<TrieNode, NonRootTrieNode>] = []
+    var handler: HandlerGenerator? = nil
+    
+    init(name: String) {
+        self.name = name
+        self.path = [":\(name)"]
+    }
+    
+    func matchPathSegment(path: String) -> Bool {
+        return true
+    }
+    
+    func updateContext(path: String, inout context: [String: String]) {
+        context[self.name] = path
+    }
+    
+}
+
+private class RootRouteNode: TrieNode {
+    private var path: [String] = []
+    var children: [protocol<TrieNode, NonRootTrieNode>] = []
+    var handler: HandlerGenerator? = nil
+    let segment: String = ""
+    
+    func matchPathSegment(path: String) -> Bool {
+        return path == self.segment
+    }
+    
+    func addHandler(method: RouteMethodKey,
+                    path: [String],
+                    handler: HandlerGenerator,
+                    nodeBuilder: (path: String) -> protocol<TrieNode,NonRootTrieNode> ) throws {
+        guard path.count > 0 else { throw TrieNodeBuildError.EmptyRoutePath }
+        
+        var methodNode: protocol<TrieNode, NonRootTrieNode> = RouteMethodNode(method: method)
+        if let idx = (self.children.indexOf { $0.segment == methodNode.segment }) {
+            methodNode = self.children[idx]
+            try methodNode.addHandler(handler, path: path, nodeBuilder: nodeBuilder)
+        } else {
+            try methodNode.addHandler(handler, path: path, nodeBuilder: nodeBuilder)
+            try self.addNode(methodNode)
+        }
+        
+    }
+}
+
+private class RouteMethodNode: TrieNode, NonRootTrieNode {
+    private var path: [String] = []
+    var children: [protocol<TrieNode, NonRootTrieNode>] = []
+    var handler: HandlerGenerator? = nil
+    let methodSpec: RouteMethodKey
+    
+    static func segmentPresentation(methodKey: RouteMethodKey) -> String {
+        switch methodKey {
+        case .Any:
+            return "AnyMethod"
+        case .Specific(let method):
+            return method.methodString
+        }
+    }
+    
+    var segment: String {
+        return RouteMethodNode.segmentPresentation(self.methodSpec)
+    }
+    
+    init(method: RouteMethodKey) {
+        self.methodSpec = method
+    }
+    
+    func matchPathSegment(path: String) -> Bool {
+        switch self.methodSpec {
+        case .Any: return true
+        case .Specific(let method):
+            return method.methodString.caseInsensitiveCompare(path) == .OrderedSame
+        }
+    }
+    
+}
+
+
+
+final class PerfectRouteMatcher : RouteMatcher {
+    
+    private static func nodeForPathSegment(segment: String) -> protocol<TrieNode, NonRootTrieNode> {
+        switch segment {
+        case "*": return WildcardNode()
+        case let s where s.utf8.count > 0 && s.substringToIndex(s.startIndex.advancedBy(1)) == ":" :
+            return VariableNode(name: s.substringFromIndex(s.startIndex.advancedBy(1)))
+        default: return PathNode(segment: segment)
+        }
+    }
+    
+    
+    private let rootNode: TrieNode
+    
+    init(routes: [RouteKey : HandlerGenerator]) throws {
+        
+        let rootNode = RootRouteNode()
+        for (routeKey, handler) in routes {
+            
+            let path = routeKey.pattern.componentsSeparatedByString("/").filter { $0 != "" }
+            try rootNode.addHandler(routeKey.method,
+                                    path: path,
+                                    handler: handler,
+                                    nodeBuilder: PerfectRouteMatcher.nodeForPathSegment)
+        }
+        self.rootNode = rootNode
+    }
+    
+    func matchRoute(request: WebRequest) -> (handler: RouteResponder, params: [String:String])? {
+        var context = [String: String]()
+        let methodAndPath = Array([
+            [""],
+            [RouteMethodNode.segmentPresentation(.Specific(HTTPMethod(request.requestMethod!)))],
+            request.path!.componentsSeparatedByString("/").filter { $0 != "" }
+            ].flatten())
+        return self.rootNode.evaluate(methodAndPath, context: &context)
+            .map { ($0.1(), $0.0) }
+    }
+}
 
 

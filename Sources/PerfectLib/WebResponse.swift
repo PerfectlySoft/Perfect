@@ -73,6 +73,8 @@ extension Cookie {
     }
 }
 
+
+
 /// Represents an outgoing web response. Handles the following tasks:
 /// - Management of sessions
 /// - Collecting HTTP response headers & cookies.
@@ -127,88 +129,67 @@ public class WebResponse {
 	}
 
 	func respond(completion: () -> ()) {
-
-		self.requestCompleted = { [weak self] in
-			self?.sendResponse()
-			completion()
-		}
-
-		doMainBody()
+        self.sendResponse(doMainBody())
 	}
 
-	/// Perform a 302 redirect to the given url
-	public func redirectTo(url: String) {
-		self.setStatus(302, message: "FOUND")
-		self.replaceHeader("Location", value: url)
-	}
-
-	/// Add an outgoing HTTP header
-	public func addHeader(name: String, value: String) {
-		self.headersArray.append( (name, value) )
-	}
-
-	/// Set a HTTP header, replacing all existing instances of said header
-	public func replaceHeader(name: String, value: String) {
-		for i in 0..<self.headersArray.count {
-			if self.headersArray[i].0 == name {
-				self.headersArray.remove(at: i)
-			}
-		}
-		self.addHeader(name, value: value)
-	}
 
 	// directly called by the WebSockets impl
-	func sendResponse() {
-		for (key, value) in headersArray {
-			connection.writeHeaderLine(key + ": " + value)
-		}
+    func sendResponse(response: Response) {
+        
+        for (key, value) in response.headers {
+            connection.writeHeaderLine("\(key): \(value)")
+        }
+        
 		// cookies
-		if self.cookiesArray.count > 0 {
+		if response.cookies.count > 0 {
 			let now = getNow()
             
-			for cookie in self.cookiesArray {
+			for cookie in response.cookies {
                 connection.writeHeaderLine(cookie.serialize(now))
 			}
 		}
 		connection.writeHeaderLine("Content-Length: \(bodyData.count)")
-		connection.writeBodyBytes(bodyData)
+        response.body.observe({ data in
+                self.connection.writeBodyBytes(data)
+            }, end: {
+                self.connection.connection.close()
+            })
 	}
 
-	private func doMainBody() {
+	private func doMainBody() -> Response {
 
 		do {
-
 			return try include(request.pathInfo ?? "error", local: false)
 
 		} catch PerfectError.FileError(let code, let msg) {
 
 			print("File exception \(code) \(msg)")
-			self.setStatus(code == 404 ? Int(code) : 500, message: msg)
-			self.bodyData = [UInt8]("File exception \(code) \(msg)".utf8)
+            return Response(statusCode: (Int(code), msg),
+                body: "File exception \(code) \(msg)")
+                
 
 		} catch MustacheError.SyntaxError(let msg) {
 
 			print("MustacheError.SyntaxError \(msg)")
-			self.setStatus(500, message: msg)
-			self.bodyData = [UInt8]("Mustache syntax error \(msg)".utf8)
+            return .InternalError("Mustache syntax error \(msg)")
 
 		} catch MustacheError.EvaluationError(let msg) {
 
 			print("MustacheError.EvaluationError exception \(msg)")
-			self.setStatus(500, message: msg)
-			self.bodyData = [UInt8]("Mustache evaluation error \(msg)".utf8)
+            return .InternalError("Mustache evaluation error \(msg)")
 
 		} catch let e {
 			print("Unexpected exception \(e)")
+            return .InternalError("Unexpected exception \(e)")
 		}
-		self.requestCompleted()
+        
 	}
 
-	func includeVirtual(path: String) throws {
-		Routing.handleRequest(self.request, response: self)
+	func includeVirtual(path: String) throws -> Response {
+		return Routing.handleRequest(self.request, response: self)
 	}
 
-	func include(path: String, local: Bool) throws {
+	func include(path: String, local: Bool) throws -> Response {
 		return try self.includeVirtual(path)
 	}
 

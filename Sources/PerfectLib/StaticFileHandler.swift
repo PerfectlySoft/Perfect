@@ -18,10 +18,10 @@
 //
 
 public struct StaticFileHandler {
-	
+    
 	public init() {}
 	
-	public func handleRequest(request: WebRequest, response: WebResponse) {
+	public func handleRequest(request: WebRequest, response: WebResponse) -> Response {
 		
 		var requestUri = request.requestURI ?? ""
 		if requestUri.hasSuffix("/") {
@@ -31,18 +31,18 @@ public struct StaticFileHandler {
 		let file = File(documentRoot + "/" + requestUri)
 		
 		guard file.exists() else {
-			response.setStatus(404, message: "Not Found")
-			response.appendBodyString("The file \(requestUri) was not found.")
-			// !FIX! need 404.html or some such thing
-			response.requestCompleted()
-			return
+            return .NotFound("The file \(requestUri) was not found.")
+//			response.setStatus(404, message: "Not Found")
+//			response.appendBodyString("The file \(requestUri) was not found.")
+//			// !FIX! need 404.html or some such thing
+//			response.requestCompleted()
+//			return
 		}
 		
-		self.sendFile(response, file: file)
-		response.requestCompleted()
+		return self.sendFileResponse(response, file: file)
 	}
 	
-	func sendFile(response: WebResponse, file: File) {
+	func sendFileResponse(response: WebResponse, file: File) -> Response {
 		
 		defer {
 			file.close()
@@ -52,11 +52,12 @@ public struct StaticFileHandler {
 		response.setStatus(200, message: "OK")
 		
 		do {
-			let bytes = try file.readSomeBytes(size)
-			response.addHeader("Content-type", value: MimeType.forExtension(file.path().pathExtension))
-			response.appendBodyBytes(bytes)
+            let bytes = try file.readSomeBytes(size)
+            var response = Response( bytes: bytes)
+            response.headers["Content-type"] = MimeType.forExtension(file.path().pathExtension)
+            return response
 		} catch {
-			response.setStatus(500, message: "Internal server error")
+            return .InternalError("Internal server error")
 		}
 	}
 }
