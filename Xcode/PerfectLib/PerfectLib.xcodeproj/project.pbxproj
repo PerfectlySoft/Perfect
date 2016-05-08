@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		3C44A20E1CCF18450090736E /* Responder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C44A20D1CCF18450090736E /* Responder.swift */; };
+		3C617B5C1CDFCB4E0091BD74 /* MiddlewareResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C617B5B1CDFCB4E0091BD74 /* MiddlewareResponder.swift */; };
+		3C617B5E1CDFCBFF0091BD74 /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C617B5D1CDFCBFF0091BD74 /* Response.swift */; };
 		F80C63AE1CC158F40002F3C9 /* Bytes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F80C63AD1CC158F40002F3C9 /* Bytes.swift */; };
 		F80C63D21CC1590F0002F3C9 /* cURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = F80C63AF1CC1590E0002F3C9 /* cURL.swift */; };
 		F80C63D31CC1590F0002F3C9 /* Dir.swift in Sources */ = {isa = PBXBuildFile; fileRef = F80C63B01CC1590E0002F3C9 /* Dir.swift */; };
@@ -65,6 +67,8 @@
 
 /* Begin PBXFileReference section */
 		3C44A20D1CCF18450090736E /* Responder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Responder.swift; path = ../../Sources/PerfectLib/Responder.swift; sourceTree = "<group>"; };
+		3C617B5B1CDFCB4E0091BD74 /* MiddlewareResponder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MiddlewareResponder.swift; path = ../../Sources/PerfectLib/MiddlewareResponder.swift; sourceTree = "<group>"; };
+		3C617B5D1CDFCBFF0091BD74 /* Response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Response.swift; path = ../../Sources/PerfectLib/Response.swift; sourceTree = "<group>"; };
 		F80C63AD1CC158F40002F3C9 /* Bytes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Bytes.swift; path = ../../Sources/PerfectLib/Bytes.swift; sourceTree = "<group>"; };
 		F80C63AF1CC1590E0002F3C9 /* cURL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = cURL.swift; path = ../../Sources/PerfectLib/cURL.swift; sourceTree = "<group>"; };
 		F80C63B01CC1590E0002F3C9 /* Dir.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Dir.swift; path = ../../Sources/PerfectLib/Dir.swift; sourceTree = "<group>"; };
@@ -215,6 +219,8 @@
 				F80C63D11CC1590F0002F3C9 /* WebSocketHandler.swift */,
 				F8AB3D931CCAB763002CE7A0 /* SwiftCompatibility.swift */,
 				3C44A20D1CCF18450090736E /* Responder.swift */,
+				3C617B5B1CDFCB4E0091BD74 /* MiddlewareResponder.swift */,
+				3C617B5D1CDFCBFF0091BD74 /* Response.swift */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -358,7 +364,9 @@
 				F80C63E51CC1590F0002F3C9 /* NetTCPSSL.swift in Sources */,
 				F80C63EC1CC1590F0002F3C9 /* SysProcess.swift in Sources */,
 				F80C63DA1CC1590F0002F3C9 /* HTTPServer.swift in Sources */,
+				3C617B5E1CDFCBFF0091BD74 /* Response.swift in Sources */,
 				F80C63D71CC1590F0002F3C9 /* File.swift in Sources */,
+				3C617B5C1CDFCB4E0091BD74 /* MiddlewareResponder.swift in Sources */,
 				F80C63F21CC1590F0002F3C9 /* WebRequest.swift in Sources */,
 				F80C63E91CC1590F0002F3C9 /* PerfectServer.swift in Sources */,
 				F8AB3D941CCAB763002CE7A0 /* SwiftCompatibility.swift in Sources */,
