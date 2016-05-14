@@ -36,7 +36,7 @@ public class FastCGIServer {
 	}
 
 	/// Start the server on the indicated named pipe
-	public func start(namedPipe: String) throws {
+	public func start(namedPipe namedPipe: String) throws {
 		if access(namedPipe, F_OK) != -1 {
 			// exists. remove it
 			unlink(namedPipe)
@@ -57,7 +57,7 @@ public class FastCGIServer {
 	}
 
 	/// Start the server on the indicated TCP port and optional address
-	public func start(port: UInt16, bindAddress: String = "0.0.0.0") throws {
+	public func start(port port: UInt16, bindAddress: String = "0.0.0.0") throws {
 		let socket = NetTCP()
 		socket.initSocket()
 		try socket.bind(port: port, address: bindAddress)
