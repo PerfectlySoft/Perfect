@@ -31,32 +31,32 @@ public struct StaticFileHandler {
 		let file = File(documentRoot + "/" + requestUri)
 		
 		guard file.exists() else {
-			response.setStatus(404, message: "Not Found")
-			response.appendBodyString("The file \(requestUri) was not found.")
+			response.setStatus(code: 404, message: "Not Found")
+			response.appendBody(string: "The file \(requestUri) was not found.")
 			// !FIX! need 404.html or some such thing
 			response.requestCompleted()
 			return
 		}
 		
-		self.sendFile(response, file: file)
+		self.sendFile(response: response, file: file)
 		response.requestCompleted()
 	}
 	
-	func sendFile(response: WebResponse, file: File) {
+	func sendFile(response response: WebResponse, file: File) {
 		
 		defer {
 			file.close()
 		}
 		
 		let size = file.size()
-		response.setStatus(200, message: "OK")
+		response.setStatus(code: 200, message: "OK")
 		
 		do {
-			let bytes = try file.readSomeBytes(size)
-			response.addHeader("Content-type", value: MimeType.forExtension(file.path().pathExtension))
-			response.appendBodyBytes(bytes)
+			let bytes = try file.readSomeBytes(count: size)
+			response.addHeader(name: "Content-type", value: MimeType.forExtension(file.path().pathExtension))
+			response.appendBody(bytes: bytes)
 		} catch {
-			response.setStatus(500, message: "Internal server error")
+			response.setStatus(code: 500, message: "Internal server error")
 		}
 	}
 }

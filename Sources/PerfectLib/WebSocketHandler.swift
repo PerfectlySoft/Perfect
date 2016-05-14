@@ -44,7 +44,7 @@ public class WebSocket {
 		let bytesPayload: [UInt8]
 
 		var stringPayload: String? {
-			return UTF8Encoding.encode(self.bytesPayload)
+			return UTF8Encoding.encode(bytes: self.bytesPayload)
 		}
 	}
 
@@ -65,7 +65,7 @@ public class WebSocket {
 	public func close() {
 		if self.socket.fd.isValid {
 
-			self.sendMessage(.Close, bytes: [UInt8](), final: true) {
+			self.sendMessage(opcode: .Close, bytes: [UInt8](), final: true) {
 				self.socket.close()
 			}
 		}
@@ -121,11 +121,11 @@ public class WebSocket {
 
 		if self.readBuffer.availableExportBytes >= 4 {
 
-			let maskingKey = self.readBuffer.exportBytes(4)
+			let maskingKey = self.readBuffer.exportBytes(count: 4)
 
 			if self.readBuffer.availableExportBytes >= unmaskedLength {
 
-				var exported = self.readBuffer.exportBytes(unmaskedLength)
+				var exported = self.readBuffer.exportBytes(count: unmaskedLength)
 				for i in 0..<exported.count {
 					exported[i] = exported[i] ^ maskingKey[i % 4]
 				}
@@ -138,8 +138,8 @@ public class WebSocket {
 		return nil
 	}
 
-	func fillBuffer(demand: Int, completion: (Bool) -> ()) {
-		self.socket.readBytesFully(demand, timeoutSeconds: self.readTimeoutSeconds) {
+	func fillBuffer(demand demand: Int, completion: (Bool) -> ()) {
+		self.socket.readBytesFully(count: demand, timeoutSeconds: self.readTimeoutSeconds) {
 			[weak self] (b:[UInt8]?) -> () in
 			if let b = b {
 				self?.readBuffer.data.append(contentsOf: b)
@@ -148,8 +148,8 @@ public class WebSocket {
 		}
 	}
 
-	func fillBufferSome(suggestion: Int, completion: () -> ()) {
-		self.socket.readSomeBytes(suggestion) {
+	func fillBufferSome(suggestion suggestion: Int, completion: () -> ()) {
+		self.socket.readSomeBytes(count: suggestion) {
 			[weak self] (b:[UInt8]?) -> () in
 			if let b = b {
 				self?.readBuffer.data.append(contentsOf: b)
@@ -158,14 +158,14 @@ public class WebSocket {
 		}
 	}
 
-	private func readFrame(completion: (Frame?) -> ()) {
+	private func readFrame(completion completion: (Frame?) -> ()) {
 		if let frame = self.fillFrame() {
 
 			switch frame.opCode {
 			// check for and handle ping/pong
 			case .Ping:
-				self.sendMessage(.Pong, bytes: frame.bytesPayload, final: true) {
-					self.readFrame(completion)
+				self.sendMessage(opcode: .Pong, bytes: frame.bytesPayload, final: true) {
+					self.readFrame(completion: completion)
 				}
 				return
 			// check for and handle close
@@ -176,13 +176,13 @@ public class WebSocket {
 				return completion(frame)
 			}
 		}
-		self.fillBuffer(1) {
+		self.fillBuffer(demand: 1) {
 			b in
 			guard b != false else {
 				return completion(nil)
 			}
-			self.fillBufferSome(1024 * 32) { // some arbitrary read-ahead amount
-				self.readFrame(completion)
+			self.fillBufferSome(suggestion: 1024 * 32) { // some arbitrary read-ahead amount
+				self.readFrame(completion: completion)
 			}
 		}
 	}
@@ -205,54 +205,54 @@ public class WebSocket {
 
 	/// Send binary data to thew client.
 	public func sendBinaryMessage(bytes: [UInt8], final: Bool, completion: () -> ()) {
-		self.sendMessage(.Binary, bytes: bytes, final: final, completion: completion)
+		self.sendMessage(opcode: .Binary, bytes: bytes, final: final, completion: completion)
 	}
 
 	/// Send string data to the client.
 	public func sendStringMessage(string: String, final: Bool, completion: () -> ()) {
-		self.sendMessage(.Text, bytes: UTF8Encoding.decode(string), final: final, completion: completion)
+		self.sendMessage(opcode: .Text, bytes: UTF8Encoding.decode(string: string), final: final, completion: completion)
 	}
 
 	/// Send a "pong" message to the client.
 	public func sendPong(completion: () -> ()) {
-		self.sendMessage(.Pong, bytes: [UInt8](), final: true, completion: completion)
+		self.sendMessage(opcode: .Pong, bytes: [UInt8](), final: true, completion: completion)
 	}
 
 	/// Send a "ping" message to the client.
 	/// Expect a "pong" message to follow.
 	public func sendPing(completion: () -> ()) {
-		self.sendMessage(.Ping, bytes: [UInt8](), final: true, completion: completion)
+		self.sendMessage(opcode: .Ping, bytes: [UInt8](), final: true, completion: completion)
 	}
 
-	private func sendMessage(opcode: OpcodeType, bytes: [UInt8], final: Bool, completion: () -> ()) {
+	private func sendMessage(opcode opcode: OpcodeType, bytes: [UInt8], final: Bool, completion: () -> ()) {
 		let sendBuffer = Bytes()
 
 		let byte1 = UInt8(final ? 0x80 : 0x0) | (self.nextIsContinuation ? 0 : opcode.rawValue)
 
 		self.nextIsContinuation = !final
 
-		sendBuffer.import8Bits(byte1)
+		sendBuffer.import8Bits(from: byte1)
 
 		let payloadSize = bytes.count
 		if payloadSize < smallPayloadSize {
 
 			let byte2 = UInt8(payloadSize)
 
-			sendBuffer.import8Bits(byte2)
+			sendBuffer.import8Bits(from: byte2)
 
 		} else if payloadSize <= Int(UINT16_MAX) {
 
-			sendBuffer.import8Bits(UInt8(smallPayloadSize))
-				.import16Bits(htons(UInt16(payloadSize)))
+			sendBuffer.import8Bits(from: UInt8(smallPayloadSize))
+				.import16Bits(from: htons(UInt16(payloadSize)))
 
 		} else {
 
-			sendBuffer.import8Bits(UInt8(1+smallPayloadSize))
-				.import64Bits(htonll(UInt64(payloadSize)))
+			sendBuffer.import8Bits(from: UInt8(1+smallPayloadSize))
+				.import64Bits(from: htonll(UInt64(payloadSize)))
 
 		}
-		sendBuffer.importBytes(bytes)
-		self.socket.writeBytes(sendBuffer.data) {
+		sendBuffer.importBytes(from: bytes)
+		self.socket.write(bytes: sendBuffer.data) {
 			_ in
 			completion()
 		}
@@ -266,7 +266,7 @@ public protocol WebSocketSessionHandler {
 	/// If this has a valid, the protocol name will be validated against what the client is requesting.
 	var socketProtocol: String? { get }
 	/// This function is called once the WebSocket session has been initiated.
-	func handleSession(request: WebRequest, socket: WebSocket)
+	func handleSession(request request: WebRequest, socket: WebSocket)
 
 }
 
@@ -287,26 +287,26 @@ public struct WebSocketHandler {
 
 	public func handleRequest(request: WebRequest, response: WebResponse) {
 
-		guard let upgrade = request.header("Upgrade"),
-			connection = request.header("Connection"),
-			secWebSocketKey = request.header("Sec-WebSocket-Key"),
-			secWebSocketVersion = request.header("Sec-WebSocket-Version")
-			where upgrade.lowercased() == "websocket" && connection.lowercased().containsString("upgrade") else {
+		guard let upgrade = request.header(named: "Upgrade"),
+			connection = request.header(named: "Connection"),
+			secWebSocketKey = request.header(named: "Sec-WebSocket-Key"),
+			secWebSocketVersion = request.header(named: "Sec-WebSocket-Version")
+			where upgrade.lowercased() == "websocket" && connection.lowercased().contains(string: "upgrade") else {
 
-				response.setStatus(400, message: "Bad Request")
+				response.setStatus(code: 400, message: "Bad Request")
 				response.requestCompleted()
 				return
 		}
 
 		guard acceptableProtocolVersions.contains(Int(secWebSocketVersion) ?? 0) else {
-			response.setStatus(400, message: "Bad Request")
-			response.addHeader("Sec-WebSocket-Version", value: "\(acceptableProtocolVersions[0])")
-			response.appendBodyString("WebSocket protocol version \(secWebSocketVersion) not supported. Supported protocol versions are: \(acceptableProtocolVersions)")
+			response.setStatus(code: 400, message: "Bad Request")
+			response.addHeader(name: "Sec-WebSocket-Version", value: "\(acceptableProtocolVersions[0])")
+			response.appendBody(string: "WebSocket protocol version \(secWebSocketVersion) not supported. Supported protocol versions are: \(acceptableProtocolVersions)")
 			response.requestCompleted()
 			return
 		}
 
-		let secWebSocketProtocol = request.header("Sec-WebSocket-Protocol") ?? ""
+		let secWebSocketProtocol = request.header(named: "Sec-WebSocket-Protocol") ?? ""
 		let protocolList = secWebSocketProtocol.characters.split(separator: ",").flatMap {
 			i -> String? in
 			var s = String(i)
@@ -317,53 +317,60 @@ public struct WebSocketHandler {
 		}
 
 		guard let handler = self.handlerProducer(request: request, protocols: protocolList) else {
-			response.setStatus(400, message: "Bad Request")
-			response.appendBodyString("WebSocket protocols not supported.")
+			response.setStatus(code: 400, message: "Bad Request")
+			response.appendBody(string: "WebSocket protocols not supported.")
 			response.requestCompleted()
 			return
 		}
 
 		response.requestCompleted = {} // this is no longer a normal request, eligible for keep-alive
 
-		response.setStatus(101, message: "Switching Protocols")
-		response.addHeader("Upgrade", value: "websocket")
-		response.addHeader("Connection", value: "Upgrade")
-		response.addHeader("Sec-WebSocket-Accept", value: self.base64((secWebSocketKey + webSocketGUID).utf8.sha1))
+		response.setStatus(code: 101, message: "Switching Protocols")
+		response.addHeader(name: "Upgrade", value: "websocket")
+		response.addHeader(name: "Connection", value: "Upgrade")
+		response.addHeader(name: "Sec-WebSocket-Accept", value: self.base64((secWebSocketKey + webSocketGUID).utf8.sha1))
 
 		if let chosenProtocol = handler.socketProtocol {
-			response.addHeader("Sec-WebSocket-Protocol", value: chosenProtocol)
+			response.addHeader(name: "Sec-WebSocket-Protocol", value: chosenProtocol)
 		}
 
 		for (key, value) in response.headersArray {
-			response.connection.writeHeaderLine(key + ": " + value)
+			response.connection.writeHeader(line: key + ": " + value)
 		}
-		response.connection.writeBodyBytes([UInt8]())
+		response.connection.writeBody(bytes: [UInt8]())
 
-		handler.handleSession(request, socket: WebSocket(connection: response.connection))
+		handler.handleSession(request: request, socket: WebSocket(connection: response.connection))
 	}
 
-	private func base64(a: [UInt8]) -> String {
+	private func base64(_ a: [UInt8]) -> String {
 		let bio = BIO_push(BIO_new(BIO_f_base64()), BIO_new(BIO_s_mem()))
 
 		BIO_set_flags(bio, BIO_FLAGS_BASE64_NO_NL)
 		BIO_write(bio, a, Int32(a.count))
 		BIO_ctrl(bio, BIO_CTRL_FLUSH, 0, nil)
 
-		var mem = UnsafeMutablePointer<BUF_MEM>(nil)
+		var mem: UnsafeMutablePointer<BUF_MEM>? = UnsafeMutablePointer<BUF_MEM>(nil)
 		BIO_ctrl(bio, BIO_C_GET_BUF_MEM_PTR, 0, &mem)
 		BIO_ctrl(bio, BIO_CTRL_SET_CLOSE, Int(BIO_NOCLOSE), nil)
 		BIO_free_all(bio)
 
-		let txt = UnsafeMutablePointer<UInt8>(mem.pointee.data)
-		let ret = UTF8Encoding.encode(GenerateFromPointer(from: txt, count: mem.pointee.length))
-		free(mem.pointee.data)
+		guard let amem = mem else {
+			return ""
+		}
+		
+		guard let txt: UnsafeMutablePointer<UInt8>? = UnsafeMutablePointer<UInt8>(amem.pointee.data) else {
+			return ""
+		}
+		
+		let ret = UTF8Encoding.encode(generator: GenerateFromPointer(from: txt, count: amem.pointee.length))
+		free(amem.pointee.data)
 		return ret
 	}
 }
 
 extension String.UTF8View {
 	var sha1: [UInt8] {
-		let bytes = UnsafeMutablePointer<UInt8>.alloc(Int(SHA_DIGEST_LENGTH))
+		let bytes = UnsafeMutablePointer<UInt8>.allocatingCapacity(Int(SHA_DIGEST_LENGTH))
 		defer { bytes.deallocateCapacity(Int(SHA_DIGEST_LENGTH)) }
 
 		SHA1(Array<UInt8>(self), (self.count), bytes)

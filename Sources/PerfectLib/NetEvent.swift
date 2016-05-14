@@ -106,9 +106,9 @@ class NetEvent {
 		self.kq = kqueue()
 #endif
 		guard self.kq != -1 else {
-			Log.terminal("Unable to initialize event listener.")
+			Log.terminal(message: "Unable to initialize event listener.")
 		}
-		self.evlist = UnsafeMutablePointer<event>.alloc(self.numEvents)
+		self.evlist = UnsafeMutablePointer<event>.allocatingCapacity(self.numEvents)
 		memset(self.evlist, 0, sizeof(event.self) * self.numEvents)
 	}
 
@@ -121,7 +121,7 @@ class NetEvent {
 
 	private func runLoop() {
 
-		let q = Threading.getQueue("NetEvent", type: .Serial)
+		let q = Threading.getQueue(name: "NetEvent", type: .Serial)
 		q.dispatch {
 			while true {
 //				print("event wait")
@@ -131,7 +131,7 @@ class NetEvent {
 				let nev = Int(kevent(self.kq, nil, 0, self.evlist, Int32(self.numEvents), nil))
 #endif
 				guard nev >= 0 else {
-					Log.terminal("event returned less than zero \(nev).")
+					Log.terminal(message: "event returned less than zero \(nev).")
 				}
 				// process results
 				self.lock.doWithLock {
@@ -201,7 +201,7 @@ class NetEvent {
 	}
 
 	// socket can only be queued with one callback at a time
-	static func add(socket: SocketType, what: Filter, timeoutSeconds: Double, callback: EventCallback) {
+	static func add(socket newSocket: SocketType, what: Filter, timeoutSeconds: Double, callback: EventCallback) {
 		let threadingCallback:EventCallback = {
 			s, f in
 			Threading.dispatchBlock {
@@ -212,7 +212,7 @@ class NetEvent {
 		if let n = NetEvent.staticEvent {
 
 			n.lock.doWithLock {
-				n.queuedSockets[socket] = QueuedSocket(socket: socket, what: what, timeoutSeconds: timeoutSeconds < 0.0 ? noTimeout : timeoutSeconds, callback: threadingCallback, associated: 0)
+				n.queuedSockets[newSocket] = QueuedSocket(socket: newSocket, what: what, timeoutSeconds: timeoutSeconds < 0.0 ? noTimeout : timeoutSeconds, callback: threadingCallback, associated: 0)
 #if os(Linux)
 				var evt = event()
 				evt.events = what.epollEvent | EPOLLONESHOT.rawValue | EPOLLET.rawValue
@@ -223,11 +223,11 @@ class NetEvent {
 #else
 				var tmout = timespec(tv_sec: 0, tv_nsec: 0)
 				if timeoutSeconds > 0.0 {
-					var kvt = event(ident: UInt(socket), filter: Int16(EVFILT_TIMER), flags: UInt16(EV_ADD | EV_ENABLE | EV_ONESHOT), fflags: 0, data: Int(timeoutSeconds * 1000), udata: nil)
+					var kvt = event(ident: UInt(newSocket), filter: Int16(EVFILT_TIMER), flags: UInt16(EV_ADD | EV_ENABLE | EV_ONESHOT), fflags: 0, data: Int(timeoutSeconds * 1000), udata: nil)
 					kevent(n.kq, &kvt, 1, nil, 0, &tmout)
 //					print("event add \(socket) EVFILT_TIMER")
 				}
-				var kvt = event(ident: UInt(socket), filter: what.kqueueFilter, flags: UInt16(EV_ADD | EV_ENABLE | EV_ONESHOT), fflags: 0, data: 0, udata: nil)
+				var kvt = event(ident: UInt(newSocket), filter: what.kqueueFilter, flags: UInt16(EV_ADD | EV_ENABLE | EV_ONESHOT), fflags: 0, data: 0, udata: nil)
 				kevent(n.kq, &kvt, 1, nil, 0, &tmout)
 //				print("event add \(socket) \(what.kqueueFilter)")
 #endif
@@ -235,24 +235,24 @@ class NetEvent {
 		}
 	}
 
-	static func remove(socket: SocketType) {
+	static func remove(socket oldSocket: SocketType) {
 		if let n = NetEvent.staticEvent {
 			n.lock.doWithLock {
-				if let old = n.queuedSockets[socket] {
+				if let old = n.queuedSockets[oldSocket] {
 #if os(Linux)
 					epoll_ctl(n.kq, EPOLL_CTL_DEL, socket, nil)
 #else
 					// ensure any associate timer is deleted
 					// these two calls could be conglomerated but would require allocation. revisit
-					var kvt = event(ident: UInt(socket), filter: old.what.kqueueFilter, flags: UInt16(EV_DELETE), fflags: 0, data: 0, udata: nil)
+					var kvt = event(ident: UInt(oldSocket), filter: old.what.kqueueFilter, flags: UInt16(EV_DELETE), fflags: 0, data: 0, udata: nil)
 					var tmout = timespec(tv_sec: 0, tv_nsec: 0)
 					kevent(n.kq, &kvt, 1, nil, 0, &tmout)
 					if old.timeoutSeconds > 0.0 {
-						kvt = event(ident: UInt(socket), filter: Int16(EVFILT_TIMER), flags: UInt16(EV_DELETE), fflags: 0, data: 0, udata: nil)
+						kvt = event(ident: UInt(oldSocket), filter: Int16(EVFILT_TIMER), flags: UInt16(EV_DELETE), fflags: 0, data: 0, udata: nil)
 						kevent(n.kq, &kvt, 1, nil, 0, &tmout)
 					}
 #endif
-					n.queuedSockets.removeValue(forKey: socket)
+					n.queuedSockets.removeValue(forKey: oldSocket)
 				}
 			}
 		}

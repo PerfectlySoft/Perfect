@@ -44,19 +44,19 @@ public struct PerfectServer {
         } else {
             baseDir = Dir(homeDir() + serverPerfectLibraries)
         }
-        Log.info("Load libs from: \(baseDir.realPath())");
+        Log.info(message: "Load libs from: \(baseDir.realPath())");
 		do {
 			try baseDir.forEachEntry { (name: String) -> () in
 				if name.hasSuffix(".framework") || name.hasSuffix(".framework/") {
 					let fileName = baseDir.realPath() + "/" + name
-					if dl.loadFramework(fileName) {
+					if dl.loadFramework(atPath: fileName) {
 						print("Loaded "+name)
 					} else {
 						print("FAILED to load "+name)
 					}
 				} else if name.hasSuffix(".so") || name.hasSuffix(".dylib") {
 					let fileName = baseDir.realPath() + "/" + name
-					if dl.loadLibrary(fileName) {
+					if dl.loadLibrary(atPath: fileName) {
 						print("Loaded "+name)
 					} else {
 						print("FAILED to load "+name)

@@ -70,11 +70,11 @@ public class File : Closeable {
 	public convenience init(tempFilePrefix: String) {
 		let template = tempFilePrefix + "XXXXXX"
 		let utf8 = template.utf8
-		let name = UnsafeMutablePointer<Int8>.alloc(utf8.count + 1)
+		let name = UnsafeMutablePointer<Int8>.allocatingCapacity(utf8.count + 1)
 		var i = utf8.startIndex
 		for index in 0..<utf8.count {
 			name[index] = Int8(utf8[i])
-			i = i.successor()
+			i = i.advanced(by: 1)
 		}
 		name[utf8.count] = 0
 		
@@ -92,11 +92,11 @@ public class File : Closeable {
 	/// Returns the file path. If the file is a symbolic link, the link will be resolved.
 	public func realPath() -> String {
 		if isLink() {
-			let buffer = UnsafeMutablePointer<Int8>.alloc(2048)
+			let buffer = UnsafeMutablePointer<Int8>.allocatingCapacity(2048)
 			let res = readlink(internalPath, buffer, 2048)
 			if res != -1 {
 				let ary = completeArray(buffer, count: res)
-				let trailPath = UTF8Encoding.encode(ary)
+				let trailPath = UTF8Encoding.encode(bytes: ary)
 				if trailPath[trailPath.startIndex] != "/" && trailPath[trailPath.startIndex] != "." {
 					return internalPath.stringByDeletingLastPathComponent + "/" + trailPath
 				}
@@ -243,7 +243,7 @@ public class File : Closeable {
 	/// - parameter to: The new position
 	/// - parameter whence: Whence to set it from. Once of `SEEK_SET`, `SEEK_CUR`, `SEEK_END`.
 	/// - returns: The new position marker value
-	public func setMarker(to: Int, whence: Int32 = SEEK_CUR) -> Int {
+	public func setMarker(to to: Int, whence: Int32 = SEEK_CUR) -> Int {
 		if isOpen() {
 			return Int(lseek(Int32(self.fd), off_t(to), whence))
 		}
@@ -285,7 +285,7 @@ public class File : Closeable {
 			return destFile
 		}
 		if errno == EXDEV {
-			try self.copyTo(path, overWrite: overWrite)
+			try self.copyTo(path: path, overWrite: overWrite)
 			self.delete()
 			return destFile
 		}
@@ -297,7 +297,7 @@ public class File : Closeable {
 	/// - parameter overWrite: Indicates that any existing file at the destination path should first be deleted
 	/// - returns: Returns a new file object representing the new location
 	/// - throws: `PerfectError.FileError`
-	public func copyTo(path: String, overWrite: Bool = false) throws -> File {
+	public func copyTo(path path: String, overWrite: Bool = false) throws -> File {
 		let destFile = File(path)
 		if destFile.exists() {
 			if overWrite {
@@ -311,22 +311,22 @@ public class File : Closeable {
 		if !wasOpen {
 			try openRead()
 		} else {
-			setMarker(0)
+			setMarker(to: 0)
 		}
 		defer {
 			if !wasOpen {
 				close()
 			} else {
-				setMarker(oldMarker)
+				setMarker(to: oldMarker)
 			}
 		}
 		
 		try destFile.openTruncate()
 		
-		var bytes = try self.readSomeBytes(fileCopyBufferSize)
+		var bytes = try self.readSomeBytes(count: fileCopyBufferSize)
 		while bytes.count > 0 {
-			try destFile.writeBytes(bytes)
-			bytes = try self.readSomeBytes(fileCopyBufferSize)
+			try destFile.write(bytes: bytes)
+			bytes = try self.readSomeBytes(count: fileCopyBufferSize)
 		}
 		
 		destFile.close()
@@ -339,7 +339,7 @@ public class File : Closeable {
 		return access(internalPath, F_OK) != -1
 	}
 	
-	func sizeOr(value: Int) -> Int {
+	func sizeOr(_ value: Int) -> Int {
 		var st = stat()
 		let statRes = isOpen() ?  fstat(Int32(fd), &st) : stat(internalPath, &st)
 		guard statRes != -1 else {
@@ -403,12 +403,12 @@ public class File : Closeable {
 	/// - parameter count: The maximum number of bytes to read
 	/// - returns: The bytes read as an array of UInt8. May have a count of zero.
 	/// - throws: `PerfectError.FileError`
-	public func readSomeBytes(count: Int) throws -> [UInt8] {
+	public func readSomeBytes(count count: Int) throws -> [UInt8] {
 		if !isOpen() {
 			try openRead()
 		}
 		let bSize = min(count, self.sizeOr(count))
-		let ptr = UnsafeMutablePointer<UInt8>.alloc(bSize)
+		let ptr = UnsafeMutablePointer<UInt8>.allocatingCapacity(bSize)
 
 		let readCount = read(CInt(fd), ptr, bSize)
 		guard readCount >= 0 else {
@@ -423,24 +423,24 @@ public class File : Closeable {
 	
 	/// Reads the entire file as a string
 	public func readString() throws -> String {
-		let bytes = try self.readSomeBytes(self.size())
-		return UTF8Encoding.encode(bytes)
+		let bytes = try self.readSomeBytes(count: self.size())
+		return UTF8Encoding.encode(bytes: bytes)
 	}
 	
 	/// Writes the string to the file using UTF-8 encoding
 	/// - parameter s: The string to write
 	/// - returns: Returns the number of bytes which were written
 	/// - throws: `PerfectError.FileError`
-	public func writeString(s: String) throws -> Int {
-		return try writeBytes(Array(s.utf8))
+	public func write(string string: String) throws -> Int {
+		return try write(bytes: Array(string.utf8))
 	}
 	
 	/// Writes the array of bytes to the file
 	/// - parameter bytes: The bytes to write
 	/// - returns: The number of bytes which were written
 	/// - throws: `PerfectError.FileError`
-	public func writeBytes(bytes: [UInt8]) throws -> Int {
-		return try writeBytes(bytes, dataPosition: 0, length: bytes.count)
+	public func write(bytes bytes: [UInt8]) throws -> Int {
+		return try write(bytes: bytes, dataPosition: 0, length: bytes.count)
 	}
 	
 	/// Write the indicated bytes to the file
@@ -448,10 +448,14 @@ public class File : Closeable {
 	/// - parameter dataPosition: The offset within `bytes` at which to begin writing.
 	/// - parameter length: The number of bytes to write.
 	/// - throws: `PerfectError.FileError`
-	public func writeBytes(bytes: [UInt8], dataPosition: Int, length: Int) throws -> Int {
+	public func write(bytes bytes: [UInt8], dataPosition: Int, length: Int) throws -> Int {
 		
 		let ptr = UnsafeMutablePointer<UInt8>(bytes).advanced(by: dataPosition)
-		let wrote = write(CInt(fd), ptr, length)
+		#if os(Linux)
+		let wrote = SwiftGlibc.write(Int32(fd), ptr, length)
+		#else
+		let wrote = Darwin.write(Int32(fd), ptr, length)
+		#endif
 		guard wrote == length else {
 			try ThrowFileError()
 		}
@@ -512,7 +516,7 @@ public class File : Closeable {
 		return res != 0
 	}
 	
-	private func completeArray(from: UnsafeMutablePointer<UInt8>, count: Int) -> [UInt8] {
+	private func completeArray(_ from: UnsafeMutablePointer<UInt8>, count: Int) -> [UInt8] {
 		
 		defer { from.deallocateCapacity(count) }
 		
@@ -523,7 +527,7 @@ public class File : Closeable {
 		return ary
 	}
 	
-	private func completeArray(from: UnsafeMutablePointer<Int8>, count: Int) -> [UInt8] {
+	private func completeArray(_ from: UnsafeMutablePointer<Int8>, count: Int) -> [UInt8] {
 		
 		defer { from.deallocateCapacity(count) }
 		

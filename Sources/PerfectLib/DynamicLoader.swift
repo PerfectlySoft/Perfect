@@ -36,7 +36,7 @@ struct DynamicLoader {
 		
 	}
 	
-	func loadFramework(atPath: String) -> Bool {
+	func loadFramework(atPath atPath: String) -> Bool {
 		let resolvedPath = atPath.stringByResolvingSymlinksInPath
 		let moduleName = resolvedPath.lastPathComponent.stringByDeletingPathExtension
 		let file = File(resolvedPath + "/" + moduleName)
@@ -47,7 +47,7 @@ struct DynamicLoader {
 		return false
 	}
 	
-	func loadLibrary(atPath: String) -> Bool {
+	func loadLibrary(atPath atPath: String) -> Bool {
 		var fileName = atPath.lastPathComponent
 		if fileName.hasPrefix("lib") {
 		#if swift(>=3.0)
@@ -60,11 +60,11 @@ struct DynamicLoader {
 		return self.loadRealPath(atPath, moduleName: moduleName)
 	}
 	
-	private func loadRealPath(realPath: String, moduleName: String) -> Bool {
+	private func loadRealPath(_ realPath: String, moduleName: String) -> Bool {
 		let openRes = dlopen(realPath, RTLD_NOW|RTLD_LOCAL)
 		if openRes != nil {
 			// this is fragile
-			let newModuleName = moduleName.stringByReplacingString("-", withString: "_").stringByReplacingString(" ", withString: "_")
+			let newModuleName = moduleName.stringByReplacing(string: "-", withString: "_").stringByReplacing(string: " ", withString: "_")
 			let symbolName = "_TF\(newModuleName.utf8.count)\(newModuleName)\(initFuncName.utf8.count)\(initFuncName)FT_T_"
 			let sym = dlsym(openRes, symbolName)
 			if sym != nil {

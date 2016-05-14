@@ -68,7 +68,7 @@ public class WebRequest {
 				let utf16 = key.utf16
 				let index = key.utf16.startIndex.advanced(by: 5)
 				let nKey = String(key.utf16.suffix(from: index))!
-				d[nKey.stringByReplacingString("_", withString: "-")] = value
+				d[nKey.stringByReplacing(string: "_", withString: "-")] = value
 			}
 		}
 		return d
@@ -78,10 +78,10 @@ public class WebRequest {
 	public lazy var cookies: [(String, String)] = {
 		var c = [(String, String)]()
 		if let rawCookie = self.httpCookie {
-			let semiSplit = rawCookie.characters.split(separator: ";").map { String($0.filter { $0 != " " }) }
+			let semiSplit = rawCookie.characters.split(separator: ";").map { (chars: String.CharacterView) in String(chars.filter { $0 != " " }) }
 			for cookiePair in semiSplit {
 				
-				let cookieSplit = cookiePair.characters.split(separator: "=", maxSplits: Int.max, omittingEmptySubsequences: false).map { String($0.filter { $0 != " " }) }
+				let cookieSplit = cookiePair.characters.split(separator: "=", maxSplits: Int.max, omittingEmptySubsequences: false).map { (chars: String.CharacterView) in String(chars.filter { $0 != " " }) }
 				if cookieSplit.count == 2 {
 					let name = cookieSplit[0].stringByDecodingURL
 					let value = cookieSplit[1].stringByDecodingURL
@@ -142,7 +142,7 @@ public class WebRequest {
 	/// For example, if the content-type were application/json you could use this function to get the raw JSON data as a String
 	public lazy var postBodyString: String = {
 		if let stdin = self.connection.stdin {
-			let qs = UTF8Encoding.encode(stdin)
+			let qs = UTF8Encoding.encode(bytes: stdin)
 			return qs
 		}
 		return ""
@@ -159,14 +159,14 @@ public class WebRequest {
 			}
 			
 		} else if let stdin = self.connection.stdin {
-			let qs = UTF8Encoding.encode(stdin)
+			let qs = UTF8Encoding.encode(bytes: stdin)
 			let semiSplit = qs.characters.split(separator: "&").map { String($0) }
 			for paramPair in semiSplit {
 				
 				let paramSplit = paramPair.characters.split(separator: "=", maxSplits: Int.max, omittingEmptySubsequences: false).map { String($0) }
 				if paramSplit.count == 2 {
-					let name = paramSplit[0].stringByReplacingString("+", withString: " ").stringByDecodingURL
-					let value = paramSplit[1].stringByReplacingString("+", withString: " ").stringByDecodingURL
+					let name = paramSplit[0].stringByReplacing(string: "+", withString: " ").stringByDecodingURL
+					let value = paramSplit[1].stringByReplacing(string: "+", withString: " ").stringByDecodingURL
 					if let n = name {
 						c.append((n, value ?? ""))
 					}
@@ -229,11 +229,11 @@ public class WebRequest {
 		return a.count > 0 ? a : nil
 	}
 	
-	private func get(named: String) -> String? {
+	private func get(_ named: String) -> String? {
 		return connection.requestParams[named]
 	}
 	
-	private func set(named: String, value: String?) {
+	private func set(_ named: String, value: String?) {
 		if let v = value {
 			connection.requestParams[named] = v
 		} else {
@@ -241,14 +241,14 @@ public class WebRequest {
 		}
 	}
 	
-	private func get(named: String) -> Int? {
+	private func get(_ named: String) -> Int? {
 		if let i = connection.requestParams[named] {
 			return Int(i)
 		}
 		return nil
 	}
 	
-	private func set(named: String, value: Int?) {
+	private func set(_ named: String, value: Int?) {
 		if let v = value {
 			connection.requestParams[named] = String(v)
 		} else {
@@ -343,7 +343,7 @@ public class WebRequest {
 		}
 	}
 	/// Returns the indicated HTTP header.
-	public func header(named: String) -> String? { return self.headers[named.uppercased()] }
+	public func header(named named: String) -> String? { return self.headers[named.uppercased()] }
 	/// Returns the raw request parameter header
 	public func rawHeader(named: String) -> String? { return self.connection.requestParams[named] }
 	/// Returns a Dictionary containing all raw request parameters.
@@ -354,22 +354,22 @@ public class WebRequest {
 	}
 	
 	private func extractField(from: String, named: String) -> String? {
-		guard let range = from.rangeOf(named + "=") else {
+		guard let range = from.range(of: named + "=") else {
 			return nil
 		}
 		
-		var currPos = range.endIndex
+		var currPos = range.upperBound
 		var ret = ""
 		let quoted = from[currPos] == "\""
 		if quoted {
-			currPos = currPos.successor()
+			currPos = from.index(after: currPos)
 			let tooFar = from.endIndex
 			while currPos != tooFar {
 				if from[currPos] == "\"" {
 					break
 				}
 				ret.append(from[currPos])
-				currPos = currPos.successor()
+				currPos = from.index(after: currPos)
 			}
 		} else {
 			let tooFar = from.endIndex
@@ -378,7 +378,7 @@ public class WebRequest {
 					break
 				}
 				ret.append(from[currPos])
-				currPos = currPos.successor()
+				currPos = from.index(after: currPos)
 			}
 		}
 		return ret

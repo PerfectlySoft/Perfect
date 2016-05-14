@@ -49,8 +49,8 @@ public class NetNamedPipe : NetTCP {
 	}
 
 	public override func sockName() -> (String, UInt16) {
-		var addr = UnsafeMutablePointer<sockaddr_un>.alloc(1)
-		var len = UnsafeMutablePointer<socklen_t>.alloc(1)
+		var addr = UnsafeMutablePointer<sockaddr_un>.allocatingCapacity(1)
+		var len = UnsafeMutablePointer<socklen_t>.allocatingCapacity(1)
 		defer {
 			addr.deallocateCapacity(1)
 			len.deallocateCapacity(1)
@@ -80,8 +80,8 @@ public class NetNamedPipe : NetTCP {
 	}
 
 	public override func peerName() -> (String, UInt16) {
-		var addr = UnsafeMutablePointer<sockaddr_un>.alloc(1)
-		var len = UnsafeMutablePointer<socklen_t>.alloc(1)
+		var addr = UnsafeMutablePointer<sockaddr_un>.allocatingCapacity(1)
+		var len = UnsafeMutablePointer<socklen_t>.allocatingCapacity(1)
 		defer {
 			addr.deallocateCapacity(1)
 			len.deallocateCapacity(1)
@@ -113,7 +113,7 @@ public class NetNamedPipe : NetTCP {
 	/// Bind the socket to the address path
 	/// - parameter address: The path on the file system at which to create and bind the socket
 	/// - throws: `PerfectError.NetworkError`
-	public func bind(address: String) throws {
+	public func bind(address address: String) throws {
 
 		initSocket()
 
@@ -123,7 +123,7 @@ public class NetNamedPipe : NetTCP {
 #else
 		let addrLen = sizeof(UInt8) + sizeof(sa_family_t) + utf8.count + 1
 #endif
-		let addrPtr = UnsafeMutablePointer<UInt8>.alloc(addrLen)
+		let addrPtr = UnsafeMutablePointer<UInt8>.allocatingCapacity(addrLen)
 		defer { addrPtr.deallocateCapacity(addrLen) }
 
 		var memLoc = 0
@@ -162,13 +162,13 @@ public class NetNamedPipe : NetTCP {
 	/// - parameter timeoutSeconds: The number of seconds to wait for the connection to complete. A timeout of negative one indicates that there is no timeout.
 	/// - parameter callBack: The closure which will be called when the connection completes. If the connection completes successfully then the current NetNamedPipe instance will be passed to the callback, otherwise, a nil object will be passed.
 	/// - returns: `PerfectError.NetworkError`
-	public func connect(address: String, timeoutSeconds: Double, callBack: (NetNamedPipe?) -> ()) throws {
+	public func connect(address address: String, timeoutSeconds: Double, callBack: (NetNamedPipe?) -> ()) throws {
 
 		initSocket()
 
 		let utf8 = address.utf8
 		let addrLen = sizeof(UInt8) + sizeof(sa_family_t) + utf8.count + 1
-		let addrPtr = UnsafeMutablePointer<UInt8>.alloc(addrLen)
+		let addrPtr = UnsafeMutablePointer<UInt8>.allocatingCapacity(addrLen)
 
 		defer { addrPtr.deallocateCapacity(addrLen) }
 
@@ -197,7 +197,7 @@ public class NetNamedPipe : NetTCP {
 				try ThrowNetworkError()
 			}
 
-			NetEvent.add(fd.fd, what: .Write, timeoutSeconds: timeoutSeconds) {
+			NetEvent.add(socket: fd.fd, what: .Write, timeoutSeconds: timeoutSeconds) {
 				fd, w in
 			
 				if case .Timer = w {
@@ -213,16 +213,16 @@ public class NetNamedPipe : NetTCP {
 	/// - parameter fd: The file descriptor to send
 	/// - parameter callBack: The callback to call when the send completes. The parameter passed will be `true` if the send completed without error.
 	/// - throws: `PerfectError.NetworkError`
-	public func sendFd(fd: Int32, callBack: (Bool) -> ()) throws {
+	public func sendFd(_ fd: Int32, callBack: (Bool) -> ()) throws {
 		let length = sizeof(cmsghdr) + sizeof(Int32)
 	#if os(Linux)
-		var msghdr = UnsafeMutablePointer<SwiftGlibc.msghdr>.alloc(1)
+		var msghdr = UnsafeMutablePointer<SwiftGlibc.msghdr>.allocatingCapacity(1)
 	#else
-		var msghdr = UnsafeMutablePointer<Darwin.msghdr>.alloc(1)
+		var msghdr = UnsafeMutablePointer<Darwin.msghdr>.allocatingCapacity(1)
 	#endif
-		var nothingPtr = UnsafeMutablePointer<iovec>.alloc(1)
-		var nothing = UnsafeMutablePointer<CChar>.alloc(1)
-		let buffer = UnsafeMutablePointer<CChar>.alloc(length)
+		var nothingPtr = UnsafeMutablePointer<iovec>.allocatingCapacity(1)
+		var nothing = UnsafeMutablePointer<CChar>.allocatingCapacity(1)
+		let buffer = UnsafeMutablePointer<CChar>.allocatingCapacity(length)
 		defer {
 			msghdr.deallocateCapacity(1)
 			buffer.deallocateCapacity(length)
@@ -264,7 +264,7 @@ public class NetNamedPipe : NetTCP {
 			callBack(true)
 		} else if res == -1 && errno == EAGAIN {
 
-			NetEvent.add(self.fd.fd, what: .Write, timeoutSeconds: NetEvent.noTimeout) { [weak self]
+			NetEvent.add(socket: self.fd.fd, what: .Write, timeoutSeconds: NetEvent.noTimeout) { [weak self]
 				fd, w in
 			
 				do {
@@ -282,12 +282,12 @@ public class NetNamedPipe : NetTCP {
 	/// Receive an existing opened file descriptor from the sender
 	/// - parameter callBack: The callback to call when the receive completes. The parameter passed will be the received file descriptor or invalidSocket.
 	/// - throws: `PerfectError.NetworkError`
-	public func receiveFd(callBack: (Int32) -> ()) throws {
+	public func receiveFd(callBack cb: (Int32) -> ()) throws {
 		let length = sizeof(cmsghdr) + sizeof(Int32)
 		var msghdrr = msghdr()
-		var nothingPtr = UnsafeMutablePointer<iovec>.alloc(1)
-		var nothing = UnsafeMutablePointer<CChar>.alloc(1)
-		let buffer = UnsafeMutablePointer<CChar>.alloc(length)
+		var nothingPtr = UnsafeMutablePointer<iovec>.allocatingCapacity(1)
+		var nothing = UnsafeMutablePointer<CChar>.allocatingCapacity(1)
+		let buffer = UnsafeMutablePointer<CChar>.allocatingCapacity(length)
 		defer {
 			buffer.deallocateCapacity(length)
 			nothingPtr.deallocateCapacity(1)
@@ -323,16 +323,16 @@ public class NetNamedPipe : NetTCP {
 		let res = recvmsg(Int32(self.fd.fd), &msghdrr, 0)
 		if res > 0 {
 			let receivedInt = asInts.pointee
-			callBack(receivedInt)
+			cb(receivedInt)
 		} else if res == -1 && errno == EAGAIN {
 
-			NetEvent.add(self.fd.fd, what: .Read, timeoutSeconds: NetEvent.noTimeout) { [weak self]
+			NetEvent.add(socket: self.fd.fd, what: .Read, timeoutSeconds: NetEvent.noTimeout) { [weak self]
 				fd, w in
 			
 				do {
-					try self?.receiveFd(callBack)
+					try self?.receiveFd(callBack: cb)
 				} catch {
-					callBack(invalidSocket)
+					cb(invalidSocket)
 				}
 			}
 
@@ -346,7 +346,7 @@ public class NetNamedPipe : NetTCP {
 	/// - parameter file: The `File` whose descriptor to send
 	/// - parameter callBack: The callback to call when the send completes. The parameter passed will be `true` if the send completed without error.
 	/// - throws: `PerfectError.NetworkError`
-	public func sendFile(file: File, callBack: (Bool) -> ()) throws {
+	public func sendFile(_ file: File, callBack: (Bool) -> ()) throws {
 		try self.sendFd(Int32(file.fd), callBack: callBack)
 	}
 
@@ -354,7 +354,7 @@ public class NetNamedPipe : NetTCP {
 	/// - parameter file: The `NetTCP` whose descriptor to send
 	/// - parameter callBack: The callback to call when the send completes. The parameter passed will be `true` if the send completed without error.
 	/// - throws: `PerfectError.NetworkError`
-	public func sendFile(file: NetTCP, callBack: (Bool) -> ()) throws {
+	public func sendFile(_ file: NetTCP, callBack: (Bool) -> ()) throws {
 		try self.sendFd(file.fd.fd, callBack: callBack)
 	}
 
@@ -403,7 +403,7 @@ public class NetNamedPipe : NetTCP {
 		}
 	}
 
-	override func makeFromFd(fd: Int32) -> NetTCP {
+	override func makeFromFd(_ fd: Int32) -> NetTCP {
 		return NetNamedPipe(fd: fd)
 	}
 }
