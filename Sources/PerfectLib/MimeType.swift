@@ -839,7 +839,7 @@ let mimeMap = ["123" : "application/vnd.lotus-1-2-3",
 
 struct MimeType {
 	
-	static func forExtension(ext: String) -> String {
+	static func forExtension(_ ext: String) -> String {
 		return mimeMap[ext.lowercased()] ?? "application/octet-stream"
 	}
 	

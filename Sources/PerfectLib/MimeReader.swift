@@ -114,17 +114,14 @@ public class MimeReader {
 	/// - parameter tempDir: The path to the directory in which to store temporary files. Defaults to "/tmp/".
 	public init(_ contentType: String, tempDir: String = "/tmp/") {
 		self.tempDirectory = tempDir
-		if contentType.rangeOf(kMultiPartForm) != nil {
+		if contentType.range(of: kMultiPartForm) != nil {
 			self.multi = true
-			if let range = contentType.rangeOf(kBoundary) {
+			if let range = contentType.range(of: kBoundary) {
 				
-				var startIndex = range.startIndex.successor()
-				for _ in 1...kBoundary.characters.count {
-					startIndex = startIndex.successor()
-				}
+				let startIndex = contentType.index(range.lowerBound, offsetBy: kBoundary.characters.count+1)
 				let endIndex = contentType.endIndex
 				
-				let boundaryString = contentType.substringWith(startIndex..<endIndex)
+				let boundaryString = contentType.substring(with: startIndex..<endIndex)
 				self.boundary.append("--")
 				self.boundary.append(boundaryString)
 				self.state = .StateBoundary
@@ -137,12 +134,12 @@ public class MimeReader {
 //		self.maxFileSize = size
 //	}
 	
-	func openTempFile(spec: BodySpec) {
+	func openTempFile(spec spec: BodySpec) {
 		spec.file = File(tempFilePrefix: self.tempDirectory + kPerfectTempPrefix)
 		spec.tmpFileName = spec.file!.path()
 	}
 	
-	func isBoundaryStart(bytes: [UInt8], start: Array<UInt8>.Index) -> Bool {
+	func isBoundaryStart(bytes bytes: [UInt8], start: Array<UInt8>.Index) -> Bool {
 		var gen = self.boundary.utf8.makeIterator()
 		var pos = start
 		var next = gen.next()
@@ -152,13 +149,13 @@ public class MimeReader {
 				return false
 			}
 			
-			pos = pos.successor()
+			pos = pos.advanced(by: 1)
 			next = gen.next()
 		}
 		return next == nil // got to the end is success
 	}
 	
-	func isField(name: String, bytes: [UInt8], start: Array<UInt8>.Index) -> Array<UInt8>.Index {
+	func isField(name name: String, bytes: [UInt8], start: Array<UInt8>.Index) -> Array<UInt8>.Index {
 		var check = start
 		let end = bytes.endIndex
 		var gen = name.utf8.makeIterator()
@@ -176,21 +173,21 @@ public class MimeReader {
 				break
 			}
 			
-			check = check.successor()
+			check = check.advanced(by: 1)
 		}
 		return end
 	}
 	
-	func pullValue(name: String, from: String) -> String {
+	func pullValue(name name: String, from: String) -> String {
 		
 		var accum = ""
 		
-		if let nameRange = from.rangeOf(name + "=", ignoreCase: true) {
-			var start = nameRange.endIndex
+		if let nameRange = from.range(of: name + "=", ignoreCase: true) {
+			var start = nameRange.upperBound
 			let end = from.endIndex
 			
 			if from[start] == "\"" {
-				start = start.successor()
+				start = from.index(after: start)
 			}
 			
 			while start < end {
@@ -198,13 +195,13 @@ public class MimeReader {
 					break;
 				}
 				accum.append(from[start])
-				start = start.successor()
+				start = from.index(after: start)
 			}
 		}
 		return accum
 	}
 	
-	func internalAddToBuffer(bytes: [UInt8]) -> MimeReadState {
+	func internalAddToBuffer(bytes bytes: [UInt8]) -> MimeReadState {
 		
 		var clearBuffer = true
 		var position = bytes.startIndex
@@ -224,7 +221,7 @@ public class MimeReader {
 					position = end
 				} else {
 					position = position.advanced(by: self.boundary.characters.count)
-					if bytes[position] == mime_dash && bytes[position.successor()] == mime_dash {
+					if bytes[position] == mime_dash && bytes[position.advanced(by: 1)] == mime_dash {
 						self.state = .StateDone
 						position = position.advanced(by: 2)
 					} else {
@@ -244,12 +241,12 @@ public class MimeReader {
 				while eolPos.distance(to: end) > 1 {
 					
 					let b1 = bytes[eolPos]
-					let b2 = bytes[eolPos.successor()]
+					let b2 = bytes[eolPos.advanced(by: 1)]
 					
 					if b1 == mime_cr && b2 == mime_lf {
 						break
 					}
-					eolPos = eolPos.successor()
+					eolPos = eolPos.advanced(by: 1)
 				}
 				if eolPos.distance(to: end) <= 1 { // no eol
 					self.buffer = Array(bytes[position..<end])
@@ -260,31 +257,31 @@ public class MimeReader {
 					let spec = self.bodySpecs.last!
 					if eolPos != position {
 						
-						let check = isField(kContentDisposition, bytes: bytes, start: position)
+						let check = isField(name: kContentDisposition, bytes: bytes, start: position)
 						if check != end { // yes, content-disposition
 							
-							let line = UTF8Encoding.encode(bytes[check.advanced(by: 2)..<eolPos])
-							let name = pullValue("name", from: line)
-							let fileName = pullValue("filename", from: line)
+							let line = UTF8Encoding.encode(bytes: bytes[check.advanced(by: 2)..<eolPos])
+							let name = pullValue(name: "name", from: line)
+							let fileName = pullValue(name: "filename", from: line)
 							
 							spec.fieldName = name
 							spec.fileName = fileName
 							
 						} else {
 							
-							let check = isField(kContentType, bytes: bytes, start: position)
+							let check = isField(name: kContentType, bytes: bytes, start: position)
 							if check != end { // yes, content-type
 								
-								spec.contentType = UTF8Encoding.encode(bytes[check.advanced(by: 2)..<eolPos])
+								spec.contentType = UTF8Encoding.encode(bytes: bytes[check.advanced(by: 2)..<eolPos])
 								
 							}
 						}
 						position = eolPos.advanced(by: 2)
 					}
-					if (eolPos == position || position != end) && position.distance(to: end) > 1 && bytes[position] == mime_cr && bytes[position.successor()] == mime_lf {
+					if (eolPos == position || position != end) && position.distance(to: end) > 1 && bytes[position] == mime_cr && bytes[position.advanced(by: 1)] == mime_lf {
 						position = position.advanced(by: 2)
 						if spec.fileName.characters.count > 0 {
-							openTempFile(spec)
+							openTempFile(spec: spec)
 							self.state = .StateFile
 						} else {
 							self.state = .StateFieldValue
@@ -305,13 +302,13 @@ public class MimeReader {
 							continue
 						}
 						
-						if bytes[position.successor()] == mime_lf {
+						if bytes[position.advanced(by: 1)] == mime_lf {
 							
-							if isBoundaryStart(bytes, start: position.advanced(by: 2)) {
+							if isBoundaryStart(bytes: bytes, start: position.advanced(by: 2)) {
 								
 								position = position.advanced(by: 2)
 								self.state = .StateBoundary
-								spec.fieldValue = UTF8Encoding.encode(spec.fieldValueTempBytes!)
+								spec.fieldValue = UTF8Encoding.encode(bytes: spec.fieldValueTempBytes!)
 								spec.fieldValueTempBytes = nil
 								break
 								
@@ -329,7 +326,7 @@ public class MimeReader {
 					}
 					
 					spec.fieldValueTempBytes!.append(bytes[position])
-					position = position.successor()
+					position = position.advanced(by: 1)
 				}
 				
 			case .StateFile:
@@ -345,9 +342,9 @@ public class MimeReader {
 							continue
 						}
 						
-						if bytes[position.successor()] == mime_lf {
+						if bytes[position.advanced(by: 1)] == mime_lf {
 							
-							if isBoundaryStart(bytes, start: position.advanced(by: 2)) {
+							if isBoundaryStart(bytes: bytes, start: position.advanced(by: 2)) {
 								
 								position = position.advanced(by: 2)
 								self.state = .StateBoundary
@@ -377,8 +374,8 @@ public class MimeReader {
 							if writeEnd.distance(to: end) < 2 {
 								break
 							}
-							if bytes[writeEnd.successor()] == mime_lf {
-								if isBoundaryStart(bytes, start: writeEnd.advanced(by: 2)) {
+							if bytes[writeEnd.advanced(by: 1)] == mime_lf {
+								if isBoundaryStart(bytes: bytes, start: writeEnd.advanced(by: 2)) {
 									break
 								} else if writeEnd.distance(to: end) - 2 < self.boundary.characters.count {
 									// we are at the eol, but check to see if the next line may be starting a boundary
@@ -389,13 +386,13 @@ public class MimeReader {
 							}
 						}
 						
-						writeEnd = writeEnd.successor()
+						writeEnd = writeEnd.advanced(by: 1)
 					}
 					do {
 						let length = position.distance(to: writeEnd)
-						spec.fileSize += try spec.file!.writeBytes(bytes, dataPosition: position, length: length)
+						spec.fileSize += try spec.file!.write(bytes: bytes, dataPosition: position, length: length)
 					} catch let e {
-						Log.error("Exception while writing file upload data: \(e)")
+						Log.error(message: "Exception while writing file upload data: \(e)")
 						self.state = .StateNone
 						break
 					}
@@ -417,14 +414,14 @@ public class MimeReader {
 	
 	/// Add data to be parsed.
 	/// - parameter bytes: The array of UInt8 to be parsed.
-	public func addToBuffer(bytes: [UInt8]) {
+	public func addToBuffer(bytes bytes: [UInt8]) {
 		if isMultiPart() {
 			
 			if self.buffer.count != 0 {
 				self.buffer.append(contentsOf: bytes)
-				internalAddToBuffer(self.buffer)
+				internalAddToBuffer(bytes: self.buffer)
 			} else {
-				internalAddToBuffer(bytes)
+				internalAddToBuffer(bytes: bytes)
 			}
 		} else {
 			self.buffer.append(contentsOf: bytes)

@@ -78,8 +78,8 @@ public class WebResponse {
 	}
 
 	/// Set the response status code and message. For example, 200, "OK".
-	public func setStatus(code: Int, message: String) {
-		self.connection.setStatus(code, msg: message)
+	public func setStatus(code c: Int, message m: String) {
+		self.connection.setStatus(code: c, message: m)
 	}
 
 	/// Get the response status code and message.
@@ -88,16 +88,16 @@ public class WebResponse {
 	}
 
 	/// Adds the cookie object to the response
-	public func addCookie(cookie: Cookie) {
+	public func addCookie(cookie cookie: Cookie) {
 		self.cookiesArray.append(cookie)
 	}
 
-	public func appendBodyBytes(bytes: [UInt8]) {
-		self.bodyData.append(contentsOf: bytes)
+	public func appendBody(bytes b: [UInt8]) {
+		self.bodyData.append(contentsOf: b)
 	}
 
-	public func appendBodyString(string: String) {
-		self.bodyData.append(contentsOf: [UInt8](string.utf8))
+	public func appendBody(string s: String) {
+		self.bodyData.append(contentsOf: [UInt8](s.utf8))
 	}
 
 	func respond(completion: () -> ()) {
@@ -112,29 +112,29 @@ public class WebResponse {
 
 	/// Perform a 302 redirect to the given url
 	public func redirectTo(url: String) {
-		self.setStatus(302, message: "FOUND")
-		self.replaceHeader("Location", value: url)
+		self.setStatus(code: 302, message: "FOUND")
+		self.replaceHeader(name: "Location", value: url)
 	}
 
 	/// Add an outgoing HTTP header
-	public func addHeader(name: String, value: String) {
-		self.headersArray.append( (name, value) )
+	public func addHeader(name n: String, value: String) {
+		self.headersArray.append( (n, value) )
 	}
 
 	/// Set a HTTP header, replacing all existing instances of said header
-	public func replaceHeader(name: String, value: String) {
+	public func replaceHeader(name n: String, value: String) {
 		for i in 0..<self.headersArray.count {
-			if self.headersArray[i].0 == name {
+			if self.headersArray[i].0 == n {
 				self.headersArray.remove(at: i)
 			}
 		}
-		self.addHeader(name, value: value)
+		self.addHeader(name: n, value: value)
 	}
 
 	// directly called by the WebSockets impl
 	func sendResponse() {
 		for (key, value) in headersArray {
-			connection.writeHeaderLine(key + ": " + value)
+			connection.writeHeader(line: key + ": " + value)
 		}
 		// cookies
 		if self.cookiesArray.count > 0 {
@@ -166,36 +166,36 @@ public class WebResponse {
 					}
 				}
                 // etc...
-                connection.writeHeaderLine(cookieLine)
+				connection.writeHeader(line: cookieLine)
 			}
 		}
-		connection.writeHeaderLine("Content-Length: \(bodyData.count)")
+		connection.writeHeader(line: "Content-Length: \(bodyData.count)")
 
-		connection.writeBodyBytes(bodyData)
+		connection.writeBody(bytes: bodyData)
 	}
 
 	private func doMainBody() {
 
 		do {
 
-			return try include(request.pathInfo ?? "error", local: false)
+			return try include(path: request.pathInfo ?? "error", local: false)
 
 		} catch PerfectError.FileError(let code, let msg) {
 
 			print("File exception \(code) \(msg)")
-			self.setStatus(code == 404 ? Int(code) : 500, message: msg)
+			self.setStatus(code: code == 404 ? Int(code) : 500, message: msg)
 			self.bodyData = [UInt8]("File exception \(code) \(msg)".utf8)
 
 		} catch MustacheError.SyntaxError(let msg) {
 
 			print("MustacheError.SyntaxError \(msg)")
-			self.setStatus(500, message: msg)
+			self.setStatus(code: 500, message: msg)
 			self.bodyData = [UInt8]("Mustache syntax error \(msg)".utf8)
 
 		} catch MustacheError.EvaluationError(let msg) {
 
 			print("MustacheError.EvaluationError exception \(msg)")
-			self.setStatus(500, message: msg)
+			self.setStatus(code: 500, message: msg)
 			self.bodyData = [UInt8]("Mustache evaluation error \(msg)".utf8)
 
 		} catch let e {
@@ -204,12 +204,12 @@ public class WebResponse {
 		self.requestCompleted()
 	}
 
-	func includeVirtual(path: String) throws {
+	func includeVirtual(path path: String) throws {
 		Routing.handleRequest(self.request, response: self)
 	}
 
-	func include(path: String, local: Bool) throws {
-		return try self.includeVirtual(path)
+	func include(path path: String, local: Bool) throws {
+		return try self.includeVirtual(path: path)
 	}
 
 	private func makeNonRelative(path: String, local: Bool = false) -> String {

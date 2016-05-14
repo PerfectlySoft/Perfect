@@ -20,23 +20,23 @@
 /// Placeholder functions for logging system
 public struct Log {
 	
-	static func info(msg: String) {
-		print(msg)
+	static func info(message message: String) {
+		print(message)
 	}
 	
-	static func warning(msg: String) {
-		print(msg)
+	static func warning(message message: String) {
+		print(message)
 	}
 	
-	static func error(msg: String) {
-		print(msg)
+	static func error(message message: String) {
+		print(message)
 	}
 	
-	static func critical(msg: String) {
-		print(msg)
+	static func critical(message message: String) {
+		print(message)
 	}
 	@noreturn
-	static func terminal(msg: String) {
-		fatalError(msg)		
+	static func terminal(message message: String) {
+		fatalError(message)		
 	}
 }

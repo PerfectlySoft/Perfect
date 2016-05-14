@@ -33,7 +33,7 @@ public class JSONDecoding {
 	
 	static private var jsonDecodableRegistry = [String:JSONConvertibleObjectCreator]()
 	
-	static public func registerJSONDecodable(name: String, creator: JSONConvertibleObjectCreator) {
+	static public func registerJSONDecodable(name name: String, creator: JSONConvertibleObjectCreator) {
 		JSONDecoding.jsonDecodableRegistry[name] = creator
 	}
 	
@@ -41,10 +41,10 @@ public class JSONDecoding {
 		guard let objkey = values[JSONDecoding.objectIdentifierKey] as? String else {
 			return nil
 		}
-		return JSONDecoding.createJSONConvertibleObject(objkey, values: values)
+		return JSONDecoding.createJSONConvertibleObject(name: objkey, values: values)
 	}
 	
-	static public func createJSONConvertibleObject(name: String, values:[String:Any]) -> JSONConvertibleObject? {
+	static public func createJSONConvertibleObject(name name: String, values:[String:Any]) -> JSONConvertibleObject? {
 		guard let creator = JSONDecoding.jsonDecodableRegistry[name] else {
 			return nil
 		}
@@ -65,7 +65,7 @@ public class JSONConvertibleObject: JSONConvertible {
 	
 	public init() {}
 	
-	public func setJSONValues(values:[String:Any]) {}
+	public func setJSONValues(_ values:[String:Any]) {}
 	public func getJSONValues() -> [String:Any] { return [String:Any]() }
 
 	public func jsonEncodedString() throws -> String {
@@ -74,7 +74,7 @@ public class JSONConvertibleObject: JSONConvertible {
 }
 
 public extension JSONConvertibleObject {
-	func getJSONValue<T: JSONConvertible>(named: String, from:[String:Any], defaultValue: T) -> T {
+	func getJSONValue<T: JSONConvertible>(named named: String, from:[String:Any], defaultValue: T) -> T {
 		let f = from[named]
 		if let v = f as? T {
 			return v
@@ -184,7 +184,7 @@ extension Bool: JSONConvertible {
 
 // !FIX! Downcasting to protocol does not work on Linux
 // Not sure if this is intentional, or a bug.
-func jsonEncodedStringWorkAround(o: Any) throws -> String {
+func jsonEncodedStringWorkAround(_ o: Any) throws -> String {
 	switch o {
 	case let jsonAble as JSONConvertibleObject: // as part of Linux work around
 		return try jsonAble.jsonEncodedString()
@@ -355,7 +355,7 @@ private class JSONDecodeState {
 				}
 			}
 			if let objid = d[JSONDecoding.objectIdentifierKey] as? String {
-				if let o = JSONDecoding.createJSONConvertibleObject(objid, values: d) {
+				if let o = JSONDecoding.createJSONConvertibleObject(name: objid, values: d) {
 					return o
 				}
 			}
@@ -366,7 +366,7 @@ private class JSONDecodeState {
 			if c.isWhiteSpace() {
 				// nothing
 			} else if c.isDigit() || c == "-" || c == "+" {
-				return try readNumber(c)
+				return try readNumber(firstChar: c)
 			} else if c == "t" || c == "T" {
 				return try readTrue()
 			} else if c == "f" || c == "F" {
@@ -442,7 +442,7 @@ private class JSONDecodeState {
 		throw JSONConversionError.SyntaxError
 	}
 	
-	func readNumber(firstChar: UnicodeScalar) throws -> JSONConvertible {
+	func readNumber(firstChar firstChar: UnicodeScalar) throws -> JSONConvertible {
 		var s = ""
 		var needPeriod = true, needExp = true
 		s.append(firstChar)

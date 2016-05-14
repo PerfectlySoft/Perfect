@@ -9,7 +9,7 @@
 #if swift(>=3.0)
 
 	extension UnsafeMutablePointer {
-		public static func alloc(num: Int) -> UnsafeMutablePointer<Pointee> {
+		public static func allocatingCapacity(_ num: Int) -> UnsafeMutablePointer<Pointee> {
 			return UnsafeMutablePointer<Pointee>(allocatingCapacity: num)
 		}
 	}
@@ -23,7 +23,11 @@
 	public typealias OpaquePointer = COpaquePointer
 	
 	extension UnsafeMutablePointer {
-		
+	
+		public static func allocatingCapacity(num: Int) -> UnsafeMutablePointer<Memory> {
+			return UnsafeMutablePointer<Memory>.alloc(num)
+		}
+	
 		var pointee: Memory {
 			get { return self.memory }
 			set { self.memory = newValue }
@@ -66,6 +70,66 @@
 		mutating func remove(at at: String.Index) -> Character {
 			return self.removeAtIndex(at)
 		}
+		
+		func substring(to index: String.Index) -> String {
+			var s = ""
+			var idx = self.startIndex
+			let endIdx = self.endIndex
+			while idx != endIdx && idx != index {
+				s.append(self[idx])
+				idx = self.index(after: idx)
+			}
+			return s
+		}
+		
+		func substring(with range: Range<String.Index>) -> String {
+			var s = ""
+			var idx = range.lowerBound
+			let endIdx = self.endIndex
+			
+			while idx < endIdx && idx < range.upperBound {
+				s.append(self[idx])
+				idx = self.index(after: idx)
+			}
+			
+			return s
+		}
+		
+		func index(after index: String.Index) -> String.Index {
+			return index.successor()
+		}
+		
+		func index(before index: String.Index) -> String.Index {
+			return index.predecessor()
+		}
+		
+		func index(_ index: String.Index, offsetBy: Int) -> String.Index {
+			return index.advanced(by: offsetBy)
+		}
+		
+		func range(of string: String, ignoreCase: Bool = false) -> Range<String.Index>? {
+			var idx = self.startIndex
+			let endIdx = self.endIndex
+			
+			while idx != endIdx {
+				if ignoreCase ? (String(self[idx]).lowercased() == String(string[string.startIndex]).lowercased()) : (self[idx] == string[string.startIndex]) {
+					var newIdx = self.index(after: idx)
+					var findIdx = string.index(after: string.startIndex)
+					let findEndIdx = string.endIndex
+					
+					while newIdx != endIndex && findIdx != findEndIdx && (ignoreCase ? (String(self[newIdx]).lowercased() == String(string[findIdx]).lowercased()) : (self[newIdx] == string[findIdx])) {
+						newIdx = self.index(after: newIdx)
+						findIdx = string.index(after: findIdx)
+					}
+					
+					if findIdx == findEndIdx { // match
+						return idx..<newIdx
+					}
+				}
+				idx = self.index(after: idx)
+			}
+			return nil
+		}
 	}
 	
 	extension CollectionType where Generator == IndexingGenerator<Self> {
@@ -76,11 +140,35 @@
 		public func suffix(from from: Self.Index) -> SubSequence {
 			return self.suffixFrom(from)
 		}
+		
+		func index(after index: String.Index) -> String.Index {
+			return index.successor()
+		}
 	}
 	
 	extension String.CharacterView {
 		func split(separator separator: Character, maxSplits: Int = Int.max, omittingEmptySubsequences: Bool = false) -> [String.CharacterView] {
 			return self.split(separator, maxSplit: maxSplits, allowEmptySlices: false)
+		}
+		
+		func index(after index: String.CharacterView.Index) -> String.CharacterView.Index {
+			return index.successor()
+		}
+		
+		func index(before index: String.CharacterView.Index) -> String.CharacterView.Index {
+			return index.predecessor()
+		}
+	}
+	
+	extension String.UTF8View {
+		func index(after index: String.UTF8View.Index) -> String.UTF8View.Index {
+			return index.advanced(by: 1)
+		}
+	}
+	
+	extension String.UnicodeScalarView {
+		public func makeIterator() -> Generator {
+			return self.generate()
 		}
 	}
 	
@@ -96,14 +184,10 @@
 		}
 	}
 	
-	extension String.UnicodeScalarView {
-		public func makeIterator() -> Generator {
-			return self.generate()
+	extension String.UTF8View.Index {
+		func advanced(by by: Int) -> String.UTF8View.Index {
+			return self.advancedBy(by)
 		}
-		
-//		public mutating func append<S : SequenceType where S.Generator.Element == UnicodeScalar>(contentsOf newElements: S) {
-//			return self.appendContentsOf(newElements)
-//		}
 	}
 	
 	extension Array {
@@ -166,6 +250,11 @@
 		public mutating func remove(at index: Self.Index) -> Self.Generator.Element {
 			return self.removeAtIndex(index)
 		}
+	}
+	
+	extension Range {
+		var lowerBound: Element { return self.startIndex }
+		var upperBound: Element { return self.endIndex }
 	}
 	
 	@warn_unused_result

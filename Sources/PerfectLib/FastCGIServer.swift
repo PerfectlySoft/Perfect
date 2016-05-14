@@ -43,7 +43,7 @@ public class FastCGIServer {
 		}
 		let pipe = NetNamedPipe()
 		pipe.initSocket()
-		try pipe.bind(namedPipe)
+		try pipe.bind(address: namedPipe)
 		pipe.listen()
 		chmod(namedPipe, mode_t(S_IRWXU|S_IRWXO|S_IRWXG))
 
@@ -60,7 +60,7 @@ public class FastCGIServer {
 	public func start(port: UInt16, bindAddress: String = "0.0.0.0") throws {
 		let socket = NetTCP()
 		socket.initSocket()
-		try socket.bind(port, address: bindAddress)
+		try socket.bind(port: port, address: bindAddress)
 		socket.listen()
 
 		defer { socket.close() }
@@ -79,19 +79,19 @@ public class FastCGIServer {
 
 				if let n = net {
 					Threading.dispatchBlock {
-						self?.handleConnection(n)
+						self?.handleConnection(net: n)
 					}
 				}
 			}
 		}
 	}
 
-	func handleConnection(net: NetTCP) {
+	func handleConnection(net net: NetTCP) {
 		let fcgiReq = FastCGIRequest(net: net)
-		readRecord(fcgiReq)
+		readRecord(fcgiReq: fcgiReq)
 	}
 
-	func readRecord(fcgiReq: FastCGIRequest) {
+	func readRecord(fcgiReq fcgiReq: FastCGIRequest) {
 
 		fcgiReq.readRecord {
 			[weak self] (r:FastCGIRecord?) -> () in
@@ -101,12 +101,12 @@ public class FastCGIServer {
 				return // died. timed out. errorered
 			}
 
-			self?.handleRecord(fcgiReq, fcgiRecord: record)
+			self?.handleRecord(fcgiReq: fcgiReq, fcgiRecord: record)
 		}
 
 	}
 
-	func handleRecord(fcgiReq: FastCGIRequest, fcgiRecord: FastCGIRecord) {
+	func handleRecord(fcgiReq fcgiReq: FastCGIRequest, fcgiRecord: FastCGIRecord) {
 		switch fcgiRecord.recType {
 
 		case fcgiBeginRequest:
@@ -148,9 +148,9 @@ public class FastCGIServer {
 					}
 					if sz > 0 {
 						let idx2 = Int(idx + sz)
-						let name = UTF8Encoding.encode(bytes[idx..<idx2])
+						let name = UTF8Encoding.encode(bytes: bytes[idx..<idx2])
 						let idx3 = idx2 + Int(vsz)
-						let value = UTF8Encoding.encode(bytes[idx2..<idx3])
+						let value = UTF8Encoding.encode(bytes: bytes[idx2..<idx3])
 
 						fcgiReq.requestParams[name] = value
 
@@ -169,7 +169,7 @@ public class FastCGIServer {
 
 		case fcgiData:
 			if fcgiRecord.contentLength > 0 {
-				fcgiReq.requestParams["L_FCGI_DATA"] = UTF8Encoding.encode(fcgiRecord.content!)
+				fcgiReq.requestParams["L_FCGI_DATA"] = UTF8Encoding.encode(bytes: fcgiRecord.content!)
 			}
 
 		case fcgiXStdin:
@@ -183,7 +183,7 @@ public class FastCGIServer {
 
 				let size = ntohl((four << 24) + (three << 16) + (two << 8) + one)
 
-				readXStdin(fcgiReq, size: Int(size))
+				readXStdin(fcgiReq: fcgiReq, size: Int(size))
 				return
 			}
 
@@ -192,12 +192,12 @@ public class FastCGIServer {
 
 		}
 		fcgiReq.lastRecordType = fcgiRecord.recType
-		readRecord(fcgiReq)
+		readRecord(fcgiReq: fcgiReq)
 	}
 
-	func readXStdin(fcgiReq: FastCGIRequest, size: Int) {
+	func readXStdin(fcgiReq fcgiReq: FastCGIRequest, size: Int) {
 
-		fcgiReq.connection.readSomeBytes(size) {
+		fcgiReq.connection.readSomeBytes(count: size) {
 			[weak self] (b:[UInt8]?) -> () in
 
 			guard let bytes = b else {
@@ -210,14 +210,14 @@ public class FastCGIServer {
 			let remaining = size - bytes.count
 			if  remaining == 0 {
 				fcgiReq.lastRecordType = fcgiStdin
-				self?.readRecord(fcgiReq)
+				self?.readRecord(fcgiReq: fcgiReq)
 			} else {
-				self?.readXStdin(fcgiReq, size: remaining)
+				self?.readXStdin(fcgiReq: fcgiReq, size: remaining)
 			}
 		}
 	}
 
-	func runRequest(fcgiReq: FastCGIRequest) {
+	func runRequest(_ fcgiReq: FastCGIRequest) {
 
 		let request = WebRequest(fcgiReq)
 		let response = WebResponse(fcgiReq, request: request)
@@ -226,8 +226,8 @@ public class FastCGIServer {
 
 			let status = response.appStatus
 
-			let finalBytes = fcgiReq.makeEndRequestBody(Int(fcgiReq.requestId), appStatus: status, protocolStatus: fcgiRequestComplete)
-			fcgiReq.writeBytes(finalBytes)
+			let finalBytes = fcgiReq.makeEndRequestBody(requestId: Int(fcgiReq.requestId), appStatus: status, protocolStatus: fcgiRequestComplete)
+			fcgiReq.write(bytes: finalBytes)
 			fcgiReq.connection.close()
 		}
 	}

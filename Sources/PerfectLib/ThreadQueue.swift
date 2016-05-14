@@ -16,7 +16,7 @@
 public protocol ThreadQueue {
 	var name: String { get }
 	var type: Threading.QueueType { get }
-	func dispatch(closure: Threading.ThreadClosure)
+	func dispatch(_ closure: Threading.ThreadClosure)
 }
 
 public extension Threading {
@@ -43,7 +43,7 @@ public extension Threading {
 			self.startLoop()
 		}
 
-		func dispatch(closure: Threading.ThreadClosure) {
+		func dispatch(_ closure: Threading.ThreadClosure) {
 			self.lock.doWithLock {
 				self.q.append(closure)
 				self.lock.signal()
@@ -85,7 +85,7 @@ public extension Threading {
 			self.startLoop()
 		}
 
-		func dispatch(closure: Threading.ThreadClosure) {
+		func dispatch(_ closure: Threading.ThreadClosure) {
 			self.lock.doWithLock {
 				self.q.append(closure)
 				self.lock.signal()
@@ -125,7 +125,7 @@ public extension Threading {
 		return num
 	}
 
-	static func getQueue(name: String, type: QueueType) -> ThreadQueue {
+	static func getQueue(name name: String, type: QueueType) -> ThreadQueue {
 		var q: ThreadQueue?
 		Threading.queuesLock.doWithLock {
 			switch type {
@@ -150,7 +150,7 @@ public extension Threading {
 	/// Call the given closure on the "default" concurrent queue
 	/// Returns immediately.
 	public static func dispatchBlock(closure: Threading.ThreadClosure) {
-		let q = Threading.getQueue("default", type: .Concurrent)
+		let q = Threading.getQueue(name: "default", type: .Concurrent)
 		q.dispatch(closure)
 	}
 
@@ -169,11 +169,17 @@ public extension Threading {
 
 		let pthreadFunc: ThreadFunction = {
 			p in
-
-			let unleakyObject = Unmanaged<IsThisRequired>.fromOpaque(OpaquePointer(p)).takeRetainedValue()
-
-			unleakyObject.closure()
-
+		#if swift(>=3.0)
+			if let pCheck = p {
+				let unleakyObject = Unmanaged<IsThisRequired>.fromOpaque(OpaquePointer(pCheck)).takeRetainedValue()
+				unleakyObject.closure()
+			}
+		#else
+			if nil != p {
+				let unleakyObject = Unmanaged<IsThisRequired>.fromOpaque(OpaquePointer(p)).takeRetainedValue()
+				unleakyObject.closure()
+			}
+		#endif
 			return nil
 		}
 	#if swift(>=3.0)

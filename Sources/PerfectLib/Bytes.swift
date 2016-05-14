@@ -20,7 +20,7 @@
 /// A Bytes object represents an array of UInt8 and provides various utilities for importing and exporting values into and out of that array.
 /// A Bytes object maintains a position marker which is used to denote the position from which new export operations proceed.
 /// An export will advance the position by the appropriate amount.
-public class Bytes {
+public final class Bytes {
 	
 	/// The position from which new export operations begin.
 	public var position = 0
@@ -49,61 +49,61 @@ public class Bytes {
 	// -- IMPORT
 	/// Imports one UInt8 value appending it to the end of the array
 	/// - returns: The Bytes object
-	public func import8Bits(byte: UInt8) -> Bytes {
-		data.append(byte)
+	public func import8Bits(from from: UInt8) -> Bytes {
+		data.append(from)
 		return self
 	}
 	
 	/// Imports one UInt16 value appending it to the end of the array
 	/// - returns: The Bytes object
-	public func import16Bits(short: UInt16) -> Bytes {
-		data.append(UInt8(short & 0xFF))
-		data.append(UInt8((short >> 8) & 0xFF))
+	public func import16Bits(from from: UInt16) -> Bytes {
+		data.append(UInt8(from & 0xFF))
+		data.append(UInt8((from >> 8) & 0xFF))
 		return self
 	}
 	
 	/// Imports one UInt32 value appending it to the end of the array
 	/// - returns: The Bytes object
-	public func import32Bits(int: UInt32) -> Bytes {
-		data.append(UInt8(int & 0xFF))
-		data.append(UInt8((int >> 8) & 0xFF))
-		data.append(UInt8((int >> 16) & 0xFF))
-		data.append(UInt8((int >> 24) & 0xFF))
+	public func import32Bits(from from: UInt32) -> Bytes {
+		data.append(UInt8(from & 0xFF))
+		data.append(UInt8((from >> 8) & 0xFF))
+		data.append(UInt8((from >> 16) & 0xFF))
+		data.append(UInt8((from >> 24) & 0xFF))
 		return self
 	}
 	
 	/// Imports one UInt64 value appending it to the end of the array
 	/// - returns: The Bytes object
-	public func import64Bits(int: UInt64) -> Bytes {
-		data.append(UInt8(int & 0xFF))
-		data.append(UInt8((int >> 8) & 0xFF))
-		data.append(UInt8((int >> 16) & 0xFF))
-		data.append(UInt8((int >> 24) & 0xFF))
-		data.append(UInt8((int >> 32) & 0xFF))
-		data.append(UInt8((int >> 40) & 0xFF))
-		data.append(UInt8((int >> 48) & 0xFF))
-		data.append(UInt8((int >> 56) & 0xFF))
+	public func import64Bits(from from: UInt64) -> Bytes {
+		data.append(UInt8(from & 0xFF))
+		data.append(UInt8((from >> 8) & 0xFF))
+		data.append(UInt8((from >> 16) & 0xFF))
+		data.append(UInt8((from >> 24) & 0xFF))
+		data.append(UInt8((from >> 32) & 0xFF))
+		data.append(UInt8((from >> 40) & 0xFF))
+		data.append(UInt8((from >> 48) & 0xFF))
+		data.append(UInt8((from >> 56) & 0xFF))
 		return self
 	}
 	
 	/// Imports an array of UInt8 values appending them to the end of the array
 	/// - returns: The Bytes object
-	public func importBytes(bytes: [UInt8]) -> Bytes {
-		data.append(contentsOf: bytes)
+	public func importBytes(from from: [UInt8]) -> Bytes {
+		data.append(contentsOf: from)
 		return self
 	}
 	
 	/// Imports the array values of the given Bytes appending them to the end of the array
 	/// - returns: The Bytes object
-	public func importBytes(bytes: Bytes) -> Bytes {
-		data.append(contentsOf: bytes.data)
+	public func importBytes(from from: Bytes) -> Bytes {
+		data.append(contentsOf: from.data)
 		return self
 	}
 	
 	/// Imports an `ArraySlice` of UInt8 values appending them to the end of the array
 	/// - returns: The Bytes object
-	public func importBytes(bytes: ArraySlice<UInt8>) -> Bytes {
-		data.append(contentsOf: bytes)
+	public func importBytes(from from: ArraySlice<UInt8>) -> Bytes {
+		data.append(contentsOf: from)
 		return self
 	}
 	
@@ -168,7 +168,7 @@ public class Bytes {
 	}
 	
 	/// Exports the indicated number of bytes
-	public func exportBytes(count: Int) -> [UInt8] {
+	public func exportBytes(count count: Int) -> [UInt8] {
 		var sub = [UInt8]()
 		let end = self.position + count
 		while self.position < end {

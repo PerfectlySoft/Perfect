@@ -137,7 +137,7 @@ public struct NotificationResponse {
 	}
 	/// The body data bytes converted to String.
 	public var stringBody: String {
-		return UTF8Encoding.encode(self.body)
+		return UTF8Encoding.encode(bytes: self.body)
 	}
 }
 
@@ -182,13 +182,13 @@ public class NotificationPusher {
 	/// 2. Path to push notification certificate as obtained from Apple: net.useCertificateFile("path/to/aps.pem")
 	/// 3a. Password for the certificate's private key file, if it is password protected: net.keyFilePassword = "password"
 	/// 3b. Path to the certificate's private key file: net.usePrivateKeyFile("path/to/key.pem")
-	public static func addConfigurationIOS(name: String, configurator: netConfigurator) {
+	public static func addConfigurationIOS(name name: String, configurator: netConfigurator) {
 		self.configurationsLock.doWithLock {
 			self.iosConfigurations[name] = NotificationConfiguration(configurator: configurator)
 		}
 	}
 	
-	static func getStreamIOS(configurationName: String, callback: (HTTP2Client?) -> ()) {
+	static func getStreamIOS(configurationName configurationName: String, callback: (HTTP2Client?) -> ()) {
 		
 		var conf: NotificationConfiguration?
 		self.configurationsLock.doWithLock {
@@ -216,7 +216,7 @@ public class NotificationPusher {
 				// add a new connected stream
 				
 				c.configurator(net!.net)
-				net!.connect(self.notificationHostIOS, port: iosNotificationPort, ssl: true, timeoutSeconds: 5.0) {
+				net!.connect(host: self.notificationHostIOS, port: iosNotificationPort, ssl: true, timeoutSeconds: 5.0) {
 					b in
 					if b {
 						callback(net!)
@@ -231,7 +231,7 @@ public class NotificationPusher {
 		}
 	}
 	
-	static func releaseStreamIOS(configurationName: String, net: HTTP2Client) {
+	static func releaseStreamIOS(configurationName configurationName: String, net: HTTP2Client) {
 		var conf: NotificationConfiguration?
 		self.configurationsLock.doWithLock {
 			conf = self.iosConfigurations[configurationName]
@@ -273,13 +273,13 @@ public class NotificationPusher {
 	/// Provide a callback with which to receive the response.
 	public func pushIOS(configurationName: String, deviceToken: String, expiration: UInt32, priority: UInt8, notificationItems: [IOSNotificationItem], callback: (NotificationResponse) -> ()) {
 		
-		NotificationPusher.getStreamIOS(configurationName) {
+		NotificationPusher.getStreamIOS(configurationName: configurationName) {
 			client in
 			if let c = client {
 				self.pushIOS(c, deviceTokens: [deviceToken], expiration: expiration, priority: priority, notificationItems: notificationItems) {
 					responses in
 					
-					NotificationPusher.releaseStreamIOS(configurationName, net: c)
+					NotificationPusher.releaseStreamIOS(configurationName: configurationName, net: c)
 					
 					if responses.count == 1 {
 						callback(responses.first!)
@@ -301,13 +301,13 @@ public class NotificationPusher {
 	/// Provide a callback with which to receive the responses.
 	public func pushIOS(configurationName: String, deviceTokens: [String], expiration: UInt32, priority: UInt8, notificationItems: [IOSNotificationItem], callback: ([NotificationResponse]) -> ()) {
 		
-		NotificationPusher.getStreamIOS(configurationName) {
+		NotificationPusher.getStreamIOS(configurationName: configurationName) {
 			client in
 			if let c = client {
 				self.pushIOS(c, deviceTokens: deviceTokens, expiration: expiration, priority: priority, notificationItems: notificationItems) {
 					responses in
 					
-					NotificationPusher.releaseStreamIOS(configurationName, net: c)
+					NotificationPusher.releaseStreamIOS(configurationName: configurationName, net: c)
 					
 					if responses.count == 1 {
 						callback(responses)
@@ -321,7 +321,7 @@ public class NotificationPusher {
 		}
 	}
 	
-	func pushIOS(net: HTTP2Client, deviceToken: String, expiration: UInt32, priority: UInt8, notificationJson: [UInt8], callback: (NotificationResponse) -> ()) {
+	func pushIOS(_ net: HTTP2Client, deviceToken: String, expiration: UInt32, priority: UInt8, notificationJson: [UInt8], callback: (NotificationResponse) -> ()) {
 		
 		let request = net.createRequest()
 		request.requestMethod = "POST"
@@ -340,12 +340,12 @@ public class NotificationPusher {
 				let code = r.getStatus().0
 				callback(NotificationResponse(code: code, body: r.bodyData))
 			} else {
-				callback(NotificationResponse(code: -1, body: UTF8Encoding.decode("No response")))
+				callback(NotificationResponse(code: -1, body: UTF8Encoding.decode(string: "No response")))
 			}
 		}
 	}
 	
-	func pushIOS(client: HTTP2Client, deviceTokens: ComponentGenerator, expiration: UInt32, priority: UInt8, notificationJson: [UInt8], callback: ([NotificationResponse]) -> ()) {
+	func pushIOS(_ client: HTTP2Client, deviceTokens: ComponentGenerator, expiration: UInt32, priority: UInt8, notificationJson: [UInt8], callback: ([NotificationResponse]) -> ()) {
 		var g = deviceTokens
 		if let next = g.next() {
 			pushIOS(client, deviceToken: next, expiration: expiration, priority: priority, notificationJson: notificationJson) {
@@ -360,14 +360,14 @@ public class NotificationPusher {
 		}
 	}
 	
-	func pushIOS(client: HTTP2Client, deviceTokens: [String], expiration: UInt32, priority: UInt8, notificationItems: [IOSNotificationItem], callback: ([NotificationResponse]) -> ()) {
+	func pushIOS(_ client: HTTP2Client, deviceTokens: [String], expiration: UInt32, priority: UInt8, notificationItems: [IOSNotificationItem], callback: ([NotificationResponse]) -> ()) {
 		self.resetResponses()
 		let g = deviceTokens.makeIterator()
-		let jsond = UTF8Encoding.decode(self.itemsToPayloadString(notificationItems))
+		let jsond = UTF8Encoding.decode(string: self.itemsToPayloadString(notificationItems: notificationItems))
 		self.pushIOS(client, deviceTokens: g, expiration: expiration, priority: priority, notificationJson: jsond, callback: callback)
 	}
 	
-	func itemsToPayloadString(notificationItems: [IOSNotificationItem]) -> String {
+	func itemsToPayloadString(notificationItems notificationItems: [IOSNotificationItem]) -> String {
 		var dict = [String:Any]()
 		var aps = [String:Any]()
 		var alert = [String:Any]()

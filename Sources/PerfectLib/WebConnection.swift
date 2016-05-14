@@ -29,14 +29,14 @@ public protocol WebConnection {
 	var mimes: MimeReader? { get }
 	
 	/// Set the response status code and message. For example, 200, "OK".
-	func setStatus(code: Int, msg: String)
+	func setStatus(code c: Int, message: String)
 	/// Get the response status code and message.
 	func getStatus() -> (Int, String)
 	/// Add a response header which will be sent to the client.
-	func writeHeaderLine(h: String)
+	func writeHeader(line l: String)
 	/// Send header bytes to the client.
-	func writeHeaderBytes(b: [UInt8])
+	func writeHeader(bytes b: [UInt8])
 	/// Write body bytes to the client. Any pending header data will be written first.
-	func writeBodyBytes(b: [UInt8])
+	func writeBody(bytes b: [UInt8])
 	
 }

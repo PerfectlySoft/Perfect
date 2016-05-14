@@ -89,33 +89,60 @@ public class CURL {
 		setOption(CURLOPT_READDATA, v: opaqueMe)
 	#endif
 		let headerReadFunc: curl_func = {
-			(a: UnsafeMutablePointer<Void>, size: Int, num: Int, p: UnsafeMutablePointer<Void>) -> Int in
-			
-			let crl = Unmanaged<CURL>.fromOpaque(OpaquePointer(p)).takeUnretainedValue()
-			let bytes = UnsafeMutablePointer<UInt8>(a)
-			let fullCount = size*num
-			for idx in 0..<fullCount {
-				crl.headerBytes.append(bytes[idx])
+			(a, size, num, p) -> Int in
+		#if swift(>=3.0)
+			let crl = Unmanaged<CURL>.fromOpaque(OpaquePointer(p!)).takeUnretainedValue()
+			if let bytes = UnsafeMutablePointer<UInt8>(a) {
+				let fullCount = size*num
+				for idx in 0..<fullCount {
+					crl.headerBytes.append(bytes[idx])
+				}
+				return fullCount
 			}
-			return fullCount
+		#else
+			let crl = Unmanaged<CURL>.fromOpaque(OpaquePointer(p)).takeUnretainedValue()
+		#endif
+			let bytes = UnsafeMutablePointer<UInt8>(a)
+			if nil != bytes {
+				let fullCount = size*num
+				for idx in 0..<fullCount {
+					crl.headerBytes.append(bytes[idx])
+				}
+				return fullCount
+			}
+			return 0
 		}
 		setOption(CURLOPT_HEADERFUNCTION, f: headerReadFunc)
 		
 		let writeFunc: curl_func = {
-			(a: UnsafeMutablePointer<Void>, size: Int, num: Int, p: UnsafeMutablePointer<Void>) -> Int in
+			(a, size, num, p) -> Int in
 			
+		#if swift(>=3.0)
+			let crl = Unmanaged<CURL>.fromOpaque(OpaquePointer(p!)).takeUnretainedValue()
+			if let bytes = UnsafeMutablePointer<UInt8>(a) {
+				let fullCount = size*num
+				for idx in 0..<fullCount {
+					crl.bodyBytes.append(bytes[idx])
+				}
+				return fullCount
+			}
+		#else
 			let crl = Unmanaged<CURL>.fromOpaque(OpaquePointer(p)).takeUnretainedValue()
 			let bytes = UnsafeMutablePointer<UInt8>(a)
-			let fullCount = size*num
-			for idx in 0..<fullCount {
-				crl.bodyBytes.append(bytes[idx])
+			if nil != bytes {
+				let fullCount = size*num
+				for idx in 0..<fullCount {
+					crl.bodyBytes.append(bytes[idx])
+				}
+				return fullCount
 			}
-			return fullCount
+		#endif
+			return 0
 		}
 		setOption(CURLOPT_WRITEFUNCTION, f: writeFunc)
 		
 		let readFunc: curl_func = {
-			(a: UnsafeMutablePointer<Void>, b: Int, c: Int, p: UnsafeMutablePointer<Void>) -> Int in
+			(a, b, c, p) -> Int in
 			
 			// !FIX!
 			
@@ -151,22 +178,22 @@ public class CURL {
 		self.multi = curl_multi_init()
 		curl_multi_add_handle(self.multi!, self.curl!)
 		
-		performInner(header, body: body, closure: closure)
+		performInner(header: header, body: body, closure: closure)
 	}
 	
-	private func performInner(header: Bytes, body: Bytes, closure: (Int, [UInt8], [UInt8]) -> ()) {
+	private func performInner(header header: Bytes, body: Bytes, closure: (Int, [UInt8], [UInt8]) -> ()) {
 		let perf = self.perform()
 		if let h = perf.2 {
-			header.importBytes(h)
+			header.importBytes(from: h)
 		} 
 		if let b = perf.3 {
-			body.importBytes(b)
+			body.importBytes(from: b)
 		}
 		if perf.0 == false { // done
 			closure(perf.1, header.data, body.data)
 		} else {
 			Threading.dispatchBlock { [weak self] in
-				self?.performInner(header, body: body, closure: closure)
+				self?.performInner(header: header, body: body, closure: closure)
 			}
 		}
 	}
@@ -186,7 +213,7 @@ public class CURL {
 			self.reset()
 		}
 		if code != CURLE_OK {
-			let str = self.strError(code)
+			let str = self.strError(code: code)
 			print(str)
 		}
 		return (Int(code.rawValue), self.headerBytes, self.bodyBytes)
@@ -247,47 +274,54 @@ public class CURL {
 //	}
 	
 	/// Returns the String message for the given CURL result code.
-	public func strError(code: CURLcode) -> String {
+	public func strError(code code: CURLcode) -> String {
 		return String(validatingUTF8: curl_easy_strerror(code))!
 	}
 	
 	/// Returns the Int value for the given CURLINFO.
-	public func getInfo(info: CURLINFO) -> (Int, CURLcode) {
+	public func getInfo(_ info: CURLINFO) -> (Int, CURLcode) {
 		var i = 0
 		let c = curl_easy_getinfo_long(self.curl!, info, &i)
 		return (i, c)
 	}
 	
 	/// Returns the String value for the given CURLINFO.
-	public func getInfo(info: CURLINFO) -> (String, CURLcode) {
-		let i = UnsafeMutablePointer<UnsafePointer<Int8>>.alloc(1)
+	public func getInfo(_ info: CURLINFO) -> (String, CURLcode) {
+	#if swift(>=3.0)
+		let i = UnsafeMutablePointer<UnsafePointer<Int8>?>.allocatingCapacity(1)
+		defer { i.deinitialize(count: 1); i.deallocateCapacity(1) }
+		let code = curl_easy_getinfo_cstr(self.curl!, info, i)
+		return (code != CURLE_OK ? "" : String(validatingUTF8: i.pointee!)!, code)
+	#else
+		let i = UnsafeMutablePointer<UnsafePointer<Int8>>.allocatingCapacity(1)
 		defer { i.deinitialize(count: 1); i.deallocateCapacity(1) }
 		let code = curl_easy_getinfo_cstr(self.curl!, info, i)
 		return (code != CURLE_OK ? "" : String(validatingUTF8: i.pointee)!, code)
+	#endif
 	}
 	
 	/// Sets the Int64 option value.
-	public func setOption(option: CURLoption, int: Int64) -> CURLcode {
+	public func setOption(_ option: CURLoption, int: Int64) -> CURLcode {
 		return curl_easy_setopt_int64(self.curl!, option, int)
 	}
 	
 	/// Sets the Int option value.
-	public func setOption(option: CURLoption, int: Int) -> CURLcode {
+	public func setOption(_ option: CURLoption, int: Int) -> CURLcode {
 		return curl_easy_setopt_long(self.curl!, option, int)
 	}
 	
 	/// Sets the poionter option value.
-	public func setOption(option: CURLoption, v: UnsafeMutablePointer<Void>) -> CURLcode {
+	public func setOption(_ option: CURLoption, v: UnsafeMutablePointer<Void>) -> CURLcode {
 		return curl_easy_setopt_void(self.curl!, option, v)
 	}
 	
 	/// Sets the callback function option value.
-	public func setOption(option: CURLoption, f: curl_func) -> CURLcode {
+	public func setOption(_ option: CURLoption, f: curl_func) -> CURLcode {
 		return curl_easy_setopt_func(self.curl!, option, f)
 	}
 	
 	/// Sets the String option value.
-	public func setOption(option: CURLoption, s: String) -> CURLcode {
+	public func setOption(_ option: CURLoption, s: String) -> CURLcode {
 		switch(option.rawValue) {
 		case CURLOPT_HTTP200ALIASES.rawValue,
 			CURLOPT_HTTPHEADER.rawValue,
@@ -296,7 +330,16 @@ public class CURL {
 			CURLOPT_QUOTE.rawValue,
 			CURLOPT_MAIL_FROM.rawValue,
 			CURLOPT_MAIL_RCPT.rawValue:
+		#if swift(>=3.0)
+			guard let slist = curl_slist_append(nil, s) else {
+				return CURLE_OUT_OF_MEMORY
+			}
+		#else
 			let slist = curl_slist_append(nil, s)
+			guard nil != slist else {
+				return CURLE_OUT_OF_MEMORY
+			}
+		#endif
 			self.slists.append(slist)
 			return curl_easy_setopt_slist(self.curl!, option, slist)
 		default:

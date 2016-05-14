@@ -27,8 +27,13 @@ public struct Threading {
 
 	/// The key type used for `Threading.once`.
 	public typealias ThreadOnce = pthread_once_t
-	typealias ThreadFunction = @convention(c) (UnsafeMutablePointer<Void>) -> UnsafeMutablePointer<Void>
-
+	#if swift(>=3.0)
+	typealias VoidPointer = UnsafeMutablePointer<Void>?
+	#else
+	typealias VoidPointer = UnsafeMutablePointer<Void>
+	#endif
+	typealias ThreadFunction = @convention(c) (VoidPointer) -> VoidPointer
+	
 	class IsThisRequired {
 		let closure: ThreadClosure
 		init(closure: ThreadClosure) {
@@ -94,13 +99,13 @@ public struct Threading {
 		override init() {
 			super.init()
 
-			var __c_attr = pthread_condattr_t()
-			pthread_condattr_init(&__c_attr)
+			var attr = pthread_condattr_t()
+			pthread_condattr_init(&attr)
 			#if os (Linux)
-			pthread_condattr_setclock(&__c_attr, CLOCK_MONOTONIC)
+			pthread_condattr_setclock(&attr, CLOCK_MONOTONIC)
 			#endif
-			pthread_cond_init(&cond, &__c_attr)
-			pthread_condattr_destroy(&__c_attr)
+			pthread_cond_init(&cond, &attr)
+			pthread_condattr_destroy(&attr)
 		}
 
 		deinit {
@@ -123,7 +128,8 @@ public struct Threading {
 		/// Blocks the calling thread until a signal is received or the timeout occurs.
 		/// Returns true only if the signal was received.
 		/// Returns false upon timeout or error.
-		public func wait(waitMillis: Int = -1) -> Bool {
+		public func wait(seconds seconds: Double = -1) -> Bool {
+			let waitMillis = Int(seconds * 1000.0)
 			if waitMillis == -1 {
 				return 0 == pthread_cond_wait(&self.cond, &self.mutex)
 			}
@@ -190,7 +196,7 @@ public struct Threading {
 	/// This is useful for ensuring that initialization code is only called once in a multi-threaded process.
 	/// Upon returning from `Threading.once` it is guaranteed that the closure has been executed and has completed.
 	#if swift(>=3.0)
-	public static func once(threadOnce: inout ThreadOnce, onceFunc: ThreadOnceFunction) {
+	public static func once(_ threadOnce: inout ThreadOnce, onceFunc: ThreadOnceFunction) {
 		pthread_once(&threadOnce, onceFunc)
 	}
 	#else
@@ -199,8 +205,8 @@ public struct Threading {
 	}
 	#endif
 
-	public static func sleep(milliseconds: Int) {
-
+	public static func sleep(seconds inSeconds: Double) {
+		let milliseconds = Int(inSeconds * 1000.0)
 		var tv = timeval()
 		tv.tv_sec = milliseconds/1000
 #if os(Linux)

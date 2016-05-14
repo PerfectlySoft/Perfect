@@ -43,7 +43,7 @@ public struct Dir {
 		return exists(realPath())
 	}
 	
-	func exists(path: String) -> Bool {
+	func exists(_ path: String) -> Bool {
 		return access(path, F_OK) != -1
 	}
 	
@@ -111,7 +111,11 @@ public struct Dir {
 		defer { closedir(dir) }
 		
 		var ent = dirent()
-		let entPtr = UnsafeMutablePointer<UnsafeMutablePointer<dirent>>.alloc(1)
+	#if swift(>=3.0)
+		let entPtr = UnsafeMutablePointer<UnsafeMutablePointer<dirent>?>.allocatingCapacity(1)
+	#else
+		let entPtr = UnsafeMutablePointer<UnsafeMutablePointer<dirent>>.allocatingCapacity(1)
+	#endif
 		defer { entPtr.deallocateCapacity(1) }
 		
 		while readdir_r(dir, &ent, entPtr) == 0 && entPtr.pointee != nil {

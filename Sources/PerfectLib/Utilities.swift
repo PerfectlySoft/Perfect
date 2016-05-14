@@ -37,6 +37,13 @@ public struct GenerateFromPointer<T> : IteratorProtocol {
 		self.from = from
 		self.count = count
 	}
+	#if swift(>=3.0)
+	#else
+	public init(from: UnsafeMutablePointer<T>?, count: Int) {
+		self.from = from!
+		self.count = count
+	}
+	#endif
 	
 	/// Return the next element or nil if the sequence has been exhausted.
 	mutating public func next() -> Element? {
@@ -54,10 +61,10 @@ public struct GenerateFromPointer<T> : IteratorProtocol {
 public struct Encoding {
 	
 	/// Return a String given a character generator.
-	public static func encode<D : UnicodeCodec, G : IteratorProtocol where G.Element == D.CodeUnit>(decoder : D, generator: G) -> String {
+	public static func encode<D : UnicodeCodec, G : IteratorProtocol where G.Element == D.CodeUnit>(codec inCodec: D, generator: G) -> String {
 		var encodedString = ""
 		var finished: Bool = false
-		var mutableDecoder = decoder
+		var mutableDecoder = inCodec
 		var mutableGenerator = generator
 		repeat {
 			let decodingResult = mutableDecoder.decode(&mutableGenerator)
@@ -92,7 +99,7 @@ public struct UTF16Encoding {
 	
 	/// Use a UTF-16 character generator to create a String.
 	public static func encode<G : IteratorProtocol where G.Element == UTF16.CodeUnit>(generator: G) -> String {
-		return Encoding.encode(UTF16(), generator: generator)
+		return Encoding.encode(codec: UTF16(), generator: generator)
 	}
 }
 
@@ -100,24 +107,24 @@ public struct UTF16Encoding {
 public struct UTF8Encoding {
 	
 	/// Use a character generator to create a String.
-	public static func encode<G : IteratorProtocol where G.Element == UTF8.CodeUnit>(generator: G) -> String {
-		return Encoding.encode(UTF8(), generator: generator)
+	public static func encode<G : IteratorProtocol where G.Element == UTF8.CodeUnit>(generator generator: G) -> String {
+		return Encoding.encode(codec: UTF8(), generator: generator)
 	}
 	
 	#if swift(>=3.0)
 	/// Use a character sequence to create a String.
-	public static func encode<S : Sequence where S.Iterator.Element == UTF8.CodeUnit>(bytes: S) -> String {
-		return encode(bytes.makeIterator())
+	public static func encode<S : Sequence where S.Iterator.Element == UTF8.CodeUnit>(bytes bytes: S) -> String {
+		return encode(generator: bytes.makeIterator())
 	}
 	#else
 	/// Use a character sequence to create a String.
-	public static func encode<S : SequenceType where S.Generator.Element == UTF8.CodeUnit>(bytes: S) -> String {
-		return encode(bytes.generate())
+	public static func encode<S : SequenceType where S.Generator.Element == UTF8.CodeUnit>(bytes bytes: S) -> String {
+		return encode(generator: bytes.generate())
 	}
 	#endif
 	
 	/// Decode a String into an array of UInt8.
-	public static func decode(str: String) -> Array<UInt8> {
+	public static func decode(string str: String) -> Array<UInt8> {
 		return [UInt8](str.utf8)
 	}
 }
@@ -255,7 +262,7 @@ extension String {
 			}
 		}
 		
-		return UTF8Encoding.encode(bytesArray)
+		return UTF8Encoding.encode(bytes: bytesArray)
 	}
 	
 	public var decodeHex: [UInt8]? {
@@ -282,7 +289,7 @@ extension String {
 	/// Parse uuid string
 	/// Results undefined if the string is not a valid UUID
 	public func asUUID() -> uuid_t {
-		let u = UnsafeMutablePointer<UInt8>.alloc(sizeof(uuid_t))
+		let u = UnsafeMutablePointer<UInt8>.allocatingCapacity(sizeof(uuid_t))
 		defer {
 			u.deallocateCapacity(sizeof(uuid_t))
 		}
@@ -291,8 +298,8 @@ extension String {
 	}
 	
 	public static func fromUUID(uuid: uuid_t) -> String {
-		let u = UnsafeMutablePointer<UInt8>.alloc(sizeof(uuid_t))
-		let unu = UnsafeMutablePointer<Int8>.alloc(37) // as per spec. 36 + null
+		let u = UnsafeMutablePointer<UInt8>.allocatingCapacity(sizeof(uuid_t))
+		let unu = UnsafeMutablePointer<Int8>.allocatingCapacity(37) // as per spec. 36 + null
 		
 		defer {
 			u.deallocateCapacity(sizeof(uuid_t))
@@ -311,7 +318,7 @@ public func empty_uuid() -> uuid_t {
 }
 
 public func random_uuid() -> uuid_t {
-	let u = UnsafeMutablePointer<UInt8>.alloc(sizeof(uuid_t))
+	let u = UnsafeMutablePointer<UInt8>.allocatingCapacity(sizeof(uuid_t))
 	defer {
 		u.deallocateCapacity(sizeof(uuid_t))
 	}
@@ -325,11 +332,11 @@ extension String {
 	/// Parse an HTTP Digest authentication header returning a Dictionary containing each part.
 	public func parseAuthentication() -> [String:String] {
 		var ret = [String:String]()
-		if let _ = self.rangeOf("Digest ") {
+		if let _ = self.range(of: "Digest ") {
 			ret["type"] = "Digest"
 			let wantFields = ["username", "nonce", "nc", "cnonce", "response", "uri", "realm", "qop", "algorithm"]
 			for field in wantFields {
-				if let foundField = String.extractField(self, named: field) {
+				if let foundField = String.extractField(from: self, named: field) {
 					ret[field] = foundField
 				}
 			}
@@ -337,23 +344,23 @@ extension String {
 		return ret
 	}
 	
-	private static func extractField(from: String, named: String) -> String? {
-		guard let range = from.rangeOf(named + "=") else {
+	private static func extractField(from from: String, named: String) -> String? {
+		guard let range = from.range(of: named + "=") else {
 			return nil
 		}
 		
-		var currPos = range.endIndex
+		var currPos = range.upperBound
 		var ret = ""
 		let quoted = from[currPos] == "\""
 		if quoted {
-			currPos = currPos.successor()
+			currPos = from.index(after: currPos)
 			let tooFar = from.endIndex
 			while currPos != tooFar {
 				if from[currPos] == "\"" {
 					break
 				}
 				ret.append(from[currPos])
-				currPos = currPos.successor()
+				currPos = from.index(after: currPos)
 			}
 		} else {
 			let tooFar = from.endIndex
@@ -362,7 +369,7 @@ extension String {
 					break
 				}
 				ret.append(from[currPos])
-				currPos = currPos.successor()
+				currPos = from.index(after: currPos)
 			}
 		}
 		return ret
@@ -371,9 +378,9 @@ extension String {
 
 extension String {
 	
-	public func stringByReplacingString(find: String, withString: String) -> String {
+	public func stringByReplacing(string string: String, withString: String) -> String {
 		
-		guard !find.isEmpty else {
+		guard !string.isEmpty else {
 			return self
 		}
 		guard !self.isEmpty else {
@@ -385,14 +392,14 @@ extension String {
 		let endIdx = self.endIndex
 		
 		while idx != endIdx {
-			if self[idx] == find[find.startIndex] {
-				var newIdx = idx.advanced(by: 1)
-				var findIdx = find.startIndex.advanced(by: 1)
-				let findEndIdx = find.endIndex
+			if self[idx] == string[string.startIndex] {
+				var newIdx = self.index(after: idx)
+				var findIdx = string.index(after: string.startIndex)
+				let findEndIdx = string.endIndex
 				
-				while newIdx != endIndex && findIdx != findEndIdx && self[newIdx] == find[findIdx] {
-					newIdx = newIdx.advanced(by: 1)
-					findIdx = findIdx.advanced(by: 1)
+				while newIdx != endIndex && findIdx != findEndIdx && self[newIdx] == string[findIdx] {
+					newIdx = self.index(after: newIdx)
+					findIdx = string.index(after: findIdx)
 				}
 				
 				if findIdx == findEndIdx { // match
@@ -402,63 +409,15 @@ extension String {
 				}
 			}
 			ret.append(self[idx])
-			idx = idx.advanced(by: 1)
+			idx = self.index(after: idx)
 		}
 		
 		return ret
 	}
 	
-	public func substringTo(index: String.Index) -> String {
-		var s = ""
-		var idx = self.startIndex
-		let endIdx = self.endIndex
-		while idx != endIdx && idx != index {
-			s.append(self[idx])
-			idx = idx.successor()
-		}
-		return s
-	}
-	
-	public func substringWith(range: Range<String.Index>) -> String {
-		var s = ""
-		var idx = range.startIndex
-		let endIdx = self.endIndex
-		
-		while idx < endIdx && idx < range.endIndex {
-			s.append(self[idx])
-			idx = idx.successor()
-		}
-		
-		return s
-	}
-	
-	public func rangeOf(string: String, ignoreCase: Bool = false) -> Range<String.Index>? {
-		var idx = self.startIndex
-		let endIdx = self.endIndex
-		
-		while idx != endIdx {
-			if ignoreCase ? (String(self[idx]).lowercased() == String(string[string.startIndex]).lowercased()) : (self[idx] == string[string.startIndex]) {
-				var newIdx = idx.advanced(by: 1)
-				var findIdx = string.startIndex.advanced(by: 1)
-				let findEndIdx = string.endIndex
-				
-				while newIdx != endIndex && findIdx != findEndIdx && (ignoreCase ? (String(self[newIdx]).lowercased() == String(string[findIdx]).lowercased()) : (self[newIdx] == string[findIdx])) {
-					newIdx = newIdx.advanced(by: 1)
-					findIdx = findIdx.advanced(by: 1)
-				}
-				
-				if findIdx == findEndIdx { // match
-					return idx..<newIdx
-				}
-			}
-			idx = idx.advanced(by: 1)
-		}
-		return nil
-	}
-	
 	// For compatibility due to shifting swift
-	public func containsString(string: String) -> Bool {
-		return nil != self.rangeOf(string)
+	public func contains(string string: String) -> Bool {
+		return nil != self.range(of: string)
 	}
 }
 
@@ -485,10 +444,10 @@ extension String {
 		guard unis.count > 0 else {
 			return false
 		}
-		return unis[unis.endIndex.predecessor()] == Character(pathSeparator)
+		return unis[unis.index(before: unis.endIndex)] == Character(pathSeparator)
 	}
 	
-	private func pathComponents(addFirstLast: Bool) -> [String] {
+	private func pathComponents(addFirstLast addFirstLast: Bool) -> [String] {
 		var r = [String]()
 		let unis = self.characters
 		guard unis.count > 0 else {
@@ -510,11 +469,11 @@ extension String {
 	}
 	
 	var pathComponents: [String] {
-		return self.pathComponents(true)
+		return self.pathComponents(addFirstLast: true)
 	}
 	
 	var lastPathComponent: String {
-		let last = self.pathComponents(false).last ?? ""
+		let last = self.pathComponents(addFirstLast: false).last ?? ""
 		if last.isEmpty && self.characters.first == Character(pathSeparator) {
 			return String(pathSeparator)
 		}
@@ -522,7 +481,7 @@ extension String {
 	}
 	
 	var stringByDeletingLastPathComponent: String {
-		var comps = self.pathComponents(false)
+		var comps = self.pathComponents(addFirstLast: false)
 		guard comps.count > 1 else {
 			if self.beginsWithSeparator {
 				return String(pathSeparator)
@@ -542,14 +501,14 @@ extension String {
 		let startIndex = unis.startIndex
 		var endIndex = unis.endIndex
 		while endIndex != startIndex {
-			if unis[endIndex.predecessor()] != Character(pathSeparator) {
+			if unis[unis.index(before: endIndex)] != Character(pathSeparator) {
 				break
 			}
-			endIndex = endIndex.predecessor()
+			endIndex = unis.index(before: endIndex)
 		}
 		let noTrailsIndex = endIndex
 		while endIndex != startIndex {
-			endIndex = endIndex.predecessor()
+			endIndex = unis.index(before: endIndex)
 			if unis[endIndex] == Character(extensionSeparator) {
 				break
 			}
@@ -558,9 +517,9 @@ extension String {
 			if noTrailsIndex == startIndex {
 				return self
 			}
-			return self.substringTo(noTrailsIndex)
+			return self.substring(to: noTrailsIndex)
 		}
-		return self.substringTo(endIndex)
+		return self.substring(to: endIndex)
 	}
 	
 	var pathExtension: String {
@@ -568,14 +527,14 @@ extension String {
 		let startIndex = unis.startIndex
 		var endIndex = unis.endIndex
 		while endIndex != startIndex {
-			if unis[endIndex.predecessor()] != Character(pathSeparator) {
+			if unis[unis.index(before: endIndex)] != Character(pathSeparator) {
 				break
 			}
-			endIndex = endIndex.predecessor()
+			endIndex = unis.index(before: endIndex)
 		}
 		let noTrailsIndex = endIndex
 		while endIndex != startIndex {
-			endIndex = endIndex.predecessor()
+			endIndex = unis.index(before: endIndex)
 			if unis[endIndex] == Character(extensionSeparator) {
 				break
 			}
@@ -583,7 +542,7 @@ extension String {
 		guard endIndex != startIndex else {
 			return ""
 		}
-		return self.substringWith(endIndex.successor()..<noTrailsIndex)
+		return self.substring(with: unis.index(after: endIndex)..<noTrailsIndex)
 	}
 
 	var stringByResolvingSymlinksInPath: String {
@@ -631,11 +590,11 @@ public func getNow() -> Double {
 	return Double((posixTime.tv_sec * 1000) + (Int(posixTime.tv_usec)/1000))
 }
 /// Converts the milliseconds based ICU date to seconds since the epoch
-public func icuDateToSeconds(icuDate: Double) -> Int {
+public func icuDateToSeconds(_ icuDate: Double) -> Int {
 	return Int(icuDate / 1000)
 }
 /// Converts the seconds since the epoch into the milliseconds based ICU date
-public func secondsToICUDate(seconds: Int) -> Double {
+public func secondsToICUDate(_ seconds: Int) -> Double {
 	return Double(seconds * 1000)
 }
 
@@ -647,13 +606,13 @@ public func secondsToICUDate(seconds: Int) -> Double {
 /// - returns: The resulting date string
 /// - throws: `PerfectError.ICUError`
 /// - Seealso [Date Time Format Syntax](http://userguide.icu-project.org/formatparse/datetime#TOC-Date-Time-Format-Syntax)
-public func formatDate(date: Double, format: String, timezone inTimezone: String? = nil, locale inLocale: String? = nil) throws -> String {
+public func formatDate(_ date: Double, format: String, timezone inTimezone: String? = nil, locale inLocale: String? = nil) throws -> String {
 	
 	var t = tm()
 	var time = time_t(date / 1000.0)
 	gmtime_r(&time, &t)
 	let maxResults = 1024
-	let results = UnsafeMutablePointer<Int8>.alloc(maxResults)
+	let results = UnsafeMutablePointer<Int8>.allocatingCapacity(maxResults)
 	defer {
 		results.deallocateCapacity(maxResults)
 	}
