@@ -88,8 +88,8 @@ public class WebResponse {
 	}
 
 	/// Adds the cookie object to the response
-	public func addCookie(cookie cookie: Cookie) {
-		self.cookiesArray.append(cookie)
+	public func addCookie(cookie cooky: Cookie) {
+		self.cookiesArray.append(cooky)
 	}
 
 	public func appendBody(bytes b: [UInt8]) {
@@ -204,12 +204,12 @@ public class WebResponse {
 		self.requestCompleted()
 	}
 
-	func includeVirtual(path path: String) throws {
+	func includeVirtual(path pth: String) throws {
 		Routing.handleRequest(self.request, response: self)
 	}
 
-	func include(path path: String, local: Bool) throws {
-		return try self.includeVirtual(path: path)
+	func include(path pth: String, local: Bool) throws {
+		return try self.includeVirtual(path: pth)
 	}
 
 	private func makeNonRelative(path: String, local: Bool = false) -> String {

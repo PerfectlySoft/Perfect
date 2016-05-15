@@ -50,16 +50,16 @@ public class HTTPServer {
 	/// Start the server on the indicated TCP port and optional address.
 	/// - parameter port: The port on which to bind.
 	/// - parameter bindAddress: The local address on which to bind.
-	public func start(port port: UInt16, bindAddress: String = "0.0.0.0") throws {
+	public func start(port prt: UInt16, bindAddress: String = "0.0.0.0") throws {
 		
-		self.serverPort = port
+		self.serverPort = prt
 		self.serverAddress = bindAddress
 		
 		let socket = NetTCP()
 		socket.initSocket()
-		try socket.bind(port: port, address: bindAddress)
+		try socket.bind(port: prt, address: bindAddress)
 		
-		print("Starting HTTP server on \(bindAddress):\(port) with document root \(self.documentRoot)")
+		print("Starting HTTP server on \(bindAddress):\(prt) with document root \(self.documentRoot)")
 		
 		try self.startInner(socket: socket)
 	}
@@ -69,9 +69,9 @@ public class HTTPServer {
 	/// - parameter sslCert: The server SSL certificate file.
 	/// - parameter sslKey: The server SSL key file.
 	/// - parameter bindAddress: The local address on which to bind.
-	public func start(port port: UInt16, sslCert: String, sslKey: String, dhParams: String? = nil, bindAddress: String = "0.0.0.0") throws {
+	public func start(port prt: UInt16, sslCert: String, sslKey: String, dhParams: String? = nil, bindAddress: String = "0.0.0.0") throws {
 		
-		self.serverPort = port
+		self.serverPort = prt
 		self.serverAddress = bindAddress
 		
 		let socket = NetTCPSSL()
@@ -210,17 +210,17 @@ public class HTTPServer {
 			throw PerfectError.NetworkError(code, "Error validating private key file: \(socket.errorStr(forCode: code))")
 		}
 		
-		try socket.bind(port: port, address: bindAddress)
+		try socket.bind(port: prt, address: bindAddress)
 
-		print("Starting HTTPS server on \(bindAddress):\(port) with document root \(self.documentRoot)")
+		print("Starting HTTPS server on \(bindAddress):\(prt) with document root \(self.documentRoot)")
 		
 		try self.startInner(socket: socket)
 	}
 	
-	private func startInner(socket socket: NetTCP) throws {
-		socket.listen()
-		self.net = socket
-		defer { socket.close() }
+	private func startInner(socket sock: NetTCP) throws {
+		sock.listen()
+		self.net = sock
+		defer { sock.close() }
 		self.start()
 	}
 	
@@ -250,8 +250,8 @@ public class HTTPServer {
 		}
 	}
 	
-	func handleConnection(net net: NetTCP) {
-		let req = HTTPWebConnection(net: net, server: self)
+	func handleConnection(net nt: NetTCP) {
+		let req = HTTPWebConnection(net: nt, server: self)
 		req.readRequest { requestOk in
 			if requestOk {
 				self.runRequest(req)
@@ -374,8 +374,8 @@ public class HTTPServer {
 			self.serverPort = server.serverPort
 		}
 		
-		func setStatus(code code: Int, message msg: String) {
-			self.statusCode = code
+		func setStatus(code cod: Int, message msg: String) {
+			self.statusCode = cod
 			self.statusMsg = msg
 		}
 		
@@ -436,9 +436,9 @@ public class HTTPServer {
 			}
 		}
 		
-		func readBody(callback callback: OkCallback) {
+		func readBody(callback callbck: OkCallback) {
 			guard let cl = self.requestParams["CONTENT_LENGTH"] where Int(cl) > 0 else {
-				callback(true)
+				callbck(true)
 				return
 			}
 			
@@ -449,7 +449,7 @@ public class HTTPServer {
 			}
 			self.workingBuffer.removeAll()
 			self.workingBufferOffset = 0
-			self.readBody(count: (Int(cl) ?? 0) - workingDiff, callback: callback)
+			self.readBody(count: (Int(cl) ?? 0) - workingDiff, callback: callbck)
 		}
 		
 		func readBody(count size: Int, callback: OkCallback) {

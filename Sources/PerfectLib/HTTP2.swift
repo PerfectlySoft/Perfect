@@ -141,8 +141,8 @@ class HTTP2Connection: WebConnection {
 	var mimes: MimeReader? { return nil }
 
 	/// Set the response status code and message. For example, 200, "OK".
-	func setStatus(code code: Int, message msg: String) {
-		self.status = (code, msg)
+	func setStatus(code cod: Int, message msg: String) {
+		self.status = (cod, msg)
 	}
 	/// Get the response status code and message.
 	func getStatus() -> (Int, String) { return self.status }
@@ -161,8 +161,8 @@ public class HTTP2WebRequest: WebRequest {
 
 public class HTTP2WebResponse: WebResponse, HeaderListener {
 
-	public func addHeader(name name: [UInt8], value: [UInt8], sensitive: Bool) {
-		let n = UTF8Encoding.encode(bytes: name)
+	public func addHeader(name nam: [UInt8], value: [UInt8], sensitive: Bool) {
+		let n = UTF8Encoding.encode(bytes: nam)
 		let v = UTF8Encoding.encode(bytes: value)
 
 		switch n {
@@ -206,12 +206,12 @@ public class HTTP2Client {
 
 	}
 
-	func dequeueFrame(timeoutSeconds timeoutSeconds: Double) -> HTTP2Frame? {
+	func dequeueFrame(timeoutSeconds timeout: Double) -> HTTP2Frame? {
 		var frame: HTTP2Frame? = nil
 
 		self.frameReadEvent.doWithLock {
 			if self.frameQueue.count == 0 {
-				self.frameReadEvent.wait(seconds: timeoutSeconds)
+				self.frameReadEvent.wait(seconds: timeout)
 			}
 			if self.frameQueue.count > 0 {
 				frame = self.frameQueue.removeFirst()
@@ -221,12 +221,12 @@ public class HTTP2Client {
 		return frame
 	}
 
-	func dequeueFrame(timeoutSeconds timeoutSeconds: Double, streamId: UInt32) -> HTTP2Frame? {
+	func dequeueFrame(timeoutSeconds timeout: Double, streamId: UInt32) -> HTTP2Frame? {
 		var frame: HTTP2Frame? = nil
 
 		self.frameReadEvent.doWithLock {
 			if self.frameQueue.count == 0 {
-				self.frameReadEvent.wait(seconds: timeoutSeconds)
+				self.frameReadEvent.wait(seconds: timeout)
 			}
 			if self.frameQueue.count > 0 {
 				for i in 0..<self.frameQueue.count {
@@ -383,13 +383,13 @@ public class HTTP2Client {
 		return self.net.fd.isValid
 	}
 
-	public func connect(host host: String, port: UInt16, ssl: Bool, timeoutSeconds: Double, callback: (Bool) -> ()) {
-		self.host = host
+	public func connect(host hst: String, port: UInt16, ssl: Bool, timeoutSeconds: Double, callback: (Bool) -> ()) {
+		self.host = hst
 		self.ssl = ssl
 		self.timeoutSeconds = timeoutSeconds
 
 		do {
-			try net.connect(address: host, port: port, timeoutSeconds: timeoutSeconds) {
+			try net.connect(address: hst, port: port, timeoutSeconds: timeoutSeconds) {
 				n in
 
 				if let net = n as? NetTCPSSL {
@@ -421,11 +421,11 @@ public class HTTP2Client {
 		return HTTP2WebRequest(HTTP2Connection(client: self))
 	}
 
-	func awaitResponse(streamId streamId: UInt32, request: WebRequest, callback: (WebResponse?, String?) -> ()) {
+	func awaitResponse(streamId stream: UInt32, request: WebRequest, callback: (WebResponse?, String?) -> ()) {
 		let response = HTTP2WebResponse(request.connection, request: request)
 		var streamOpen = true
 		while streamOpen {
-			let f = self.dequeueFrame(timeoutSeconds: self.timeoutSeconds, streamId: streamId)
+			let f = self.dequeueFrame(timeoutSeconds: self.timeoutSeconds, streamId: stream)
 
 			if let frame = f {
 
@@ -598,9 +598,9 @@ public class HTTP2Client {
 		return HTTP2Frame(length: payloadLength, type: type, flags: flags, streamId: sid, payload: nil)
 	}
 
-	func readHTTP2Frame(timeout timeout: Double, callback: (HTTP2Frame?) -> ()) {
+	func readHTTP2Frame(timeout time: Double, callback: (HTTP2Frame?) -> ()) {
 		let net = self.net
-		net.readBytesFully(count: 9, timeoutSeconds: timeout) {
+		net.readBytesFully(count: 9, timeoutSeconds: time) {
 			bytes in
 
 			if let b = bytes {
@@ -608,7 +608,7 @@ public class HTTP2Client {
 				var header = self.bytesToHeader(b)
 
 				if header.length > 0 {
-					net.readBytesFully(count: Int(header.length), timeoutSeconds: timeout) {
+					net.readBytesFully(count: Int(header.length), timeoutSeconds: time) {
 						bytes in
 
 						header.payload = bytes
@@ -656,10 +656,10 @@ public class HTTP2Client {
 		return b
 	}
 
-	func decodeHeaders(from from: Bytes, endPosition: Int, listener: HeaderListener) {
+	func decodeHeaders(from frm: Bytes, endPosition: Int, listener: HeaderListener) {
 		let decoder = HPACKDecoder()
 		do {
-			try decoder.decode(input: from, headerListener: listener)
+			try decoder.decode(input: frm, headerListener: listener)
 		} catch {
 			self.close()
 		}

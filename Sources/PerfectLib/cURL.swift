@@ -181,19 +181,19 @@ public class CURL {
 		performInner(header: header, body: body, closure: closure)
 	}
 	
-	private func performInner(header header: Bytes, body: Bytes, closure: (Int, [UInt8], [UInt8]) -> ()) {
+	private func performInner(header headr: Bytes, body: Bytes, closure: (Int, [UInt8], [UInt8]) -> ()) {
 		let perf = self.perform()
 		if let h = perf.2 {
-			header.importBytes(from: h)
+			headr.importBytes(from: h)
 		} 
 		if let b = perf.3 {
 			body.importBytes(from: b)
 		}
 		if perf.0 == false { // done
-			closure(perf.1, header.data, body.data)
+			closure(perf.1, headr.data, body.data)
 		} else {
 			Threading.dispatchBlock { [weak self] in
-				self?.performInner(header: header, body: body, closure: closure)
+				self?.performInner(header: headr, body: body, closure: closure)
 			}
 		}
 	}
@@ -274,8 +274,8 @@ public class CURL {
 //	}
 	
 	/// Returns the String message for the given CURL result code.
-	public func strError(code code: CURLcode) -> String {
-		return String(validatingUTF8: curl_easy_strerror(code))!
+	public func strError(code cod: CURLcode) -> String {
+		return String(validatingUTF8: curl_easy_strerror(cod))!
 	}
 	
 	/// Returns the Int value for the given CURLINFO.

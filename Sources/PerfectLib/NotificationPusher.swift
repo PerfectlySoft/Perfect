@@ -182,17 +182,17 @@ public class NotificationPusher {
 	/// 2. Path to push notification certificate as obtained from Apple: net.useCertificateFile("path/to/aps.pem")
 	/// 3a. Password for the certificate's private key file, if it is password protected: net.keyFilePassword = "password"
 	/// 3b. Path to the certificate's private key file: net.usePrivateKeyFile("path/to/key.pem")
-	public static func addConfigurationIOS(name name: String, configurator: netConfigurator) {
+	public static func addConfigurationIOS(name nam: String, configurator: netConfigurator) {
 		self.configurationsLock.doWithLock {
-			self.iosConfigurations[name] = NotificationConfiguration(configurator: configurator)
+			self.iosConfigurations[nam] = NotificationConfiguration(configurator: configurator)
 		}
 	}
 	
-	static func getStreamIOS(configurationName configurationName: String, callback: (HTTP2Client?) -> ()) {
+	static func getStreamIOS(configurationName configuration: String, callback: (HTTP2Client?) -> ()) {
 		
 		var conf: NotificationConfiguration?
 		self.configurationsLock.doWithLock {
-			conf = self.iosConfigurations[configurationName]
+			conf = self.iosConfigurations[configuration]
 		}
 		
 		if let c = conf {
@@ -231,10 +231,10 @@ public class NotificationPusher {
 		}
 	}
 	
-	static func releaseStreamIOS(configurationName configurationName: String, net: HTTP2Client) {
+	static func releaseStreamIOS(configurationName configuration: String, net: HTTP2Client) {
 		var conf: NotificationConfiguration?
 		self.configurationsLock.doWithLock {
-			conf = self.iosConfigurations[configurationName]
+			conf = self.iosConfigurations[configuration]
 		}
 		
 		if let c = conf, n = net as? NotificationHTTP2Client {
@@ -367,13 +367,13 @@ public class NotificationPusher {
 		self.pushIOS(client, deviceTokens: g, expiration: expiration, priority: priority, notificationJson: jsond, callback: callback)
 	}
 	
-	func itemsToPayloadString(notificationItems notificationItems: [IOSNotificationItem]) -> String {
+	func itemsToPayloadString(notificationItems items: [IOSNotificationItem]) -> String {
 		var dict = [String:Any]()
 		var aps = [String:Any]()
 		var alert = [String:Any]()
 		var alertBody: String?
 		
-		for item in notificationItems {
+		for item in items {
 			switch item {
 			case .AlertBody(let s):
 				alertBody = s

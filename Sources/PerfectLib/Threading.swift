@@ -128,8 +128,8 @@ public struct Threading {
 		/// Blocks the calling thread until a signal is received or the timeout occurs.
 		/// Returns true only if the signal was received.
 		/// Returns false upon timeout or error.
-		public func wait(seconds seconds: Double = -1) -> Bool {
-			let waitMillis = Int(seconds * 1000.0)
+		public func wait(seconds secs: Double = -1) -> Bool {
+			let waitMillis = Int(secs * 1000.0)
 			if waitMillis == -1 {
 				return 0 == pthread_cond_wait(&self.cond, &self.mutex)
 			}

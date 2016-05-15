@@ -42,21 +42,21 @@ public struct StaticFileHandler {
 		response.requestCompleted()
 	}
 	
-	func sendFile(response response: WebResponse, file: File) {
+	func sendFile(response resp: WebResponse, file: File) {
 		
 		defer {
 			file.close()
 		}
 		
 		let size = file.size()
-		response.setStatus(code: 200, message: "OK")
+		resp.setStatus(code: 200, message: "OK")
 		
 		do {
 			let bytes = try file.readSomeBytes(count: size)
-			response.addHeader(name: "Content-type", value: MimeType.forExtension(file.path().pathExtension))
-			response.appendBody(bytes: bytes)
+			resp.addHeader(name: "Content-type", value: MimeType.forExtension(file.path().pathExtension))
+			resp.appendBody(bytes: bytes)
 		} catch {
-			response.setStatus(code: 500, message: "Internal server error")
+			resp.setStatus(code: 500, message: "Internal server error")
 		}
 	}
 }

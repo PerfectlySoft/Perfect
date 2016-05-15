@@ -236,9 +236,9 @@ public class NetTCPSSL : NetTCP {
 		return err
 	}
 	
-	public func sslErrorCode(resultCode resultCode: Int32) -> Int32 {
+	public func sslErrorCode(resultCode code: Int32) -> Int32 {
 		if let ssl = self.ssl {
-			let err = SSL_get_error(ssl, resultCode)
+			let err = SSL_get_error(ssl, code)
 			return err
 		}
 		return -1
@@ -270,14 +270,14 @@ public class NetTCPSSL : NetTCP {
 		return ret
 	}
 	
-	override func isEAgain(err err: Int) -> Bool {
-		if err == -1 && self.usingSSL {
-			let sslErr = SSL_get_error(self.ssl!, Int32(err))
+	override func isEAgain(err er: Int) -> Bool {
+		if er == -1 && self.usingSSL {
+			let sslErr = SSL_get_error(self.ssl!, Int32(er))
 			if sslErr != SSL_ERROR_SYSCALL {
 				return sslErr == SSL_ERROR_WANT_READ || sslErr == SSL_ERROR_WANT_WRITE
 			}
 		}
-		return super.isEAgain(err: err)
+		return super.isEAgain(err: er)
 	}
 	
 	override func recv(into buf: UnsafeMutablePointer<Void>, count: Int) -> Int {
@@ -296,9 +296,9 @@ public class NetTCPSSL : NetTCP {
 		return super.send(buf, count: count)
 	}
 	
-	override func readBytesFullyIncomplete(into into: ReferenceBuffer, read: Int, remaining: Int, timeoutSeconds: Double, completion: ([UInt8]?) -> ()) {
+	override func readBytesFullyIncomplete(into to: ReferenceBuffer, read: Int, remaining: Int, timeoutSeconds: Double, completion: ([UInt8]?) -> ()) {
 		guard usingSSL else {
-			return super.readBytesFullyIncomplete(into: into, read: read, remaining: remaining, timeoutSeconds: timeoutSeconds, completion: completion)
+			return super.readBytesFullyIncomplete(into: to, read: read, remaining: remaining, timeoutSeconds: timeoutSeconds, completion: completion)
 		}
 		var what = NetEvent.Filter.Write
 		let sslErr = SSL_get_error(self.ssl!, -1)
@@ -312,7 +312,7 @@ public class NetTCPSSL : NetTCP {
 			if case .Timer = w {
 				completion(nil) // timeout or error
 			} else {
-				self.readBytesFully(into: into, read: read, remaining: remaining, timeoutSeconds: timeoutSeconds, completion: completion)
+				self.readBytesFully(into: to, read: read, remaining: remaining, timeoutSeconds: timeoutSeconds, completion: completion)
 			}
 		}
 	}
@@ -351,7 +351,7 @@ public class NetTCPSSL : NetTCP {
 		self.beginSSL(timeoutSeconds: 5.0, closure: closure)
 	}
 	
-	public func beginSSL(timeoutSeconds timeoutSeconds: Double, closure: (Bool) -> ()) {
+	public func beginSSL(timeoutSeconds timeout: Double, closure: (Bool) -> ()) {
 		guard self.fd.fd != invalidSocket else {
 			closure(false)
 			return
@@ -377,11 +377,11 @@ public class NetTCPSSL : NetTCP {
 			let sslErr = SSL_get_error(ssl, res)
 			if sslErr == SSL_ERROR_WANT_WRITE {
 				
-				NetEvent.add(socket: fd.fd, what: .Write, timeoutSeconds: timeoutSeconds) { [weak self]
+				NetEvent.add(socket: fd.fd, what: .Write, timeoutSeconds: timeout) { [weak self]
 					fd, w in
 					
 					if case .Write = w {
-						self?.beginSSL(timeoutSeconds: timeoutSeconds, closure: closure)
+						self?.beginSSL(timeoutSeconds: timeout, closure: closure)
 					} else {
 						closure(false)
 					}
@@ -389,11 +389,11 @@ public class NetTCPSSL : NetTCP {
 				return
 			} else if sslErr == SSL_ERROR_WANT_READ {
 				
-				NetEvent.add(socket: fd.fd, what: .Read, timeoutSeconds: timeoutSeconds) { [weak self]
+				NetEvent.add(socket: fd.fd, what: .Read, timeoutSeconds: timeout) { [weak self]
 					fd, w in
 					
 					if case .Read = w {
-						self?.beginSSL(timeoutSeconds: timeoutSeconds, closure: closure)
+						self?.beginSSL(timeoutSeconds: timeout, closure: closure)
 					} else {
 						closure(false)
 					}
@@ -463,21 +463,21 @@ public class NetTCPSSL : NetTCP {
 		return r == 1
 	}
 	
-	public func useCertificateChainFile(cert cert: String) -> Bool {
+	public func useCertificateChainFile(cert crt: String) -> Bool {
 		self.initSocket()
 		guard let sslCtx = self.sslCtx else {
 			return false
 		}
-		let r = SSL_CTX_use_certificate_chain_file(sslCtx, cert)
+		let r = SSL_CTX_use_certificate_chain_file(sslCtx, crt)
 		return r == 1
 	}
 	
-	public func usePrivateKeyFile(cert cert: String) -> Bool {
+	public func usePrivateKeyFile(cert crt: String) -> Bool {
 		self.initSocket()
 		guard let sslCtx = self.sslCtx else {
 			return false
 		}
-		let r = SSL_CTX_use_PrivateKey_file(sslCtx, cert, SSL_FILETYPE_PEM)
+		let r = SSL_CTX_use_PrivateKey_file(sslCtx, crt, SSL_FILETYPE_PEM)
 		return r == 1
 	}
 	
@@ -511,8 +511,8 @@ public class NetTCPSSL : NetTCP {
 		}
 	}
 	
-	override public func accept(timeoutSeconds timeoutSeconds: Double, callBack: (NetTCP?) -> ()) throws {
-		try super.accept(timeoutSeconds: timeoutSeconds, callBack: {
+	override public func accept(timeoutSeconds timeout: Double, callBack: (NetTCP?) -> ()) throws {
+		try super.accept(timeoutSeconds: timeout, callBack: {
 			[unowned self] (net:NetTCP?) -> () in
 			
 			if let netSSL = net as? NetTCPSSL {
@@ -521,38 +521,38 @@ public class NetTCPSSL : NetTCP {
 				netSSL.ssl = SSL_new(self.sslCtx!)
 				SSL_set_fd(netSSL.ssl!, netSSL.fd.fd)
 				
-				self.finishAccept(timeoutSeconds: timeoutSeconds, net: netSSL, callBack: callBack)
+				self.finishAccept(timeoutSeconds: timeout, net: netSSL, callBack: callBack)
 			} else {
 				callBack(net)
 			}
 		})
 	}
 	
-	func finishAccept(timeoutSeconds timeoutSeconds: Double, net: NetTCPSSL, callBack: (NetTCP?) -> ()) {
+	func finishAccept(timeoutSeconds timeout: Double, net: NetTCPSSL, callBack: (NetTCP?) -> ()) {
 		let res = SSL_accept(net.ssl!)
 		let sslErr = SSL_get_error(net.ssl!, res)
 		if res == -1 {
 			if sslErr == SSL_ERROR_WANT_WRITE {
 				
-				NetEvent.add(socket: net.fd.fd, what: .Write, timeoutSeconds: timeoutSeconds) { [weak self]
+				NetEvent.add(socket: net.fd.fd, what: .Write, timeoutSeconds: timeout) { [weak self]
 					fd, w in
 					
 					if case .Timer = w {
 						callBack(nil)
 					} else {
-						self?.finishAccept(timeoutSeconds: timeoutSeconds, net: net, callBack: callBack)
+						self?.finishAccept(timeoutSeconds: timeout, net: net, callBack: callBack)
 					}
 				}
 				
 			} else if sslErr == SSL_ERROR_WANT_READ {
 				
-				NetEvent.add(socket: net.fd.fd, what: .Read, timeoutSeconds: timeoutSeconds) { [weak self]
+				NetEvent.add(socket: net.fd.fd, what: .Read, timeoutSeconds: timeout) { [weak self]
 					fd, w in
 					
 					if case .Timer = w {
 						callBack(nil)
 					} else {
-						self?.finishAccept(timeoutSeconds: timeoutSeconds, net: net, callBack: callBack)
+						self?.finishAccept(timeoutSeconds: timeout, net: net, callBack: callBack)
 					}
 				}
 				

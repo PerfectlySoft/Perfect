@@ -107,14 +107,14 @@ public struct UTF16Encoding {
 public struct UTF8Encoding {
 	
 	/// Use a character generator to create a String.
-	public static func encode<G : IteratorProtocol where G.Element == UTF8.CodeUnit>(generator generator: G) -> String {
-		return Encoding.encode(codec: UTF8(), generator: generator)
+	public static func encode<G : IteratorProtocol where G.Element == UTF8.CodeUnit>(generator gen: G) -> String {
+		return Encoding.encode(codec: UTF8(), generator: gen)
 	}
 	
 	#if swift(>=3.0)
 	/// Use a character sequence to create a String.
-	public static func encode<S : Sequence where S.Iterator.Element == UTF8.CodeUnit>(bytes bytes: S) -> String {
-		return encode(generator: bytes.makeIterator())
+	public static func encode<S : Sequence where S.Iterator.Element == UTF8.CodeUnit>(bytes byts: S) -> String {
+		return encode(generator: byts.makeIterator())
 	}
 	#else
 	/// Use a character sequence to create a String.
@@ -344,32 +344,32 @@ extension String {
 		return ret
 	}
 	
-	private static func extractField(from from: String, named: String) -> String? {
-		guard let range = from.range(ofString: named + "=") else {
+	private static func extractField(from frm: String, named: String) -> String? {
+		guard let range = frm.range(ofString: named + "=") else {
 			return nil
 		}
 		
 		var currPos = range.upperBound
 		var ret = ""
-		let quoted = from[currPos] == "\""
+		let quoted = frm[currPos] == "\""
 		if quoted {
-			currPos = from.index(after: currPos)
-			let tooFar = from.endIndex
+			currPos = frm.index(after: currPos)
+			let tooFar = frm.endIndex
 			while currPos != tooFar {
-				if from[currPos] == "\"" {
+				if frm[currPos] == "\"" {
 					break
 				}
-				ret.append(from[currPos])
-				currPos = from.index(after: currPos)
+				ret.append(frm[currPos])
+				currPos = frm.index(after: currPos)
 			}
 		} else {
-			let tooFar = from.endIndex
+			let tooFar = frm.endIndex
 			while currPos != tooFar {
-				if from[currPos] == "," {
+				if frm[currPos] == "," {
 					break
 				}
-				ret.append(from[currPos])
-				currPos = from.index(after: currPos)
+				ret.append(frm[currPos])
+				currPos = frm.index(after: currPos)
 			}
 		}
 		return ret
@@ -378,9 +378,9 @@ extension String {
 
 extension String {
 	
-	public func stringByReplacing(string string: String, withString: String) -> String {
+	public func stringByReplacing(string strng: String, withString: String) -> String {
 		
-		guard !string.isEmpty else {
+		guard !strng.isEmpty else {
 			return self
 		}
 		guard !self.isEmpty else {
@@ -392,14 +392,14 @@ extension String {
 		let endIdx = self.endIndex
 		
 		while idx != endIdx {
-			if self[idx] == string[string.startIndex] {
+			if self[idx] == strng[strng.startIndex] {
 				var newIdx = self.index(after: idx)
-				var findIdx = string.index(after: string.startIndex)
-				let findEndIdx = string.endIndex
+				var findIdx = strng.index(after: strng.startIndex)
+				let findEndIdx = strng.endIndex
 				
-				while newIdx != endIndex && findIdx != findEndIdx && self[newIdx] == string[findIdx] {
+				while newIdx != endIndex && findIdx != findEndIdx && self[newIdx] == strng[findIdx] {
 					newIdx = self.index(after: newIdx)
-					findIdx = string.index(after: findIdx)
+					findIdx = strng.index(after: findIdx)
 				}
 				
 				if findIdx == findEndIdx { // match
@@ -416,8 +416,8 @@ extension String {
 	}
 	
 	// For compatibility due to shifting swift
-	public func contains(string string: String) -> Bool {
-		return nil != self.range(ofString: string)
+	public func contains(string strng: String) -> Bool {
+		return nil != self.range(ofString: strng)
 	}
 }
 
@@ -447,20 +447,20 @@ extension String {
 		return unis[unis.index(before: unis.endIndex)] == Character(pathSeparator)
 	}
 	
-	private func pathComponents(addFirstLast addFirstLast: Bool) -> [String] {
+	private func pathComponents(addFirstLast addfl: Bool) -> [String] {
 		var r = [String]()
 		let unis = self.characters
 		guard unis.count > 0 else {
 			return r
 		}
 		
-		if addFirstLast && self.beginsWithSeparator {
+		if addfl && self.beginsWithSeparator {
 			r.append(String(pathSeparator))
 		}
 		
 		r.append(contentsOf: self.characters.split(separator: Character(pathSeparator)).map { String($0) })
 		
-		if addFirstLast && self.endsWithSeparator {
+		if addfl && self.endsWithSeparator {
 			if !self.beginsWithSeparator || r.count > 1 {
 				r.append(String(pathSeparator))
 			}

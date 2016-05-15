@@ -36,36 +36,36 @@ public class FastCGIServer {
 	}
 
 	/// Start the server on the indicated named pipe
-	public func start(namedPipe namedPipe: String) throws {
-		if access(namedPipe, F_OK) != -1 {
+	public func start(namedPipe name: String) throws {
+		if access(name, F_OK) != -1 {
 			// exists. remove it
-			unlink(namedPipe)
+			unlink(name)
 		}
 		let pipe = NetNamedPipe()
 		pipe.initSocket()
-		try pipe.bind(address: namedPipe)
+		try pipe.bind(address: name)
 		pipe.listen()
-		chmod(namedPipe, mode_t(S_IRWXU|S_IRWXO|S_IRWXG))
+		chmod(name, mode_t(S_IRWXU|S_IRWXO|S_IRWXG))
 
 		self.net = pipe
 
 		defer { pipe.close() }
 
-		print("Starting FastCGI server on named pipe "+namedPipe)
+		print("Starting FastCGI server on named pipe "+name)
 
 		self.start()
 	}
 
 	/// Start the server on the indicated TCP port and optional address
-	public func start(port port: UInt16, bindAddress: String = "0.0.0.0") throws {
+	public func start(port prt: UInt16, bindAddress: String = "0.0.0.0") throws {
 		let socket = NetTCP()
 		socket.initSocket()
-		try socket.bind(port: port, address: bindAddress)
+		try socket.bind(port: prt, address: bindAddress)
 		socket.listen()
 
 		defer { socket.close() }
 
-		print("Starting FastCGi server on \(bindAddress):\(port)")
+		print("Starting FastCGi server on \(bindAddress):\(prt)")
 
 		self.start()
 	}
@@ -86,36 +86,36 @@ public class FastCGIServer {
 		}
 	}
 
-	func handleConnection(net net: NetTCP) {
-		let fcgiReq = FastCGIRequest(net: net)
+	func handleConnection(net nt: NetTCP) {
+		let fcgiReq = FastCGIRequest(net: nt)
 		readRecord(fcgiReq: fcgiReq)
 	}
 
-	func readRecord(fcgiReq fcgiReq: FastCGIRequest) {
+	func readRecord(fcgiReq req: FastCGIRequest) {
 
-		fcgiReq.readRecord {
+		req.readRecord {
 			[weak self] (r:FastCGIRecord?) -> () in
 
 			guard let record = r else {
-				fcgiReq.connection.close()
+				req.connection.close()
 				return // died. timed out. errorered
 			}
 
-			self?.handleRecord(fcgiReq: fcgiReq, fcgiRecord: record)
+			self?.handleRecord(fcgiReq: req, fcgiRecord: record)
 		}
 
 	}
 
-	func handleRecord(fcgiReq fcgiReq: FastCGIRequest, fcgiRecord: FastCGIRecord) {
+	func handleRecord(fcgiReq req: FastCGIRequest, fcgiRecord: FastCGIRecord) {
 		switch fcgiRecord.recType {
 
 		case fcgiBeginRequest:
 			// FastCGIBeginRequestBody UInt16 role, UInt8 flags
 			let role: UInt16 = ntohs((UInt16(fcgiRecord.content![1]) << 8) | UInt16(fcgiRecord.content![0]))
 			let flags: UInt8 = fcgiRecord.content![2]
-			fcgiReq.requestParams["L_FCGI_ROLE"] = String(role)
-			fcgiReq.requestParams["L_FCGI_FLAGS"] = String(flags)
-			fcgiReq.requestId = fcgiRecord.requestId
+			req.requestParams["L_FCGI_ROLE"] = String(role)
+			req.requestParams["L_FCGI_FLAGS"] = String(flags)
+			req.requestId = fcgiRecord.requestId
 		case fcgiParams:
 			if fcgiRecord.contentLength > 0 {
 
@@ -152,7 +152,7 @@ public class FastCGIServer {
 						let idx3 = idx2 + Int(vsz)
 						let value = UTF8Encoding.encode(bytes: bytes[idx2..<idx3])
 
-						fcgiReq.requestParams[name] = value
+						req.requestParams[name] = value
 
 						idx = idx3
 					}
@@ -161,15 +161,15 @@ public class FastCGIServer {
 			}
 		case fcgiStdin:
 			if fcgiRecord.contentLength > 0 {
-				fcgiReq.putStdinData(fcgiRecord.content!)
+				req.putStdinData(fcgiRecord.content!)
 			} else { // done initiating the request. run with it
-				runRequest(fcgiReq)
+				runRequest(req)
 				return
 			}
 
 		case fcgiData:
 			if fcgiRecord.contentLength > 0 {
-				fcgiReq.requestParams["L_FCGI_DATA"] = UTF8Encoding.encode(bytes: fcgiRecord.content!)
+				req.requestParams["L_FCGI_DATA"] = UTF8Encoding.encode(bytes: fcgiRecord.content!)
 			}
 
 		case fcgiXStdin:
@@ -183,7 +183,7 @@ public class FastCGIServer {
 
 				let size = ntohl((four << 24) + (three << 16) + (two << 8) + one)
 
-				readXStdin(fcgiReq: fcgiReq, size: Int(size))
+				readXStdin(fcgiReq: req, size: Int(size))
 				return
 			}
 
@@ -191,28 +191,28 @@ public class FastCGIServer {
 			print("Unhandled FastCGI record type \(fcgiRecord.recType)")
 
 		}
-		fcgiReq.lastRecordType = fcgiRecord.recType
-		readRecord(fcgiReq: fcgiReq)
+		req.lastRecordType = fcgiRecord.recType
+		readRecord(fcgiReq: req)
 	}
 
-	func readXStdin(fcgiReq fcgiReq: FastCGIRequest, size: Int) {
+	func readXStdin(fcgiReq req: FastCGIRequest, size: Int) {
 
-		fcgiReq.connection.readSomeBytes(count: size) {
+		req.connection.readSomeBytes(count: size) {
 			[weak self] (b:[UInt8]?) -> () in
 
 			guard let bytes = b else {
-				fcgiReq.connection.close()
+				req.connection.close()
 				return // died. timed out. errorered
 			}
 
-			fcgiReq.putStdinData(bytes)
+			req.putStdinData(bytes)
 
 			let remaining = size - bytes.count
 			if  remaining == 0 {
-				fcgiReq.lastRecordType = fcgiStdin
-				self?.readRecord(fcgiReq: fcgiReq)
+				req.lastRecordType = fcgiStdin
+				self?.readRecord(fcgiReq: req)
 			} else {
-				self?.readXStdin(fcgiReq: fcgiReq, size: remaining)
+				self?.readXStdin(fcgiReq: req, size: remaining)
 			}
 		}
 	}

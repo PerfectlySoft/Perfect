@@ -99,8 +99,8 @@ public class MustacheEvaluationContext {
 		return cc
 	}
 	
-	internal func newChildContext(withMap withMap: MapType) -> MustacheEvaluationContext {
-		let cc = MustacheEvaluationContext(webResponse: webResponse, map: withMap)
+	internal func newChildContext(withMap with: MapType) -> MustacheEvaluationContext {
+		let cc = MustacheEvaluationContext(webResponse: webResponse, map: with)
 		cc.parent = self
 		return cc
 	}
@@ -108,18 +108,18 @@ public class MustacheEvaluationContext {
 	/// Search for a value starting from the current context. If not found in the current context, the parent context will be searched, etc.
 	/// - parameter named: The name of the value to find
 	/// - returns: The value, if found, or nil
-	public func getValue(named named: String) -> MapType.Value? {
-		let v = mapValues[named]
+	public func getValue(named nam: String) -> MapType.Value? {
+		let v = mapValues[nam]
 		if v == nil && parent != nil {
-			return parent?.getValue(named: named)
+			return parent?.getValue(named: nam)
 		}
 		return v
 	}
 	
 	/// Extends the current values with those from the parameter.
 	/// - parameter with: The new values to add
-	public func extendValues(with with: MapType) {
-		for (key, value) in with {
+	public func extendValues(with wit: MapType) {
+		for (key, value) in wit {
 			mapValues[key] = value
 		}
 	}
@@ -176,7 +176,7 @@ public class MustacheTag {
 	var closeD: [UnicodeScalar]?
 	
 	/// Evaluate the tag within the given context.
-	public func evaluate(context context: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) {
+	public func evaluate(context contxt: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) {
 		
 		switch type {
 		case .Plain:
@@ -184,11 +184,11 @@ public class MustacheTag {
 		case .UnescapedName:
 			collector.append(tag, encoded: false)
 		case .Name:
-			if let value = context.getValue(named: tag) {
+			if let value = contxt.getValue(named: tag) {
 				collector.append(String(value))
 			}
 		case .UnencodedName:
-			if let value = context.getValue(named: tag) {
+			if let value = contxt.getValue(named: tag) {
 				collector.append(String(value), encoded: false)
 			}
 		case .Pragma, .Bang:
@@ -253,9 +253,9 @@ public class MustacheTag {
 public class MustachePartialTag : MustacheTag {
 	
 	/// Override for evaluating the partial tag.
-	public override func evaluate(context context: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) {
+	public override func evaluate(context contxt: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) {
 		
-		guard let page = context.getCurrentFilePath() else {
+		guard let page = contxt.getCurrentFilePath() else {
 			print("Exception while executing partial \(tag): unable to find template root directory")
 			return
 		}
@@ -280,9 +280,9 @@ public class MustachePartialTag : MustacheTag {
 			let str = UTF8Encoding.encode(bytes: bytes)
 			let template = try parser.parse(string: str)
 			
-			try template.evaluatePragmas(context: context, collector: collector, requireHandler: false)
+			try template.evaluatePragmas(context: contxt, collector: collector, requireHandler: false)
 			
-			let newContext = context.newChildContext()
+			let newContext = contxt.newChildContext()
 			newContext.filePath = fullPath
 			template.evaluate(context: newContext, collector: collector)
 			
@@ -318,14 +318,14 @@ public class MustachePragmaTag : MustacheTag {
 public class MustacheGroupTag : MustacheTag {
 	var children = [MustacheTag]()
 	
-	func evaluatePos(context context: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) {
-		let cValue = context.getValue(named: tag)
+	func evaluatePos(context contxt: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) {
+		let cValue = contxt.getValue(named: tag)
 		if let value = cValue {
 			// if it is a dictionary, then eval children with it as the new context
 			// otherwise, it must be an array with elements which are dictionaries
 			switch value {
 			case let v as MustacheEvaluationContext.MapType:
-				let newContext = context.newChildContext(withMap: v)
+				let newContext = contxt.newChildContext(withMap: v)
 				for child in children {
 					child.evaluate(context: newContext, collector: collector)
 				}
@@ -336,28 +336,28 @@ public class MustacheGroupTag : MustacheTag {
 			// 	}
 			case let sequence as MustacheEvaluationContext.SequenceType:
 				for item in sequence {
-					let newContext = context.newChildContext(withMap: item)
+					let newContext = contxt.newChildContext(withMap: item)
 					for child in children {
 						child.evaluate(context: newContext, collector: collector)
 					}
 				}
 			case let lambda as (String, MustacheEvaluationContext) -> String:
-				collector.append(lambda(bodyText(), context), encoded: false)
+				collector.append(lambda(bodyText(), contxt), encoded: false)
 			case let stringValue as String where stringValue.characters.count > 0:
 				for child in children {
-					child.evaluate(context: context, collector: collector)
+					child.evaluate(context: contxt, collector: collector)
 				}
 			case let booleanValue as Bool where booleanValue == true:
 				for child in children {
-					child.evaluate(context: context, collector: collector)
+					child.evaluate(context: contxt, collector: collector)
 				}
 			case let intValue as Int where intValue != 0:
 				for child in children {
-					child.evaluate(context: context, collector: collector)
+					child.evaluate(context: contxt, collector: collector)
 				}
 			case let decValue as Double where decValue != 0.0:
 				for child in children {
-					child.evaluate(context: context, collector: collector)
+					child.evaluate(context: contxt, collector: collector)
 				}
 			default:
 				()
@@ -365,42 +365,42 @@ public class MustacheGroupTag : MustacheTag {
 		}
 	}
 
-	func evaluateNeg(context context: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) {
-		let cValue = context.getValue(named: tag)
+	func evaluateNeg(context contxt: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) {
+		let cValue = contxt.getValue(named: tag)
 		if let value = cValue {
 			switch value {
 			case let v as MustacheEvaluationContext.MapType where v.count == 0:
 				for child in children {
-					child.evaluate(context: context, collector: collector)
+					child.evaluate(context: contxt, collector: collector)
 				}
 			case let v as [String:String] where v.count == 0:
 				for child in children {
-					child.evaluate(context: context, collector: collector)
+					child.evaluate(context: contxt, collector: collector)
 				}
 			case let sequence as MustacheEvaluationContext.SequenceType where sequence.count == 0:
 				for child in children {
-					child.evaluate(context: context, collector: collector)
+					child.evaluate(context: contxt, collector: collector)
 				}
 			case let booleanValue as Bool where booleanValue == false:
 				for child in children {
-					child.evaluate(context: context, collector: collector)
+					child.evaluate(context: contxt, collector: collector)
 				}
 			default:
 				()
 			}
 		} else {
 			for child in children {
-				child.evaluate(context: context, collector: collector)
+				child.evaluate(context: contxt, collector: collector)
 			}
 		}
 	}
 	
 	/// Evaluate the tag in the given context.
-	public override func evaluate(context context: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) {
+	public override func evaluate(context contxt: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) {
 		if type == .Hash {
-			self.evaluatePos(context: context, collector: collector)
+			self.evaluatePos(context: contxt, collector: collector)
 		} else if type == .Caret {
-			self.evaluateNeg(context: context, collector: collector)
+			self.evaluateNeg(context: contxt, collector: collector)
 		} else {
 			// optionally a warning?
 			// otherwise this is a perfectly valid situation
@@ -438,7 +438,7 @@ public class MustacheTemplate : MustacheGroupTag {
 	/// - parameter collector: The `MustacheEvaluationOutputCollector` object which will collect all output from the template evaluation.
 	/// - parameter requireHandler: If true, the pragmas must contain a PageHandler pragma which must indicate a previously registered handler object. If a global page handler has been registered then it will be utilized. If `requireHandler` is false, the global handler will NOT be sought.
 	/// - throws: If `requireHandler` is true and the a handler pragma does not exist or does not indicate a properly registered handler object, then this function will throw `MustacheError.EvaluationError`.
-	public func evaluatePragmas(context context: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector, requireHandler: Bool = true) throws {
+	public func evaluatePragmas(context contxt: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector, requireHandler: Bool = true) throws {
 //		for pragma in pragmas {
 //			let d = pragma.parsePragma()
 //			...
@@ -448,11 +448,11 @@ public class MustacheTemplate : MustacheGroupTag {
 	/// Evaluate the template using the given context and output collector.
 	/// - parameter context: The `MustacheEvaluationContext` object which holds the values used for evaluating the template.
 	/// - parameter collector: The `MustacheEvaluationOutputCollector` object which will collect all output from the template evaluation. `MustacheEvaluationOutputCollector.asString()` can be called to retreive the resulting output data.
-	override public func evaluate(context context: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) {
+	override public func evaluate(context contxt: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) {
 		for child in children {
-			child.evaluate(context: context, collector: collector)
+			child.evaluate(context: contxt, collector: collector)
 		}
-		context.webResponse = nil
+		contxt.webResponse = nil
 	}
 	
 	/// Returns a String containing the reconstituted template, including all children.
@@ -489,11 +489,11 @@ public class MustacheParser {
 	/// Parses a string containing mustache markup and returns the `MustacheTemplate` object.
 	/// - throws: `MustacheError.SyntaxError`
 	/// - returns: A `MustacheTemplate` object which can be evaluated.
-	public func parse(string string: String) throws -> MustacheTemplate {
+	public func parse(string strng: String) throws -> MustacheTemplate {
 		
 		let t = MustacheTemplate()
 		self.activeList = t
-		self.g = string.unicodeScalars.makeIterator()
+		self.g = strng.unicodeScalars.makeIterator()
 		
 		try consumeLoop()
 		
@@ -559,27 +559,27 @@ public class MustacheParser {
 		}
 	}
 	
-	func consumePossibleOpenDelimiter(index index: Int) -> Bool {
-		if index == openDelimiters.count { // we successfully encountered a full delimiter sequence
+	func consumePossibleOpenDelimiter(index idx: Int) -> Bool {
+		if idx == openDelimiters.count { // we successfully encountered a full delimiter sequence
 			return true
 		}
 		if let e = next() {
 			testingPutback!.append(e)
-			if e == openDelimiters[index] {
-				return consumePossibleOpenDelimiter(index: 1 + index)
+			if e == openDelimiters[idx] {
+				return consumePossibleOpenDelimiter(index: 1 + idx)
 			}
 		}
 		return false
 	}
 	
-	func consumePossibleCloseDelimiter(index index: Int) -> Bool {
-		if index == closeDelimiters.count { // we successfully encountered a full delimiter sequence
+	func consumePossibleCloseDelimiter(index idx: Int) -> Bool {
+		if idx == closeDelimiters.count { // we successfully encountered a full delimiter sequence
 			return true
 		}
 		if let e = next() {
-			if e == closeDelimiters[index] {
+			if e == closeDelimiters[idx] {
 				testingPutback!.append(e)
-				return consumePossibleCloseDelimiter(index: 1 + index)
+				return consumePossibleCloseDelimiter(index: 1 + idx)
 			}
 		}
 		return false
@@ -678,9 +678,9 @@ public class MustacheParser {
 	
 	// reads until closing delimiters
 	// firstChar was read as part of previous step and should be added to the result
-	func consumeTagName(firstChar firstChar: UnicodeScalar?) -> String {
+	func consumeTagName(firstChar first: UnicodeScalar?) -> String {
 		
-		guard let f = firstChar else {
+		guard let f = first else {
 			return ""
 		}
 		
@@ -809,14 +809,14 @@ public class MustacheParser {
 		}
 	}
 	
-	func setDelimiters(open open: [UnicodeScalar], close: [UnicodeScalar]) {
-		openDelimiters = open
+	func setDelimiters(open opn: [UnicodeScalar], close: [UnicodeScalar]) {
+		openDelimiters = opn
 		closeDelimiters = close
 	}
 }
 
 public protocol MustachePageHandler {
-	func valuesForResponse(context context: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) throws -> MustacheEvaluationContext.MapType
+	func valuesForResponse(context contxt: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) throws -> MustacheEvaluationContext.MapType
 }
 
 public func mustacheRequest(request: WebRequest, response: WebResponse, handler: MustachePageHandler, path: String) throws {

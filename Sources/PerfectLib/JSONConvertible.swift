@@ -33,8 +33,8 @@ public class JSONDecoding {
 	
 	static private var jsonDecodableRegistry = [String:JSONConvertibleObjectCreator]()
 	
-	static public func registerJSONDecodable(name name: String, creator: JSONConvertibleObjectCreator) {
-		JSONDecoding.jsonDecodableRegistry[name] = creator
+	static public func registerJSONDecodable(name nam: String, creator: JSONConvertibleObjectCreator) {
+		JSONDecoding.jsonDecodableRegistry[nam] = creator
 	}
 	
 	static public func createJSONConvertibleObject(values:[String:Any]) -> JSONConvertibleObject? {
@@ -44,8 +44,8 @@ public class JSONDecoding {
 		return JSONDecoding.createJSONConvertibleObject(name: objkey, values: values)
 	}
 	
-	static public func createJSONConvertibleObject(name name: String, values:[String:Any]) -> JSONConvertibleObject? {
-		guard let creator = JSONDecoding.jsonDecodableRegistry[name] else {
+	static public func createJSONConvertibleObject(name nam: String, values:[String:Any]) -> JSONConvertibleObject? {
+		guard let creator = JSONDecoding.jsonDecodableRegistry[nam] else {
 			return nil
 		}
 		let jsonObj = creator()
@@ -74,8 +74,8 @@ public class JSONConvertibleObject: JSONConvertible {
 }
 
 public extension JSONConvertibleObject {
-	func getJSONValue<T: JSONConvertible>(named named: String, from:[String:Any], defaultValue: T) -> T {
-		let f = from[named]
+	func getJSONValue<T: JSONConvertible>(named namd: String, from:[String:Any], defaultValue: T) -> T {
+		let f = from[namd]
 		if let v = f as? T {
 			return v
 		}
@@ -442,17 +442,17 @@ private class JSONDecodeState {
 		throw JSONConversionError.SyntaxError
 	}
 	
-	func readNumber(firstChar firstChar: UnicodeScalar) throws -> JSONConvertible {
+	func readNumber(firstChar first: UnicodeScalar) throws -> JSONConvertible {
 		var s = ""
 		var needPeriod = true, needExp = true
-		s.append(firstChar)
+		s.append(first)
 		
-		if firstChar == "." {
+		if first == "." {
 			needPeriod = false
 		}
 		
 		var next = self.next()
-		var last = firstChar
+		var last = first
 		while let c = next {
 			if c.isDigit() {
 				s.append(c)

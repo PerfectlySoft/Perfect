@@ -125,23 +125,23 @@ public extension Threading {
 		return num
 	}
 
-	static func getQueue(name name: String, type: QueueType) -> ThreadQueue {
+	static func getQueue(name nam: String, type: QueueType) -> ThreadQueue {
 		var q: ThreadQueue?
 		Threading.queuesLock.doWithLock {
 			switch type {
 			case .Serial:
-				if let qTst = Threading.serialQueues[name] {
+				if let qTst = Threading.serialQueues[nam] {
 					q = qTst
 				} else {
-					q = SerialQueue(name: name)
-					Threading.serialQueues[name] = q
+					q = SerialQueue(name: nam)
+					Threading.serialQueues[nam] = q
 				}
 			case .Concurrent:
-				if let qTst = Threading.concurrentQueues[name] {
+				if let qTst = Threading.concurrentQueues[nam] {
 					q = qTst
 				} else {
-					q = ConcurrentQueue(name: name)
-					Threading.concurrentQueues[name] = q
+					q = ConcurrentQueue(name: nam)
+					Threading.concurrentQueues[nam] = q
 				}
 			}
 		}
