@@ -36,8 +36,8 @@ struct DynamicLoader {
 		
 	}
 	
-	func loadFramework(atPath atPath: String) -> Bool {
-		let resolvedPath = atPath.stringByResolvingSymlinksInPath
+	func loadFramework(atPath at: String) -> Bool {
+		let resolvedPath = at.stringByResolvingSymlinksInPath
 		let moduleName = resolvedPath.lastPathComponent.stringByDeletingPathExtension
 		let file = File(resolvedPath + "/" + moduleName)
 		if file.exists() {
@@ -47,8 +47,8 @@ struct DynamicLoader {
 		return false
 	}
 	
-	func loadLibrary(atPath atPath: String) -> Bool {
-		var fileName = atPath.lastPathComponent
+	func loadLibrary(atPath at: String) -> Bool {
+		var fileName = at.lastPathComponent
 		if fileName.hasPrefix("lib") {
 		#if swift(>=3.0)
 			fileName.characters.removeFirst(3)
@@ -57,7 +57,7 @@ struct DynamicLoader {
 		#endif
 		}
 		let moduleName = fileName.stringByDeletingPathExtension
-		return self.loadRealPath(atPath, moduleName: moduleName)
+		return self.loadRealPath(at, moduleName: moduleName)
 	}
 	
 	private func loadRealPath(_ realPath: String, moduleName: String) -> Bool {

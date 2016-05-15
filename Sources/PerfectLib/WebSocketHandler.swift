@@ -138,8 +138,8 @@ public class WebSocket {
 		return nil
 	}
 
-	func fillBuffer(demand demand: Int, completion: (Bool) -> ()) {
-		self.socket.readBytesFully(count: demand, timeoutSeconds: self.readTimeoutSeconds) {
+	func fillBuffer(demand demnd: Int, completion: (Bool) -> ()) {
+		self.socket.readBytesFully(count: demnd, timeoutSeconds: self.readTimeoutSeconds) {
 			[weak self] (b:[UInt8]?) -> () in
 			if let b = b {
 				self?.readBuffer.data.append(contentsOf: b)
@@ -148,8 +148,8 @@ public class WebSocket {
 		}
 	}
 
-	func fillBufferSome(suggestion suggestion: Int, completion: () -> ()) {
-		self.socket.readSomeBytes(count: suggestion) {
+	func fillBufferSome(suggestion suggest: Int, completion: () -> ()) {
+		self.socket.readSomeBytes(count: suggest) {
 			[weak self] (b:[UInt8]?) -> () in
 			if let b = b {
 				self?.readBuffer.data.append(contentsOf: b)
@@ -158,31 +158,31 @@ public class WebSocket {
 		}
 	}
 
-	private func readFrame(completion completion: (Frame?) -> ()) {
+	private func readFrame(completion comp: (Frame?) -> ()) {
 		if let frame = self.fillFrame() {
 
 			switch frame.opCode {
 			// check for and handle ping/pong
 			case .Ping:
 				self.sendMessage(opcode: .Pong, bytes: frame.bytesPayload, final: true) {
-					self.readFrame(completion: completion)
+					self.readFrame(completion: comp)
 				}
 				return
 			// check for and handle close
 			case .Close:
 				self.close()
-				return completion(nil)
+				return comp(nil)
 			default:
-				return completion(frame)
+				return comp(frame)
 			}
 		}
 		self.fillBuffer(demand: 1) {
 			b in
 			guard b != false else {
-				return completion(nil)
+				return comp(nil)
 			}
 			self.fillBufferSome(suggestion: 1024 * 32) { // some arbitrary read-ahead amount
-				self.readFrame(completion: completion)
+				self.readFrame(completion: comp)
 			}
 		}
 	}
@@ -224,10 +224,10 @@ public class WebSocket {
 		self.sendMessage(opcode: .Ping, bytes: [UInt8](), final: true, completion: completion)
 	}
 
-	private func sendMessage(opcode opcode: OpcodeType, bytes: [UInt8], final: Bool, completion: () -> ()) {
+	private func sendMessage(opcode op: OpcodeType, bytes: [UInt8], final: Bool, completion: () -> ()) {
 		let sendBuffer = Bytes()
 
-		let byte1 = UInt8(final ? 0x80 : 0x0) | (self.nextIsContinuation ? 0 : opcode.rawValue)
+		let byte1 = UInt8(final ? 0x80 : 0x0) | (self.nextIsContinuation ? 0 : op.rawValue)
 
 		self.nextIsContinuation = !final
 
@@ -266,7 +266,7 @@ public protocol WebSocketSessionHandler {
 	/// If this has a valid, the protocol name will be validated against what the client is requesting.
 	var socketProtocol: String? { get }
 	/// This function is called once the WebSocket session has been initiated.
-	func handleSession(request request: WebRequest, socket: WebSocket)
+	func handleSession(request req: WebRequest, socket: WebSocket)
 
 }
 

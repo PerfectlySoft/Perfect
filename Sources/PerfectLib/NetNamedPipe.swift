@@ -113,11 +113,11 @@ public class NetNamedPipe : NetTCP {
 	/// Bind the socket to the address path
 	/// - parameter address: The path on the file system at which to create and bind the socket
 	/// - throws: `PerfectError.NetworkError`
-	public func bind(address address: String) throws {
+	public func bind(address addr: String) throws {
 
 		initSocket()
 
-		let utf8 = address.utf8
+		let utf8 = addr.utf8
 #if os(Linux) // BSDs have a size identifier in front, Linux does not
 		let addrLen = sizeof(sockaddr_un)
 #else
@@ -162,11 +162,11 @@ public class NetNamedPipe : NetTCP {
 	/// - parameter timeoutSeconds: The number of seconds to wait for the connection to complete. A timeout of negative one indicates that there is no timeout.
 	/// - parameter callBack: The closure which will be called when the connection completes. If the connection completes successfully then the current NetNamedPipe instance will be passed to the callback, otherwise, a nil object will be passed.
 	/// - returns: `PerfectError.NetworkError`
-	public func connect(address address: String, timeoutSeconds: Double, callBack: (NetNamedPipe?) -> ()) throws {
+	public func connect(address addr: String, timeoutSeconds: Double, callBack: (NetNamedPipe?) -> ()) throws {
 
 		initSocket()
 
-		let utf8 = address.utf8
+		let utf8 = addr.utf8
 		let addrLen = sizeof(UInt8) + sizeof(sa_family_t) + utf8.count + 1
 		let addrPtr = UnsafeMutablePointer<UInt8>.allocatingCapacity(addrLen)
 

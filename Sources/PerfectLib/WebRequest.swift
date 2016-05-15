@@ -343,7 +343,7 @@ public class WebRequest {
 		}
 	}
 	/// Returns the indicated HTTP header.
-	public func header(named named: String) -> String? { return self.headers[named.uppercased()] }
+	public func header(named nam: String) -> String? { return self.headers[nam.uppercased()] }
 	/// Returns the raw request parameter header
 	public func rawHeader(named: String) -> String? { return self.connection.requestParams[named] }
 	/// Returns a Dictionary containing all raw request parameters.

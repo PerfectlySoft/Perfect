@@ -247,9 +247,9 @@ public class File : Closeable {
 	/// - parameter to: The new position
 	/// - parameter whence: Whence to set it from. Once of `SEEK_SET`, `SEEK_CUR`, `SEEK_END`.
 	/// - returns: The new position marker value
-	public func setMarker(to to: Int, whence: Int32 = SEEK_CUR) -> Int {
+	public func setMarker(to toInt: Int, whence: Int32 = SEEK_CUR) -> Int {
 		if isOpen() {
-			return Int(lseek(Int32(self.fd), off_t(to), whence))
+			return Int(lseek(Int32(self.fd), off_t(toInt), whence))
 		}
 		return 0
 	}
@@ -301,8 +301,8 @@ public class File : Closeable {
 	/// - parameter overWrite: Indicates that any existing file at the destination path should first be deleted
 	/// - returns: Returns a new file object representing the new location
 	/// - throws: `PerfectError.FileError`
-	public func copyTo(path path: String, overWrite: Bool = false) throws -> File {
-		let destFile = File(path)
+	public func copyTo(path pth: String, overWrite: Bool = false) throws -> File {
+		let destFile = File(pth)
 		if destFile.exists() {
 			if overWrite {
 				destFile.delete()
@@ -407,11 +407,11 @@ public class File : Closeable {
 	/// - parameter count: The maximum number of bytes to read
 	/// - returns: The bytes read as an array of UInt8. May have a count of zero.
 	/// - throws: `PerfectError.FileError`
-	public func readSomeBytes(count count: Int) throws -> [UInt8] {
+	public func readSomeBytes(count cnt: Int) throws -> [UInt8] {
 		if !isOpen() {
 			try openRead()
 		}
-		let bSize = min(count, self.sizeOr(count))
+		let bSize = min(cnt, self.sizeOr(cnt))
 		let ptr = UnsafeMutablePointer<UInt8>.allocatingCapacity(bSize)
 
 		let readCount = read(CInt(fd), ptr, bSize)
@@ -435,16 +435,16 @@ public class File : Closeable {
 	/// - parameter s: The string to write
 	/// - returns: Returns the number of bytes which were written
 	/// - throws: `PerfectError.FileError`
-	public func write(string string: String) throws -> Int {
-		return try write(bytes: Array(string.utf8))
+	public func write(string strng: String) throws -> Int {
+		return try write(bytes: Array(strng.utf8))
 	}
 	
 	/// Writes the array of bytes to the file
 	/// - parameter bytes: The bytes to write
 	/// - returns: The number of bytes which were written
 	/// - throws: `PerfectError.FileError`
-	public func write(bytes bytes: [UInt8]) throws -> Int {
-		return try write(bytes: bytes, dataPosition: 0, length: bytes.count)
+	public func write(bytes byts: [UInt8]) throws -> Int {
+		return try write(bytes: byts, dataPosition: 0, length: byts.count)
 	}
 	
 	/// Write the indicated bytes to the file
@@ -452,9 +452,9 @@ public class File : Closeable {
 	/// - parameter dataPosition: The offset within `bytes` at which to begin writing.
 	/// - parameter length: The number of bytes to write.
 	/// - throws: `PerfectError.FileError`
-	public func write(bytes bytes: [UInt8], dataPosition: Int, length: Int) throws -> Int {
+	public func write(bytes byts: [UInt8], dataPosition: Int, length: Int) throws -> Int {
 		
-		let ptr = UnsafeMutablePointer<UInt8>(bytes).advanced(by: dataPosition)
+		let ptr = UnsafeMutablePointer<UInt8>(byts).advanced(by: dataPosition)
 		#if os(Linux)
 		let wrote = SwiftGlibc.write(Int32(fd), ptr, length)
 		#else
