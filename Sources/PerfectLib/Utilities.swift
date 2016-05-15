@@ -564,21 +564,6 @@ extension String {
 //		let ary = s.pathComponents(false) // get rid of slash runs
 //		return absolute ? "/" + ary.joinWithSeparator(String(pathSeparator)) : ary.joinWithSeparator(String(pathSeparator))
 	}
-	#if os(Linux)
-	func hasPrefix(of: String) -> Bool {
-		let c1 = self.characters
-		let c2 = of.characters
-		
-		return c1.count >= c2.count && String(c1.prefix(c2.count)) == of
-	}
-	
-	func hasSuffix(of: String) -> Bool {
-		let c1 = self.characters
-		let c2 = of.characters
-	
-		return c1.count >= c2.count && String(c1.suffix(c2.count)) == of
-	}
-	#endif
 }
 
 /// Returns the current time according to ICU
