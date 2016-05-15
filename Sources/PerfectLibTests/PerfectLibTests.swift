@@ -758,14 +758,14 @@ class PerfectLibTests: XCTestCase {
 		
 		let src = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 		
-		let res = src.range(of: "DEF")
+		let res = src.range(ofString: "DEF")
 		XCTAssert(res == src.index(src.startIndex, offsetBy: 3)..<src.index(src.startIndex, offsetBy: 6))
 		
-		let res2 = src.range(of: "FED")
+		let res2 = src.range(ofString: "FED")
 		XCTAssert(res2 == nil)
 		
 		
-		let res3 = src.range(of: "def", ignoreCase: true)
+		let res3 = src.range(ofString: "def", ignoreCase: true)
 		XCTAssert(res3 == src.index(src.startIndex, offsetBy: 3)..<src.index(src.startIndex, offsetBy: 6))
 	}
 	
@@ -1021,7 +1021,7 @@ class PerfectLibTests: XCTestCase {
 	func testPathComponentsExPerformance() {
 		let s = "/foo/bar/baz/bilbo/bucket/salami"
 		self.measure {
-			for _ in 0..<100000 {
+			for _ in 0..<10000 {
 				s.pathComponents.count
 			}
 		}
@@ -1030,7 +1030,7 @@ class PerfectLibTests: XCTestCase {
 	func testPathComponentsNatPerformance() {
 		let s = "/foo/bar/baz/bilbo/bucket/salami" as NSString
 		self.measure {
-			for _ in 0..<100000 {
+			for _ in 0..<10000 {
 				s.pathComponents.count
 			}
 		}
@@ -1040,7 +1040,7 @@ class PerfectLibTests: XCTestCase {
 		let s = "/foo/bar/baz/bilbo/bucket/salami"
 		self.measure {
 			
-			for _ in 0..<100000 {
+			for _ in 0..<10000 {
 				s.characters.split(separator: Character("/")).map { String($0) } .count
 			}
 			
@@ -1075,8 +1075,8 @@ class PerfectLibTests: XCTestCase {
 			
 			class Listener: HeaderListener {
 				var headers = [(String, String)]()
-				func addHeader(name name: [UInt8], value: [UInt8], sensitive: Bool) {
-					self.headers.append((UTF8Encoding.encode(bytes: name), UTF8Encoding.encode(bytes: value)))
+				func addHeader(name nam: [UInt8], value: [UInt8], sensitive: Bool) {
+					self.headers.append((UTF8Encoding.encode(bytes: nam), UTF8Encoding.encode(bytes: value)))
 				}
 			}
 			

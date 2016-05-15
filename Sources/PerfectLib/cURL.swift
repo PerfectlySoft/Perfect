@@ -101,7 +101,6 @@ public class CURL {
 			}
 		#else
 			let crl = Unmanaged<CURL>.fromOpaque(OpaquePointer(p)).takeUnretainedValue()
-		#endif
 			let bytes = UnsafeMutablePointer<UInt8>(a)
 			if nil != bytes {
 				let fullCount = size*num
@@ -110,6 +109,7 @@ public class CURL {
 				}
 				return fullCount
 			}
+		#endif
 			return 0
 		}
 		setOption(CURLOPT_HEADERFUNCTION, f: headerReadFunc)

@@ -357,11 +357,16 @@ public struct WebSocketHandler {
 		guard let amem = mem else {
 			return ""
 		}
-		
-		guard let txt: UnsafeMutablePointer<UInt8>? = UnsafeMutablePointer<UInt8>(amem.pointee.data) else {
+	#if swift(>=3.0)
+		guard let txt = UnsafeMutablePointer<UInt8>(amem.pointee.data) else {
 			return ""
 		}
-		
+	#else
+		let txt = UnsafeMutablePointer<UInt8>(amem.pointee.data)
+		guard nil != txt else {
+			return ""
+		}
+	#endif
 		let ret = UTF8Encoding.encode(generator: GenerateFromPointer(from: txt, count: amem.pointee.length))
 		free(amem.pointee.data)
 		return ret
