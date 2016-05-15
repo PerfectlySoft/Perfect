@@ -11,7 +11,7 @@
 [![Twitter](https://img.shields.io/badge/Twitter-@PerfectlySoft-brightgreen.svg?style=flat)](http://twitter.com/PerfectlySoft)
 [![Join the chat at https://gitter.im/PerfectlySoft/Perfect](https://img.shields.io/badge/Gitter-Join%20Chat-brightgreen.svg)](https://gitter.im/PerfectlySoft/Perfect?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-**The master branch of this project currently compiles with Swift 2.2 and with the 3.0-dev March toolchain.**
+**The master branch of this project currently compiles with Swift 2.2 and with the 3.0-dev MAY toolchain.**
 
 **Download [release-1.0](https://github.com/PerfectlySoft/Perfect/releases/tag/v1.0.0) for the stable 1.0 API.**
 
