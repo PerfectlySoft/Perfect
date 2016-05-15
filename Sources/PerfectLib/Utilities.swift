@@ -332,7 +332,7 @@ extension String {
 	/// Parse an HTTP Digest authentication header returning a Dictionary containing each part.
 	public func parseAuthentication() -> [String:String] {
 		var ret = [String:String]()
-		if let _ = self.range(of: "Digest ") {
+		if let _ = self.range(ofString: "Digest ") {
 			ret["type"] = "Digest"
 			let wantFields = ["username", "nonce", "nc", "cnonce", "response", "uri", "realm", "qop", "algorithm"]
 			for field in wantFields {
@@ -345,7 +345,7 @@ extension String {
 	}
 	
 	private static func extractField(from from: String, named: String) -> String? {
-		guard let range = from.range(of: named + "=") else {
+		guard let range = from.range(ofString: named + "=") else {
 			return nil
 		}
 		
@@ -417,7 +417,7 @@ extension String {
 	
 	// For compatibility due to shifting swift
 	public func contains(string string: String) -> Bool {
-		return nil != self.range(of: string)
+		return nil != self.range(ofString: string)
 	}
 }
 

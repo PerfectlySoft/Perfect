@@ -74,7 +74,11 @@ public class File : Closeable {
 		var i = utf8.startIndex
 		for index in 0..<utf8.count {
 			name[index] = Int8(utf8[i])
+		#if swift(>=3.0)
+			i = utf8.index(after: i)
+		#else
 			i = i.advanced(by: 1)
+		#endif
 		}
 		name[utf8.count] = 0
 		
