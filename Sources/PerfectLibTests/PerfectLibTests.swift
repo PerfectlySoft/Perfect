@@ -174,8 +174,26 @@ class PerfectLibTests: XCTestCase {
 		}
 	}
 	
-	func _rand(to to: Int32) -> Int32 {
-		return Foundation.rand() % Int32(to)
+	func testJSONDecodeUnicode() {
+		var decoded: [String: Any]?
+		let jsonStr = "{\"emoji\": \"\\ud83d\\ude33\"}"     // {"emoji": "\ud83d\ude33"}
+		do {
+			decoded = try jsonStr.jsonDecode() as? [String: Any]
+		} catch let e {
+			
+			XCTAssert(false, "Exception while decoding JSON \(e)")
+			return
+		}
+		
+		XCTAssert(decoded != nil)
+		let value = decoded!["emoji"]
+		XCTAssert(value != nil)
+		let emojiStr = decoded!["emoji"] as! String
+		XCTAssert(emojiStr == "😳")
+	}
+	
+	func _rand(to upper: Int32) -> Int32 {
+		return Foundation.rand() % Int32(upper)
 	}
 	
 	func testMimeReader() {
