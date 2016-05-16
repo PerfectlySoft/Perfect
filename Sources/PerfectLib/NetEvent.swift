@@ -97,7 +97,7 @@ class NetEvent {
 
 	private static var initOnce = Threading.ThreadOnce()
 
-	static let noTimeout = 0.0
+	static let noTimeout = Threading.noTimeout
 
 	private init() {
 #if os(Linux)
@@ -171,7 +171,7 @@ class NetEvent {
 #if os(Linux)
 							epoll_ctl(self.kq, EPOLL_CTL_DEL, sock, nil)
 #else
-							if qitm.timeoutSeconds > 0.0 {
+							if qitm.timeoutSeconds > NetEvent.noTimeout {
 								// need to either remove the timer or the failed event
 								// this could be optimised to do all removes at once
 								var tmout = timespec(tv_sec: 0, tv_nsec: 0)
@@ -212,7 +212,7 @@ class NetEvent {
 		if let n = NetEvent.staticEvent {
 
 			n.lock.doWithLock {
-				n.queuedSockets[newSocket] = QueuedSocket(socket: newSocket, what: what, timeoutSeconds: timeoutSeconds < 0.0 ? noTimeout : timeoutSeconds, callback: threadingCallback, associated: 0)
+				n.queuedSockets[newSocket] = QueuedSocket(socket: newSocket, what: what, timeoutSeconds: timeoutSeconds, callback: threadingCallback, associated: 0)
 #if os(Linux)
 				var evt = event()
 				evt.events = what.epollEvent | EPOLLONESHOT.rawValue | EPOLLET.rawValue
@@ -222,7 +222,7 @@ class NetEvent {
 //				print("event add \(socket) \(evt.events)")
 #else
 				var tmout = timespec(tv_sec: 0, tv_nsec: 0)
-				if timeoutSeconds > 0.0 {
+				if timeoutSeconds > noTimeout {
 					var kvt = event(ident: UInt(newSocket), filter: Int16(EVFILT_TIMER), flags: UInt16(EV_ADD | EV_ENABLE | EV_ONESHOT), fflags: 0, data: Int(timeoutSeconds * 1000), udata: nil)
 					kevent(n.kq, &kvt, 1, nil, 0, &tmout)
 //					print("event add \(socket) EVFILT_TIMER")
@@ -247,7 +247,7 @@ class NetEvent {
 					var kvt = event(ident: UInt(oldSocket), filter: old.what.kqueueFilter, flags: UInt16(EV_DELETE), fflags: 0, data: 0, udata: nil)
 					var tmout = timespec(tv_sec: 0, tv_nsec: 0)
 					kevent(n.kq, &kvt, 1, nil, 0, &tmout)
-					if old.timeoutSeconds > 0.0 {
+					if old.timeoutSeconds > noTimeout {
 						kvt = event(ident: UInt(oldSocket), filter: Int16(EVFILT_TIMER), flags: UInt16(EV_DELETE), fflags: 0, data: 0, udata: nil)
 						kevent(n.kq, &kvt, 1, nil, 0, &tmout)
 					}

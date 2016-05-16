@@ -341,7 +341,7 @@ public class NetTCP : Closeable {
 		var what: NetEvent.Filter = .None
 		
 		let waitFunc = {
-			NetEvent.add(socket: self.fd.fd, what: .Write, timeoutSeconds: 0.0) {
+			NetEvent.add(socket: self.fd.fd, what: .Write, timeoutSeconds: NetEvent.noTimeout) {
 				_, w in
 				what = w
 				s?.lock()
@@ -416,7 +416,7 @@ public class NetTCP : Closeable {
 	
 	func writeIncomplete(bytes nptr: UnsafeMutablePointer<UInt8>, wrote: Int, length: Int, completion: (Int) -> ()) {
 		
-		NetEvent.add(socket: fd.fd, what: .Write, timeoutSeconds: 0.0) {
+		NetEvent.add(socket: fd.fd, what: .Write, timeoutSeconds: NetEvent.noTimeout) {
 			fd, w in
 			
 			self.write(bytes: nptr, wrote: wrote, length: length, completion: completion)
@@ -514,7 +514,7 @@ public class NetTCP : Closeable {
 	
 	private func waitAccept() {
 		
-		NetEvent.add(socket: fd.fd, what: .Read, timeoutSeconds: 0.0) { [weak self]
+		NetEvent.add(socket: fd.fd, what: .Read, timeoutSeconds: NetEvent.noTimeout) { [weak self]
 			_, _ in
 			
 			self?.semaphore!.lock()
