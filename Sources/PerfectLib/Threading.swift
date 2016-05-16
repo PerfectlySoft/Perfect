@@ -17,6 +17,8 @@ import Darwin
 /// A wrapper around a variety of threading related functions and classes.
 public struct Threading {
 
+	public static var noTimeout = 0.0
+	
 	/// Non-instantiable.
 	private init() {}
 
@@ -128,11 +130,11 @@ public struct Threading {
 		/// Blocks the calling thread until a signal is received or the timeout occurs.
 		/// Returns true only if the signal was received.
 		/// Returns false upon timeout or error.
-		public func wait(seconds secs: Double = -1) -> Bool {
-			let waitMillis = Int(secs * 1000.0)
-			if waitMillis == -1 {
+		public func wait(seconds secs: Double = Threading.noTimeout) -> Bool {
+			if secs == Threading.noTimeout {
 				return 0 == pthread_cond_wait(&self.cond, &self.mutex)
 			}
+			let waitMillis = Int(secs * 1000.0)
 			var tm = timespec()
 			tm.tv_sec = waitMillis / 1000
 			tm.tv_nsec = (waitMillis - (tm.tv_sec * 1000)) * 1000000
@@ -206,6 +208,9 @@ public struct Threading {
 	#endif
 
 	public static func sleep(seconds inSeconds: Double) {
+		guard inSeconds >= 0.0 else {
+			return
+		}
 		let milliseconds = Int(inSeconds * 1000.0)
 		var tv = timeval()
 		tv.tv_sec = milliseconds/1000
