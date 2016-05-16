@@ -108,6 +108,13 @@ private let jsonWhiteSpace = UnicodeScalar(UInt32(32))
 private let jsonColon = UnicodeScalar(UInt32(58))
 private let jsonComma = UnicodeScalar(UInt32(44))
 
+private let highSurrogateLowerBound = UInt32(strtoul("d800", nil, 16))
+private let highSurrogateUpperBound = UInt32(strtoul("dbff", nil, 16))
+private let lowSurrogateLowerBound = UInt32(strtoul("dc00", nil, 16))
+private let lowSurrogateUpperBound = UInt32(strtoul("dfff", nil, 16))
+private let surrogateStep = UInt32(strtoul("400", nil, 16))
+private let surrogateBase = UInt32(strtoul("10000", nil, 16))
+
 // this is a stand-in for a JSON null
 // may be produced when decoding
 public struct JSONConvertibleNull: JSONConvertible {
@@ -423,7 +430,36 @@ private class JSONDecodeState {
 						}
 						hexStr.append(hexC)
 					}
-					let result = UnicodeScalar(UInt32(strtoul(hexStr, nil, 16)))
+					var uint32Value = UInt32(strtoul(hexStr, nil, 16))
+					// if unicode is a high/low surrogate, it can't be converted directly by UnicodeScalar
+					// if it's a low surrogate (not expected), throw error
+					if case lowSurrogateLowerBound...lowSurrogateUpperBound = uint32Value {
+						throw JSONConversionError.SyntaxError
+					}
+					// if it's a high surrogate, find the low surrogate which the next unicode is supposed to be, then calculate the pair
+					if case highSurrogateLowerBound...highSurrogateUpperBound = uint32Value {
+						let highSurrogateValue = uint32Value
+						guard self.next() == jsonBackSlash else {
+							throw JSONConversionError.SyntaxError
+						}
+						guard self.next() == "u" else {
+							throw JSONConversionError.SyntaxError
+						}
+						var lowSurrogateHexStr = ""
+						for _ in 1...4 {
+							next = self.next()
+							guard let hexC = next else {
+								throw JSONConversionError.SyntaxError
+							}
+							guard hexC.isHexDigit() else {
+								throw JSONConversionError.SyntaxError
+							}
+							lowSurrogateHexStr.append(hexC)
+						}
+						let lowSurrogateValue = UInt32(strtoul(lowSurrogateHexStr, nil, 16))
+						uint32Value = ( highSurrogateValue - highSurrogateLowerBound ) * surrogateStep + ( lowSurrogateValue - lowSurrogateLowerBound ) + surrogateBase
+					}
+					let result = UnicodeScalar(uint32Value)
 					s.append(result)
 				default:
 					s.append(c)
