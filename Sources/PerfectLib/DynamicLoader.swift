@@ -24,18 +24,18 @@
 #endif
 
 struct DynamicLoader {
-	
+
 	// sketchy! PerfectServerModuleInit is not defined as convention(c)
 	// but it does not seem to matter provided it is Void->Void
 	// I am unsure on how to convert a void* to a legit Swift ()->() func
 	typealias InitFunction = @convention(c) ()->()
-	
+
 	let initFuncName = "PerfectServerModuleInit"
-	
+
 	init() {
-		
+
 	}
-	
+
 	func loadFramework(atPath at: String) -> Bool {
 		let resolvedPath = at.stringByResolvingSymlinksInPath
 		let moduleName = resolvedPath.lastPathComponent.stringByDeletingPathExtension
@@ -46,7 +46,7 @@ struct DynamicLoader {
 		}
 		return false
 	}
-	
+
 	func loadLibrary(atPath at: String) -> Bool {
 		var fileName = at.lastPathComponent
 		if fileName.begins(with: "lib") {
@@ -59,33 +59,33 @@ struct DynamicLoader {
 		let moduleName = fileName.stringByDeletingPathExtension
 		return self.loadRealPath(at, moduleName: moduleName)
 	}
-	
+
 	private func loadRealPath(_ realPath: String, moduleName: String) -> Bool {
+#if swift(>=3.0)
+		guard let openRes = dlopen(realPath, RTLD_NOW|RTLD_LOCAL) else {
+			Log.warning(message: "Errno \(String(validatingUTF8: dlerror())!)")
+			return false
+		}
+#else
 		let openRes = dlopen(realPath, RTLD_NOW|RTLD_LOCAL)
-		if openRes != nil {
-			// this is fragile
-			let newModuleName = moduleName.stringByReplacing(string: "-", withString: "_").stringByReplacing(string: " ", withString: "_")
-			let symbolName = "_TF\(newModuleName.utf8.count)\(newModuleName)\(initFuncName.utf8.count)\(initFuncName)FT_T_"
-			let sym = dlsym(openRes, symbolName)
-			if sym != nil {
-				let f: InitFunction = unsafeBitCast(sym, to: InitFunction.self)
-				f()
-				return true
-			} else {
-				print("Error loading \(realPath). Symbol \(symbolName) not found.")
-				dlclose(openRes)
-			}
+		guard nil != openRes else {
+			Log.warning(message: "Errno \(String(validatingUTF8: dlerror())!)")
+			return false
+		}
+#endif
+		// this is fragile
+		let newModuleName = moduleName.stringByReplacing(string: "-", withString: "_").stringByReplacing(string: " ", withString: "_")
+		let symbolName = "_TF\(newModuleName.utf8.count)\(newModuleName)\(initFuncName.utf8.count)\(initFuncName)FT_T_"
+		let sym = dlsym(openRes, symbolName)
+		if sym != nil {
+			let f: InitFunction = unsafeBitCast(sym, to: InitFunction.self)
+			f()
+			return true
 		} else {
-			print("Errno \(String(validatingUTF8: dlerror())!)")
+			Log.warning(message: "Error loading \(realPath). Symbol \(symbolName) not found.")
+			dlclose(openRes)
 		}
 		return false
 	}
-	
+
 }
-
-
-
-
-
-
-
