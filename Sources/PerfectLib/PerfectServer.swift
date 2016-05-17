@@ -37,6 +37,8 @@ public struct PerfectServer {
 		
 		NetEvent.initialize()
 		
+		Routing.initialize()
+		
 		let dl = DynamicLoader()
         var baseDir : Dir
         if serverPerfectLibraries.hasPrefix("/") || serverPerfectLibraries.hasPrefix("~/") || serverPerfectLibraries.hasPrefix("./") {
