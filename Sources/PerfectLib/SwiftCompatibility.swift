@@ -281,6 +281,10 @@
 	extension Range {
 		var lowerBound: Element { return self.startIndex }
 		var upperBound: Element { return self.endIndex }
+		
+		init(uncheckedBounds: (Element, Element)) {
+			self.init(start: uncheckedBounds.0, end: uncheckedBounds.1)
+		}
 	}
 	
 	@warn_unused_result
