@@ -64,7 +64,7 @@ public class WebRequest {
 	private lazy var work_around_headers: [String:String] = {
 		var d = Dictionary<String, String>()
 		for (key, value) in self.connection.requestParams {
-			if key.hasPrefix("HTTP_") {
+			if key.begins(with: "HTTP_") {
 				let utf16 = key.utf16
 				let index = key.utf16.startIndex.advanced(by: 5)
 				let nKey = String(key.utf16.suffix(from: index))!

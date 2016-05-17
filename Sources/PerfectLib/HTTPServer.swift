@@ -638,7 +638,7 @@ public class HTTPServer {
 		func putStdinData(_ b: [UInt8]) {
 			if self.stdin == nil && self.mimes == nil {
 				let contentType = self.contentType
-				if contentType == nil || !contentType!.hasPrefix("multipart/form-data") {
+				if contentType == nil || !contentType!.begins(with: "multipart/form-data") {
 					self.stdin = b
 				} else {
 					self.mimes = MimeReader(contentType!)

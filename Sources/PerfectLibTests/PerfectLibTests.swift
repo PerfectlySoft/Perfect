@@ -988,7 +988,7 @@ class PerfectLibTests: XCTestCase {
 									
 									let s = s1 + UTF8Encoding.encode(bytes: readBytes!)
 									
-									XCTAssert(s.hasPrefix("HTTP/1.1 200 OK"))
+									XCTAssert(s.begins(with: "HTTP/1.1 200 OK"))
 									
 									print(s)
 									
@@ -1077,13 +1077,6 @@ class PerfectLibTests: XCTestCase {
 			}
 			
 		}
-	}
-	
-	func testStringHasPrefix() {
-		let s1 = "abcdefg"
-		
-		XCTAssert(s1.hasPrefix("abc"))
-		XCTAssert(!s1.hasPrefix("acb"))
 	}
 	
 	func testHPACKEncode() {
