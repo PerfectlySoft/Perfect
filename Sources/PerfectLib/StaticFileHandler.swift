@@ -23,13 +23,13 @@ public struct StaticFileHandler {
 	
 	public init() {}
 	
-	public func handleRequest(request: WebRequest, response: WebResponse) {
+	public func handleRequest(request req: WebRequest, response: WebResponse) {
 		
-		var requestUri = request.requestURI ?? ""
+		var requestUri = req.requestURI ?? ""
 		if requestUri.hasSuffix("/") {
 			requestUri.append("index.html") // !FIX! needs to be configurable
 		}
-		let documentRoot = request.documentRoot
+		let documentRoot = req.documentRoot
 		let file = File(documentRoot + "/" + requestUri)
 		
 		guard file.exists() else {
@@ -40,7 +40,7 @@ public struct StaticFileHandler {
 			return
 		}
 		
-		self.sendFile(request: request, response: response, file: file)
+		self.sendFile(request: req, response: response, file: file)
 	}
 	
 	func sendFile(request req: WebRequest, response resp: WebResponse, file: File) {
