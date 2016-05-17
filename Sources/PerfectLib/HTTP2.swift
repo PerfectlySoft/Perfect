@@ -117,7 +117,7 @@ public struct HTTP2Frame {
 	}
 }
 
-class HTTP2Connection: WebConnection {
+final class HTTP2Connection: WebConnection {
 
 	weak var client: HTTP2Client?
 	var status = (200, "OK")
@@ -149,9 +149,9 @@ class HTTP2Connection: WebConnection {
 	/// Add a response header which will be sent to the client.
 	func writeHeader(line h: String) {}
 	/// Send header bytes to the client.
-	func writeHeader(bytes b: [UInt8]) {}
+	func writeHeader(bytes b: [UInt8], completion: (Bool) -> ()) {}
 	/// Write body bytes ot the client. Any pending header data will be written first.
-	func writeBody(bytes b: [UInt8]) {}
+	func writeBody(bytes b: [UInt8], completion: (Bool) -> ()) {}
 
 }
 
@@ -270,7 +270,7 @@ public class HTTP2Client {
 	}
 
 	func readOneFrame() {
-		Threading.dispatchBlock {
+		Threading.dispatch {
 			self.readHTTP2Frame(timeout: -1) { [weak self]
 				f in
 
@@ -339,7 +339,7 @@ public class HTTP2Client {
 	}
 
 	func startReadThread() {
-		Threading.dispatchBlock { [weak self] in
+		Threading.dispatch { [weak self] in
 
 			// dbg
 			defer {

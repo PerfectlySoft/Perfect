@@ -78,7 +78,7 @@ public class FastCGIServer {
 				[weak self] (net: NetTCP?) -> () in
 
 				if let n = net {
-					Threading.dispatchBlock {
+					Threading.dispatch {
 						self?.handleConnection(net: n)
 					}
 				}
@@ -227,8 +227,10 @@ public class FastCGIServer {
 			let status = response.appStatus
 
 			let finalBytes = fcgiReq.makeEndRequestBody(requestId: Int(fcgiReq.requestId), appStatus: status, protocolStatus: fcgiRequestComplete)
-			fcgiReq.write(bytes: finalBytes)
-			fcgiReq.connection.close()
+			fcgiReq.write(bytes: finalBytes) {
+				_ in 
+				fcgiReq.connection.close()
+			}
 		}
 	}
 }

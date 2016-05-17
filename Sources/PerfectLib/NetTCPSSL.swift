@@ -306,7 +306,7 @@ public class NetTCPSSL : NetTCP {
 			what = NetEvent.Filter.Read
 		}
 		
-		NetEvent.add(socket: fd.fd, what: what, timeoutSeconds: 0.0) {
+		NetEvent.add(socket: fd.fd, what: what, timeoutSeconds: NetEvent.noTimeout) {
 			fd, w in
 			
 			if case .Timer = w {
@@ -327,7 +327,7 @@ public class NetTCPSSL : NetTCP {
 			what = NetEvent.Filter.Read
 		}
 		
-		NetEvent.add(socket: fd.fd, what: what, timeoutSeconds: 0.0) { [weak self]
+		NetEvent.add(socket: fd.fd, what: what, timeoutSeconds: NetEvent.noTimeout) { [weak self]
 			fd, w in
 		
 			self?.write(bytes: nptr, wrote: wrote, length: length, completion: completion)

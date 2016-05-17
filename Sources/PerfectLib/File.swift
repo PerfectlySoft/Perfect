@@ -95,18 +95,18 @@ public class File : Closeable {
 	
 	/// Returns the file path. If the file is a symbolic link, the link will be resolved.
 	public func realPath() -> String {
+		let maxPath = 2048
 		if isLink() {
-			let buffer = UnsafeMutablePointer<Int8>.allocatingCapacity(2048)
-			let res = readlink(internalPath, buffer, 2048)
+			var ary = [UInt8](repeating: 0, count: maxPath)
+			let buffer = UnsafeMutablePointer<Int8>(ary)
+			let res = readlink(internalPath, buffer, maxPath)
 			if res != -1 {
-				let ary = completeArray(buffer, count: res)
+				ary.removeLast(maxPath - res)
 				let trailPath = UTF8Encoding.encode(bytes: ary)
 				if trailPath[trailPath.startIndex] != "/" && trailPath[trailPath.startIndex] != "." {
 					return internalPath.stringByDeletingLastPathComponent + "/" + trailPath
 				}
 				return trailPath
-			} else {
-				buffer.deallocateCapacity(2048)
 			}
 		}
 		return internalPath
@@ -248,10 +248,10 @@ public class File : Closeable {
 	/// - parameter whence: Whence to set it from. Once of `SEEK_SET`, `SEEK_CUR`, `SEEK_END`.
 	/// - returns: The new position marker value
 	public func setMarker(to toInt: Int, whence: Int32 = SEEK_CUR) -> Int {
-		if isOpen() {
-			return Int(lseek(Int32(self.fd), off_t(toInt), whence))
+		if !isOpen() {
+			do { try openRead() } catch { return -1 }
 		}
-		return 0
+		return Int(lseek(Int32(self.fd), off_t(toInt), whence))
 	}
 	
 	/// Returns the modification date for the file in the standard UNIX format of seconds since 1970/01/01 00:00:00 GMT
@@ -412,7 +412,8 @@ public class File : Closeable {
 			try openRead()
 		}
 		let bSize = min(cnt, self.sizeOr(cnt))
-		let ptr = UnsafeMutablePointer<UInt8>.allocatingCapacity(bSize)
+		var ary = [UInt8](repeating: 0, count: bSize)
+		let ptr = UnsafeMutablePointer<UInt8>(ary)
 
 		let readCount = read(CInt(fd), ptr, bSize)
 		guard readCount >= 0 else {
@@ -422,7 +423,10 @@ public class File : Closeable {
 			
 			try ThrowFileError()
 		}
-		return completeArray(ptr, count: readCount)
+		if readCount < bSize {
+			ary.removeLast(bSize - readCount)
+		}
+		return ary
 	}
 	
 	/// Reads the entire file as a string
@@ -519,31 +523,9 @@ public class File : Closeable {
 		}
 		return res != 0
 	}
-	
-	private func completeArray(_ from: UnsafeMutablePointer<UInt8>, count: Int) -> [UInt8] {
-		
-		defer { from.deallocateCapacity(count) }
-		
-		var ary = [UInt8](repeating: 0, count: count)
-		for index in 0..<count {
-			ary[index] = from[index]
-		}
-		return ary
-	}
-	
-	private func completeArray(_ from: UnsafeMutablePointer<Int8>, count: Int) -> [UInt8] {
-		
-		defer { from.deallocateCapacity(count) }
-		
-		var ary = [UInt8](repeating: 0, count: count)
-		for index in 0..<count {
-			ary[index] = UInt8(from[index])
-		}
-		return ary
-	}
 }
 
-class UnclosableFile : File {
+private final class UnclosableFile : File {
 	
 	init(fd: Int32) {
 		super.init(fd: fd, path: "")

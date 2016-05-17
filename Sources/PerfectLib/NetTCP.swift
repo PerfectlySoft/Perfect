@@ -34,16 +34,16 @@ public class NetTCP : Closeable {
 	private var networkFailure: Bool = false
 	private var semaphore: Threading.Event?
 	
-	class ReferenceBuffer {
-		var b: UnsafeMutablePointer<UInt8>
+	final class ReferenceBuffer {
+		var a: [UInt8]
 		let size: Int
 		init(size: Int) {
 			self.size = size
-			self.b = UnsafeMutablePointer<UInt8>.allocatingCapacity(size)
+			self.a = [UInt8](repeating: 0, count: size)
 		}
 		
-		deinit {
-			self.b.deallocateCapacity(self.size)
+		subscript(by: Int) -> UnsafeMutablePointer<Void> {
+			return UnsafeMutablePointer<Void>(self.a).advanced(by: by)
 		}
 	}
 	
@@ -246,22 +246,18 @@ public class NetTCP : Closeable {
 	#endif
 	
 	private func completeArray(from frm: ReferenceBuffer, count: Int) -> [UInt8] {
-		
-		var ary = [UInt8](repeating: 0, count: count)
-		for index in 0..<count {
-			ary[index] = frm.b[index]
-		}
-		return ary
+		frm.a.removeLast(frm.size - count)
+		return frm.a
 	}
 	
-	func readBytesFully(into int: ReferenceBuffer, read: Int, remaining: Int, timeoutSeconds: Double, completion: ([UInt8]?) -> ()) {
-		let readCount = recv(into: int.b + read, count: remaining)
+	func readBytesFully(into buffer: ReferenceBuffer, read: Int, remaining: Int, timeoutSeconds: Double, completion: ([UInt8]?) -> ()) {
+		let readCount = recv(into: buffer[read], count: remaining)
 		if readCount == 0 {
 			completion(nil) // disconnect
 		} else if self.isEAgain(err: readCount) {
 			
 			// no data available. wait
-			self.readBytesFullyIncomplete(into: int, read: read, remaining: remaining, timeoutSeconds: timeoutSeconds, completion: completion)
+			self.readBytesFullyIncomplete(into: buffer, read: read, remaining: remaining, timeoutSeconds: timeoutSeconds, completion: completion)
 			
 		} else if readCount < 0 {
 			completion(nil) // networking or other error
@@ -269,9 +265,9 @@ public class NetTCP : Closeable {
 			
 			// got some data
 			if remaining - readCount == 0 { // done
-				completion(completeArray(from: int, count: read + readCount))
+				completion(completeArray(from: buffer, count: read + readCount))
 			} else { // try again for more
-				readBytesFully(into: int, read: read + readCount, remaining: remaining - readCount, timeoutSeconds: timeoutSeconds, completion: completion)
+				readBytesFully(into: buffer, read: read + readCount, remaining: remaining - readCount, timeoutSeconds: timeoutSeconds, completion: completion)
 			}
 		}
 	}
@@ -305,7 +301,7 @@ public class NetTCP : Closeable {
 	public func readSomeBytes(count cnt: Int, completion: ([UInt8]?) -> ()) {
 		
 		let ptr = ReferenceBuffer(size: cnt)
-		let readCount = recv(into: ptr.b, count: cnt)
+		let readCount = recv(into: ptr[0], count: cnt)
 		if readCount == 0 {
 			completion(nil)
 		} else if self.isEAgain(err: readCount) {
@@ -341,7 +337,7 @@ public class NetTCP : Closeable {
 		var what: NetEvent.Filter = .None
 		
 		let waitFunc = {
-			NetEvent.add(socket: self.fd.fd, what: .Write, timeoutSeconds: 0.0) {
+			NetEvent.add(socket: self.fd.fd, what: .Write, timeoutSeconds: NetEvent.noTimeout) {
 				_, w in
 				what = w
 				s?.lock()
@@ -416,7 +412,7 @@ public class NetTCP : Closeable {
 	
 	func writeIncomplete(bytes nptr: UnsafeMutablePointer<UInt8>, wrote: Int, length: Int, completion: (Int) -> ()) {
 		
-		NetEvent.add(socket: fd.fd, what: .Write, timeoutSeconds: 0.0) {
+		NetEvent.add(socket: fd.fd, what: .Write, timeoutSeconds: NetEvent.noTimeout) {
 			fd, w in
 			
 			self.write(bytes: nptr, wrote: wrote, length: length, completion: completion)
@@ -514,7 +510,7 @@ public class NetTCP : Closeable {
 	
 	private func waitAccept() {
 		
-		NetEvent.add(socket: fd.fd, what: .Read, timeoutSeconds: 0.0) { [weak self]
+		NetEvent.add(socket: fd.fd, what: .Read, timeoutSeconds: NetEvent.noTimeout) { [weak self]
 			_, _ in
 			
 			self?.semaphore!.lock()
@@ -538,7 +534,7 @@ public class NetTCP : Closeable {
 		
 			let accRes = tryAccept()
 			if accRes != -1 {
-				Threading.dispatchBlock {
+				Threading.dispatch {
 					callBack(self.makeFromFd(accRes))
 				}
 			} else if self.isEAgain(err: Int(accRes)) {

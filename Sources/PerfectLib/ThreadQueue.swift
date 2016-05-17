@@ -149,7 +149,7 @@ public extension Threading {
 	}
 	/// Call the given closure on the "default" concurrent queue
 	/// Returns immediately.
-	public static func dispatchBlock(closure: Threading.ThreadClosure) {
+	public static func dispatch(closure: Threading.ThreadClosure) {
 		let q = Threading.getQueue(name: "default", type: .Concurrent)
 		q.dispatch(closure)
 	}
