@@ -567,19 +567,23 @@ extension String {
 }
 
 extension String {
-	func begins(with: String) -> Bool {
-		return self.characters.starts(with: with.characters)
+	func begins(with str: String) -> Bool {
+	#if swift(>=3.0)
+		return self.characters.starts(with: str.characters)
+	#else
+		return self.hasPrefix(str)
+	#endif
 	}
 	
-	func ends(with: String) -> Bool {
+	func ends(with str: String) -> Bool {
 		let mine = self.characters
-		let theirs = with.characters
+		let theirs = str.characters
 		
 		guard mine.count >= theirs.count else {
 			return false
 		}
 		
-		return theirs.starts(with: mine[mine.index(mine.endIndex, offsetBy: -theirs.count)..<mine.endIndex])
+		return str.begins(with: self[self.index(self.endIndex, offsetBy: -theirs.count)..<mine.endIndex])
 	}
 }
 
