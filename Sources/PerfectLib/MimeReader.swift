@@ -121,7 +121,7 @@ public class MimeReader {
 				let startIndex = contentType.index(range.lowerBound, offsetBy: kBoundary.characters.count+1)
 				let endIndex = contentType.endIndex
 				
-				let boundaryString = contentType.substring(with: startIndex..<endIndex)
+				let boundaryString = contentType[startIndex..<endIndex]
 				self.boundary.append("--")
 				self.boundary.append(boundaryString)
 				self.state = .StateBoundary
