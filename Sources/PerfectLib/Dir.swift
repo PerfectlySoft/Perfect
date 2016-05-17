@@ -19,16 +19,17 @@
 
 #if os(Linux)
 import SwiftGlibc
+import LinuxBridge
 	#else
 import Darwin
 #endif
 
-/// This class represents a directory on the file system. 
+/// This class represents a directory on the file system.
 /// It can be used for creating & inspecting directories and enumerating directory contents.
 public struct Dir {
-	
+
 	var internalPath = ""
-	
+
 	/// Create a new Dir object with the given path
 	public init(_ path: String) {
 		if path.ends(with: "/") {
@@ -37,24 +38,24 @@ public struct Dir {
 			self.internalPath = path + "/"
 		}
 	}
-	
+
 	/// Returns true if the directory exists
 	public func exists() -> Bool {
 		return exists(realPath())
 	}
-	
+
 	func exists(_ path: String) -> Bool {
 		return access(path, F_OK) != -1
 	}
-	
+
 	/// Creates the directory using the provided permissions. All directories along the path will be created if need be.
 	/// - parameter perms: The permissions for use for the new directory and preceeding directories which need to be created. Defaults to RWX-GUO
 	/// - throws: `PerfectError.FileError`
 	public func create(perms: Int = Int(S_IRWXG|S_IRWXU|S_IRWXO)) throws {
-		
+
 		let pth = realPath()
 		var currPath = pth.begins(with: "/") ? "/" : ""
-		
+
 		for component in pth.pathComponents {
 			if component != "/" {
 				currPath += component
@@ -68,7 +69,7 @@ public struct Dir {
 			}
 		}
 	}
-	
+
 	/// Deletes the directory. The directory must be empty in order to be successfuly deleted.
 	/// - throws: `PerfectError.FileError`
 	public func delete() throws {
@@ -77,12 +78,12 @@ public struct Dir {
 			try ThrowFileError()
 		}
 	}
-	
+
 	/// Returns the name of the directory
 	public func name() -> String {
 		return internalPath.lastPathComponent
 	}
-	
+
 	/// Returns a Dir object representing the current Dir's parent. Returns nil if there is no parent.
 	public func parentDir() -> Dir? {
 		guard internalPath != "/" else {
@@ -90,26 +91,43 @@ public struct Dir {
 		}
 		return Dir(internalPath.stringByDeletingLastPathComponent)
 	}
-	
+
 	/// Returns the path to the current directory
 	public func path() -> String {
 		return internalPath
 	}
-	
+
 	func realPath() -> String {
 		return internalPath.stringByResolvingSymlinksInPath
 	}
-	
+
+#if os(Linux)
+		func readDir(_ d: OpaquePointer, _ dirEnt: inout dirent, _ endPtr: UnsafeMutablePointer<UnsafeMutablePointer<dirent>?>!) -> Int32 {
+			return readdir_r(d, &dirEnt, endPtr)
+		}
+#else
+		func readDir(_ d: UnsafeMutablePointer<DIR>, _ dirEnt: inout dirent, _ endPtr: UnsafeMutablePointer<UnsafeMutablePointer<dirent>?>!) -> Int32 {
+			return readdir_r(d, &dirEnt, endPtr)
+		}
+#endif
+
 	/// Enumerates the contents of the directory passing the name of each contained element to the provided callback.
 	/// - parameter closure: The callback which will receive each entry's name
 	/// - throws: `PerfectError.FileError`
 	public func forEachEntry(closure: (name: String) -> ()) throws {
-		let dir = opendir(realPath())
-		guard dir != nil else {
+		#if swift(>=3.0)
+		//let dir = opendir(realPath())
+		guard let dir = opendir(realPath()) else {
 			try ThrowFileError()
 		}
+		#else
+		let dir = opendir(realPath())
+		guard nil != dir else {
+			try ThrowFileError()
+		}
+		#endif
 		defer { closedir(dir) }
-		
+
 		var ent = dirent()
 	#if swift(>=3.0)
 		let entPtr = UnsafeMutablePointer<UnsafeMutablePointer<dirent>?>.allocatingCapacity(1)
@@ -117,8 +135,8 @@ public struct Dir {
 		let entPtr = UnsafeMutablePointer<UnsafeMutablePointer<dirent>>.allocatingCapacity(1)
 	#endif
 		defer { entPtr.deallocateCapacity(1) }
-		
-		while readdir_r(dir, &ent, entPtr) == 0 && entPtr.pointee != nil {
+
+		while readDir(dir, &ent, entPtr) == 0 && entPtr.pointee != nil {
 			let name = ent.d_name
 		#if os(Linux)
 			let nameLen = 1024
@@ -126,7 +144,7 @@ public struct Dir {
 			let nameLen = ent.d_namlen
 		#endif
 			let type = ent.d_type
-			
+
 			var nameBuf = [CChar]()
 			let mirror = Mirror(reflecting: name)
 		#if swift(>=3.0)
@@ -154,10 +172,3 @@ public struct Dir {
 		}
 	}
 }
-
-
-
-
-
-
-
