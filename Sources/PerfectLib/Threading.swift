@@ -24,7 +24,7 @@ public struct Threading {
 
 	/// The function type which can be given to `Threading.once`.
 	public typealias ThreadOnceFunction = @convention(c) () -> ()
-	/// The function type which can be given to `Threading.dispatchBlock`.
+	/// The function type which can be given to `Threading.dispatch`.
 	public typealias ThreadClosure = () -> ()
 
 	/// The key type used for `Threading.once`.
