@@ -337,9 +337,14 @@ public struct WebSocketHandler {
 		for (key, value) in response.headersArray {
 			response.connection.writeHeader(line: key + ": " + value)
 		}
-		response.connection.writeBody(bytes: [UInt8]())
-
-		handler.handleSession(request: request, socket: WebSocket(connection: response.connection))
+		response.connection.writeBody(bytes: [UInt8]()) {
+			ok in
+			guard ok else {
+				response.connection.connection.close()
+				return
+			}
+			handler.handleSession(request: request, socket: WebSocket(connection: response.connection))
+		}
 	}
 
 	private func base64(_ a: [UInt8]) -> String {

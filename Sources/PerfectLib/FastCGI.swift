@@ -124,31 +124,41 @@ class FastCGIRequest : WebConnection {
 		self.header += h + "\r\n"
 	}
 	
-	func writeHeader(bytes b: [UInt8]) {
+	func writeHeader(bytes b: [UInt8], completion: (Bool) -> ()) {
 		if !wroteHeader {
 			wroteHeader = true
 			
 			let statusLine = "Status: \(statusCode) \(statusMsg)\r\n"
 			let firstBytes = makeStdoutBody(requestId: Int(requestId), data: [UInt8](statusLine.utf8) + b)
-			write(bytes: firstBytes)
+			write(bytes: firstBytes, completion: completion)
 			
 		} else if b.count > 0 {
 			let furtherBytes = makeStdoutBody(requestId: Int(requestId), data: b)
-			write(bytes: furtherBytes)
+			write(bytes: furtherBytes, completion: completion)
 		}
 	}
 	
-	func writeBody(bytes b: [UInt8]) {
+	func writeBody(bytes b: [UInt8], completion: (Bool) -> ()) {
 		if !wroteHeader {
 			header += "\r\n" // final CRLF
-			writeHeader(bytes: [UInt8](header.utf8))
-			header = ""
+			writeHeader(bytes: [UInt8](header.utf8)) {
+				ok in
+				
+				guard ok else {
+					return completion(false)
+				}
+				
+				self.header = ""				
+				let b = self.makeStdoutBody(requestId: Int(self.requestId), data: b)
+				self.write(bytes: b, completion: completion)
+			}
+		} else {
+			let b = makeStdoutBody(requestId: Int(requestId), data: b)
+			write(bytes: b, completion: completion)
 		}
-		let b = makeStdoutBody(requestId: Int(requestId), data: b)
-		write(bytes: b)
 	}
 	
-	func write(bytes byts: [UInt8]) {
+	func write(bytes byts: [UInt8], completion: (Bool) -> ()) {
 		self.connection.writeFully(bytes: byts)
 	}
 	

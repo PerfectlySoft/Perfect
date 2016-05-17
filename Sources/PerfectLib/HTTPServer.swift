@@ -234,7 +234,7 @@ public class HTTPServer {
 				[weak self] (net: NetTCP?) -> () in
 				
 				if let n = net {
-					Threading.dispatchBlock {
+					Threading.dispatch {
 						self?.handleConnection(net: n)
 					}
 				}
@@ -261,31 +261,6 @@ public class HTTPServer {
 		}
 	}
 	
-	func sendFile(req: HTTPWebConnection, file: File) {
-		
-		defer {
-			file.close()
-		}
-		
-		var size = file.size()
-		let readSize = httpReadSize * 16
-		req.setStatus(code: 200, message: "OK")
-		req.writeHeader(line: "Content-length: \(size)")
-		req.writeHeader(line: "Content-type: \(MimeType.forExtension(file.path().pathExtension))")
-		req.pushHeaderBytes()
-		
-		do {
-			while size > 0 {
-				
-				let bytes = try file.readSomeBytes(count: min(size, readSize))
-				req.writeBody(bytes: bytes)
-				size -= bytes.count
-			}
-		} catch {
-			req.connection.close()
-		}
-	}
-	
 	// returns true if the request pointed to a file which existed
 	// and the request was properly handled
 	func run(request req: HTTPWebConnection, withPathInfo: String, completion: (Bool) -> ()) {
@@ -303,9 +278,11 @@ public class HTTPServer {
 		guard let pathInfo = req.requestParams["PATH_INFO"] else {
 			
 			req.setStatus(code: 500, message: "INVALID")
-			req.pushHeaderBytes()
-			req.connection.close()
-			return
+			return req.pushHeaderBytes {
+				_ in
+				
+				req.connection.close()
+			}
 		}
 		
 		req.requestParams["PERFECTSERVER_DOCUMENT_ROOT"] = self.documentRoot
@@ -316,17 +293,31 @@ public class HTTPServer {
 				req.setStatus(code: 404, message: "NOT FOUND")
 				let msg = "The file \"\(pathInfo)\" was not found.".utf8
 				req.writeHeader(line: "Content-length: \(msg.count)")
-				req.writeBody(bytes: [UInt8](msg))
-			}
-			if req.httpKeepAlive {
-				self.handleConnection(net: req.connection)
+				req.writeBody(bytes: [UInt8](msg)) {
+					ok in
+					
+					guard ok else {
+						req.connection.close()
+						return
+					}
+					
+					self.keepAliveOrClose(request: req)
+				}
 			} else {
-				req.connection.close()
+				self.keepAliveOrClose(request: req)
 			}
 		}
 	}
 	
-	class HTTPWebConnection : WebConnection {
+	func keepAliveOrClose(request req: HTTPWebConnection) {
+		if req.httpKeepAlive {
+			self.handleConnection(net: req.connection)
+		} else {
+			req.connection.close()
+		}
+	}
+	
+	final class HTTPWebConnection : WebConnection {
 		
 		typealias OkCallback = (Bool) -> ()
 		
@@ -664,39 +655,68 @@ public class HTTPServer {
 			self.header += h + "\r\n"
 		}
 		
-		func writeHeader(bytes b: [UInt8]) {
+		func writeHeader(bytes b: [UInt8], completion: OkCallback) {
 			if !wroteHeader {
 				wroteHeader = true
 				
 				let statusLine = "\(self.httpVersion) \(statusCode) \(statusMsg)\r\n"
 				let firstBytes = [UInt8](statusLine.utf8)
-				write(bytes: firstBytes)
 				
-			}
-			if !b.isEmpty {
-				write(bytes: b)
+//				print("header \(UTF8Encoding.encode(bytes: firstBytes))")
+				
+				write(bytes: firstBytes) {
+					ok in
+					
+					guard ok else {
+						return completion(false)
+					}
+					
+//					print("header \(UTF8Encoding.encode(bytes: b))")
+					
+					self.write(bytes: b, completion: completion)
+				}
+			} else {
+				completion(true)
 			}
 		}
 		
-		func pushHeaderBytes() {
+		func pushHeaderBytes(completion: OkCallback) {
 			if !wroteHeader {
 				if self.httpKeepAlive {
 					header += "Connection: keep-alive\r\nKeep-Alive: timeout=\(Int(httpReadTimeout)), max=100\r\n\r\n" // final CRLF
 				} else {
 					header += "\r\n" // final CRLF
 				}
-				writeHeader(bytes: [UInt8](header.utf8))
-				header = ""
+				writeHeader(bytes: [UInt8](header.utf8)) {
+					ok in
+					
+					self.header = ""
+					completion(ok)
+				}
+			} else {
+				completion(true)
 			}
 		}
 		
-		func writeBody(bytes b: [UInt8]) {
-			pushHeaderBytes()
-			write(bytes: b)
+		func writeBody(bytes b: [UInt8], completion: OkCallback) {
+			pushHeaderBytes {
+				ok in
+				
+				guard ok else {
+					return completion(false)
+				}
+				
+				self.write(bytes: b, completion: completion)
+			}
 		}
 		
-		func write(bytes b: [UInt8]) {
-			self.connection.writeFully(bytes: b)
+		func write(bytes b: [UInt8], completion: OkCallback) {
+		
+			self.connection.write(bytes: b) {
+				writeCount in
+				
+				completion(writeCount == b.count)
+			}
 		}
 		
 	}

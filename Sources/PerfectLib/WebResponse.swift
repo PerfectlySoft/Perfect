@@ -48,7 +48,6 @@ public struct Cookie {
 }
 
 /// Represents an outgoing web response. Handles the following tasks:
-/// - Management of sessions
 /// - Collecting HTTP response headers & cookies.
 /// - Locating the response template file, parsing it, evaluating it and returning the resulting data.
 /// - Provides access to the WebRequest object.
@@ -58,8 +57,6 @@ public class WebResponse {
 
 	/// The WebRequest for this response
 	public var request: WebRequest
-	/// The output encoding for a textual response. Defaults to UTF-8.
-	public var outputEncoding = "UTF-8"
 
 	var headersArray = [(String, String)]()
 	var cookiesArray = [Cookie]()
@@ -69,7 +66,10 @@ public class WebResponse {
 	var appMessage = ""
 
 	var bodyData = [UInt8]()
-
+	
+	var chunkedStarted = false
+	var wroteHeaders = false
+	
 	public var requestCompleted: () -> () = {}
 
 	internal init(_ c: WebConnection, request: WebRequest) {
@@ -92,22 +92,107 @@ public class WebResponse {
 		self.cookiesArray.append(cooky)
 	}
 
+	/// Appends the given bytes to the outgoing content body
 	public func appendBody(bytes b: [UInt8]) {
 		self.bodyData.append(contentsOf: b)
 	}
-
+	
+	/// Appends the given string to the outgoing content body
+	/// String is converted to UTF8 bytes
 	public func appendBody(string s: String) {
 		self.bodyData.append(contentsOf: [UInt8](s.utf8))
 	}
 
+	/// Pushes any waiting body data to the client.
+	/// Calls the given completion handler when done.
+	/// The parameter to the handler will be true if the data was successfully pushed. If false is given then the request should be considered to have been aborted.
+	public func pushBody(completion: (Bool) -> ()) {
+		self.writeHeaders()
+		self.connection.writeBody(bytes: self.bodyData) {
+			ok in
+			
+			self.bodyData.removeAll()
+			
+			Threading.dispatch {
+				completion(ok)
+			}
+		}
+	}
+	
+	/// If HTTP chunked transfer encoding has not already been started, chunked starts and the existing HTTP headers are written.
+	/// Any existing body data is sent to the client as a chunk and the body data is cleared for the next round of appendBody/appendBytes.
+	/// Calls the given completion handler when done. 
+	/// The parameter to the handler will be true if the data was successfully pushed. If false is given then the request should be considered to have been aborted.
+	public func pushChunked(completion: (Bool) -> ()) {
+		if !self.chunkedStarted {
+			self.chunkedStarted = true
+			
+			self.replaceHeader(name: "Transfer-Encoding", value: "chunked")
+			self.writeHeaders()
+		}
+		let bodyCount = self.bodyData.count
+		if bodyCount > 0 {
+			let hexString = "\(String(bodyCount, radix: 16, uppercase: true))\r\n"
+			connection.writeBody(bytes: Array(hexString.utf8)) {
+				ok in
+				
+				guard ok else {
+					return completion(false)
+				}
+				
+				self.bodyData.append(httpCR)
+				self.bodyData.append(httpLF)
+				self.connection.writeBody(bytes: self.bodyData) {
+					ok in
+					
+					self.bodyData.removeAll()
+					
+					Threading.dispatch {
+						completion(ok)
+					}
+				}
+			}
+		} else {
+			completion(true)
+		}
+	}
+	
 	func respond(completion: () -> ()) {
 
 		self.requestCompleted = { [weak self] in
-			self?.sendResponse()
-			completion()
+			
+			guard let `self` = self else {
+				return completion()
+			}
+			
+			if self.chunkedStarted {
+				// write any remaining body data
+				// write the final 0 chunk
+				self.pushChunked {
+					ok in
+					
+					guard ok else {
+						return completion()
+					}
+					
+					self.appendBody(string: "0\r\n\r\n")
+					self.writeBody {
+						_ in
+						
+						completion()
+					}
+				}
+			} else {
+				self.writeHeaders()
+				self.writeBody {
+					_ in
+				
+					completion()
+				}
+			}
 		}
 
-		doMainBody()
+		Routing.handleRequest(self.request, response: self)
 	}
 
 	/// Perform a 302 redirect to the given url
@@ -131,11 +216,28 @@ public class WebResponse {
 		self.addHeader(name: n, value: value)
 	}
 
-	// directly called by the WebSockets impl
-	func sendResponse() {
+	// queues headers to be written with the first body chunk
+	func writeHeaders() {
+		
+		guard !wroteHeaders else {
+			return
+		}
+		
+		wroteHeaders = true
+		
+		var foundContentLength = false
 		for (key, value) in headersArray {
 			connection.writeHeader(line: key + ": " + value)
+			if !foundContentLength && key.lowercased() == "content-length" {
+				foundContentLength = true
+			}
 		}
+		
+		// if this is not a chunked request and there is not already an existing Content-Length header, add it
+		if !self.chunkedStarted && !foundContentLength {
+			connection.writeHeader(line: "Content-Length: \(bodyData.count)")
+		}		
+		
 		// cookies
 		if self.cookiesArray.count > 0 {
 			let now = getNow()
@@ -146,7 +248,7 @@ public class WebResponse {
 				cookieLine.append(cookie.value!.stringByEncodingURL)
 				if cookie.expiresIn != 0.0 {
 					let formattedDate = try! formatDate(now + secondsToICUDate(Int(cookie.expiresIn)*60),
-						format: "%a, %d-%b-%Y %T GMT", timezone: "GMT")
+					                                    format: "%a, %d-%b-%Y %T GMT", timezone: "GMT")
 					cookieLine.append(";expires=" + formattedDate)
 				}
 				if let path = cookie.path {
@@ -165,60 +267,17 @@ public class WebResponse {
 						cookieLine.append("; HttpOnly")
 					}
 				}
-                // etc...
+				// etc...
 				connection.writeHeader(line: cookieLine)
 			}
 		}
-		connection.writeHeader(line: "Content-Length: \(bodyData.count)")
-
-		connection.writeBody(bytes: bodyData)
 	}
-
-	private func doMainBody() {
-
-		do {
-
-			return try include(path: request.pathInfo ?? "error", local: false)
-
-		} catch PerfectError.FileError(let code, let msg) {
-
-			print("File exception \(code) \(msg)")
-			self.setStatus(code: code == 404 ? Int(code) : 500, message: msg)
-			self.bodyData = [UInt8]("File exception \(code) \(msg)".utf8)
-
-		} catch MustacheError.SyntaxError(let msg) {
-
-			print("MustacheError.SyntaxError \(msg)")
-			self.setStatus(code: 500, message: msg)
-			self.bodyData = [UInt8]("Mustache syntax error \(msg)".utf8)
-
-		} catch MustacheError.EvaluationError(let msg) {
-
-			print("MustacheError.EvaluationError exception \(msg)")
-			self.setStatus(code: 500, message: msg)
-			self.bodyData = [UInt8]("Mustache evaluation error \(msg)".utf8)
-
-		} catch let e {
-			print("Unexpected exception \(e)")
+	
+	func writeBody(completion: (Bool) -> ()) {
+		connection.writeBody(bytes: bodyData) {
+			ok in
+			self.bodyData.removeAll()
+			completion(ok)
 		}
-		self.requestCompleted()
-	}
-
-	func includeVirtual(path pth: String) throws {
-		Routing.handleRequest(self.request, response: self)
-	}
-
-	func include(path pth: String, local: Bool) throws {
-		return try self.includeVirtual(path: pth)
-	}
-
-	private func makeNonRelative(path: String, local: Bool = false) -> String {
-		if includeStack.count == 0 {
-			return "/" + path
-		}
-		if local {
-			return includeStack.last!.stringByDeletingLastPathComponent + "/" + path
-		}
-		return request.pathInfo!.stringByDeletingLastPathComponent + "/" + path
 	}
 }

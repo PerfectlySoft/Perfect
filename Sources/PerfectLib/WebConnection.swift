@@ -34,9 +34,12 @@ public protocol WebConnection {
 	func getStatus() -> (Int, String)
 	/// Add a response header which will be sent to the client.
 	func writeHeader(line l: String)
+	
 	/// Send header bytes to the client.
-	func writeHeader(bytes b: [UInt8])
+	/// If false is passed to the completion handler the request should be assumed to have aborted.
+	func writeHeader(bytes b: [UInt8], completion: (Bool) -> ())
 	/// Write body bytes to the client. Any pending header data will be written first.
-	func writeBody(bytes b: [UInt8])
+	/// If false is passed to the completion handler the request should be assumed to have aborted.
+	func writeBody(bytes b: [UInt8], completion: (Bool) -> ())
 	
 }
