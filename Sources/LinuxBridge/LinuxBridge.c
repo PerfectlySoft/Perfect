@@ -6,7 +6,10 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <sys/time.h>
+#include <signal.h>
 
+#undef SIG_IGN
+__sighandler_t SIG_IGN = (__sighandler_t)1;
 
 int linux_fcntl_get(int fd, int cmd)
 {

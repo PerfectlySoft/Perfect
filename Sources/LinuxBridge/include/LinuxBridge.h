@@ -9,7 +9,10 @@
 #include <pthread.h>
 #include <sys/epoll.h>
 #include <sys/timerfd.h>
+#include <signal.h>
 // #include <errno.h>
+#undef SIG_IGN
+extern __sighandler_t SIG_IGN;
 
 int linux_open(const char *path, int oflag, mode_t mode);
 int linux_errno();

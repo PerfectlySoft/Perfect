@@ -19,6 +19,7 @@
 
 #if os(Linux)
 
+import SwiftGlibc
 import LinuxBridge
 
 private let FILT_READ = EPOLLIN.rawValue
@@ -79,7 +80,7 @@ class NetEvent {
 #endif
 
 	private static let debug = false
-	
+
 	private struct QueuedSocket {
 		let socket: SocketType
 		let what: Filter
@@ -102,12 +103,20 @@ class NetEvent {
 	static let noTimeout = Threading.noTimeout
 
 	private init() {
-		sigignore(SIGPIPE)
+
+		var sa = sigaction()
+
 #if os(Linux)
 		self.kq = epoll_create(0xFEC7)
+		sa.__sigaction_handler.sa_handler = SIG_IGN
 #else
 		self.kq = kqueue()
+		sa.__sigaction_u.__sa_handler = SIG_IGN
 #endif
+
+		sa.sa_flags = 0
+		sigaction(SIGPIPE, &sa, nil)
+
 		guard self.kq != -1 else {
 			Log.terminal(message: "Unable to initialize event listener.")
 		}
@@ -228,8 +237,8 @@ class NetEvent {
 #if os(Linux)
 				var evt = event()
 				evt.events = what.epollEvent | EPOLLONESHOT.rawValue | EPOLLET.rawValue
-				evt.data.fd = socket
-				epoll_ctl(n.kq, EPOLL_CTL_ADD, socket, &evt)
+				evt.data.fd = newSocket
+				epoll_ctl(n.kq, EPOLL_CTL_ADD, newSocket, &evt)
 
 //				print("event add \(socket) \(evt.events)")
 #else
@@ -256,7 +265,7 @@ class NetEvent {
 			n.lock.doWithLock {
 				if let old = n.queuedSockets[oldSocket] {
 #if os(Linux)
-					epoll_ctl(n.kq, EPOLL_CTL_DEL, socket, nil)
+					epoll_ctl(n.kq, EPOLL_CTL_DEL, oldSocket, nil)
 #else
 					// ensure any associate timer is deleted
 					// these two calls could be conglomerated but would require allocation. revisit
