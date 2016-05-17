@@ -517,9 +517,9 @@ extension String {
 			if noTrailsIndex == startIndex {
 				return self
 			}
-			return self.substring(to: noTrailsIndex)
+			return self[startIndex..<noTrailsIndex]
 		}
-		return self.substring(to: endIndex)
+		return self[startIndex..<endIndex]
 	}
 	
 	var pathExtension: String {
@@ -542,7 +542,7 @@ extension String {
 		guard endIndex != startIndex else {
 			return ""
 		}
-		return self.substring(with: unis.index(after: endIndex)..<noTrailsIndex)
+		return self[unis.index(after: endIndex)..<noTrailsIndex]
 	}
 
 	var stringByResolvingSymlinksInPath: String {
