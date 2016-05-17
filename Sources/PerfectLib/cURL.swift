@@ -21,25 +21,25 @@ import cURL
 
 /// This class is a wrapper around the CURL library. It permits network operations to be completed using cURL in a block or non-blocking manner.
 public class CURL {
-	
+
 	static var sInit:Int = {
 		curl_global_init(Int(CURL_GLOBAL_SSL | CURL_GLOBAL_WIN32))
 		return 1
 	}()
-	
+
 	var curl: UnsafeMutablePointer<Void>?
 	var multi: UnsafeMutablePointer<Void>?
-	
+
 	var slists = [UnsafeMutablePointer<curl_slist>]()
-	
+
 	var headerBytes = [UInt8]()
 	var bodyBytes = [UInt8]()
-	
+
 	/// The CURLINFO_RESPONSE_CODE for the last operation.
 	public var responseCode: Int {
 		return self.getInfo(CURLINFO_RESPONSE_CODE).0
 	}
-	
+
 	/// Get or set the current URL.
 	public var url: String {
 		get {
@@ -49,19 +49,19 @@ public class CURL {
 			self.setOption(CURLOPT_URL, s: newValue)
 		}
 	}
-	
+
 	/// Initialize the CURL request.
 	public init() {
 		self.curl = curl_easy_init()
 		setCurlOpts()
 	}
-	
+
 	/// Initialize the CURL request with a given URL.
 	public convenience init(url: String) {
 		self.init()
 		self.url = url
 	}
-	
+
 	/// Duplicate the given request into a new CURL object.
 	public init(dupeCurl: CURL) {
 		if let copyFrom = dupeCurl.curl {
@@ -71,7 +71,7 @@ public class CURL {
 		}
 		setCurlOpts() // still set options
 	}
-	
+
 	func setCurlOpts() {
 		curl_easy_setopt_long(self.curl!, CURLOPT_NOSIGNAL, 1)
 	#if swift(>=3.0)
@@ -79,7 +79,7 @@ public class CURL {
 	#else
 		let opaqueMe = UnsafeMutablePointer<Void>(Unmanaged.passUnretained(self).toOpaque())
 	#endif
-	#if os(Linux)
+	#if Ubuntu_14_04
 		setOption(CURLOPT_WRITEHEADER, v: opaqueMe)
 		setOption(CURLOPT_FILE, v: opaqueMe)
 		setOption(CURLOPT_INFILE, v: opaqueMe)
@@ -113,10 +113,10 @@ public class CURL {
 			return 0
 		}
 		setOption(CURLOPT_HEADERFUNCTION, f: headerReadFunc)
-		
+
 		let writeFunc: curl_func = {
 			(a, size, num, p) -> Int in
-			
+
 		#if swift(>=3.0)
 			let crl = Unmanaged<CURL>.fromOpaque(OpaquePointer(p!)).takeUnretainedValue()
 			if let bytes = UnsafeMutablePointer<UInt8>(a) {
@@ -140,19 +140,19 @@ public class CURL {
 			return 0
 		}
 		setOption(CURLOPT_WRITEFUNCTION, f: writeFunc)
-		
+
 		let readFunc: curl_func = {
 			(a, b, c, p) -> Int in
-			
+
 			// !FIX!
-			
+
 //			let crl = Unmanaged<CURL>.fromOpaque(COpaquePointer(p)).takeUnretainedValue()
 			return 0
 		}
 		setOption(CURLOPT_READFUNCTION, f: readFunc)
-		
+
 	}
-	
+
 	/// Clean up and reset the CURL object.
 	public func reset() {
 		if self.curl != nil {
@@ -168,24 +168,24 @@ public class CURL {
 			setCurlOpts()
 		}
 	}
-	
+
 	/// Perform the CURL request in a non-blocking manner. The closure will be called with the resulting code, header and body data.
 	public func perform(closure: (Int, [UInt8], [UInt8]) -> ()) {
-		
+
 		let header = Bytes()
 		let body = Bytes()
-		
+
 		self.multi = curl_multi_init()
 		curl_multi_add_handle(self.multi!, self.curl!)
-		
+
 		performInner(header: header, body: body, closure: closure)
 	}
-	
+
 	private func performInner(header headr: Bytes, body: Bytes, closure: (Int, [UInt8], [UInt8]) -> ()) {
 		let perf = self.perform()
 		if let h = perf.2 {
 			headr.importBytes(from: h)
-		} 
+		}
 		if let b = perf.3 {
 			body.importBytes(from: b)
 		}
@@ -197,11 +197,11 @@ public class CURL {
 			}
 		}
 	}
-	
+
 	/// Performs the request, blocking the current thread until it completes.
 	/// - returns: A tuple consisting of: Int - the result code, [UInt8] - the header bytes if any, [UInt8] - the body bytes if any
 	public func performFully() -> (Int, [UInt8], [UInt8]) {
-		
+
 		let code = curl_easy_perform(self.curl!)
 		defer {
 			if self.headerBytes.count > 0 {
@@ -218,7 +218,7 @@ public class CURL {
 		}
 		return (Int(code.rawValue), self.headerBytes, self.bodyBytes)
 	}
-	
+
 	/// Performs a bit of work on the current request.
 	/// - returns: A tuple consisting of: Bool - should perform() be called again, Int - the result code, [UInt8] - the header bytes if any, [UInt8] - the body bytes if any
 	public func perform() -> (Bool, Int, [UInt8]?, [UInt8]?) {
@@ -229,17 +229,17 @@ public class CURL {
 		var one: Int32 = 0
 		var code = CURLM_OK
 		repeat {
-		
+
 			code = curl_multi_perform(self.multi!, &one)
-			
+
 		} while code == CURLM_CALL_MULTI_PERFORM
-		
+
 		guard code == CURLM_OK else {
 			return (false, Int(code.rawValue), nil, nil)
 		}
 		var two: Int32 = 0
 		let msg = curl_multi_info_read(self.multi!, &two)
-		
+
 		defer {
 			if self.headerBytes.count > 0 {
 				self.headerBytes = [UInt8]()
@@ -248,7 +248,7 @@ public class CURL {
 				self.bodyBytes = [UInt8]()
 			}
 		}
-		
+
 		if msg != nil {
 			let msgResult = curl_get_msg_result(msg)
 			guard msgResult == CURLE_OK else {
@@ -262,7 +262,7 @@ public class CURL {
 			self.headerBytes.count > 0 ? self.headerBytes : nil,
 			self.bodyBytes.count > 0 ? self.bodyBytes : nil)
 	}
-	
+
 //	/// Returns the result code for the last
 //	public func multiResult() -> CURLcode {
 //		var two: Int32 = 0
@@ -272,19 +272,19 @@ public class CURL {
 //		}
 //		return CURLE_OK
 //	}
-	
+
 	/// Returns the String message for the given CURL result code.
 	public func strError(code cod: CURLcode) -> String {
 		return String(validatingUTF8: curl_easy_strerror(cod))!
 	}
-	
+
 	/// Returns the Int value for the given CURLINFO.
 	public func getInfo(_ info: CURLINFO) -> (Int, CURLcode) {
 		var i = 0
 		let c = curl_easy_getinfo_long(self.curl!, info, &i)
 		return (i, c)
 	}
-	
+
 	/// Returns the String value for the given CURLINFO.
 	public func getInfo(_ info: CURLINFO) -> (String, CURLcode) {
 	#if swift(>=3.0)
@@ -299,27 +299,27 @@ public class CURL {
 		return (code != CURLE_OK ? "" : String(validatingUTF8: i.pointee)!, code)
 	#endif
 	}
-	
+
 	/// Sets the Int64 option value.
 	public func setOption(_ option: CURLoption, int: Int64) -> CURLcode {
 		return curl_easy_setopt_int64(self.curl!, option, int)
 	}
-	
+
 	/// Sets the Int option value.
 	public func setOption(_ option: CURLoption, int: Int) -> CURLcode {
 		return curl_easy_setopt_long(self.curl!, option, int)
 	}
-	
+
 	/// Sets the poionter option value.
 	public func setOption(_ option: CURLoption, v: UnsafeMutablePointer<Void>) -> CURLcode {
 		return curl_easy_setopt_void(self.curl!, option, v)
 	}
-	
+
 	/// Sets the callback function option value.
 	public func setOption(_ option: CURLoption, f: curl_func) -> CURLcode {
 		return curl_easy_setopt_func(self.curl!, option, f)
 	}
-	
+
 	/// Sets the String option value.
 	public func setOption(_ option: CURLoption, s: String) -> CURLcode {
 		switch(option.rawValue) {
@@ -347,7 +347,7 @@ public class CURL {
 		}
 		return curl_easy_setopt_cstr(self.curl!, option, s)
 	}
-	
+
 	/// Cleanup and close the CURL request.
 	public func close() {
 		if self.curl != nil {
@@ -356,7 +356,7 @@ public class CURL {
 				self.multi = nil
 			}
 			curl_easy_cleanup(self.curl!)
-			
+
 			self.curl = nil
 			while self.slists.count > 0 {
 				curl_slist_free_all(self.slists.last!)
@@ -364,9 +364,8 @@ public class CURL {
 			}
 		}
 	}
-	
+
 	deinit {
 		self.close()
 	}
 }
-
