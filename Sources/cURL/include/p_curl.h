@@ -4,6 +4,19 @@
 
 #include <curl/curl.h>
 
+#ifdef CURLOPT_HEADERDATA
+#undef CURLOPT_HEADERDATA
+CURLoption CURLOPT_HEADERDATA = CURLOPT_WRITEHEADER;
+#endif
+#ifdef CURLOPT_WRITEDATA
+#undef CURLOPT_WRITEDATA
+CURLoption CURLOPT_WRITEDATA = CURLOPT_FILE;
+#endif
+#ifdef CURLOPT_READDATA
+#undef CURLOPT_READDATA
+CURLoption CURLOPT_READDATA = CURLOPT_INFILE;
+#endif
+
 typedef size_t (*curl_func)(void * ptr, size_t size, size_t num, void * ud);
 
 extern inline CURLcode curl_easy_setopt_long(CURL *handle, CURLoption option, long value)
