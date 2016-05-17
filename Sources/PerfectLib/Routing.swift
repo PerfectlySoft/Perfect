@@ -129,10 +129,20 @@ public struct RouteMap: CustomStringConvertible {
 /// Variables set by the routing process can be accessed through the `WebRequest.urlVariables` dictionary.
 /// Note that a PageHandler *MUST* call `WebResponse.requestCompleted()` when the request has completed.
 /// This does not need to be done within the `handleRequest` method.
-public class Routing {
+public struct Routing {
 	
 	/// The routes which have been configured.
 	static public var Routes = RouteMap()
+	
+	static func initialize() {
+		// add a wildcard handler for webroot access
+		// user modules can overwrite this if desired
+		Routing.Routes["*"] = {
+			request, response in
+			
+			StaticFileHandler().handleRequest(request: request, response: response)
+		}
+	}
 	
 	private init() {}
 	
@@ -149,7 +159,6 @@ public class Routing {
 			response.requestCompleted()
 		}
 	}
-	
 }
 
 class RouteNode: CustomStringConvertible {
