@@ -79,15 +79,10 @@ public class CURL {
 	#else
 		let opaqueMe = UnsafeMutablePointer<Void>(Unmanaged.passUnretained(self).toOpaque())
 	#endif
-	#if Ubuntu_14_04
-		setOption(CURLOPT_WRITEHEADER, v: opaqueMe)
-		setOption(CURLOPT_FILE, v: opaqueMe)
-		setOption(CURLOPT_INFILE, v: opaqueMe)
-	#else
 		setOption(CURLOPT_HEADERDATA, v: opaqueMe)
 		setOption(CURLOPT_WRITEDATA, v: opaqueMe)
 		setOption(CURLOPT_READDATA, v: opaqueMe)
-	#endif
+
 		let headerReadFunc: curl_func = {
 			(a, size, num, p) -> Int in
 		#if swift(>=3.0)
