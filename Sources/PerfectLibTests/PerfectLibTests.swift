@@ -1030,6 +1030,20 @@ class PerfectLibTests: XCTestCase {
 		XCTAssert("/".lastPathComponent == "/")
 	}
 	
+	func testStringBeginsWith() {
+		let a = "123456"
+		
+		XCTAssert(a.begins(with: "123"))
+		XCTAssert(!a.begins(with: "abc"))
+	}
+	
+	func testStringEndsWith() {
+		let a = "123456"
+		
+		XCTAssert(a.ends(with: "456"))
+		XCTAssert(!a.ends(with: "abc"))
+	}
+	
 	func testStringByDeletingLastPathComponent() {
 		XCTAssert("/a/".stringByDeletingLastPathComponent == "/")
 		XCTAssert("/b/a".stringByDeletingLastPathComponent == "/b")

@@ -566,6 +566,23 @@ extension String {
 	}
 }
 
+extension String {
+	func begins(with: String) -> Bool {
+		return self.characters.starts(with: with.characters)
+	}
+	
+	func ends(with: String) -> Bool {
+		let mine = self.characters
+		let theirs = with.characters
+		
+		guard mine.count >= theirs.count else {
+			return false
+		}
+		
+		return theirs.starts(with: mine[mine.index(mine.endIndex, offsetBy: -theirs.count)..<mine.endIndex])
+	}
+}
+
 /// Returns the current time according to ICU
 /// ICU dates are the number of milliseconds since the reference date of Thu, 01-Jan-1970 00:00:00 GMT
 public func getNow() -> Double {
