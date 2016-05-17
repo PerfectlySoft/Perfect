@@ -102,13 +102,21 @@ public struct Dir {
 	}
 
 #if os(Linux)
+	#if swift(>=3.0)
 		func readDir(_ d: OpaquePointer, _ dirEnt: inout dirent, _ endPtr: UnsafeMutablePointer<UnsafeMutablePointer<dirent>?>!) -> Int32 {
 			return readdir_r(d, &dirEnt, endPtr)
 		}
+	#endif
 #else
+	#if swift(>=3.0)
 		func readDir(_ d: UnsafeMutablePointer<DIR>, _ dirEnt: inout dirent, _ endPtr: UnsafeMutablePointer<UnsafeMutablePointer<dirent>?>!) -> Int32 {
 			return readdir_r(d, &dirEnt, endPtr)
 		}
+	#else
+		func readDir(_ d: UnsafeMutablePointer<DIR>, inout _ dirEnt: dirent, _ endPtr: UnsafeMutablePointer<UnsafeMutablePointer<dirent>>) -> Int32 {
+			return readdir_r(d, &dirEnt, endPtr)
+		}
+	#endif
 #endif
 
 	/// Enumerates the contents of the directory passing the name of each contained element to the provided callback.
