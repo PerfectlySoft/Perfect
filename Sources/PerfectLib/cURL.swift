@@ -192,7 +192,7 @@ public class CURL {
 		if perf.0 == false { // done
 			closure(perf.1, headr.data, body.data)
 		} else {
-			Threading.dispatchBlock { [weak self] in
+			Threading.dispatch { [weak self] in
 				self?.performInner(header: headr, body: body, closure: closure)
 			}
 		}
