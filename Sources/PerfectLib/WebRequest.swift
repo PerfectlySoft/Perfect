@@ -27,9 +27,9 @@
 ///
 /// Access to the current WebRequest object is generally provided through the corresponding WebResponse object
 public class WebRequest {
-	
+
 	var connection: WebConnection
-	
+
 	public lazy var documentRoot: String = {
 		var f = self.connection.requestParams["PERFECTSERVER_DOCUMENT_ROOT"]
 		var root = ""
@@ -43,12 +43,12 @@ public class WebRequest {
 		}
 		return root
 	}()
-	
+
 	private var cachedHttpAuthorization: [String:String]? = nil
-	
+
 	/// Variables set by the URL routing process
 	public var urlVariables = [String:String]()
-	
+
 	// !FIX! This had previously been lazy but utilizing .headers was crashing the Swift 3.0-dev compiler
 	// Temp work around is to be indirect
 	/// A `Dictionary` containing all HTTP header names and values
@@ -62,25 +62,24 @@ public class WebRequest {
 		}
 	}
 	private lazy var work_around_headers: [String:String] = {
-		var d = Dictionary<String, String>()
-		for (key, value) in self.connection.requestParams {
-			if key.begins(with: "HTTP_") {
-				let utf16 = key.utf16
-				let index = key.utf16.startIndex.advanced(by: 5)
-				let nKey = String(key.utf16.suffix(from: index))!
-				d[nKey.stringByReplacing(string: "_", withString: "-")] = value
+			var d = Dictionary<String, String>()
+			for (key, value) in self.connection.requestParams {
+				if key.begins(with: "HTTP_") {
+					let index = key.index(key.startIndex, offsetBy: 5)
+					let nKey = key[index..<key.endIndex].stringByReplacing(string: "_", withString: "-")
+					d[nKey] = value
+				}
 			}
-		}
-		return d
-	}()
-	
+			return d
+		}()
+
 	/// A tuple array containing each incoming cookie name/value pair
 	public lazy var cookies: [(String, String)] = {
 		var c = [(String, String)]()
 		if let rawCookie = self.httpCookie {
 			let semiSplit = rawCookie.characters.split(separator: ";").map { (chars: String.CharacterView) in String(chars.filter { $0 != " " }) }
 			for cookiePair in semiSplit {
-				
+
 				let cookieSplit = cookiePair.characters.split(separator: "=", maxSplits: Int.max, omittingEmptySubsequences: false).map { (chars: String.CharacterView) in String(chars.filter { $0 != " " }) }
 				if cookieSplit.count == 2 {
 					let name = cookieSplit[0].stringByDecodingURL
@@ -93,14 +92,14 @@ public class WebRequest {
 		}
 		return c
 	}()
-	
+
 	/// A tuple array containing each GET/search/query parameter name/value pair
 	public lazy var queryParams: [(String, String)] = {
 		var c = [(String, String)]()
 		if let qs = self.queryString {
 			let semiSplit = qs.characters.split(separator: "&").map { String($0) }
 			for paramPair in semiSplit {
-				
+
 				let paramSplit = paramPair.characters.split(separator: "=", maxSplits: Int.max, omittingEmptySubsequences: false).map { String($0) }
 				if paramSplit.count == 2 {
 					let name = paramSplit[0].stringByDecodingURL
@@ -113,7 +112,7 @@ public class WebRequest {
 		}
 		return c
 	}()
-	
+
 	/// An array of `MimeReader.BodySpec` objects which provide access to each file which was uploaded
 	public lazy var fileUploads: [MimeReader.BodySpec] = {
 		var c = Array<MimeReader.BodySpec>()
@@ -126,7 +125,7 @@ public class WebRequest {
 		}
 		return c
 	}()
-	
+
 	/// Return the raw POST body as a byte array
 	/// This is mainly useful when POSTing non-url-encoded and not-multipart form data
 	/// For example, if the content-type were application/json you could use this function to get the raw JSON data as bytes
@@ -136,7 +135,7 @@ public class WebRequest {
 		}
 		return [UInt8]()
 	}()
-	
+
 	/// Return the raw POST body as a String
 	/// This is mainly useful when POSTing non-url-encoded and not-multipart form data
 	/// For example, if the content-type were application/json you could use this function to get the raw JSON data as a String
@@ -147,7 +146,7 @@ public class WebRequest {
 		}
 		return ""
 	}()
-	
+
 	/// A tuple array containing each POST parameter name/value pair
 	public lazy var postParams: [(String, String)] = {
 		var c = [(String, String)]()
@@ -157,12 +156,12 @@ public class WebRequest {
 					c.append((body.fieldName, body.fieldValue))
 				}
 			}
-			
+
 		} else if let stdin = self.connection.stdin {
 			let qs = UTF8Encoding.encode(bytes: stdin)
 			let semiSplit = qs.characters.split(separator: "&").map { String($0) }
 			for paramPair in semiSplit {
-				
+
 				let paramSplit = paramPair.characters.split(separator: "=", maxSplits: Int.max, omittingEmptySubsequences: false).map { String($0) }
 				if paramSplit.count == 2 {
 					let name = paramSplit[0].stringByReplacing(string: "+", withString: " ").stringByDecodingURL
@@ -175,7 +174,7 @@ public class WebRequest {
 		}
 		return c
 		}()
-	
+
 	/// Returns the first GET or POST parameter with the given name
 	public func param(name: String) -> String? {
 		for p in self.queryParams
@@ -188,7 +187,7 @@ public class WebRequest {
 		}
 		return nil
 	}
-	
+
 	/// Returns the first GET or POST parameter with the given name
 	/// Returns the supplied default value if the parameter was not found
 	public func param(name: String, defaultValue: String) -> String {
@@ -202,7 +201,7 @@ public class WebRequest {
 		}
 		return defaultValue
 	}
-	
+
 	/// Returns all GET or POST parameters with the given name
 	public func params(named: String) -> [String]? {
 		var a = [String]()
@@ -216,7 +215,7 @@ public class WebRequest {
 		}
 		return a.count > 0 ? a : nil
 	}
-	
+
 	/// Returns all GET or POST parameters
 	public func params() -> [(String,String)]? {
 		var a = [(String,String)]()
@@ -228,11 +227,11 @@ public class WebRequest {
 		}
 		return a.count > 0 ? a : nil
 	}
-	
+
 	private func get(_ named: String) -> String? {
 		return connection.requestParams[named]
 	}
-	
+
 	private func set(_ named: String, value: String?) {
 		if let v = value {
 			connection.requestParams[named] = v
@@ -240,14 +239,14 @@ public class WebRequest {
 			connection.requestParams.removeValue(forKey: named)
 		}
 	}
-	
+
 	private func get(_ named: String) -> Int? {
 		if let i = connection.requestParams[named] {
 			return Int(i)
 		}
 		return nil
 	}
-	
+
 	private func set(_ named: String, value: Int?) {
 		if let v = value {
 			connection.requestParams[named] = String(v)
@@ -255,7 +254,7 @@ public class WebRequest {
 			connection.requestParams.removeValue(forKey: named)
 		}
 	}
-	
+
 	/// Provides access to the HTTP_CONNECTION parameter.
 	public var httpConnection: String? { get { return get("HTTP_CONNECTION") } set { set("HTTP_CONNECTION", value: newValue) } }
 	/// Provides access to the HTTP_COOKIE parameter.
@@ -348,16 +347,16 @@ public class WebRequest {
 	public func rawHeader(named: String) -> String? { return self.connection.requestParams[named] }
 	/// Returns a Dictionary containing all raw request parameters.
 	public func raw() -> Dictionary<String, String> { return self.connection.requestParams }
-	
+
 	internal init(_ c: WebConnection) {
 		self.connection = c
 	}
-	
+
 	private func extractField(from: String, named: String) -> String? {
 		guard let range = from.range(ofString: named + "=") else {
 			return nil
 		}
-		
+
 		var currPos = range.upperBound
 		var ret = ""
 		let quoted = from[currPos] == "\""
@@ -384,15 +383,3 @@ public class WebRequest {
 		return ret
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
