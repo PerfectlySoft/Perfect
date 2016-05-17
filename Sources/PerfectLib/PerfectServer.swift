@@ -41,7 +41,7 @@ public struct PerfectServer {
 		
 		let dl = DynamicLoader()
         var baseDir : Dir
-        if serverPerfectLibraries.hasPrefix("/") || serverPerfectLibraries.hasPrefix("~/") || serverPerfectLibraries.hasPrefix("./") {
+        if serverPerfectLibraries.begins(with: "/") || serverPerfectLibraries.begins(with: "~/") || serverPerfectLibraries.begins(with: "./") {
             baseDir = Dir(serverPerfectLibraries)
         } else {
             baseDir = Dir(homeDir() + serverPerfectLibraries)
@@ -49,14 +49,14 @@ public struct PerfectServer {
         Log.info(message: "Load libs from: \(baseDir.realPath())");
 		do {
 			try baseDir.forEachEntry { (name: String) -> () in
-				if name.hasSuffix(".framework") || name.hasSuffix(".framework/") {
+				if name.ends(with: ".framework") || name.ends(with: ".framework/") {
 					let fileName = baseDir.realPath() + "/" + name
 					if dl.loadFramework(atPath: fileName) {
 						print("Loaded "+name)
 					} else {
 						print("FAILED to load "+name)
 					}
-				} else if name.hasSuffix(".so") || name.hasSuffix(".dylib") {
+				} else if name.ends(with: ".so") || name.ends(with: ".dylib") {
 					let fileName = baseDir.realPath() + "/" + name
 					if dl.loadLibrary(atPath: fileName) {
 						print("Loaded "+name)

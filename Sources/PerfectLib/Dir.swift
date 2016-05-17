@@ -31,7 +31,7 @@ public struct Dir {
 	
 	/// Create a new Dir object with the given path
 	public init(_ path: String) {
-		if path.hasSuffix("/") {
+		if path.ends(with: "/") {
 			self.internalPath = path
 		} else {
 			self.internalPath = path + "/"
@@ -53,7 +53,7 @@ public struct Dir {
 	public func create(perms: Int = Int(S_IRWXG|S_IRWXU|S_IRWXO)) throws {
 		
 		let pth = realPath()
-		var currPath = pth.hasPrefix("/") ? "/" : ""
+		var currPath = pth.begins(with: "/") ? "/" : ""
 		
 		for component in pth.pathComponents {
 			if component != "/" {

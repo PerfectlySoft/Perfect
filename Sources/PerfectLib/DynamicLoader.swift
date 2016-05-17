@@ -49,7 +49,7 @@ struct DynamicLoader {
 	
 	func loadLibrary(atPath at: String) -> Bool {
 		var fileName = at.lastPathComponent
-		if fileName.hasPrefix("lib") {
+		if fileName.begins(with: "lib") {
 		#if swift(>=3.0)
 			fileName.characters.removeFirst(3)
 		#else
