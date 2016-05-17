@@ -248,10 +248,10 @@ public class File : Closeable {
 	/// - parameter whence: Whence to set it from. Once of `SEEK_SET`, `SEEK_CUR`, `SEEK_END`.
 	/// - returns: The new position marker value
 	public func setMarker(to toInt: Int, whence: Int32 = SEEK_CUR) -> Int {
-		if isOpen() {
-			return Int(lseek(Int32(self.fd), off_t(toInt), whence))
+		if !isOpen() {
+			do { try openRead() } catch { return -1 }
 		}
-		return 0
+		return Int(lseek(Int32(self.fd), off_t(toInt), whence))
 	}
 	
 	/// Returns the modification date for the file in the standard UNIX format of seconds since 1970/01/01 00:00:00 GMT
