@@ -19,30 +19,16 @@
 
 import PackageDescription
 
-#if os(Linux)
 let package = Package(
 	name: "PerfectLib",
-	targets: [
-		Target(name: "PerfectLib", dependencies: [
-										.Target(name: "OpenSSL"),
-										.Target(name: "cURL"),
-										.Target(name: "LinuxBridge")]),
-		Target(name: "OpenSSL"),
-		Target(name: "cURL"),
-		Target(name: "LinuxBridge")
-		],
-	exclude: ["Sources/PerfectLibTests"]
+	targets: [],
+	dependencies: [
+	              	.Package(url: "https://github.com/PerfectlySoft/Perfect-libcurl.git", majorVersion: 0, minor: 5),
+	              	.Package(url: "https://github.com/PerfectlySoft/Perfect-OpenSSL.git", majorVersion: 0, minor: 3)
+	],
+	exclude: ["Sources/LinuxBridge", "Sources/OpenSSL", "Sources/cURL"]
 )
-#else
-let package = Package(
-	name: "PerfectLib",
-	targets: [
-		Target(name: "PerfectLib", dependencies: [
-										.Target(name: "OpenSSL"),
-										.Target(name: "cURL")]),
-		Target(name: "OpenSSL"),
-		Target(name: "cURL")
-		],
-	exclude: ["Sources/LinuxBridge", "Sources/PerfectLibTests"]
-)
-#endif
+
+products.append(Product(name: "PerfectLib", type: .Library(.Dynamic), modules: "PerfectLib"))
+
+//print("\(package.toTOML())")

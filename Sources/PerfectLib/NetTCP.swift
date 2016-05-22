@@ -470,9 +470,9 @@ public class NetTCP : Closeable {
 	/// - returns: `PerfectError.NetworkError`
 	public func accept(timeoutSeconds timeout: Double, callBack: (NetTCP?) -> ()) throws {
 	#if os(Linux)
-		let accRes = SwiftGlibc.accept(fd.fd, UnsafeMutablePointer<sockaddr>(nil), UnsafeMutablePointer<socklen_t>(nil))
+		let accRes = SwiftGlibc.accept(fd.fd, nil, nil)
 	#else
-		let accRes = Darwin.accept(fd.fd, UnsafeMutablePointer<sockaddr>(nil), UnsafeMutablePointer<socklen_t>(nil))
+		let accRes = Darwin.accept(fd.fd, nil, nil)
 	#endif
 		if accRes != -1 {
 			let newTcp = self.makeFromFd(accRes)
@@ -500,9 +500,9 @@ public class NetTCP : Closeable {
 	
 	private func tryAccept() -> Int32 {
 		#if os(Linux)
-			let accRes = SwiftGlibc.accept(fd.fd, UnsafeMutablePointer<sockaddr>(nil), UnsafeMutablePointer<socklen_t>(nil))
+			let accRes = SwiftGlibc.accept(fd.fd, nil, nil)
 		#else
-			let accRes = Darwin.accept(fd.fd, UnsafeMutablePointer<sockaddr>(nil), UnsafeMutablePointer<socklen_t>(nil))
+			let accRes = Darwin.accept(fd.fd, nil, nil)
 		#endif
 
 		return accRes
