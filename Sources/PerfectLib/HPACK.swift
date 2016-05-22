@@ -54,7 +54,7 @@ class HeaderField {
 	}
 }
 
-final class DynamicTable {
+private final class DynamicTable {
 	
 	var headerFields = [HeaderField?]()
 	var head = 0
@@ -171,7 +171,7 @@ final class DynamicTable {
 	}
 }
 
-class StaticTable {
+private struct StaticTable {
 	
 	static let table = [
 		HeaderField(name: ":authority"),
@@ -583,9 +583,9 @@ private let huffmanCodeLengths: [UInt8] = [
 	30 // EOS
 ]
 
-let huffmanEOS = 256
+private let huffmanEOS = 256
 
-class HuffmanEncoder {
+final class HuffmanEncoder {
 	
 	let codes: [Int]
 	let lengths: [UInt8]
@@ -637,13 +637,13 @@ class HuffmanEncoder {
 	}
 }
 
-class HuffmanDecoder {
+final class HuffmanDecoder {
 	
 	enum Exception: ErrorProtocol {
 		case EOSDecoded, InvalidPadding
 	}
 	
-	class Node {
+	final class Node {
 		let symbol: Int
 		let bits: UInt8
 		var children: [Node?]?
@@ -744,11 +744,11 @@ class HuffmanDecoder {
 	}
 }
 
-let huffmanEncoderInstance = HuffmanEncoder(codes: huffmanCodes, lengths: huffmanCodeLengths)
-let huffmanDecoderInstance = HuffmanDecoder(codes: huffmanCodes, lengths: huffmanCodeLengths)
+private let huffmanEncoderInstance = HuffmanEncoder(codes: huffmanCodes, lengths: huffmanCodeLengths)
+private let huffmanDecoderInstance = HuffmanDecoder(codes: huffmanCodes, lengths: huffmanCodeLengths)
 
 /// Encodes headers according to the HPACK standard.
-public class HPACKEncoder {
+public final class HPACKEncoder {
 	
 	static let bucketSize = 17
 	static let empty = [UInt8]()
@@ -765,7 +765,7 @@ public class HPACKEncoder {
 		return size == 0 ? 0 : head.after!.index - head.before!.index + 1
 	}
 	
-	class HeaderEntry: HeaderField {
+	final class HeaderEntry: HeaderField {
 		
 		var before: HeaderEntry?
 		var after: HeaderEntry?
@@ -1068,7 +1068,7 @@ public class HPACKEncoder {
 
 /// Decodes headers which have been HPACK encoded.
 /// Decoding takes a HeaderListener object which receives each field/value as they are decoded.
-public class HPACKDecoder {
+public final class HPACKDecoder {
 	
 	public enum Exception: ErrorProtocol {
 		case DecompressionException, IllegalIndexValue, InvalidMaxDynamicTableSize, MaxDynamicTableSizeChangeRequested
@@ -1082,7 +1082,7 @@ public class HPACKDecoder {
 	
 	static let empty = [UInt8]()
 	
-	let dynamicTable: DynamicTable
+	private let dynamicTable: DynamicTable
 	
 	let maxHeaderSize: Int
 	var maxDynamicTableSize: Int

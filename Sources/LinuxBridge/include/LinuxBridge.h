@@ -10,7 +10,7 @@
 #include <sys/epoll.h>
 #include <sys/timerfd.h>
 #include <signal.h>
-// #include <errno.h>
+
 #undef SIG_IGN
 extern __sighandler_t SIG_IGN;
 

@@ -42,9 +42,9 @@
 		F80C63F31CC1590F0002F3C9 /* WebResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F80C63D01CC1590E0002F3C9 /* WebResponse.swift */; };
 		F80C63F41CC1590F0002F3C9 /* WebSocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F80C63D11CC1590F0002F3C9 /* WebSocketHandler.swift */; };
 		F80C63F61CC159720002F3C9 /* Closeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F80C63F51CC159720002F3C9 /* Closeable.swift */; };
+		F86B8EF21CED0CEC001CD16C /* PerfectLibTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86B8EF11CED0CEC001CD16C /* PerfectLibTests.swift */; };
 		F870D8BF1CB815680042F449 /* libcrypto-x86_64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F870D8BD1CB815680042F449 /* libcrypto-x86_64.a */; };
 		F870D8C01CB815680042F449 /* libssl-x86_64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F870D8BE1CB815680042F449 /* libssl-x86_64.a */; };
-		F870D8CD1CB981F90042F449 /* PerfectLibTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F870D8CC1CB981F90042F449 /* PerfectLibTests.swift */; };
 		F88D0FC21CB327C6000D499D /* PerfectLib.h in Headers */ = {isa = PBXBuildFile; fileRef = F88D0FC11CB327C6000D499D /* PerfectLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F88D0FC41CB32D72000D499D /* libstdc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F88D0FC31CB32D72000D499D /* libstdc++.tbd */; };
 		F88D0FC81CB32E56000D499D /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F88D0FC71CB32E56000D499D /* libcurl.tbd */; };
@@ -98,9 +98,9 @@
 		F80C63D01CC1590E0002F3C9 /* WebResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WebResponse.swift; path = ../../Sources/PerfectLib/WebResponse.swift; sourceTree = "<group>"; };
 		F80C63D11CC1590F0002F3C9 /* WebSocketHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WebSocketHandler.swift; path = ../../Sources/PerfectLib/WebSocketHandler.swift; sourceTree = "<group>"; };
 		F80C63F51CC159720002F3C9 /* Closeable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Closeable.swift; path = ../../Sources/PerfectLib/Closeable.swift; sourceTree = "<group>"; };
+		F86B8EF11CED0CEC001CD16C /* PerfectLibTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PerfectLibTests.swift; path = ../../Tests/PerfectLib/PerfectLibTests.swift; sourceTree = "<group>"; };
 		F870D8BD1CB815680042F449 /* libcrypto-x86_64.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libcrypto-x86_64.a"; path = "../../PerfectLib/Sources/OpenSSL/osx/libcrypto-x86_64.a"; sourceTree = "<group>"; };
 		F870D8BE1CB815680042F449 /* libssl-x86_64.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libssl-x86_64.a"; path = "../../PerfectLib/Sources/OpenSSL/osx/libssl-x86_64.a"; sourceTree = "<group>"; };
-		F870D8CC1CB981F90042F449 /* PerfectLibTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PerfectLibTests.swift; path = ../../Sources/PerfectLibTests/PerfectLibTests.swift; sourceTree = "<group>"; };
 		F870D8CE1CB982000042F449 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = PerfectLibTests/Info.plist; sourceTree = "<group>"; };
 		F88D0FC11CB327C6000D499D /* PerfectLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerfectLib.h; sourceTree = "<group>"; };
 		F88D0FC31CB32D72000D499D /* libstdc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.tbd"; path = "usr/lib/libstdc++.tbd"; sourceTree = SDKROOT; };
@@ -138,7 +138,7 @@
 			isa = PBXGroup;
 			children = (
 				F870D8CE1CB982000042F449 /* Info.plist */,
-				F870D8CC1CB981F90042F449 /* PerfectLibTests.swift */,
+				F86B8EF11CED0CEC001CD16C /* PerfectLibTests.swift */,
 			);
 			name = PerfectLibTests;
 			sourceTree = "<group>";
@@ -377,7 +377,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F870D8CD1CB981F90042F449 /* PerfectLibTests.swift in Sources */,
+				F86B8EF21CED0CEC001CD16C /* PerfectLibTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
