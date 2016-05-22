@@ -239,7 +239,10 @@ class NetEvent {
 				evt.events = what.epollEvent | EPOLLONESHOT.rawValue | EPOLLET.rawValue
 				evt.data.fd = newSocket
 				epoll_ctl(n.kq, EPOLL_CTL_ADD, newSocket, &evt)
+				if timeoutSeconds > 0.0 {
+					let timerFd = timerfd_create(CLOCK_MONOTONIC, 0)
 
+				}
 //				print("event add \(socket) \(evt.events)")
 #else
 				var tmout = timespec(tv_sec: 0, tv_nsec: 0)
@@ -265,6 +268,10 @@ class NetEvent {
 			n.lock.doWithLock {
 				if let old = n.queuedSockets[oldSocket] {
 #if os(Linux)
+					if old.associated != invalidSocket {
+						epoll_ctl(n.kq, EPOLL_CTL_DEL, old.associated, nil)
+						close(old.associated)
+					}
 					epoll_ctl(n.kq, EPOLL_CTL_DEL, oldSocket, nil)
 #else
 					// ensure any associate timer is deleted
