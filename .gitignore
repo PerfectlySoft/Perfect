@@ -53,3 +53,4 @@ PerfectServer/perfectserverhttp
 
 # SwiftPM
 .build/
+Packages/

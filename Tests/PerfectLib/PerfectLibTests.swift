@@ -26,8 +26,10 @@ class PerfectLibTests: XCTestCase {
 
 	override func setUp() {
 		super.setUp()
-	#if os(Linux)
+	#if os(OSX)
 		Foundation.srand(UInt32(time(nil)))
+	#else
+		SwiftGlibc.srand(UInt32(time(nil)))
 	#endif
 		// Put setup code here. This method is called before the invocation of each test method in the class.
 		NetEvent.initialize()
@@ -44,6 +46,14 @@ class PerfectLibTests: XCTestCase {
 		self.measureBlock(block)
 	}
 	#endif
+
+	func _rand(to upper: Int32) -> Int32 {
+		#if os(OSX)
+		return Foundation.rand() % Int32(upper)
+		#else
+		return SwiftGlibc.rand() % Int32(upper)
+		#endif
+	}
 
 	func testConcurrentQueue() {
 		let q = Threading.getQueue(name: "concurrent", type: .Concurrent)
@@ -192,10 +202,6 @@ class PerfectLibTests: XCTestCase {
 		XCTAssert(value != nil)
 		let emojiStr = decoded!["emoji"] as! String
 		XCTAssert(emojiStr == "😳")
-	}
-
-	func _rand(to upper: Int32) -> Int32 {
-		return Foundation.rand() % Int32(upper)
 	}
 
 	func testMimeReader() {
@@ -998,7 +1004,7 @@ class PerfectLibTests: XCTestCase {
 
 	#if swift(>=3.0)
 		self.waitForExpectations(withTimeout: 10000) {
-			(_: NSError?) in
+			_ in
 			net.close()
 		}
 	#else
@@ -1007,18 +1013,6 @@ class PerfectLibTests: XCTestCase {
 			net.close()
 		}
 	#endif
-	}
-
-//	func testStringByResolvingSymlinksInPath() { // YMMV tmp is a link on OSX
-//		// !FIX! this is currently failing //private/tmp
-//		let path = "/tmp".stringByResolvingSymlinksInPath
-//		XCTAssert(path == "/private/tmp")
-//	}
-
-	func testStringLastComponent() {
-		XCTAssert("/a/".lastPathComponent == "a")
-		XCTAssert("/b/a".lastPathComponent == "a")
-		XCTAssert("/".lastPathComponent == "/")
 	}
 
 	func testStringBeginsWith() {
@@ -1033,43 +1027,6 @@ class PerfectLibTests: XCTestCase {
 
 		XCTAssert(a.ends(with: "456"))
 		XCTAssert(!a.ends(with: "abc"))
-	}
-
-	func testStringByDeletingLastPathComponent() {
-		XCTAssert("/a/".stringByDeletingLastPathComponent == "/")
-		XCTAssert("/b/a".stringByDeletingLastPathComponent == "/b")
-		XCTAssert("/".stringByDeletingLastPathComponent == "/")
-	}
-
-	func testPathComponentsExPerformance() {
-		let s = "/foo/bar/baz/bilbo/bucket/salami"
-		self.measure {
-			for _ in 0..<10000 {
-				s.pathComponents.count
-			}
-		}
-	}
-	
-#if os(OSX)
-	func testPathComponentsNatPerformance() {
-		let s = "/foo/bar/baz/bilbo/bucket/salami" as NSString
-		self.measure {
-			for _ in 0..<10000 {
-				s.pathComponents.count
-			}
-		}
-	}
-#endif
-
-	func testPathComponentsSplitPerformance() {
-		let s = "/foo/bar/baz/bilbo/bucket/salami"
-		self.measure {
-
-			for _ in 0..<10000 {
-				s.characters.split(separator: Character("/")).map { String($0) } .count
-			}
-
-		}
 	}
 
 	func testHPACKEncode() {
@@ -1117,4 +1074,40 @@ class PerfectLibTests: XCTestCase {
 			XCTAssert(false, "Exception \(error)")
 		}
 	}
+}
+
+extension PerfectLibTests {
+    static var allTests : [(String, (PerfectLibTests) -> () throws -> Void)] {
+        return [
+					("testConcurrentQueue", testConcurrentQueue),
+					("testSerialQueue", testSerialQueue),
+					("testJSONConvertibleObject", testJSONConvertibleObject),
+					("testJSONEncodeDecode", testJSONEncodeDecode),
+					("testJSONDecodeUnicode", testJSONDecodeUnicode),
+					("testMimeReader", testMimeReader),
+					("testMimeReaderSimple", testMimeReaderSimple),
+					("testClientServer", testClientServer),
+					("testThreadSleep", testThreadSleep),
+					("testClientServerReadTimeout", testClientServerReadTimeout),
+					("testNetSendFile", testNetSendFile),
+					("testSysProcess", testSysProcess),
+					("testStringByEncodingHTML", testStringByEncodingHTML),
+					("testStringByEncodingURL", testStringByEncodingURL),
+					("testStringByDecodingURL", testStringByDecodingURL),
+					("testStringByDecodingURL2", testStringByDecodingURL2),
+					("testStringByReplacingString", testStringByReplacingString),
+					("testStringByReplacingString2", testStringByReplacingString2),
+					("testStringByReplacingString3", testStringByReplacingString3),
+					("testSubstringTo", testSubstringTo),
+					("testRangeTo", testRangeTo),
+					("testSubstringWith", testSubstringWith),
+					("testICUFormatDate", testICUFormatDate),
+					("testMustacheParser1", testMustacheParser1),
+					("testCURL", testCURL),
+					("testCURLHeader", testCURLHeader),
+					("testCURLPost", testCURLPost),
+					("testTCPSSLClient", testTCPSSLClient),
+					("testHPACKEncode", testHPACKEncode)
+        ]
+    }
 }

@@ -17,6 +17,7 @@
 //===----------------------------------------------------------------------===//
 //
 
+import Foundation
 #if os(Linux)
 import SwiftGlibc
 import LinuxBridge
