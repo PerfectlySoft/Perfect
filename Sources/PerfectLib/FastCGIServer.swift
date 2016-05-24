@@ -111,7 +111,7 @@ public class FastCGIServer {
 
 		case fcgiBeginRequest:
 			// FastCGIBeginRequestBody UInt16 role, UInt8 flags
-			let role: UInt16 = ntohs((UInt16(fcgiRecord.content![1]) << 8) | UInt16(fcgiRecord.content![0]))
+			let role: UInt16 = ((UInt16(fcgiRecord.content![1]) << 8) | UInt16(fcgiRecord.content![0])).netToHost
 			let flags: UInt8 = fcgiRecord.content![2]
 			req.requestParams["L_FCGI_ROLE"] = String(role)
 			req.requestParams["L_FCGI_FLAGS"] = String(flags)
@@ -181,7 +181,7 @@ public class FastCGIServer {
 				let three = UInt32(fcgiRecord.content![2])
 				let four = UInt32(fcgiRecord.content![3])
 
-				let size = ntohl((four << 24) + (three << 16) + (two << 8) + one)
+				let size = ((four << 24) + (three << 16) + (two << 8) + one).netToHost
 
 				readXStdin(fcgiReq: req, size: Int(size))
 				return

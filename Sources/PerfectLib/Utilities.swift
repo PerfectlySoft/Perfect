@@ -94,15 +94,6 @@ public struct Encoding {
 	}
 }
 
-/// Utility wrapper permitting a UTF-16 character generator to encode a String.
-public struct UTF16Encoding {
-
-	/// Use a UTF-16 character generator to create a String.
-	public static func encode<G : IteratorProtocol where G.Element == UTF16.CodeUnit>(generator: G) -> String {
-		return Encoding.encode(codec: UTF16(), generator: generator)
-	}
-}
-
 /// Utility wrapper permitting a UTF-8 character generator to encode a String. Also permits a String to be converted into a UTF-8 byte array.
 public struct UTF8Encoding {
 
@@ -149,6 +140,27 @@ extension UInt8 {
 		return s
 	}
 }
+
+extension UnsignedInteger {
+	var hostIsLittleEndian: Bool { return 256.littleEndian == 256 }
+}
+
+protocol BytesSwappingUnsignedInteger: UnsignedInteger {
+	 var byteSwapped: Self { get }
+}
+
+extension BytesSwappingUnsignedInteger {
+	var hostToNet: Self {
+		return self.hostIsLittleEndian ? self.byteSwapped : self
+	}
+	var netToHost: Self {
+		return self.hostIsLittleEndian ? self.byteSwapped : self
+	}
+}
+
+extension UInt16: BytesSwappingUnsignedInteger {}
+extension UInt32: BytesSwappingUnsignedInteger {}
+extension UInt64: BytesSwappingUnsignedInteger {}
 
 extension String {
 	/// Returns the String with all special HTML characters encoded.

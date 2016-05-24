@@ -100,7 +100,7 @@ public struct HTTP2Frame {
 	func headerBytes() -> [UInt8] {
 		var data = [UInt8]()
 
-		let l = htonl(length) >> 8
+		let l = length.hostToNet >> 8
 		data.append(UInt8(l & 0xFF))
 		data.append(UInt8((l >> 8) & 0xFF))
 		data.append(UInt8((l >> 16) & 0xFF))
@@ -108,7 +108,7 @@ public struct HTTP2Frame {
 		data.append(type)
 		data.append(flags)
 
-		let s = htonl(streamId)
+		let s = streamId.hostToNet
 		data.append(UInt8(s & 0xFF))
 		data.append(UInt8((s >> 8) & 0xFF))
 		data.append(UInt8((s >> 16) & 0xFF))
@@ -245,8 +245,8 @@ public class HTTP2Client {
 
 	func processSettingsPayload(_ b: Bytes) {
 		while b.availableExportBytes >= 6 {
-			let identifier = ntohs(b.export16Bits())
-//			let value = ntohl(b.export32Bits())
+			let identifier = b.export16Bits().netToHost
+//			let value = b.export32Bits().netToHost
 
 //			print("Setting \(identifier) \(value)")
 			
@@ -432,15 +432,15 @@ public class HTTP2Client {
 				switch frame.type {
 				case HTTP2_GOAWAY:
 					let bytes = Bytes(existingBytes: frame.payload!)
-					let streamId = ntohl(bytes.export32Bits())
-					let errorCode = ntohl(bytes.export32Bits())
+					let streamId = bytes.export32Bits().netToHost
+					let errorCode = bytes.export32Bits().netToHost
 					var message = ""
 					if bytes.availableExportBytes > 0 {
 						message = UTF8Encoding.encode(bytes: bytes.exportBytes(count: bytes.availableExportBytes))
 					}
 
 					let bytes2 = Bytes(initialSize: 8)
-					bytes2.import32Bits(from: htonl(streamId))
+					bytes2.import32Bits(from: streamId.hostToNet)
 					bytes2.import32Bits(from: 0)
 					let frame2 = HTTP2Frame(length: 8, type: HTTP2_GOAWAY, flags: 0, streamId: streamId, payload: bytes2.data)
 					self.writeHTTP2Frame(frame2) {

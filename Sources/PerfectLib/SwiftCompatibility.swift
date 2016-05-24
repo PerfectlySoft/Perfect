@@ -47,6 +47,7 @@
 	public typealias UnicodeCodec = UnicodeCodecType
 	public typealias Sequence = SequenceType
 	public typealias OpaquePointer = COpaquePointer
+	public typealias UnsignedInteger = UnsignedIntegerType
 	
 	extension UnsafeMutablePointer {
 	
