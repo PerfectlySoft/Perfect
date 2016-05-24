@@ -108,13 +108,13 @@ public class WebSocket {
 		if unmaskedLength == smallPayloadSize {
 
 			if self.readBuffer.availableExportBytes >= 2 {
-				unmaskedLength = Int(ntohs(self.readBuffer.export16Bits()))
+				unmaskedLength = Int(self.readBuffer.export16Bits().netToHost)
 			}
 
 		} else if unmaskedLength > smallPayloadSize {
 
 			if self.readBuffer.availableExportBytes >= 8 {
-				unmaskedLength = Int(ntohll(self.readBuffer.export64Bits()))
+				unmaskedLength = Int(self.readBuffer.export64Bits().netToHost)
 			}
 
 		} // else small payload
@@ -243,12 +243,12 @@ public class WebSocket {
 		} else if payloadSize <= Int(UINT16_MAX) {
 
 			sendBuffer.import8Bits(from: UInt8(smallPayloadSize))
-				.import16Bits(from: htons(UInt16(payloadSize)))
+				.import16Bits(from: UInt16(payloadSize).hostToNet)
 
 		} else {
 
 			sendBuffer.import8Bits(from: UInt8(1+smallPayloadSize))
-				.import64Bits(from: htonll(UInt64(payloadSize)))
+				.import64Bits(from: UInt64(payloadSize).hostToNet)
 
 		}
 		sendBuffer.importBytes(from: bytes)

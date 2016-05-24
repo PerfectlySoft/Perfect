@@ -94,7 +94,7 @@ public class NetTCP : Closeable {
 		inet_ntop(fd.family, &addr.pointee.sin_addr, buffer, len.pointee)
 		
 		let s = String(validatingUTF8: buffer) ?? ""
-		let p = ntohs(addr.pointee.sin_port)
+		let p = addr.pointee.sin_port.netToHost
 		
 		return (s, p)
 	}
@@ -114,7 +114,7 @@ public class NetTCP : Closeable {
 		inet_ntop(fd.family, &addr.pointee.sin_addr, buffer, len.pointee)
 		
 		let s = String(validatingUTF8: buffer) ?? ""
-		let p = ntohs(addr.pointee.sin_port)
+		let p = addr.pointee.sin_port.netToHost
 		
 		return (s, p)
 	}
