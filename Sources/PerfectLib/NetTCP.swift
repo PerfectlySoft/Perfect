@@ -31,9 +31,6 @@ import Darwin
 /// Fully realized for TCP socket types but can also serve as a base for sockets from other families, such as with `NetNamedPipe`/AF_UNIX.
 public class NetTCP : Closeable {
 	
-	private var networkFailure: Bool = false
-	private var semaphore: Threading.Event?
-	
 	final class ReferenceBuffer {
 		var a: [UInt8]
 		let size: Int
@@ -46,6 +43,11 @@ public class NetTCP : Closeable {
 			return UnsafeMutablePointer<Void>(self.a).advanced(by: by)
 		}
 	}
+	
+	private var networkFailure: Bool = false
+	private var semaphore: Threading.Event?
+	
+	private let reasonableMaxReadCount = 716800 // <700k is imperically the largest chuck I was reading at a go
 	
 	var fd: SocketFileDescriptor = SocketFileDescriptor(fd: invalidSocket, family: AF_UNSPEC)
 	
@@ -300,8 +302,9 @@ public class NetTCP : Closeable {
 	/// - parameter completion: The callback on which to deliver the results. If an error occurs during the read then a nil object will be passed to the callback, otherwise, the immediately available number of bytes, which may be zero, will be passed.
 	public func readSomeBytes(count cnt: Int, completion: ([UInt8]?) -> ()) {
 		
-		let ptr = ReferenceBuffer(size: cnt)
-		let readCount = recv(into: ptr[0], count: cnt)
+		let readRead = min(cnt, self.reasonableMaxReadCount)
+		let ptr = ReferenceBuffer(size: readRead)
+		let readCount = recv(into: ptr[0], count: readRead)
 		if readCount == 0 {
 			completion(nil)
 		} else if self.isEAgain(err: readCount) {
