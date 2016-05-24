@@ -199,7 +199,7 @@ public class NetNamedPipe : NetTCP {
 
 			NetEvent.add(socket: fd.fd, what: .Write, timeoutSeconds: timeoutSeconds) {
 				fd, w in
-			
+
 				if case .Timer = w {
 					callBack(nil)
 				} else {
@@ -238,8 +238,11 @@ public class NetNamedPipe : NetTCP {
 	#endif
 		cmsg.pointee.cmsg_level = SOL_SOCKET
 		cmsg.pointee.cmsg_type = SCM_RIGHTS
-		// swift 2.2 compat
+	#if swift(>=3.0)
+		let asInts = UnsafeMutablePointer<Int32>(cmsg.advanced(by: 1))
+	#else
 		var asInts = UnsafeMutablePointer<Int32>(cmsg.advanced(by: 1))
+	#endif
 		asInts.pointee = fd
 
 		nothing.pointee = 33
@@ -266,7 +269,7 @@ public class NetNamedPipe : NetTCP {
 
 			NetEvent.add(socket: self.fd.fd, what: .Write, timeoutSeconds: NetEvent.noTimeout) { [weak self]
 				fd, w in
-			
+
 				do {
 					try self?.sendFd(fd, callBack: callBack)
 				} catch {
@@ -316,8 +319,11 @@ public class NetNamedPipe : NetTCP {
 	#endif
 		cmsg.pointee.cmsg_level = SOL_SOCKET
 		cmsg.pointee.cmsg_type = SCM_RIGHTS
-		// swift 2.2 compat
+	#if swift(>=3.0)
+		let asInts = UnsafeMutablePointer<Int32>(cmsg.advanced(by: 1))
+	#else
 		var asInts = UnsafeMutablePointer<Int32>(cmsg.advanced(by: 1))
+	#endif
 		asInts.pointee = -1
 
 		let res = recvmsg(Int32(self.fd.fd), &msghdrr, 0)
@@ -328,7 +334,7 @@ public class NetNamedPipe : NetTCP {
 
 			NetEvent.add(socket: self.fd.fd, what: .Read, timeoutSeconds: NetEvent.noTimeout) { [weak self]
 				fd, w in
-			
+
 				do {
 					try self?.receiveFd(callBack: cb)
 				} catch {
