@@ -420,7 +420,7 @@ extension String {
 		return nil != self.range(ofString: strng)
 	}
 }
-/*
+#if os(OSX)
 extension String {
 
 	var pathSeparator: UnicodeScalar {
@@ -565,7 +565,8 @@ extension String {
 //		return absolute ? "/" + ary.joinWithSeparator(String(pathSeparator)) : ary.joinWithSeparator(String(pathSeparator))
 	}
 }
-*/
+#endif
+
 extension String {
 	func begins(with str: String) -> Bool {
 	#if swift(>=3.0)
