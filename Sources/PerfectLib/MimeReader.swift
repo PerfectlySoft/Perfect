@@ -57,7 +57,7 @@ let mime_dash = UInt8(45)
 /// Data can be given for parsing in little bits at a time by calling the `addTobuffer` function.
 /// Any file uploads which are encountered will be written to the temporary directory indicated when the `MimeReader` is created.
 /// Temporary files will be deleted when this object is deinitialized.
-public class MimeReader {
+public final class MimeReader {
 	
 	/// Array of BodySpecs representing each part that was parsed.
 	public var bodySpecs = [BodySpec]()
@@ -149,7 +149,7 @@ public class MimeReader {
 				return false
 			}
 			
-			pos = pos.advanced(by: 1)
+			pos += 1
 			next = gen.next()
 		}
 		return next == nil // got to the end is success
@@ -368,28 +368,29 @@ public class MimeReader {
 					}
 					// write as much data as we reasonably can
 					var writeEnd = position
+					let qPtr = UnsafePointer<UInt8>(byts)
 					while writeEnd < end {
 						
-						if byts[writeEnd] == mime_cr {
-							if writeEnd.distance(to: end) < 2 {
+						if qPtr[writeEnd] == mime_cr {
+							if end - writeEnd < 2 {
 								break
 							}
-							if byts[writeEnd.advanced(by: 1)] == mime_lf {
-								if isBoundaryStart(bytes: byts, start: writeEnd.advanced(by: 2)) {
+							if qPtr[writeEnd + 1] == mime_lf {
+								if isBoundaryStart(bytes: byts, start: writeEnd + 2) {
 									break
-								} else if writeEnd.distance(to: end) - 2 < self.boundary.characters.count {
+								} else if end - writeEnd - 2 < self.boundary.characters.count {
 									// we are at the eol, but check to see if the next line may be starting a boundary
-									if writeEnd.distance(to: end) < 4 || (byts[writeEnd.advanced(by: 2)] == mime_dash && byts[writeEnd.advanced(by: 3)] == mime_dash) {
+									if end - writeEnd < 4 || (qPtr[writeEnd + 2] == mime_dash && qPtr[writeEnd + 3] == mime_dash) {
 										break
 									}
 								}
 							}
 						}
 						
-						writeEnd = writeEnd.advanced(by: 1)
+						writeEnd += 1
 					}
 					do {
-						let length = position.distance(to: writeEnd)
+						let length = writeEnd - position
 						spec.fileSize += try spec.file!.write(bytes: byts, dataPosition: position, length: length)
 					} catch let e {
 						Log.error(message: "Exception while writing file upload data: \(e)")
@@ -415,7 +416,7 @@ public class MimeReader {
 	/// Add data to be parsed.
 	/// - parameter bytes: The array of UInt8 to be parsed.
 	public func addToBuffer(bytes byts: [UInt8]) {
-		if isMultiPart() {
+		if isMultiPart {
 			
 			if self.buffer.count != 0 {
 				self.buffer.append(contentsOf: byts)
@@ -429,7 +430,7 @@ public class MimeReader {
 	}
 	
 	/// Returns true of the content type indicated a multi-part form.
-	public func isMultiPart() -> Bool {
+	public var isMultiPart: Bool {
 		return self.multi
 	}
 }

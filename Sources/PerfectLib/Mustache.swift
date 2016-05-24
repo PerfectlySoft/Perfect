@@ -819,7 +819,7 @@ public protocol MustachePageHandler {
 	func valuesForResponse(context contxt: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) throws -> MustacheEvaluationContext.MapType
 }
 
-public func mustacheRequest(request: WebRequest, response: WebResponse, handler: MustachePageHandler, path: String) throws {
+public func mustacheRequest(request request: WebRequest, response: WebResponse, handler: MustachePageHandler, path: String) throws {
 	let file = File(path)
 	
 	try file.openRead()

@@ -47,7 +47,7 @@ public class NetTCP : Closeable {
 	private var networkFailure: Bool = false
 	private var semaphore: Threading.Event?
 	
-	private let reasonableMaxReadCount = 716800 // <700k is imperically the largest chuck I was reading at a go
+	private let reasonableMaxReadCount = 1024 * 600 // <700k is imperically the largest chuck I was reading at a go
 	
 	var fd: SocketFileDescriptor = SocketFileDescriptor(fd: invalidSocket, family: AF_UNSPEC)
 	
@@ -247,7 +247,7 @@ public class NetTCP : Closeable {
 	}
 	#endif
 	
-	private func completeArray(from frm: ReferenceBuffer, count: Int) -> [UInt8] {
+	private final func completeArray(from frm: ReferenceBuffer, count: Int) -> [UInt8] {
 		frm.a.removeLast(frm.size - count)
 		return frm.a
 	}
@@ -312,7 +312,10 @@ public class NetTCP : Closeable {
 		} else if readCount == -1 {
 			completion(nil)
 		} else {
-			completion(completeArray(from: ptr, count: readCount))
+			let complete = completeArray(from: ptr, count: readCount)
+			Threading.dispatch {
+				completion(complete)
+			}
 		}
 	}
 	
