@@ -17,13 +17,23 @@
 //===----------------------------------------------------------------------===//
 //
 
-internal let httpReadSize = 1024
-internal let httpReadTimeout = 5.0
-internal let httpLF = UInt8(10)
-internal let httpCR = UInt8(13)
-internal let httpColon = UInt8(58)
-internal let httpSpace = UnicodeScalar(32)
-internal let httpQuestion = UnicodeScalar(63)
+let httpReadSize = 1024 * 4
+let httpReadTimeout = 5.0
+
+private let httpMaxHeadersSize = 1024 * 8
+
+let httpLF = UInt8(10)
+let httpCR = UInt8(13)
+let httpColon = UInt8(58)
+let httpSpace = UnicodeScalar(32)
+let httpQuestion = UnicodeScalar(63)
+
+private let characterCR = Character(UnicodeScalar(httpCR))
+private let characterLF = Character(UnicodeScalar(httpLF))
+private let characterCRLF = Character("\r\n")
+private let characterSP = Character(UnicodeScalar(httpSpace))
+private let characterHT = Character(UnicodeScalar(0x09))
+private let characterColon = Character(UnicodeScalar(httpColon))
 
 /// Stand-alone HTTP server. Provides the same WebConnection based interface as the FastCGI server.
 public class HTTPServer {
@@ -334,7 +344,6 @@ public class HTTPServer {
 		
 		var workingBuffer = [UInt8]()
 		var workingBufferOffset = 0
-		var lastHeaderKey = "" // for handling continuations
 		
 		let serverName: String
 		let serverAddr: String
@@ -363,6 +372,16 @@ public class HTTPServer {
 			self.serverName = server.serverName
 			self.serverAddr = server.serverAddress
 			self.serverPort = server.serverPort
+		}
+		
+		// For testing
+		init() {
+			self.connection = NetTCP()
+			self.statusCode = 200
+			self.statusMsg = "OK"
+			self.serverName = "server_name"
+			self.serverAddr = "127.0.0.1"
+			self.serverPort = 80
 		}
 		
 		func setStatus(code cod: Int, message msg: String) {
@@ -470,10 +489,9 @@ public class HTTPServer {
 			}
 		}
 		
-		func processRequestLine(_ h: ArraySlice<UInt8>) -> Bool {
-			let lineStr = UTF8Encoding.encode(bytes: h)
-			var method = "", uri = "", pathInfo = "", queryString = "", hvers = ""
+		func processRequestLine(_ lineStr: String) -> Bool {
 			
+			var method = "", uri = "", pathInfo = "", queryString = "", hvers = ""
 			var gen = lineStr.unicodeScalars.makeIterator()
 			
 			// METHOD PATH_INFO[?QUERY] HVERS
@@ -519,96 +537,185 @@ public class HTTPServer {
 			return true
 		}
 		
-		func processHeaderLine(_ h: ArraySlice<UInt8>) -> Bool {
-			for i in h.startIndex..<h.endIndex {
-				if httpColon == h[i] {
-					let headerKey = transformHeaderName(UTF8Encoding.encode(bytes: h[h.startIndex..<i]))
-					var i2 = i + 1
-					while i2 < h.endIndex {
-						if !UnicodeScalar(h[i2]).isWhiteSpace() {
-							break
-						}
-						i2 += 1
+		func processHeaderLine(_ h: String) -> Bool {
+			var fieldName = ""
+			var fieldValue = ""
+			
+			let characters = h.characters
+			let endIndex = characters.endIndex
+			var currIndex = characters.startIndex
+			
+			while currIndex < endIndex {
+				
+				let c = characters[currIndex]
+				currIndex = characters.index(after: currIndex)
+				
+				if c == characterColon {
+					break
+				}
+				fieldName.append(c)
+			}
+			
+			guard !fieldName.isEmpty else {
+				return false
+			}
+			
+			// skip LWS
+			while currIndex < endIndex {
+				
+				let c = characters[currIndex]
+				if c == characterSP || c == characterHT {
+					currIndex = characters.index(after: currIndex)
+				} else {
+					break
+				}
+			}
+			
+			while currIndex < endIndex {
+				
+				let c = characters[currIndex]
+				currIndex = characters.index(after: currIndex)
+				
+				if c == characterCRLF || c == characterLF {
+					break
+				}
+				fieldValue.append(c)
+			}
+			
+			self.requestParams[self.transformHeaderName(fieldName)] = fieldValue
+			return true
+		}
+		
+		func pullOneHeaderLine(_ characters: String.CharacterView, range: Range<String.CharacterView.Index>) -> (String, Range<String.CharacterView.Index>) {
+			
+			var retStr = ""
+			
+			// skip CRLF or LF
+			var initial = range.lowerBound
+			while initial < range.upperBound {
+				
+				let c = characters[initial]
+				if c == characterCRLF || c == characterLF {
+					initial = characters.index(after: initial)
+					continue
+				}
+				break
+			}
+			
+			while initial < range.upperBound {
+				var c = characters[initial]
+				initial = characters.index(after: initial)
+				if c == characterCR {
+					// a single CR is invalid. either broken client or shenanigans
+					return ("", range)
+				}
+				if c == characterCRLF || c == characterLF {
+					// check for folded header
+					if initial >= range.upperBound {
+						return (retStr, initial..<range.upperBound)
 					}
-					let headerValue = UTF8Encoding.encode(bytes: h[i2..<h.endIndex])
-					self.requestParams[headerKey] = headerValue
-					self.lastHeaderKey = headerKey
-					return true
-				}
-			}
-			return false
-		}
-		
-		func processHeaderContinuation(_ h: ArraySlice<UInt8>) -> Bool {
-			guard !self.lastHeaderKey.isEmpty else {
-				return false
-			}
-			guard let found = self.requestParams[self.lastHeaderKey] else {
-				return false
-			}
-			for i in 0..<h.count {
-				if !UnicodeScalar(h[i]).isWhiteSpace() {
-					let extens = UTF8Encoding.encode(bytes: h[i..<h.count])
-					self.requestParams[self.lastHeaderKey] = found + " " + extens
-					return true
-				}
-			}
-			return false
-		}
-		
-		func scanWorkingBuffer(_ callback: OkCallback) {
-			// data was just added to workingBuffer
-			// look for header end or possible end of headers
-			// handle case of buffer break in between CR-LF pair. first new byte will be LF. skip it
-			if self.workingBuffer[self.workingBufferOffset] == httpLF {
-				self.workingBufferOffset += 1
-			}
-			var lastWasCr = false
-			var startingOffset = self.workingBufferOffset
-			for i in startingOffset..<self.workingBuffer.count {
-				
-				let c = self.workingBuffer[i]
-				
-				guard false == lastWasCr || httpLF == c else { // malformed header
-					callback(false)
-					return
-				}
-				
-				if lastWasCr { // and c is LF
-					lastWasCr = false
-					// got a header or possibly end of headers
-					let segment = self.workingBuffer[startingOffset ..< (i-1)]
-					// if segment is empty then it's the end of headers
-					// if segment begins with a space then it's a continuation of the previous header
-					// otherwise it's a new header
+					c = characters[initial]
 					
-					let first = self.workingBufferOffset == 0
-					
-					startingOffset = i + 1
-					self.workingBufferOffset = startingOffset
-					
-					if segment.count == 0 {
-						callback(true)
-						return
-					} else if UnicodeScalar(segment.first!).isWhiteSpace() {
-						if !self.processHeaderContinuation(segment) {
-							callback(false)
-							return
-						}
-					} else if first {
-						if !self.processRequestLine(segment) {
-							callback(false)
-							return
-						}
+					if c == characterSP || c == characterHT {
+						initial = characters.index(after: initial)
+						continue
 					} else {
-						if !self.processHeaderLine(segment) {
-							callback(false)
-							return
-						}
+						return (retStr, initial..<range.upperBound)
 					}
 				} else {
-					lastWasCr = c == httpCR
+					retStr.append(c)
 				}
+			}
+			
+			return ("", range)
+		}
+		
+		// the headers have been read completely
+		// self.workingBufferOffset indicates the end of the headers
+		// including the final terminating CRLF(LF) pair
+		// self.workingBuffer[self.workingBufferOffset] marks the start of body data, if any
+		func processCompleteHeaders(_ callback: OkCallback) {
+			
+			let headers = self.workingBuffer[self.workingBuffer.startIndex..<self.workingBufferOffset]
+			let decodedHeaders = UTF8Encoding.encode(bytes: headers)
+			let characters = decodedHeaders.characters
+			
+			let (line, initialRange) = self.pullOneHeaderLine(characters, range: characters.startIndex..<characters.endIndex)
+			guard !line.isEmpty else {
+				return callback(false)
+			}
+			
+			guard self.processRequestLine(line) else {
+				return callback(false)
+			}
+			
+			var currentRange = initialRange
+			while true {
+				let tup = self.pullOneHeaderLine(characters, range: currentRange)
+				guard !tup.0.isEmpty else {
+					break
+				}
+				guard self.processHeaderLine(tup.0) else {
+					return callback(false)
+				}
+				currentRange = tup.1
+			}
+			
+			callback(true)
+		}
+		
+		// scan the working buffer for the end of the headers
+		// pass true to callback to indicate that the headers have all been read
+		// pass false to indicate that the request is malformed or dead
+		// if full headers have not been read, read more data
+		// self.workingBufferOffset indicates where we start scanning
+		// if the buffer ends on a single CR or CRLF pair, back the self.workingBufferOffset up
+		func scanWorkingBuffer(_ callback: OkCallback) {
+			
+			guard self.workingBuffer.count < httpMaxHeadersSize else {
+				self.setStatus(code: 413, message: "Entity Too Large")
+				return self.writeBody(bytes: [UInt8]()) {
+					_ in
+					callback(false)
+				}
+			}
+			
+			let startingOffset = self.workingBufferOffset
+			var lastCRLFPair = -1
+			var i = startingOffset
+			while i < self.workingBuffer.count {
+				let c = self.workingBuffer[i]
+				
+				if c == httpLF {
+					// this is a valid header end
+					if lastCRLFPair != -1 {
+						self.workingBufferOffset = i + 1
+						return self.processCompleteHeaders(callback)
+					}
+					lastCRLFPair = i
+				} else if c == httpCR {
+					
+					guard i + 1 < self.workingBuffer.count else {
+						self.workingBufferOffset = i
+						break
+					}
+					
+					guard self.workingBuffer[i+1] == httpLF else {
+						// malformed header
+						return callback(false)
+					}
+					
+					if lastCRLFPair != -1 {
+						self.workingBufferOffset = i + 2
+						return self.processCompleteHeaders(callback)
+					}
+					
+					lastCRLFPair = i
+					i += 1
+				} else {
+					lastCRLFPair = -1
+				}
+				i += 1
 			}
 			// not done yet
 			self.readHeaders(callback)
@@ -662,16 +769,12 @@ public class HTTPServer {
 				let statusLine = "\(self.httpVersion) \(statusCode) \(statusMsg)\r\n"
 				let firstBytes = [UInt8](statusLine.utf8)
 				
-//				print("header \(UTF8Encoding.encode(bytes: firstBytes))")
-				
 				write(bytes: firstBytes) {
 					ok in
 					
 					guard ok else {
 						return completion(false)
 					}
-					
-//					print("header \(UTF8Encoding.encode(bytes: b))")
 					
 					self.write(bytes: b, completion: completion)
 				}
@@ -718,7 +821,6 @@ public class HTTPServer {
 				completion(writeCount == b.count)
 			}
 		}
-		
 	}
 }
 

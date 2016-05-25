@@ -1074,6 +1074,94 @@ class PerfectLibTests: XCTestCase {
 			XCTAssert(false, "Exception \(error)")
 		}
 	}
+	
+	func testWebConnectionHeadersWellFormed() {
+		let connection = HTTPServer.HTTPWebConnection()
+		
+		let fullHeaders = "GET / HTTP/1.1\r\nX-Foo: bar\r\nX-Bar: \r\nContent-Type: application/x-www-form-urlencoded\r\n\r\n"
+		
+		connection.workingBuffer = UTF8Encoding.decode(string: fullHeaders)
+		
+		connection.scanWorkingBuffer {
+			ok in
+			
+			XCTAssertTrue(ok)
+			print("\(connection.requestParams)")
+			XCTAssertTrue(connection.requestParams["HTTP_X_FOO"] == "bar")
+			XCTAssertTrue(connection.requestParams["HTTP_X_BAR"] == "")
+			XCTAssertTrue(connection.requestParams["CONTENT_TYPE"] == "application/x-www-form-urlencoded")
+		}
+	}
+	
+	func testWebConnectionHeadersLF() {
+		let connection = HTTPServer.HTTPWebConnection()
+		
+		let fullHeaders = "GET / HTTP/1.1\nX-Foo: bar\nX-Bar: \nContent-Type: application/x-www-form-urlencoded\n\n"
+		
+		connection.workingBuffer = UTF8Encoding.decode(string: fullHeaders)
+		
+		connection.scanWorkingBuffer {
+			ok in
+			
+			XCTAssertTrue(ok)
+			
+			XCTAssertTrue(connection.requestParams["HTTP_X_FOO"] == "bar")
+			XCTAssertTrue(connection.requestParams["HTTP_X_BAR"] == "")
+			XCTAssertTrue(connection.requestParams["CONTENT_TYPE"] == "application/x-www-form-urlencoded")
+		}
+	}
+	
+	func testWebConnectionHeadersMalormed() {
+		let connection = HTTPServer.HTTPWebConnection()
+		
+		let fullHeaders = "GET / HTTP/1.1\r\nX-Foo: bar\rX-Bar: \r\nContent-Type: application/x-www-form-urlencoded\r\n\r\n"
+		
+		connection.workingBuffer = UTF8Encoding.decode(string: fullHeaders)
+		
+		connection.scanWorkingBuffer {
+			ok in
+			
+			XCTAssertFalse(ok)
+		}
+	}
+	
+	func testWebConnectionHeadersFolded() {
+		let connection = HTTPServer.HTTPWebConnection()
+		
+		let fullHeaders = "GET / HTTP/1.1\r\nX-Foo: bar\r\n bar\r\nX-Bar: foo\r\n  foo\r\nContent-Type: application/x-www-form-urlencoded\r\n\r\n"
+		
+		connection.workingBuffer = UTF8Encoding.decode(string: fullHeaders)
+		
+		connection.scanWorkingBuffer {
+			ok in
+			
+			XCTAssertTrue(ok)
+			
+			XCTAssertTrue(connection.requestParams["HTTP_X_FOO"] == "barbar")
+			XCTAssertTrue(connection.requestParams["HTTP_X_BAR"] == "foo foo")
+			XCTAssertTrue(connection.requestParams["CONTENT_TYPE"] == "application/x-www-form-urlencoded")
+		}
+	}
+	
+	func testWebConnectionHeadersTooLarge() {
+		let connection = HTTPServer.HTTPWebConnection()
+		
+		var fullHeaders = "GET / HTTP/1.1\r\nX-Foo:"
+		for _ in 0..<(1024*10) {
+			fullHeaders.append(" bar")
+		}
+		fullHeaders.append("\r\n\r\n")
+		
+		connection.workingBuffer = UTF8Encoding.decode(string: fullHeaders)
+		
+		connection.scanWorkingBuffer {
+			ok in
+			
+			XCTAssertFalse(ok)
+			
+			XCTAssertTrue(connection.getStatus().0 == 413)
+		}
+	}
 }
 
 extension PerfectLibTests {
