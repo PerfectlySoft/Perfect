@@ -1,2 +1,3 @@
-Sources/PerfectLib/* linguist-vendored
-Tests/* linguist-vendored
+Sources/LinuxBridge/* linguist-vendored
+Sources/OpenSSL/* linguist-vendored
+Sources/cURL/* linguist-vendored
