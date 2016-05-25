@@ -72,7 +72,7 @@ public class WebResponse {
 	
 	public var requestCompleted: () -> () = {}
 
-	internal init(_ c: WebConnection, request: WebRequest) {
+	init(_ c: WebConnection, request: WebRequest) {
 		self.connection = c
 		self.request = request
 	}

@@ -348,7 +348,7 @@ public class WebRequest {
 	/// Returns a Dictionary containing all raw request parameters.
 	public func raw() -> Dictionary<String, String> { return self.connection.requestParams }
 
-	internal init(_ c: WebConnection) {
+	init(_ c: WebConnection) {
 		self.connection = c
 	}
 

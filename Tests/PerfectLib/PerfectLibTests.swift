@@ -1089,7 +1089,7 @@ class PerfectLibTests: XCTestCase {
 			print("\(connection.requestParams)")
 			XCTAssertTrue(connection.requestParams["HTTP_X_FOO"] == "bar")
 			XCTAssertTrue(connection.requestParams["HTTP_X_BAR"] == "")
-			XCTAssertTrue(connection.requestParams["CONTENT_TYPE"] == "application/x-www-form-urlencoded")
+			XCTAssertTrue(connection.contentType == "application/x-www-form-urlencoded")
 		}
 	}
 	
@@ -1107,7 +1107,7 @@ class PerfectLibTests: XCTestCase {
 			
 			XCTAssertTrue(connection.requestParams["HTTP_X_FOO"] == "bar")
 			XCTAssertTrue(connection.requestParams["HTTP_X_BAR"] == "")
-			XCTAssertTrue(connection.requestParams["CONTENT_TYPE"] == "application/x-www-form-urlencoded")
+			XCTAssertTrue(connection.contentType == "application/x-www-form-urlencoded")
 		}
 	}
 	
@@ -1139,7 +1139,7 @@ class PerfectLibTests: XCTestCase {
 			
 			XCTAssertTrue(connection.requestParams["HTTP_X_FOO"] == "barbar")
 			XCTAssertTrue(connection.requestParams["HTTP_X_BAR"] == "foo foo")
-			XCTAssertTrue(connection.requestParams["CONTENT_TYPE"] == "application/x-www-form-urlencoded")
+			XCTAssertTrue(connection.contentType == "application/x-www-form-urlencoded")
 		}
 	}
 	
