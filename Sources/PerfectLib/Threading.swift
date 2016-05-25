@@ -36,7 +36,7 @@ public struct Threading {
 	#endif
 	typealias ThreadFunction = @convention(c) (VoidPointer) -> VoidPointer
 	
-	class IsThisRequired {
+	final class IsThisRequired {
 		let closure: ThreadClosure
 		init(closure: ThreadClosure) {
 			self.closure = closure
@@ -80,12 +80,12 @@ public struct Threading {
 			return 0 == pthread_mutex_unlock(&self.mutex)
 		}
 
-		public func doWithLock(closure: () -> ()) {
+		public func doWithLock(closure: () throws -> ()) rethrows {
 			self.lock()
 			defer {
 				self.unlock()
 			}
-			closure()
+			try closure()
 		}
 	}
 
@@ -93,7 +93,7 @@ public struct Threading {
 	/// The event MUST be locked before `wait` or `signal` is called.
 	/// While inside the `wait` call, the event is automatically placed in the unlocked state.
 	/// After `wait` or `signal` return the event will be in the locked state and must be unlocked.
-	public class Event: Lock {
+	public final class Event: Lock {
 
 		var cond = pthread_cond_t()
 
@@ -149,10 +149,9 @@ public struct Threading {
 	/// Permits multiple readers to hold the while, while only allowing at most one writer to hold the lock.
 	/// For a writer to acquire the lock all readers must have unlocked.
 	/// For a reader to acquire the lock no writers must hold the lock.
-	public class RWLock {
+	public final class RWLock {
 
 		var lock = pthread_rwlock_t()
-
 
 		/// Initialize a new read-write lock.
 		public init() {
@@ -191,6 +190,22 @@ public struct Threading {
 		/// Returns false if an error occurs.
 		public func unlock() -> Bool {
 			return 0 == pthread_rwlock_unlock(&self.lock)
+		}
+		
+		public func doWithReadLock(closure: () throws -> ()) rethrows {
+			self.readLock()
+			defer {
+				self.unlock()
+			}
+			try closure()
+		}
+		
+		public func doWithWriteLock(closure: () throws -> ()) rethrows {
+			self.writeLock()
+			defer {
+				self.unlock()
+			}
+			try closure()
 		}
 	}
 

@@ -27,7 +27,7 @@ public struct PerfectServer {
 	/// Provides access to the singleton PerfectServer instance.
 	public static let staticPerfectServer = PerfectServer()
 	
-	internal init() {
+	init() {
 		
 	}
 	
@@ -76,8 +76,4 @@ public struct PerfectServer {
 		return "./"
 	}
 }
-
-
-
-
 

@@ -19,6 +19,86 @@
 
 let mustacheExtension = "mustache"
 
+private var mustacheTemplateCache = [String: (Int, MustacheTemplate)]()
+private let mustacheTemplateCacheLock = Threading.RWLock()
+
+private func getTemplateFromCache(_ path: String) throws -> MustacheTemplate {
+	let file = File(path)
+	var template: MustacheTemplate?
+	let modDate = file.modificationTime()
+	
+	mustacheTemplateCacheLock.doWithReadLock {
+		if let fnd = mustacheTemplateCache[path] where fnd.0 == modDate {
+			template = fnd.1.clone() as? MustacheTemplate
+		}
+	}
+	if let templateW = template?.clone() as? MustacheTemplate {
+		return templateW
+	}
+	try mustacheTemplateCacheLock.doWithWriteLock {
+		if let fnd = mustacheTemplateCache[path] where fnd.0 == modDate {
+			template = fnd.1.clone() as? MustacheTemplate
+		} else {
+			try file.openRead()
+			defer { file.close() }
+			let bytes = try file.readSomeBytes(count: file.size())
+			
+			let parser = MustacheParser()
+			let str = UTF8Encoding.encode(bytes: bytes)
+			let templateW = try parser.parse(string: str)
+			mustacheTemplateCache[path] = (modDate, templateW)
+			template = templateW.clone() as? MustacheTemplate
+		}
+	}
+	guard let templateW = template else {
+		throw PerfectError.SystemError(404, "The file \"\(path)\" was not found")
+	}
+	return templateW
+}
+
+
+//private let mustacheTemplateCacheLock = Threading.Lock()
+
+//private func getTemplateFromCache(_ path: String) throws -> MustacheTemplate {
+//	let file = File(path)
+//	var template: MustacheTemplate?
+//	let modDate = file.modificationTime()
+//	
+//	try mustacheTemplateCacheLock.doWithLock {
+//		if let fnd = mustacheTemplateCache[path] where fnd.0 == modDate {
+//			template = fnd.1.clone() as? MustacheTemplate
+//		} else {
+//			try file.openRead()
+//			defer { file.close() }
+//			let bytes = try file.readSomeBytes(count: file.size())
+//			
+//			let parser = MustacheParser()
+//			let str = UTF8Encoding.encode(bytes: bytes)
+//			let templateW = try parser.parse(string: str)
+//			mustacheTemplateCache[path] = (modDate, templateW)
+//			template = templateW.clone() as? MustacheTemplate
+//		}
+//	}
+//	guard let templateW = template else {
+//		throw PerfectError.SystemError(404, "The file \"\(path)\" was not found")
+//	}
+//	return templateW
+//}
+
+//private func getTemplateFromCache(_ path: String) throws -> MustacheTemplate {
+//	let file = File(path)
+//	
+//	try file.openRead()
+//	defer { file.close() }
+//	let bytes = try file.readSomeBytes(count: file.size())
+//	
+//	let parser = MustacheParser()
+//	let str = UTF8Encoding.encode(bytes: bytes)
+//	let template = try parser.parse(string: str)
+//	
+//	return template
+//}
+
 enum MustacheTagType {
 	
 	case Plain // plain text
@@ -77,12 +157,12 @@ public class MustacheEvaluationContext {
 	
 	var mapValues: MapType
 	
-	internal init(webResponse: WebResponse?) {
+	init(webResponse: WebResponse?) {
 		self.webResponse = webResponse
 		mapValues = MapType()
 	}
 	
-	internal init(webResponse: WebResponse?, map: MapType) {
+	init(webResponse: WebResponse?, map: MapType) {
 		self.webResponse = webResponse
 		mapValues = map
 	}
@@ -93,13 +173,13 @@ public class MustacheEvaluationContext {
 		mapValues = map
 	}
 	
-	internal func newChildContext() -> MustacheEvaluationContext {
+	func newChildContext() -> MustacheEvaluationContext {
 		let cc = MustacheEvaluationContext(webResponse: webResponse)
 		cc.parent = self
 		return cc
 	}
 	
-	internal func newChildContext(withMap with: MapType) -> MustacheEvaluationContext {
+	func newChildContext(withMap with: MapType) -> MustacheEvaluationContext {
 		let cc = MustacheEvaluationContext(webResponse: webResponse, map: with)
 		cc.parent = self
 		return cc
@@ -174,6 +254,18 @@ public class MustacheTag {
 	// only used for debug purposes
 	var openD: [UnicodeScalar]?
 	var closeD: [UnicodeScalar]?
+	
+	func clone() -> MustacheTag {
+		let s = MustacheTag()
+		self.populateClone(s)
+		return s
+	}
+	
+	func populateClone(_ tag: MustacheTag) {
+		tag.type = self.type
+		tag.tag = self.tag
+		// parent sets our parent
+	}
 	
 	/// Evaluate the tag within the given context.
 	public func evaluate(context contxt: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) {
@@ -252,6 +344,12 @@ public class MustacheTag {
 /// A sub-class of MustacheTag which represents a mustache "partial" tag.
 public class MustachePartialTag : MustacheTag {
 	
+	override func clone() -> MustacheTag {
+		let s = MustachePartialTag()
+		self.populateClone(s)
+		return s
+	}
+	
 	/// Override for evaluating the partial tag.
 	public override func evaluate(context contxt: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) {
 		
@@ -296,6 +394,12 @@ public class MustachePartialTag : MustacheTag {
 /// Pragma tags are "meta" tags which influence template evaluation but likely do not output any data.
 public class MustachePragmaTag : MustacheTag {
 	
+	override func clone() -> MustacheTag {
+		let s = MustachePragmaTag()
+		self.populateClone(s)
+		return s
+	}
+	
 	/// Parse the pragma. Pragmas should be in the format: A:B,C:D,E,F:G.
 	/// - returns: A Dictionary containing the pragma names and values.
 	public func parsePragma() -> Dictionary<String, String> {
@@ -317,6 +421,21 @@ public class MustachePragmaTag : MustacheTag {
 /// A sub-class of MustacheTag which represents a group of child tags.
 public class MustacheGroupTag : MustacheTag {
 	var children = [MustacheTag]()
+	
+	override func clone() -> MustacheTag {
+		let s = MustacheGroupTag()
+		self.populateClone(s)
+		return s
+	}
+	
+	override func populateClone(_ tag: MustacheTag) {
+		super.populateClone(tag)
+		if let groupTag = tag as? MustacheGroupTag {
+			for t in self.children {
+				groupTag.children.append(t.clone())
+			}
+		}
+	}
 	
 	func evaluatePos(context contxt: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) {
 		let cValue = contxt.getValue(named: tag)
@@ -433,6 +552,25 @@ public class MustacheTemplate : MustacheGroupTag {
 	
 	var pragmas = [MustachePragmaTag]()
 	var templateName: String = ""
+	
+	override func clone() -> MustacheTag {
+		let s = MustacheTemplate()
+		self.populateClone(s)
+		return s
+	}
+	
+	override func populateClone(_ tag: MustacheTag) {
+		super.populateClone(tag)
+		if let template = tag as? MustacheTemplate {
+			for pragma in self.pragmas {
+				if let p = pragma.clone() as? MustachePragmaTag {
+					template.pragmas.append(p)
+				}
+			}
+			self.templateName = template.templateName
+		}
+	}
+	
 	/// Evaluate any pragmas which were found in the template. These pragmas may alter the given `MustacheEvaluationContext` parameter.
 	/// - parameter context: The `MustacheEvaluationContext` object which will be used to further evaluate the template.
 	/// - parameter collector: The `MustacheEvaluationOutputCollector` object which will collect all output from the template evaluation.
@@ -820,15 +958,8 @@ public protocol MustachePageHandler {
 }
 
 public func mustacheRequest(request req: WebRequest, response: WebResponse, handler: MustachePageHandler, path: String) throws {
-	let file = File(path)
 	
-	try file.openRead()
-	defer { file.close() }
-	let bytes = try file.readSomeBytes(count: file.size())
-	
-	let parser = MustacheParser()
-	let str = UTF8Encoding.encode(bytes: bytes)
-	let template = try parser.parse(string: str)
+	let template = try getTemplateFromCache(path)
 	
 	let context = MustacheEvaluationContext(webResponse: response)
 	context.filePath = path
