@@ -26,7 +26,7 @@ let package = Package(
 	dependencies: [
 	              	.Package(url: "https://github.com/PerfectlySoft/Perfect-libcurl.git", majorVersion: 0, minor: 5),
 	              	.Package(url: "https://github.com/PerfectlySoft/Perfect-OpenSSL-Linux.git", majorVersion: 0, minor: 2),
-									.Package(url: "https://github.com/PerfectlySoft/Perfect-LinuxBridge.git", majorVersion: 0, minor: 3)
+									.Package(url: "https://github.com/PerfectlySoft/Perfect-LinuxBridge.git", majorVersion: 0, minor: 4)
 	],
 	exclude: ["Sources/LinuxBridge", "Sources/OpenSSL", "Sources/cURL"]
 )
