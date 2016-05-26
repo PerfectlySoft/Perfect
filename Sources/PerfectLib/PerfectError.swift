@@ -41,31 +41,31 @@ public enum PerfectError : ErrorProtocol {
 }
 
 @noreturn
-func ThrowFileError() throws {
+func ThrowFileError(file: String = #file, function: String = #function, line: Int = #line) throws {
 	let err = errno
 	let msg = String(validatingUTF8: strerror(err))!
 	
 //	print("FileError: \(err) \(msg)")
 	
-	throw PerfectError.FileError(err, msg)
+	throw PerfectError.FileError(err, msg + " \(file) \(function) \(line)")
 }
 
 @noreturn
-func ThrowSystemError() throws {
+func ThrowSystemError(file: String = #file, function: String = #function, line: Int = #line) throws {
 	let err = errno
 	let msg = String(validatingUTF8: strerror(err))!
 	
 //	print("SystemError: \(err) \(msg)")
 	
-	throw PerfectError.SystemError(err, msg)
+	throw PerfectError.SystemError(err, msg + " \(file) \(function) \(line)")
 }
 
 @noreturn
-func ThrowNetworkError() throws {
+func ThrowNetworkError(file: String = #file, function: String = #function, line: Int = #line) throws {
 	let err = errno
 	let msg = String(validatingUTF8: strerror(err))!
 	
 //	print("NetworkError: \(err) \(msg)")
 	
-	throw PerfectError.NetworkError(err, msg)
+	throw PerfectError.NetworkError(err, msg + " \(file) \(function) \(line)")
 }
