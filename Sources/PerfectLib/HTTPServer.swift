@@ -630,14 +630,20 @@ public class HTTPServer {
 			return ("", range)
 		}
 		
-		// the headers have been read completely
+		func headerToString() -> String? {
+			return String(validatingUTF8: UnsafePointer<CChar>(self.workingBuffer))
+		}
+		
+		// The headers have been read completely
 		// self.workingBufferOffset indicates the end of the headers
-		// including the final terminating CRLF(LF) pair
+		// including the final terminating CRLF(LF) pair which has been replaced with 0s
 		// self.workingBuffer[self.workingBufferOffset] marks the start of body data, if any
 		func processCompleteHeaders(_ callback: OkCallback) {
 			
-			let headers = self.workingBuffer[self.workingBuffer.startIndex..<self.workingBufferOffset]
-			let decodedHeaders = UTF8Encoding.encode(bytes: headers)
+			guard let decodedHeaders = self.headerToString() else {
+				return callback(false)
+			}
+			
 			let characters = decodedHeaders.characters
 			
 			let (line, initialRange) = self.pullOneHeaderLine(characters, range: characters.startIndex..<characters.endIndex)
@@ -689,6 +695,7 @@ public class HTTPServer {
 				if c == httpLF {
 					// this is a valid header end
 					if lastCRLFPair != -1 {
+						self.workingBuffer[i] = 0
 						self.workingBufferOffset = i + 1
 						return self.processCompleteHeaders(callback)
 					}
@@ -706,6 +713,9 @@ public class HTTPServer {
 					}
 					
 					if lastCRLFPair != -1 {
+						
+						self.workingBuffer[i-1] = 0
+						self.workingBuffer[i] = 0
 						self.workingBufferOffset = i + 2
 						return self.processCompleteHeaders(callback)
 					}
