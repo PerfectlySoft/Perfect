@@ -426,7 +426,7 @@ public class HTTPServer {
 			}
 		}
 		
-		func readRequest(callback: OkCallback) {
+		func readRequest( callback: OkCallback) {
 			
 			self.readHeaders { requestOk in
 				if requestOk {
@@ -446,7 +446,7 @@ public class HTTPServer {
 			}
 		}
 		
-		func readBody(callback callbck: OkCallback) {
+		func readBody( callback callbck: OkCallback) {
 			guard let cl = self.requestParams["CONTENT_LENGTH"] where Int(cl) > 0 else {
 				callbck(true)
 				return
@@ -714,8 +714,8 @@ public class HTTPServer {
 					
 					if lastCRLFPair != -1 {
 						
-						self.workingBuffer[i-1] = 0
 						self.workingBuffer[i] = 0
+						self.workingBuffer[i+1] = 0
 						self.workingBufferOffset = i + 2
 						return self.processCompleteHeaders(callback)
 					}

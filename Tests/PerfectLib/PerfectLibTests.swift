@@ -1089,7 +1089,7 @@ class PerfectLibTests: XCTestCase {
 			print("\(connection.requestParams)")
 			XCTAssertTrue(connection.requestParams["HTTP_X_FOO"] == "bar")
 			XCTAssertTrue(connection.requestParams["HTTP_X_BAR"] == "")
-			XCTAssertTrue(connection.contentType == "application/x-www-form-urlencoded")
+			XCTAssertTrue(connection.contentType == "application/x-www-form-urlencoded", connection.contentType ?? "no content type")
 		}
 	}
 	
