@@ -1195,7 +1195,12 @@ extension PerfectLibTests {
 					("testCURLHeader", testCURLHeader),
 					("testCURLPost", testCURLPost),
 					("testTCPSSLClient", testTCPSSLClient),
-					("testHPACKEncode", testHPACKEncode)
+					("testHPACKEncode", testHPACKEncode),
+					("testWebConnectionHeadersWellFormed", testWebConnectionHeadersWellFormed),
+					("testWebConnectionHeadersLF", testWebConnectionHeadersLF),
+					("testWebConnectionHeadersMalormed", testWebConnectionHeadersMalormed),
+					("testWebConnectionHeadersFolded", testWebConnectionHeadersFolded),
+					("testWebConnectionHeadersTooLarge", testWebConnectionHeadersTooLarge)
         ]
     }
 }
