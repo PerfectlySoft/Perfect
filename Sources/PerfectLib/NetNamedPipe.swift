@@ -110,13 +110,7 @@ public class NetNamedPipe : NetTCP {
 		return (s, p)
 	}
 
-	/// Bind the socket to the address path
-	/// - parameter address: The path on the file system at which to create and bind the socket
-	/// - throws: `PerfectError.NetworkError`
-	public func bind(address addr: String) throws {
-
-		initSocket()
-
+	private func makeUNAddr(address addr: String) -> (UnsafeMutablePointer<UInt8>, Int) {
 		let utf8 = addr.utf8
 #if os(Linux) // BSDs have a size identifier in front, Linux does not
 		let addrLen = sizeof(sockaddr_un)
@@ -124,7 +118,6 @@ public class NetNamedPipe : NetTCP {
 		let addrLen = sizeof(UInt8) + sizeof(sa_family_t) + utf8.count + 1
 #endif
 		let addrPtr = UnsafeMutablePointer<UInt8>.allocatingCapacity(addrLen)
-		defer { addrPtr.deallocateCapacity(addrLen) }
 
 		var memLoc = 0
 
@@ -147,13 +140,27 @@ public class NetNamedPipe : NetTCP {
 		}
 
 		addrPtr[memLoc] = 0
+
+		return (addrPtr, addrLen)
+	}
+
+	/// Bind the socket to the address path
+	/// - parameter address: The path on the file system at which to create and bind the socket
+	/// - throws: `PerfectError.NetworkError`
+	public func bind(address addr: String) throws {
+
+		initSocket()
+
+		let (addrPtr, addrLen) = self.makeUNAddr(address: addr)
+		defer { addrPtr.deallocateCapacity(addrLen) }
+
 	#if os(Linux)
 		let bRes = SwiftGlibc.bind(fd.fd, UnsafePointer<sockaddr>(addrPtr), socklen_t(addrLen))
 		#else
 		let bRes = Darwin.bind(fd.fd, UnsafePointer<sockaddr>(addrPtr), socklen_t(addrLen))
 	#endif
 		if bRes == -1 {
-			throw PerfectError.NetworkError(errno, String(validatingUTF8: strerror(errno))!)
+			try ThrowNetworkError()
 		}
 	}
 
@@ -166,25 +173,9 @@ public class NetNamedPipe : NetTCP {
 
 		initSocket()
 
-		let utf8 = addr.utf8
-		let addrLen = sizeof(UInt8) + sizeof(sa_family_t) + utf8.count + 1
-		let addrPtr = UnsafeMutablePointer<UInt8>.allocatingCapacity(addrLen)
-
+		let (addrPtr, addrLen) = self.makeUNAddr(address: addr)
 		defer { addrPtr.deallocateCapacity(addrLen) }
 
-		var memLoc = 0
-
-		addrPtr[memLoc] = UInt8(addrLen)
-                memLoc += 1
-		addrPtr[memLoc] = UInt8(AF_UNIX)
-                memLoc += 1
-
-		for char in utf8 {
-			addrPtr[memLoc] = char
-			memLoc += 1
-		}
-
-		addrPtr[memLoc] = 0
 	#if os(Linux)
 		let cRes = SwiftGlibc.connect(fd.fd, UnsafePointer<sockaddr>(addrPtr), socklen_t(addrLen))
 	#else

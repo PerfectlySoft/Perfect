@@ -270,7 +270,7 @@ class PerfectLibTests: XCTestCase {
 				file.close()
 				try file.openRead()
 
-				print("Test run: \(num) bytes with \(numTestFields) fields")
+//				print("Test run: \(num) bytes with \(numTestFields) fields")
 
 				let mimeReader = MimeReader("multipart/form-data; boundary=" + boundary)
 
@@ -312,7 +312,7 @@ class PerfectLibTests: XCTestCase {
 			file.delete()
 
 		} catch let e {
-			print("Exception while testing MimeReader: \(e)")
+			XCTAssert(false, "\(e)")
 		}
 	}
 
@@ -360,8 +360,6 @@ class PerfectLibTests: XCTestCase {
 
 				file.close()
 				try file.openRead()
-
-				print("Test run: \(num) bytes with \(numTestFields) fields")
 
 				let mimeReader = MimeReader("multipart/form-data; boundary=" + boundary)
 
@@ -697,10 +695,9 @@ class PerfectLibTests: XCTestCase {
 
 			XCTAssertTrue(data.count > 0)
 
-			print(UTF8Encoding.encode(bytes: data))
 			let waitRes = try proc.wait()
 
-			XCTAssertEqual(0, waitRes)
+			XCTAssert(0 == waitRes, "\(waitRes) \(UTF8Encoding.encode(bytes: data))")
 
 			proc.close()
 		} catch let e {
@@ -834,6 +831,8 @@ class PerfectLibTests: XCTestCase {
 		let url = "https://www.treefrog.ca"
 		let curl = CURL(url: url)
 
+		curl.setOption(CURLOPT_SSL_VERIFYPEER, int: 0)
+
 		XCTAssert(curl.url == url)
 
 		var header = [UInt8]()
@@ -856,20 +855,14 @@ class PerfectLibTests: XCTestCase {
 			body.append(contentsOf: b)
 		}
 		let perf1 = perf.1
-		XCTAssert(perf1 == 0)
+		XCTAssert(perf1 == 0, "\(perf)")
 
 		let response = curl.responseCode
-		XCTAssert(response == 200)
+		XCTAssert(response == 200, "\(response)")
 
 
 		XCTAssert(header.count > 0)
 		XCTAssert(body.count > 0)
-
-		let headerStr = UTF8Encoding.encode(bytes: header)
-		let bodyStr = UTF8Encoding.encode(bytes: body)
-
-		print(headerStr)
-		print(bodyStr)
 	}
 
     func testCURLHeader() {
@@ -987,8 +980,6 @@ class PerfectLibTests: XCTestCase {
 
 									XCTAssert(s.begins(with: "HTTP/1.1 200 OK"))
 
-									print(s)
-
 									clientExpectation.fulfill()
 								}
 							}
@@ -1086,10 +1077,9 @@ class PerfectLibTests: XCTestCase {
 			ok in
 
 			XCTAssertTrue(ok)
-			print("\(connection.requestParams)")
-			XCTAssertTrue(connection.requestParams["HTTP_X_FOO"] == "bar")
-			XCTAssertTrue(connection.requestParams["HTTP_X_BAR"] == "")
-			XCTAssertTrue(connection.contentType == "application/x-www-form-urlencoded", connection.contentType ?? "no content type")
+			XCTAssertTrue(connection.requestParams["HTTP_X_FOO"] == "bar", "\(connection.requestParams)")
+			XCTAssertTrue(connection.requestParams["HTTP_X_BAR"] == "", "\(connection.requestParams)")
+			XCTAssertTrue(connection.contentType == "application/x-www-form-urlencoded", "\(connection.requestParams)")
 		}
 	}
 
@@ -1105,9 +1095,9 @@ class PerfectLibTests: XCTestCase {
 
 			XCTAssertTrue(ok)
 
-			XCTAssertTrue(connection.requestParams["HTTP_X_FOO"] == "bar")
-			XCTAssertTrue(connection.requestParams["HTTP_X_BAR"] == "")
-			XCTAssertTrue(connection.contentType == "application/x-www-form-urlencoded")
+			XCTAssertTrue(connection.requestParams["HTTP_X_FOO"] == "bar", "\(connection.requestParams)")
+			XCTAssertTrue(connection.requestParams["HTTP_X_BAR"] == "", "\(connection.requestParams)")
+			XCTAssertTrue(connection.contentType == "application/x-www-form-urlencoded", "\(connection.requestParams)")
 		}
 	}
 
@@ -1137,9 +1127,9 @@ class PerfectLibTests: XCTestCase {
 
 			XCTAssertTrue(ok)
 
-			XCTAssertTrue(connection.requestParams["HTTP_X_FOO"] == "barbar")
-			XCTAssertTrue(connection.requestParams["HTTP_X_BAR"] == "foo foo")
-			XCTAssertTrue(connection.contentType == "application/x-www-form-urlencoded")
+			XCTAssertTrue(connection.requestParams["HTTP_X_FOO"] == "barbar", "\(connection.requestParams)")
+			XCTAssertTrue(connection.requestParams["HTTP_X_BAR"] == "foo foo", "\(connection.requestParams)")
+			XCTAssertTrue(connection.contentType == "application/x-www-form-urlencoded", "\(connection.requestParams)")
 		}
 	}
 
