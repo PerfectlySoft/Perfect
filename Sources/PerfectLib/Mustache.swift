@@ -431,9 +431,7 @@ public class MustacheGroupTag : MustacheTag {
 	override func populateClone(_ tag: MustacheTag) {
 		super.populateClone(tag)
 		if let groupTag = tag as? MustacheGroupTag {
-			for t in self.children {
-				groupTag.children.append(t.clone())
-			}
+			groupTag.children = self.children.map { $0.clone() }
 		}
 	}
 	
@@ -562,11 +560,7 @@ public class MustacheTemplate : MustacheGroupTag {
 	override func populateClone(_ tag: MustacheTag) {
 		super.populateClone(tag)
 		if let template = tag as? MustacheTemplate {
-			for pragma in self.pragmas {
-				if let p = pragma.clone() as? MustachePragmaTag {
-					template.pragmas.append(p)
-				}
-			}
+			template.pragmas = self.pragmas.flatMap { $0.clone() as? MustachePragmaTag }
 			self.templateName = template.templateName
 		}
 	}
