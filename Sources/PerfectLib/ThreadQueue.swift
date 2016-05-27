@@ -43,7 +43,7 @@ public extension Threading {
 			self.startLoop()
 		}
 
-		func dispatch(_ closure: Threading.ThreadClosure) {
+		func dispatch(_ closure: ThreadFunc) {
 			self.lock.doWithLock {
 				self.q.append(closure)
 				self.lock.signal()
@@ -74,7 +74,7 @@ public extension Threading {
 
 	private class ConcurrentQueue: ThreadQueue {
 		let name: String
-		let type = Threading.QueueType.Serial
+		let type = Threading.QueueType.Concurrent
 
 		private typealias ThreadFunc = Threading.ThreadClosure
 		private let lock = Threading.Event()
@@ -85,7 +85,7 @@ public extension Threading {
 			self.startLoop()
 		}
 
-		func dispatch(_ closure: Threading.ThreadClosure) {
+		func dispatch(_ closure: ThreadFunc) {
 			self.lock.doWithLock {
 				self.q.append(closure)
 				self.lock.signal()
@@ -98,7 +98,7 @@ public extension Threading {
 
 					while true {
 
-						var block: SerialQueue.ThreadFunc?
+						var block: ConcurrentQueue.ThreadFunc?
 						self.lock.doWithLock {
 							if self.q.count > 0 {
 								block = self.q.removeFirst()
