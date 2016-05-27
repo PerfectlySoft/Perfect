@@ -17,6 +17,9 @@
 //===----------------------------------------------------------------------===//
 //
 
+private enum RouteException: ErrorProtocol {
+    case InvalidRoute
+}
 
 /// Holds the registered routes.
 public struct RouteMap: CustomStringConvertible {
@@ -35,6 +38,10 @@ public struct RouteMap: CustomStringConvertible {
 	private let root = RouteNode() // root node for any request method
 	private var methodRoots = Dictionary<WebRequest.Method, RouteNode>() // by convention, use all upper cased method names for inserts/lookups
 
+    private func formatException(route r: String, error: ErrorProtocol) -> String {
+        return "\(error) - \(r)"
+    }
+    
 	// Lookup a route based on the URL path.
 	// Returns the handler generator if found.
 	subscript(path: String, webResponse: WebResponse) -> RequestHandler? {
@@ -60,7 +67,11 @@ public struct RouteMap: CustomStringConvertible {
 			return nil // Swift does not currently allow set-only subscripts
 		}
 		set {
-			self.root.addPathSegments(generator: path.lowercased().pathComponents.makeIterator(), handler: newValue!)
+            do {
+                try self.root.addPathSegments(generator: path.lowercased().pathComponents.makeIterator(), handler: newValue!)
+            } catch let e {
+                Log.error(message: self.formatException(route: path, error: e))
+            }
 		}
 	}
 
@@ -84,13 +95,17 @@ public struct RouteMap: CustomStringConvertible {
 			return nil // Swift does not currently allow set-only subscripts
 		}
 		set {
-			if let root = self.methodRoots[method] {
-				root.addPathSegments(generator: path.lowercased().pathComponents.makeIterator(), handler: newValue!)
-			} else {
-				let root = RouteNode()
-				self.methodRoots[method] = root
-				root.addPathSegments(generator: path.lowercased().pathComponents.makeIterator(), handler: newValue!)
-			}
+            do {
+                if let root = self.methodRoots[method] {
+                    try root.addPathSegments(generator: path.lowercased().pathComponents.makeIterator(), handler: newValue!)
+                } else {
+                    let root = RouteNode()
+                    self.methodRoots[method] = root
+                    try root.addPathSegments(generator: path.lowercased().pathComponents.makeIterator(), handler: newValue!)
+                }
+            } catch let e {
+                Log.error(message: self.formatException(route: path, error: e))
+            }
 		}
 	}
 
@@ -252,23 +267,25 @@ class RouteNode: CustomStringConvertible {
 		return handler
 	}
 
-	func addPathSegments(generator gen: ComponentGenerator, handler: RouteMap.RequestHandler) {
+	func addPathSegments(generator gen: ComponentGenerator, handler: RouteMap.RequestHandler) throws {
 		var m = gen
 		if let p = m.next() {
 			if p == "/" {
-				self.addPathSegments(generator: m, handler: handler)
+				try self.addPathSegments(generator: m, handler: handler)
 			} else {
-				self.addPathSegment(component: p, g: m, h: handler)
+				try self.addPathSegment(component: p, g: m, h: handler)
 			}
 		} else {
 			self.handler = handler
 		}
 	}
 
-	private func addPathSegment(component comp: String, g: ComponentGenerator, h: RouteMap.RequestHandler) {
+	private func addPathSegment(component comp: String, g: ComponentGenerator, h: RouteMap.RequestHandler) throws {
 		if let node = self.nodeForComponent(component: comp) {
-			node.addPathSegments(generator: g, handler: h)
-		}
+			try node.addPathSegments(generator: g, handler: h)
+        } else {
+            throw RouteException.InvalidRoute
+        }
 	}
 
 	private func nodeForComponent(component comp: String) -> RouteNode? {
