@@ -1,4 +1,0 @@
-module LinuxBridge {
-    header "LinuxBridge.h"
-    export *
-}

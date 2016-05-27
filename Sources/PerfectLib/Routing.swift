@@ -54,7 +54,7 @@ public struct RouteMap: CustomStringConvertible {
 	}
 
 	/// Add a route to the system.
-	/// `Routing.Routes["/foo/*/baz"] = { _ in return ExampleHandler() }`
+	/// `Routing.Routes["/foo/*/baz"] = { request, response in ... }`
 	public subscript(path: String) -> RequestHandler? {
 		get {
 			return nil // Swift does not currently allow set-only subscripts
@@ -65,7 +65,7 @@ public struct RouteMap: CustomStringConvertible {
 	}
 
 	/// Add an array of routes for a given handler.
-	/// `Routing.Routes[ ["/", "index.html"] ] = { _ in return ExampleHandler() }`
+	/// `Routing.Routes[ ["/", "index.html"] ] = { request, response in ... }`
 	public subscript(paths: [String]) -> RequestHandler? {
 		get {
 			return nil
@@ -78,7 +78,7 @@ public struct RouteMap: CustomStringConvertible {
 	}
 
 	/// Add a route to the system using the indicated HTTP request method.
-	/// `Routing.Routes["GET", "/foo/*/baz"] = { _ in return ExampleHandler() }`
+	/// `Routing.Routes["GET", "/foo/*/baz"] = { request, response in ... }`
 	public subscript(method: String, path: String) -> RequestHandler? {
 		get {
 			return nil // Swift does not currently allow set-only subscripts
@@ -96,7 +96,7 @@ public struct RouteMap: CustomStringConvertible {
 	}
 
 	/// Add an array of routes for a given handler using the indicated HTTP request method.
-	/// `Routing.Routes["GET", ["/", "index.html"] ] = { _ in return ExampleHandler() }`
+	/// `Routing.Routes["GET", ["/", "index.html"] ] = { request, response in ... }`
 	public subscript(method: String, paths: [String]) -> RequestHandler? {
 		get {
 			return nil // Swift does not currently allow set-only subscripts
@@ -119,11 +119,11 @@ public struct RouteMap: CustomStringConvertible {
 ///
 /// Add routes in the following manner:
 /// ```
-/// 	Routing.Routes["GET", ["/", "index.html"] ] = { (_:WebResponse) in return IndexHandler() }
-/// 	Routing.Routes["/foo/*/baz"] = { _ in return EchoHandler() }
-/// 	Routing.Routes["/foo/bar/baz"] = { _ in return EchoHandler() }
-/// 	Routing.Routes["GET", "/user/{id}/baz"] = { _ in return Echo2Handler() }
-/// 	Routing.Routes["POST", "/user/{id}/baz"] = { _ in return Echo3Handler() }
+/// 	Routing.Routes["GET", ["/", "index.html"] ] = { request, response in ... }
+/// 	Routing.Routes["/foo/*/baz"] = { request, response in ... }
+/// 	Routing.Routes["/foo/bar/baz"] = { request, response in ... }
+/// 	Routing.Routes["GET", "/user/{id}/baz"] = { request, response in ... }
+/// 	Routing.Routes["POST", "/user/{id}/baz"] = { request, response in ... }
 /// ```
 /// The closure you provide should return an instance of `PageHandler`. It is provided the WebResponse object to permit further customization.
 /// Variables set by the routing process can be accessed through the `WebRequest.urlVariables` dictionary.
@@ -174,11 +174,11 @@ class RouteNode: CustomStringConvertible {
 	}
 
 	private func putTabs(_ count: Int) -> String {
-		var s = ""
-		for _ in 0..<count {
-			s.append("\t")
-		}
-		return s
+        var s = ""
+        for _ in 0..<count {
+            s.append("\t")
+        }
+        return s
 	}
 
 	func descriptionTabbedInner(_ tabCount: Int) -> String {
