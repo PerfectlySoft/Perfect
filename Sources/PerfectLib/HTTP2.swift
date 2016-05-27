@@ -507,7 +507,7 @@ public class HTTP2Client {
 
 		do {
 
-			try encoder.encodeHeader(out: headerBytes, name: ":method", value: method ?? "GET")
+			try encoder.encodeHeader(out: headerBytes, name: ":method", value: method.description)
 			try encoder.encodeHeader(out: headerBytes, name: ":scheme", value: scheme)
 			try encoder.encodeHeader(out: headerBytes, name: ":path", value: path ?? "/", sensitive: false, incrementalIndexing: false)
 			try encoder.encodeHeader(out: headerBytes, name: "host", value: self.host)

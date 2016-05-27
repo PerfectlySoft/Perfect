@@ -22,18 +22,18 @@
 public struct RouteMap: CustomStringConvertible {
 
 	public typealias RequestHandler = (WebRequest, WebResponse) -> ()
-
+    
 	/// Pretty prints all route information.
 	public var description: String {
 		var s = self.root.description
 		for (method, root) in self.methodRoots {
-			s.append("\n" + method + ":\n" + root.description)
+			s.append("\n\(method):\n\(root.description)")
 		}
 		return s
 	}
 
 	private let root = RouteNode() // root node for any request method
-	private var methodRoots = [String:RouteNode]() // by convention, use all upper cased method names for inserts/lookups
+	private var methodRoots = Dictionary<WebRequest.Method, RouteNode>() // by convention, use all upper cased method names for inserts/lookups
 
 	// Lookup a route based on the URL path.
 	// Returns the handler generator if found.
@@ -43,7 +43,7 @@ public struct RouteMap: CustomStringConvertible {
 			var g = components.makeIterator()
 			let _ = g.next() // "/"
 
-			let method = webResponse.request.requestMethod!.uppercased()
+            let method = webResponse.request.requestMethod
 			if let root = self.methodRoots[method] {
 				if let handler = root.findHandler(currentComponent: "", generator: g, webResponse: webResponse) {
 					return handler
@@ -79,17 +79,16 @@ public struct RouteMap: CustomStringConvertible {
 
 	/// Add a route to the system using the indicated HTTP request method.
 	/// `Routing.Routes["GET", "/foo/*/baz"] = { request, response in ... }`
-	public subscript(method: String, path: String) -> RequestHandler? {
+	public subscript(method: WebRequest.Method, path: String) -> RequestHandler? {
 		get {
 			return nil // Swift does not currently allow set-only subscripts
 		}
 		set {
-			let uppered = method.uppercased()
-			if let root = self.methodRoots[uppered] {
+			if let root = self.methodRoots[method] {
 				root.addPathSegments(generator: path.lowercased().pathComponents.makeIterator(), handler: newValue!)
 			} else {
 				let root = RouteNode()
-				self.methodRoots[uppered] = root
+				self.methodRoots[method] = root
 				root.addPathSegments(generator: path.lowercased().pathComponents.makeIterator(), handler: newValue!)
 			}
 		}
@@ -97,7 +96,7 @@ public struct RouteMap: CustomStringConvertible {
 
 	/// Add an array of routes for a given handler using the indicated HTTP request method.
 	/// `Routing.Routes["GET", ["/", "index.html"] ] = { request, response in ... }`
-	public subscript(method: String, paths: [String]) -> RequestHandler? {
+	public subscript(method: WebRequest.Method, paths: [String]) -> RequestHandler? {
 		get {
 			return nil // Swift does not currently allow set-only subscripts
 		}

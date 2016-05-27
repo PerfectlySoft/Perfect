@@ -50,8 +50,6 @@ public struct StaticFileHandler {
 		
 		resp.addHeader(name: "Accept-Ranges", value: "bytes")
 		
-		let isHead = req.requestMethod == "HEAD"
-		
 		if let rangeRequest = resp.request.header(named: "Range") {
 			
 			let ranges = self.parseRangeHeader(fromHeader: rangeRequest, max: size)
@@ -64,7 +62,7 @@ public struct StaticFileHandler {
 				resp.addHeader(name: "Content-Type", value: contentType)
 				resp.addHeader(name: "Content-Range", value: "bytes \(range.lowerBound)-\(range.upperBound-1)/\(size)")
 				
-				if isHead {
+				if case .Head = req.requestMethod {
 					return resp.requestCompleted()
 				}
 				
@@ -85,7 +83,7 @@ public struct StaticFileHandler {
 		resp.addHeader(name: "Content-Type", value: contentType)
 		resp.addHeader(name: "Content-Length", value: "\(size)")
 		
-		if isHead {
+		if case .Head = req.requestMethod {
 			return resp.requestCompleted()
 		}
 		
