@@ -28,6 +28,43 @@
 /// Access to the current WebRequest object is generally provided through the corresponding WebResponse object
 public class WebRequest {
 
+    public enum Method: Hashable, CustomStringConvertible {
+        case Options, Get, Head, Post, Put, Delete, Trace, Connect, Custom(String)
+        
+        static func methodFrom(string: String) -> Method {
+            
+            switch string {
+            case "OPTIONS": return .Options
+            case "GET":     return .Get
+            case "HEAD":    return .Head
+            case "POST":    return .Post
+            case "PUT":     return .Put
+            case "DELETE":  return .Delete
+            case "TRACE":   return .Trace
+            case "CONNECT": return .Connect
+            default:        return .Custom(string)
+            }
+        }
+        
+        public var hashValue: Int {
+            return self.description.hashValue
+        }
+        
+        public var description: String {
+            switch self {
+            case .Options:  return "OPTIONS"
+            case .Get:      return "GET"
+            case .Head:     return "HEAD"
+            case .Post:     return "POST"
+            case .Put:      return "PUT"
+            case .Delete:   return "DELETE"
+            case .Trace:    return "TRACE"
+            case .Connect:  return "CONNECT"
+            case .Custom(let s): return s
+            }
+        }
+    }
+    
 	var connection: WebConnection
 
 	public lazy var documentRoot: String = {
@@ -283,7 +320,7 @@ public class WebRequest {
 		let auth = connection.requestParams["HTTP_AUTHORIZATION"] ?? connection.requestParams["Authorization"] ?? ""
 		var ret = auth.parseAuthentication()
 		if ret.count > 0 {
-			ret["method"] = self.requestMethod
+			ret["method"] = self.requestMethod.description
 		}
 		self.cachedHttpAuthorization = ret
 		return ret
@@ -303,7 +340,14 @@ public class WebRequest {
 	/// Provides access to the REMOTE_PORT parameter.
 	public var remotePort: Int? { get { return get("REMOTE_PORT") } set { set("REMOTE_PORT", value: newValue) } }
 	/// Provides access to the REQUEST_METHOD parameter.
-	public var requestMethod: String? { get { return get("REQUEST_METHOD") } set { set("REQUEST_METHOD", value: newValue) } }
+	public var requestMethod: Method {
+        get {
+            return Method.methodFrom(string: get("REQUEST_METHOD") ?? "GET")
+        }
+        set {
+            set("REQUEST_METHOD", value: newValue.description)
+        }
+    }
 	/// Provides access to the REQUEST_URI parameter.
 	public var requestURI: String? { get { return get("REQUEST_URI") } set { set("REQUEST_URI", value: newValue) } }
 	/// Provides access to the SCRIPT_FILENAME parameter.
@@ -383,3 +427,8 @@ public class WebRequest {
 		return ret
 	}
 }
+
+public func == (lhs: WebRequest.Method, rhs: WebRequest.Method) -> Bool {
+    return lhs.description == rhs.description
+}
+
