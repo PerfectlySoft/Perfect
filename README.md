@@ -11,9 +11,7 @@
 [![Twitter](https://img.shields.io/badge/Twitter-@PerfectlySoft-brightgreen.svg?style=flat)](http://twitter.com/PerfectlySoft)
 [![Join the chat at https://gitter.im/PerfectlySoft/Perfect](https://img.shields.io/badge/Gitter-Join%20Chat-brightgreen.svg)](https://gitter.im/PerfectlySoft/Perfect?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-**The master branch of this project currently compiles with Swift 2.2 and with the 3.0-dev MAY toolchain.**
-
-**Download [release-1.0](https://github.com/PerfectlySoft/Perfect/releases/tag/v1.0.0) for the stable 1.0 API.**
+**The master branch of this project currently compiles with Swift 2.2 and with the 3.0-dev MAY toolchain using Swift Package Manager.**
 
 Perfect is an application server for Linux or OS X which provides a framework for developing web and other REST services in the Swift programming language. Its primary focus is on facilitating mobile apps which require backend server software, enabling you to use one language for both front and back ends.
 
@@ -21,12 +19,10 @@ Perfect operates using either its own stand-alone HTTP server or through FastCGI
 
 Perfect is built on its own high performance completely asynchronous networking engine with the goal of providing a scalable option for internet services. It supports SSL out of the box and provides a suite of tools which are commonly required by internet servers, such as WebSockets and iOS push notifications, but does not limit your options. Feel free to swap in your own favorite JSON or templating systems, etc.
 
-**Please Note**
-[v1.0 has been released](https://github.com/PerfectlySoft/Perfect/releases/tag/v1.0.0). For a stable development environment, switch to branch **release-1.0** or download [v1.0](https://github.com/PerfectlySoft/Perfect/releases/tag/v1.0.0). **v1.0 requires the Swift 2.2 toolchain.**
-
-(2016-04-18) We have finished the main refactoring tasks required to support Swift Package Manager. The Perfect project has been split up into the following repositories:
+We have finished the main refactoring tasks required to support Swift Package Manager. The Perfect project has been split up into the following repositories:
 
 * [Perfect](https://github.com/PerfectlySoft/Perfect) - This repository contains the core PerfectLib and will continue to be the main landing point for the project.
+* [PerfectTemplate](https://github.com/PerfectlySoft/PerfectTemplate) - A simple starter project which compiles with SPM into a stand-alone executable HTTP server. This repository is ideal for starting on your own Perfect based project.
 * [PerfectServer](https://github.com/PerfectlySoft/PerfectServer) - Contains the PerfectServer variants, including the stand-alone HTTP and FastCGI servers. Those wishing to do a manual deployment should clone and build from this repository.
 * [PerfectStarter](https://github.com/PerfectlySoft/PerfectStarter) - This umbrella repository allows one to pull in all the related Perfect modules in one go, including the servers, examples, database connectors and documentation. This is a great place to start for people wishing to get up to speed with Perfect.
 * [PerfectDocs](https://github.com/PerfectlySoft/PerfectDocs) - Contains all API reference related material.
