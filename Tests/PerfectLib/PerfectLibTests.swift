@@ -1152,6 +1152,138 @@ class PerfectLibTests: XCTestCase {
 			XCTAssertTrue(connection.getStatus().0 == 413)
 		}
 	}
+    
+    private class ShimWebConnection: WebConnection {
+        let connection = NetTCP()
+        var requestParams = [String:String]()
+        var stdin: [UInt8]?
+        var mimes: MimeReader?
+        var status = (0, "")
+        
+        func setStatus(code c: Int, message: String) { self.status = (c, message) }
+        func getStatus() -> (Int, String) { return self.status }
+        func writeHeader(line l: String) {}
+        func writeHeader(bytes b: [UInt8], completion: (Bool) -> ()) { completion(true) }
+        func writeBody(bytes b: [UInt8], completion: (Bool) -> ()) { completion(true) }
+    }
+    
+    func testRoutingFound() {
+        Routing.Routes["/foo/bar/baz"] = { _, _ in }
+        let conn = ShimWebConnection()
+        let req = WebRequest(conn)
+        let resp = WebResponse(conn, request: req)
+        let fnd = Routing.Routes["/foo/bar/baz", resp]
+        
+        XCTAssert(fnd != nil)
+    }
+    
+    func testRoutingNotFound() {
+        Routing.Routes["/foo/bar/baz"] = { _, _ in }
+        let conn = ShimWebConnection()
+        let req = WebRequest(conn)
+        let resp = WebResponse(conn, request: req)
+        let fnd = Routing.Routes["/foo/bar/buck", resp]
+        
+        XCTAssert(fnd == nil)
+    }
+    
+    func testRoutingWild() {
+        Routing.Routes["/foo/*/baz/*"] = { _, _ in }
+        let conn = ShimWebConnection()
+        let req = WebRequest(conn)
+        let resp = WebResponse(conn, request: req)
+        let fnd = Routing.Routes["/foo/bar/baz/bum", resp]
+        
+        XCTAssert(fnd != nil)
+    }
+    
+    func testRoutingTrailingWild1() {
+        Routing.Routes["/foo/**"] = { _, _ in }
+        let conn = ShimWebConnection()
+        let req = WebRequest(conn)
+        let resp = WebResponse(conn, request: req)
+        do {
+            let fnd = Routing.Routes["/foo/bar/baz/bum", resp]
+            XCTAssert(fnd != nil)
+        }
+        
+        do {
+            let fnd = Routing.Routes["/foo/bar", resp]
+            XCTAssert(fnd != nil)
+        }
+        
+        do {
+            let fnd = Routing.Routes["/foo/", resp]
+            XCTAssert(fnd != nil)
+        }
+        
+        do {
+            let fnd = Routing.Routes["/fooo/", resp]
+            XCTAssert(fnd == nil)
+        }
+    }
+    
+    func testRoutingTrailingWild2() {
+        Routing.Routes["**"] = { _, _ in }
+        let conn = ShimWebConnection()
+        let req = WebRequest(conn)
+        let resp = WebResponse(conn, request: req)
+        do {
+            let fnd = Routing.Routes["/foo/bar/baz/bum", resp]
+            XCTAssert(fnd != nil)
+        }
+        
+        do {
+            let fnd = Routing.Routes["/foo/bar", resp]
+            XCTAssert(fnd != nil)
+        }
+        
+        do {
+            let fnd = Routing.Routes["/foo/", resp]
+            XCTAssert(fnd != nil)
+        }
+    }
+    
+    func testRoutingVars() {
+        Routing.Routes["/foo/{bar}/baz/{bum}"] = { _, _ in }
+        let conn = ShimWebConnection()
+        let req = WebRequest(conn)
+        let resp = WebResponse(conn, request: req)
+        let fnd = Routing.Routes["/foo/1/baz/2", resp]
+        
+        XCTAssert(fnd != nil)
+        XCTAssert(req.urlVariables["bar"] == "1")
+        XCTAssert(req.urlVariables["bum"] == "2")
+    }
+    
+    func testRoutingAddPerformance() {
+        self.measure {
+            for i in 0..<10000 {
+                Routing.Routes["/foo/\(i)/baz"] = { _, _ in }
+            }
+        }
+    }
+    
+    func testRoutingFindPerformance() {
+        for i in 0..<10000 {
+            Routing.Routes["/foo/\(i)/baz"] = { _, _ in }
+        }
+        
+        let conn = ShimWebConnection()
+        let req = WebRequest(conn)
+        let resp = WebResponse(conn, request: req)
+        
+        self.measure {
+            for i in 0..<10000 {
+                guard let _ = Routing.Routes["/foo/\(i)/baz", resp] else {
+                    XCTAssert(false, "Failed to find route")
+                    break
+                }
+            }
+        }
+    }
+    
+    
 }
 
 extension PerfectLibTests {
@@ -1190,6 +1322,16 @@ extension PerfectLibTests {
 					("testWebConnectionHeadersFolded", testWebConnectionHeadersFolded),
 					("testWebConnectionHeadersTooLarge", testWebConnectionHeadersTooLarge),
 					("testMimeReader", testMimeReader),
+					
+					("testRoutingFound", testRoutingFound),
+					("testRoutingNotFound", testRoutingNotFound),
+					("testRoutingWild", testRoutingWild),
+					("testRoutingVars", testRoutingVars),
+					("testRoutingAddPerformance", testRoutingAddPerformance),
+					("testRoutingFindPerformance", testRoutingFindPerformance),
+					("testRoutingTrailingWild1", testRoutingTrailingWild1),
+					("testRoutingTrailingWild2", testRoutingTrailingWild2),
+					
 					("testMimeReaderSimple", testMimeReaderSimple)
         ]
     }

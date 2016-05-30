@@ -66,7 +66,11 @@ public class WebRequest {
     }
     
 	var connection: WebConnection
-
+    
+    init(_ c: WebConnection) {
+        self.connection = c
+    }
+    
 	public lazy var documentRoot: String = {
 		var f = self.connection.requestParams["PERFECTSERVER_DOCUMENT_ROOT"]
 		var root = ""
@@ -391,10 +395,6 @@ public class WebRequest {
 	public func rawHeader(named: String) -> String? { return self.connection.requestParams[named] }
 	/// Returns a Dictionary containing all raw request parameters.
 	public func raw() -> Dictionary<String, String> { return self.connection.requestParams }
-
-	init(_ c: WebConnection) {
-		self.connection = c
-	}
 
 	private func extractField(from: String, named: String) -> String? {
 		guard let range = from.range(ofString: named + "=") else {
