@@ -27,6 +27,10 @@ public struct PerfectServer {
 	/// Provides access to the singleton PerfectServer instance.
 	public static let staticPerfectServer = PerfectServer()
 	
+    public static func initializeServices() {
+        PerfectServer.staticPerfectServer.initializeServices()
+    }
+    
 	init() {
 		
 	}
