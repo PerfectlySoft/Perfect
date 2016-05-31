@@ -47,11 +47,6 @@ let kPerfectTempPrefix = "perfect_upload_"
 let mime_cr = UInt8(13)
 let mime_lf = UInt8(10)
 let mime_dash = UInt8(45)
-//
-//private extension Int {
-//	func distanceTo(i: Int) -> Int { return i - self }
-//	func advancedBy(i: Int) -> Int { return self + i }
-//}
 
 /// This class is responsible for reading multi-part POST form data, including handling file uploads.
 /// Data can be given for parsing in little bits at a time by calling the `addTobuffer` function.
