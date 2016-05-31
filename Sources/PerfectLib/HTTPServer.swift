@@ -46,7 +46,9 @@ public class HTTPServer {
 	public var serverPort: UInt16 = 0
 	/// The local address on which the server is listening. The default of 0.0.0.0 indicates any local address.
 	public var serverAddress = "0.0.0.0"
-	
+	/// Switch to user after binding port
+    public var runAsUser: String?
+    
 	/// The canonical server name.
 	/// This is important if utilizing the `WebRequest.serverName` "SERVER_NAME" variable.
 	public var serverName = ""
@@ -69,6 +71,10 @@ public class HTTPServer {
 		socket.initSocket()
 		try socket.bind(port: prt, address: bindAddress)
 		
+        if let runAs = self.runAsUser {
+            try PerfectServer.switchTo(userName: runAs)
+        }
+        
 		print("Starting HTTP server on \(bindAddress):\(prt) with document root \(self.documentRoot)")
 		
 		try self.startInner(socket: socket)
@@ -222,6 +228,10 @@ public class HTTPServer {
 		
 		try socket.bind(port: prt, address: bindAddress)
 
+        if let runAs = self.runAsUser {
+            try PerfectServer.switchTo(userName: runAs)
+        }
+        
 		print("Starting HTTPS server on \(bindAddress):\(prt) with document root \(self.documentRoot)")
 		
 		try self.startInner(socket: socket)
