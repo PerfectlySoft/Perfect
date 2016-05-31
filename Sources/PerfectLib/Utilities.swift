@@ -131,6 +131,9 @@ extension UInt8 {
 			|| ( cc >= 123 && cc <= 126 )
 			|| self == 43 )
 	}
+    
+    // same as String(self, radix: 16)
+    // but outputs two characters. i.e. 0 padded
 	private var hexString: String {
 		var s = ""
 		let b = self >> 4
