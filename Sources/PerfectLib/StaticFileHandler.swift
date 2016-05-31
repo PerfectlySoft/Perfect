@@ -66,7 +66,7 @@ public struct StaticFileHandler {
 					return resp.requestCompleted()
 				}
 				
-				file.setMarker(to: range.lowerBound)
+				let _ = file.setMarker(to: range.lowerBound)
 				
 				return self.sendFile(remainingBytes: rangeCount, response: resp, file: file) {
 					ok in

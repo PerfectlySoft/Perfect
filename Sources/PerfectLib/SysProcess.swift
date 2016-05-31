@@ -133,13 +133,13 @@ public class SysProcess : Closeable {
 			try ThrowSystemError()
 		}
 	#else
-		Darwin.close(fSTDIN[0])
-		Darwin.close(fSTDOUT[1])
-		Darwin.close(fSTDERR[1])
+		let _ = Darwin.close(fSTDIN[0])
+		let _ = Darwin.close(fSTDOUT[1])
+		let _ = Darwin.close(fSTDERR[1])
 		if spawnRes != 0 {
-			Darwin.close(fSTDIN[1])
-			Darwin.close(fSTDOUT[0])
-			Darwin.close(fSTDERR[0])
+			let _ = Darwin.close(fSTDIN[1])
+			let _ = Darwin.close(fSTDOUT[0])
+			let _ = Darwin.close(fSTDERR[0])
 			try ThrowSystemError()
 		}
 	#endif
@@ -172,7 +172,7 @@ public class SysProcess : Closeable {
 		}
 		if self.pid != -1 {
 			do {
-				try self.kill()
+				let _ = try self.kill()
 			} catch {
 
 			}

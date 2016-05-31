@@ -124,9 +124,9 @@ public class File : Closeable {
 	public func close() {
 		if fd != -1 {
 		#if os(Linux)
-			SwiftGlibc.close(CInt(fd))
+			let _ = SwiftGlibc.close(CInt(fd))
 		#else
-			Darwin.close(CInt(fd))
+			let _ = Darwin.close(CInt(fd))
 		#endif
 			
 			fd = -1
@@ -289,7 +289,7 @@ public class File : Closeable {
 			return destFile
 		}
 		if errno == EXDEV {
-			try self.copyTo(path: path, overWrite: overWrite)
+			let _ = try self.copyTo(path: path, overWrite: overWrite)
 			self.delete()
 			return destFile
 		}
@@ -315,13 +315,13 @@ public class File : Closeable {
 		if !wasOpen {
 			try openRead()
 		} else {
-			setMarker(to: 0)
+			let _ = setMarker(to: 0)
 		}
 		defer {
 			if !wasOpen {
 				close()
 			} else {
-				setMarker(to: oldMarker)
+				let _ = setMarker(to: oldMarker)
 			}
 		}
 		
@@ -329,7 +329,7 @@ public class File : Closeable {
 		
 		var bytes = try self.readSomeBytes(count: fileCopyBufferSize)
 		while bytes.count > 0 {
-			try destFile.write(bytes: bytes)
+			let _ = try destFile.write(bytes: bytes)
 			bytes = try self.readSomeBytes(count: fileCopyBufferSize)
 		}
 		
