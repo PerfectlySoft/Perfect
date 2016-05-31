@@ -17,27 +17,16 @@
 //===----------------------------------------------------------------------===//
 //
 
-/// Default directory for server-size modules. Modules in this directory are loaded at server startup.
-public var serverPerfectLibraries = "PerfectLibraries/"
+/// Default directory for server-side modules. Modules in this directory are loaded at server startup.
+public var serverPerfectLibraries = "PerfectLibraries/" // !FIX! or obsolete
 
 /// Provides access to various system level features for the process.
 /// A static instance of this class is created at startup and all access to this object go through the `PerfectServer.staticPerfectServer` static property.
 public struct PerfectServer {
 	
-	/// Provides access to the singleton PerfectServer instance.
-	public static let staticPerfectServer = PerfectServer()
-	
-    public static func initializeServices() {
-        PerfectServer.staticPerfectServer.initializeServices()
-    }
-    
-	init() {
-		
-	}
-	
 	/// Performs any boot-strap level initialization such as creating databases or loading dynamic frameworks.
 	/// Should only be called once befor starting FastCGI server
-	public func initializeServices() {
+	public static func initializeServices() {
 		
 		NetEvent.initialize()
 		
@@ -48,7 +37,7 @@ public struct PerfectServer {
         if serverPerfectLibraries.begins(with: "/") || serverPerfectLibraries.begins(with: "~/") || serverPerfectLibraries.begins(with: "./") {
             baseDir = Dir(serverPerfectLibraries)
         } else {
-            baseDir = Dir(homeDir() + serverPerfectLibraries)
+            baseDir = Dir(PerfectServer.homeDir + serverPerfectLibraries)
         }
         Log.info(message: "Load libs from: \(baseDir.realPath())");
 		do {
@@ -76,8 +65,23 @@ public struct PerfectServer {
 	
 	/// The directory containing all configuration and runtime data for the current server process.
 	/// Not to be confused with the web server directory which only exists during an individual web request and in the mind of the web server itself.
-	public func homeDir() -> String {
-		return "./"
+    public static var homeDir: String {
+		return "./" // !FIX! or obsolete
 	}
+    
+    // Switch the current process to run with the permissions of the indicated user
+    public static func switchTo(userName unam: String) throws {
+        guard let pw = getpwnam(unam) else {
+            try ThrowSystemError()
+        }
+        let gid = pw.pointee.pw_gid
+        let uid = pw.pointee.pw_uid
+        guard 0 == setgid(gid) else {
+            try ThrowSystemError()
+        }
+        guard 0 == setuid(uid) else {
+            try ThrowSystemError()
+        }
+    }
 }
 
