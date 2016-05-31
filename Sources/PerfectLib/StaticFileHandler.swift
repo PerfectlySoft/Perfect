@@ -49,8 +49,8 @@ public struct StaticFileHandler {
 		let size = file.size()
 		
 		resp.addHeader(name: "Accept-Ranges", value: "bytes")
-		
-		if let rangeRequest = resp.request.header(named: "Range") {
+        
+		if let rangeRequest = req.header(named: "Range") {
 			
 			let ranges = self.parseRangeHeader(fromHeader: rangeRequest, max: size)
 			if ranges.count == 1 {
@@ -75,14 +75,24 @@ public struct StaticFileHandler {
 					resp.requestCompleted()
 				}
 			} else if ranges.count > 0 {
-				
+				// !FIX!
 			}
-		}
-		
+            
+        } else if let ifNoneMatch = req.header(named: "If-None-Match") {
+            let eTag = self.getETag(file: file)
+            if ifNoneMatch == eTag {
+                resp.setStatus(code: 304, message: "NOT MODIFIED")
+                resp.addHeader(name: "Content-Type", value: contentType)
+                return resp.requestCompleted()
+            }
+        }
+        
 		resp.setStatus(code: 200, message: "OK")
 		resp.addHeader(name: "Content-Type", value: contentType)
 		resp.addHeader(name: "Content-Length", value: "\(size)")
-		
+        
+        self.addETag(response: resp, file: file)
+        
 		if case .Head = req.requestMethod {
 			return resp.requestCompleted()
 		}
@@ -94,6 +104,20 @@ public struct StaticFileHandler {
 		}
 	}
 	
+    func getETag(file f: File) -> String {
+        let eTagStr = f.internalPath + "\(f.modificationTime())"
+        let eTag = eTagStr.utf8.sha1
+        let eTagReStr = eTag.map { $0.hexString }.joined(separator: "")
+        
+        return eTagReStr
+    }
+    
+    func addETag(response resp: WebResponse, file: File) {
+        let eTag = self.getETag(file: file)
+        
+        resp.addHeader(name: "ETag", value: eTag)
+    }
+    
 	func sendFile(remainingBytes remaining: Int, response: WebResponse, file: File, completion: (Bool) -> ()) {
 		
 		let thisRead = min(chunkedBufferSize, remaining)
