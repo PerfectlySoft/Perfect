@@ -196,7 +196,7 @@ public class HTTP2Client {
 	var frameReadOK = false
 
 	var newStreamId: UInt32 {
-		streams[streamCounter] = .None
+		streams[streamCounter] = StreamState.None
 		let s = streamCounter
 		streamCounter += 2
 		return s
@@ -211,7 +211,7 @@ public class HTTP2Client {
 
 		self.frameReadEvent.doWithLock {
 			if self.frameQueue.count == 0 {
-				self.frameReadEvent.wait(seconds: timeout)
+				let _ = self.frameReadEvent.wait(seconds: timeout)
 			}
 			if self.frameQueue.count > 0 {
 				frame = self.frameQueue.removeFirst()
@@ -226,7 +226,7 @@ public class HTTP2Client {
 
 		self.frameReadEvent.doWithLock {
 			if self.frameQueue.count == 0 {
-				self.frameReadEvent.wait(seconds: timeout)
+				let _ = self.frameReadEvent.wait(seconds: timeout)
 			}
 			if self.frameQueue.count > 0 {
 				for i in 0..<self.frameQueue.count {
@@ -324,14 +324,14 @@ public class HTTP2Client {
 
 							self?.frameQueue.append(frame)
 							self?.frameReadOK = true
-							self?.frameReadEvent.broadcast()
+							let _ = self?.frameReadEvent.broadcast()
 						}
 					}
 				} else { // network error
 					self?.frameReadEvent.doWithLock {
 						self?.close()
 						self?.frameReadOK = false
-						self?.frameReadEvent.broadcast()
+						let _ = self?.frameReadEvent.broadcast()
 					}
 				}
 			}
@@ -356,7 +356,7 @@ public class HTTP2Client {
 							s.frameReadOK = false
 							s.readOneFrame()
 							if !s.frameReadOK && net.fd.isValid {
-								s.frameReadEvent.wait()
+								let _ = s.frameReadEvent.wait()
 							}
 						}
 						if !s.frameReadOK {
@@ -440,8 +440,8 @@ public class HTTP2Client {
 					}
 
 					let bytes2 = Bytes(initialSize: 8)
-					bytes2.import32Bits(from: streamId.hostToNet)
-					bytes2.import32Bits(from: 0)
+					let _ = bytes2.import32Bits(from: streamId.hostToNet)
+                            .import32Bits(from: 0)
 					let frame2 = HTTP2Frame(length: 8, type: HTTP2_GOAWAY, flags: 0, streamId: streamId, payload: bytes2.data)
 					self.writeHTTP2Frame(frame2) {
 						b in
@@ -586,11 +586,11 @@ public class HTTP2Client {
 		let type = b[3]
 		let flags = b[4]
 		var sid: UInt32 = UInt32(b[5])
-		sid << 8
+		sid <<= 8
 		sid += UInt32(b[6])
-		sid << 8
+		sid <<= 8
 		sid += UInt32(b[7])
-		sid << 8
+		sid <<= 8
 		sid += UInt32(b[8])
 
 		sid &= ~0x80000000

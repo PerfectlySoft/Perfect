@@ -89,7 +89,7 @@ private final class DynamicTable {
 			clear()
 		} else {
 			while size > capacity {
-				remove()
+				let _ = remove()
 			}
 		}
 		
@@ -159,7 +159,7 @@ private final class DynamicTable {
 			clear()
 		} else {
 			while size + headerSize > capacity {
-				remove()
+				let _ = remove()
 			}
 			headerFields[head] = header
 			head += 1
@@ -617,14 +617,14 @@ final class HuffmanEncoder {
 			while n >= 8 {
 				n -= 8
 				let newVal = (current >> n) & 0xFF
-				owt.import8Bits(from: UInt8(newVal))
+				let _ = owt.import8Bits(from: UInt8(newVal))
 			}
 		}
 		if n > 0 {
 			current <<= (8 - n)
 			current |= (0xFF >> n)
 			let newVal = current & 0xFF
-			owt.import8Bits(from: UInt8(newVal))
+			let _ = owt.import8Bits(from: UInt8(newVal))
 		}
 	}
 	
@@ -910,7 +910,7 @@ public final class HPACKEncoder {
 		}
 		
 		while size + headerSize > capacity {
-			remove()
+			let _ = remove()
 		}
 		
 		let h = hash(name)
@@ -987,7 +987,7 @@ public final class HPACKEncoder {
 			if length == 0 {
 				break
 			}
-			remove()
+			let _ = remove()
 		}
 	}
 	
@@ -1005,16 +1005,16 @@ public final class HPACKEncoder {
 	func encodeInteger(out owt: Bytes, mask: Int, n: Int, i: Int) {
 		let nbits = 0xFF >> (8 - n)
 		if i < nbits {
-			owt.import8Bits(from: UInt8(mask | i))
+			let _ = owt.import8Bits(from: UInt8(mask | i))
 		} else {
-			owt.import8Bits(from: UInt8(mask | nbits))
+			let _ = owt.import8Bits(from: UInt8(mask | nbits))
 			var length = i - nbits
 			while true {
 				if (length & ~0x7F) == 0 {
-					owt.import8Bits(from: UInt8(length))
+					let _ = owt.import8Bits(from: UInt8(length))
 					return
 				} else {
-					owt.import8Bits(from: UInt8((length & 0x7f) | 0x80))
+					let _ = owt.import8Bits(from: UInt8((length & 0x7f) | 0x80))
 					length >>= 7
 				}
 			}
@@ -1028,7 +1028,7 @@ public final class HPACKEncoder {
 			try huffmanEncoderInstance.encode(out: owt, input: Bytes(existingBytes: string))
 		} else {
 			encodeInteger(out: owt, mask: 0x00, n: 7, i: string.count)
-			owt.importBytes(from: string)
+			let _ = owt.importBytes(from: string)
 		}
 	}
 	

@@ -420,9 +420,9 @@ public final class MimeReader {
 			
 			if self.buffer.count != 0 {
 				self.buffer.append(contentsOf: byts)
-				internalAddToBuffer(bytes: self.buffer)
+				let _ = internalAddToBuffer(bytes: self.buffer)
 			} else {
-				internalAddToBuffer(bytes: byts)
+				let _ = internalAddToBuffer(bytes: byts)
 			}
 		} else {
 			self.buffer.append(contentsOf: byts)
