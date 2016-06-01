@@ -46,7 +46,7 @@ public class CURL {
 			return self.getInfo(CURLINFO_EFFECTIVE_URL).0
 		}
 		set {
-			self.setOption(CURLOPT_URL, s: newValue)
+			let _ = self.setOption(CURLOPT_URL, s: newValue)
 		}
 	}
 
@@ -79,9 +79,9 @@ public class CURL {
 	#else
 		let opaqueMe = UnsafeMutablePointer<Void>(Unmanaged.passUnretained(self).toOpaque())
 	#endif
-		setOption(CURLOPT_HEADERDATA, v: opaqueMe)
-		setOption(CURLOPT_WRITEDATA, v: opaqueMe)
-		setOption(CURLOPT_READDATA, v: opaqueMe)
+		let _ = setOption(CURLOPT_HEADERDATA, v: opaqueMe)
+		let _ = setOption(CURLOPT_WRITEDATA, v: opaqueMe)
+		let _ = setOption(CURLOPT_READDATA, v: opaqueMe)
 
 		let headerReadFunc: curl_func = {
 			(a, size, num, p) -> Int in
@@ -107,7 +107,7 @@ public class CURL {
 		#endif
 			return 0
 		}
-		setOption(CURLOPT_HEADERFUNCTION, f: headerReadFunc)
+		let _ = setOption(CURLOPT_HEADERFUNCTION, f: headerReadFunc)
 
 		let writeFunc: curl_func = {
 			(a, size, num, p) -> Int in
@@ -134,7 +134,7 @@ public class CURL {
 		#endif
 			return 0
 		}
-		setOption(CURLOPT_WRITEFUNCTION, f: writeFunc)
+		let _ = setOption(CURLOPT_WRITEFUNCTION, f: writeFunc)
 
 		let readFunc: curl_func = {
 			(a, b, c, p) -> Int in
@@ -144,7 +144,7 @@ public class CURL {
 //			let crl = Unmanaged<CURL>.fromOpaque(COpaquePointer(p)).takeUnretainedValue()
 			return 0
 		}
-		setOption(CURLOPT_READFUNCTION, f: readFunc)
+		let _ = setOption(CURLOPT_READFUNCTION, f: readFunc)
 
 	}
 
@@ -179,10 +179,10 @@ public class CURL {
 	private func performInner(header headr: Bytes, body: Bytes, closure: (Int, [UInt8], [UInt8]) -> ()) {
 		let perf = self.perform()
 		if let h = perf.2 {
-			headr.importBytes(from: h)
+			let _ = headr.importBytes(from: h)
 		}
 		if let b = perf.3 {
-			body.importBytes(from: b)
+			let _ = body.importBytes(from: b)
 		}
 		if perf.0 == false { // done
 			closure(perf.1, headr.data, body.data)

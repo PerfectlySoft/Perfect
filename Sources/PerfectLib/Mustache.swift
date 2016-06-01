@@ -272,16 +272,16 @@ public class MustacheTag {
 		
 		switch type {
 		case .Plain:
-			collector.append(tag, encoded: false)
+			let _ = collector.append(tag, encoded: false)
 		case .UnescapedName:
-			collector.append(tag, encoded: false)
+			let _ = collector.append(tag, encoded: false)
 		case .Name:
 			if let value = contxt.getValue(named: tag) {
-				collector.append(String(value))
+				let _ = collector.append(String(value))
 			}
 		case .UnencodedName:
 			if let value = contxt.getValue(named: tag) {
-				collector.append(String(value), encoded: false)
+				let _ = collector.append(String(value), encoded: false)
 			}
 		case .Pragma, .Bang:
 			() // ignored
@@ -459,7 +459,7 @@ public class MustacheGroupTag : MustacheTag {
 					}
 				}
 			case let lambda as (String, MustacheEvaluationContext) -> String:
-				collector.append(lambda(bodyText(), contxt), encoded: false)
+				let _ = collector.append(lambda(bodyText(), contxt), encoded: false)
 			case let stringValue as String where stringValue.characters.count > 0:
 				for child in children {
 					child.evaluate(context: contxt, collector: collector)

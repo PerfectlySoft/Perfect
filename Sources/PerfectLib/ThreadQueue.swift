@@ -46,7 +46,7 @@ public extension Threading {
 		func dispatch(_ closure: ThreadFunc) {
 			self.lock.doWithLock {
 				self.q.append(closure)
-				self.lock.signal()
+				let _ = self.lock.signal()
 			}
 		}
 
@@ -60,7 +60,7 @@ public extension Threading {
 						if self.q.count > 0 {
 							block = self.q.removeFirst()
 						} else {
-							self.lock.wait()
+							let _ = self.lock.wait()
 						}
 					}
 
@@ -88,7 +88,7 @@ public extension Threading {
 		func dispatch(_ closure: ThreadFunc) {
 			self.lock.doWithLock {
 				self.q.append(closure)
-				self.lock.signal()
+				let _ = self.lock.signal()
 			}
 		}
 
@@ -103,7 +103,7 @@ public extension Threading {
 							if self.q.count > 0 {
 								block = self.q.removeFirst()
 							} else {
-								self.lock.wait()
+								let _ = self.lock.wait()
 							}
 						}
 

@@ -131,7 +131,10 @@ extension UInt8 {
 			|| ( cc >= 123 && cc <= 126 )
 			|| self == 43 )
 	}
-	private var hexString: String {
+    
+    // same as String(self, radix: 16)
+    // but outputs two characters. i.e. 0 padded
+	var hexString: String {
 		var s = ""
 		let b = self >> 4
 		s.append(UnicodeScalar(b > 9 ? b - 10 + 65 : b + 48))
@@ -205,7 +208,6 @@ extension String {
 		}
 		return ret
 	}
-
 
 	// Utility - not sure if it makes the most sense to have here or outside or elsewhere
 	static func byteFromHexDigits(one c1v: UInt8, two c2v: UInt8) -> UInt8? {
