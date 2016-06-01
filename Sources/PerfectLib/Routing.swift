@@ -138,6 +138,7 @@ public struct RouteMap: CustomStringConvertible {
 /// 	Routing.Routes["/foo/bar/baz"] = { request, response in ... }
 /// 	Routing.Routes[.Get, "/user/{id}/baz"] = { request, response in ... }
 /// 	Routing.Routes[.Post, "/user/{id}/baz"] = { request, response in ... }
+/// 	Routing.Routes["**"] = { request, response in ... } // matches any path
 /// ```
 /// Variables set by the routing process can be accessed through the `WebRequest.urlVariables` dictionary.
 /// Note that a handler *MUST* call `WebResponse.requestCompleted()` when the request has completed.
