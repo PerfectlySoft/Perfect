@@ -11,7 +11,7 @@
 [![Twitter](https://img.shields.io/badge/Twitter-@PerfectlySoft-brightgreen.svg?style=flat)](http://twitter.com/PerfectlySoft)
 [![Join the chat at https://gitter.im/PerfectlySoft/Perfect](https://img.shields.io/badge/Gitter-Join%20Chat-brightgreen.svg)](https://gitter.im/PerfectlySoft/Perfect?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-**The master branch of this project currently compiles with Swift 2.2 and with the 3.0-dev MAY toolchain using Swift Package Manager.**
+**The master branch of this project currently compiles with Swift 2.2 and with the 3.0 Preview 1 Release toolchain using Swift Package Manager.**
 
 Perfect is an application server for Linux or OS X which provides a framework for developing web and other REST services in the Swift programming language. Its primary focus is on facilitating mobile apps which require backend server software, enabling you to use one language for both front and back ends.
 
@@ -32,7 +32,7 @@ swift --version
 should produce something like the following:
 
 ```
-Apple Swift version 3.0-dev (LLVM dffa09ffd8, Clang 9f0d189820, Swift 1c720b8f84)
+Apple Swift version 3.0-dev (LLVM 3863c393d9, Clang d03752fe45, Swift e996f0c248)
 Target: x86_64-apple-macosx10.9
 ```
 
