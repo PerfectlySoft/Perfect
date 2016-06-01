@@ -45,47 +45,22 @@ public struct StaticFileHandler {
 	
 	func sendFile(request req: WebRequest, response resp: WebResponse, file: File) {
 		
-		let contentType = MimeType.forExtension(file.path().pathExtension)
-		let size = file.size()
-		
 		resp.addHeader(name: "Accept-Ranges", value: "bytes")
         
 		if let rangeRequest = req.header(named: "Range") {
 			
-			let ranges = self.parseRangeHeader(fromHeader: rangeRequest, max: size)
-			if ranges.count == 1 {
-				let range = ranges[0]
-				let rangeCount = range.count
-				
-				resp.setStatus(code: 206, message: "Partial Content")
-				resp.addHeader(name: "Content-Length", value: "\(rangeCount)")
-				resp.addHeader(name: "Content-Type", value: contentType)
-				resp.addHeader(name: "Content-Range", value: "bytes \(range.lowerBound)-\(range.upperBound-1)/\(size)")
-				
-				if case .Head = req.requestMethod {
-					return resp.requestCompleted()
-				}
-				
-				let _ = file.setMarker(to: range.lowerBound)
-				
-				return self.sendFile(remainingBytes: rangeCount, response: resp, file: file) {
-					ok in
-					
-					file.close()
-					resp.requestCompleted()
-				}
-			} else if ranges.count > 0 {
-				// !FIX!
-			}
+			return self.performRangeRequest(rangeRequest: rangeRequest, request: req, response: resp, file: file)
             
         } else if let ifNoneMatch = req.header(named: "If-None-Match") {
             let eTag = self.getETag(file: file)
             if ifNoneMatch == eTag {
                 resp.setStatus(code: 304, message: "NOT MODIFIED")
-                resp.addHeader(name: "Content-Type", value: contentType)
                 return resp.requestCompleted()
             }
         }
+        
+        let size = file.size()
+        let contentType = MimeType.forExtension(file.path().pathExtension)
         
 		resp.setStatus(code: 200, message: "OK")
 		resp.addHeader(name: "Content-Type", value: contentType)
@@ -104,6 +79,38 @@ public struct StaticFileHandler {
 		}
 	}
 	
+    func performRangeRequest(rangeRequest: String, request: WebRequest, response: WebResponse, file: File) {
+        let size = file.size()
+        let ranges = self.parseRangeHeader(fromHeader: rangeRequest, max: size)
+        if ranges.count == 1 {
+            let range = ranges[0]
+            let rangeCount = range.count
+            let contentType = MimeType.forExtension(file.path().pathExtension)
+            
+            response.setStatus(code: 206, message: "Partial Content")
+            response.addHeader(name: "Content-Length", value: "\(rangeCount)")
+            response.addHeader(name: "Content-Type", value: contentType)
+            response.addHeader(name: "Content-Range", value: "bytes \(range.lowerBound)-\(range.upperBound-1)/\(size)")
+            
+            if case .Head = request.requestMethod {
+                return response.requestCompleted()
+            }
+            
+            let _ = file.setMarker(to: range.lowerBound)
+            
+            return self.sendFile(remainingBytes: rangeCount, response: response, file: file) {
+                ok in
+                
+                file.close()
+                response.requestCompleted()
+            }
+        } else if ranges.count > 0 {
+            // !FIX! support multiple ranges
+            response.setStatus(code: 500, message: "INTERNAL SERVER ERROR")
+            return response.requestCompleted()
+        }
+    }
+    
     func getETag(file f: File) -> String {
         let eTagStr = f.internalPath + "\(f.modificationTime())"
         let eTag = eTagStr.utf8.sha1
