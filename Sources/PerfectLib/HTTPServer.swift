@@ -649,7 +649,6 @@ public class HTTPServer {
 		// including the final terminating CRLF(LF) pair which has been replaced with 0s
 		// self.workingBuffer[self.workingBufferOffset] marks the start of body data, if any
 		func processCompleteHeaders(_ callback: OkCallback) {
-			
 			guard let decodedHeaders = self.headerToString() else {
 				return callback(false)
 			}
@@ -687,7 +686,6 @@ public class HTTPServer {
 		// self.workingBufferOffset indicates where we start scanning
 		// if the buffer ends on a single CR or CRLF pair, back the self.workingBufferOffset up
 		func scanWorkingBuffer(_ callback: OkCallback) {
-			
 			guard self.workingBuffer.count < httpMaxHeadersSize else {
 				self.setStatus(code: 413, message: "Entity Too Large")
 				return self.writeBody(bytes: [UInt8]()) {
@@ -789,7 +787,7 @@ public class HTTPServer {
 				let statusLine = "\(self.httpVersion) \(statusCode) \(statusMsg)\r\n"
 				let firstBytes = [UInt8](statusLine.utf8)
 				
-				write(bytes: firstBytes) {
+				self.write(bytes: firstBytes) {
 					ok in
 					
 					guard ok else {
@@ -805,12 +803,13 @@ public class HTTPServer {
 		
 		func pushHeaderBytes(completion: OkCallback) {
 			if !wroteHeader {
+                
 				if self.httpKeepAlive {
 					header += "Connection: keep-alive\r\nKeep-Alive: timeout=\(Int(httpReadTimeout)), max=100\r\n\r\n" // final CRLF
 				} else {
 					header += "\r\n" // final CRLF
 				}
-				writeHeader(bytes: [UInt8](header.utf8)) {
+				self.writeHeader(bytes: [UInt8](header.utf8)) {
 					ok in
 					
 					self.header = ""
@@ -822,7 +821,7 @@ public class HTTPServer {
 		}
 		
 		func writeBody(bytes b: [UInt8], completion: OkCallback) {
-			pushHeaderBytes {
+			self.pushHeaderBytes {
 				ok in
 				
 				guard ok else {
@@ -834,7 +833,6 @@ public class HTTPServer {
 		}
 		
 		func write(bytes b: [UInt8], completion: OkCallback) {
-		
 			self.connection.write(bytes: b) {
 				writeCount in
 				
