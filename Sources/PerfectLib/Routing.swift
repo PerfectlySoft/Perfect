@@ -43,7 +43,7 @@ public struct RouteMap: CustomStringConvertible {
     }
     
 	// Lookup a route based on the URL path.
-	// Returns the handler generator if found.
+	// Returns the handler if found.
 	subscript(path: String, webResponse: WebResponse) -> RequestHandler? {
 		get {
 			let components = path.lowercased().pathComponents
@@ -139,10 +139,8 @@ public struct RouteMap: CustomStringConvertible {
 /// 	Routing.Routes[.Get, "/user/{id}/baz"] = { request, response in ... }
 /// 	Routing.Routes[.Post, "/user/{id}/baz"] = { request, response in ... }
 /// ```
-/// The closure you provide should return an instance of `PageHandler`. It is provided the WebResponse object to permit further customization.
 /// Variables set by the routing process can be accessed through the `WebRequest.urlVariables` dictionary.
-/// Note that a PageHandler *MUST* call `WebResponse.requestCompleted()` when the request has completed.
-/// This does not need to be done within the `handleRequest` method.
+/// Note that a handler *MUST* call `WebResponse.requestCompleted()` when the request has completed.
 public struct Routing {
 
 	/// The routes which have been configured.
@@ -151,7 +149,7 @@ public struct Routing {
 	static func initialize() {
 		// add a wildcard handler for webroot access
 		// user modules can overwrite this if desired
-		Routing.Routes["*"] = {
+		Routing.Routes["**"] = {
 			request, response in
 
 			StaticFileHandler().handleRequest(request: request, response: response)
@@ -176,12 +174,18 @@ public struct Routing {
 }
 
 class RouteNode: CustomStringConvertible {
-
+    
 	#if swift(>=3.0)
 	typealias ComponentGenerator = IndexingIterator<[String]>
 	#else
 	typealias ComponentGenerator = IndexingGenerator<[String]>
-	#endif
+    #endif
+
+    var handler: RouteMap.RequestHandler?
+    var trailingWildCard: RouteNode?
+    var wildCard: RouteNode?
+    var variables = [RouteNode]()
+    var subNodes = [String:RouteNode]()
 
 	var description: String {
 		return self.descriptionTabbed(0)
@@ -202,10 +206,13 @@ class RouteNode: CustomStringConvertible {
 		}
 		for node in self.variables {
 			s.append("\(self.putTabs(tabCount))\(node.descriptionTabbed(tabCount+1))")
-		}
-		if let node = self.wildCard {
-			s.append("\(self.putTabs(tabCount))\(node.descriptionTabbed(tabCount+1))")
-		}
+        }
+        if let node = self.wildCard {
+            s.append("\(self.putTabs(tabCount))\(node.descriptionTabbed(tabCount+1))")
+        }
+        if let node = self.trailingWildCard {
+            s.append("\(self.putTabs(tabCount))\(node.descriptionTabbed(tabCount+1))")
+        }
 		return s
 	}
 
@@ -217,11 +224,6 @@ class RouteNode: CustomStringConvertible {
 		s.append(self.descriptionTabbedInner(tabCount))
 		return s
 	}
-
-	var handler: RouteMap.RequestHandler?
-	var wildCard: RouteNode?
-	var variables = [RouteNode]()
-	var subNodes = [String:RouteNode]()
 
 	func findHandler(currentComponent curComp: String, generator: ComponentGenerator, webResponse: WebResponse) -> RouteMap.RequestHandler? {
 		var m = generator
@@ -241,12 +243,19 @@ class RouteNode: CustomStringConvertible {
 				}
 			}
 
-			// wildcards
+			// wildcard
 			if let node = self.wildCard {
 				if let h = node.findHandler(currentComponent: p, generator: m, webResponse: webResponse) {
 					return self.successfulRoute(currentComponent: curComp, handler: node.successfulRoute(currentComponent: p, handler: h, webResponse: webResponse), webResponse: webResponse)
 				}
-			}
+            }
+            
+            // trailing wildcard
+            if let node = self.trailingWildCard {
+                if let h = node.findHandler(currentComponent: p, generator: m, webResponse: webResponse) {
+                    return self.successfulRoute(currentComponent: curComp, handler: node.successfulRoute(currentComponent: p, handler: h, webResponse: webResponse), webResponse: webResponse)
+                }
+            }
 
 		} else if self.handler != nil {
 
@@ -259,6 +268,13 @@ class RouteNode: CustomStringConvertible {
 					return self.successfulRoute(currentComponent: curComp, handler: node.successfulRoute(currentComponent: "", handler: h, webResponse: webResponse), webResponse: webResponse)
 				}
 			}
+            
+            // trailing wildcard
+            if let node = self.trailingWildCard {
+                if let h = node.findHandler(currentComponent: "", generator: m, webResponse: webResponse) {
+                    return self.successfulRoute(currentComponent: curComp, handler: node.successfulRoute(currentComponent: "", handler: h, webResponse: webResponse), webResponse: webResponse)
+                }
+            }
 		}
 		return nil
 	}
@@ -297,7 +313,13 @@ class RouteNode: CustomStringConvertible {
 				self.wildCard = RouteWildCard()
 			}
 			return self.wildCard
-		}
+        }
+        if comp == "**" {
+            if self.trailingWildCard == nil {
+                self.trailingWildCard = RouteTrailingWildCard()
+            }
+            return self.trailingWildCard
+        }
 		if comp.characters.count >= 3 && comp[comp.startIndex] == "{" && comp[comp.index(before: comp.endIndex)] == "}" {
 			let node = RouteVariable(name: comp[comp.index(after: comp.startIndex)..<comp.index(before: comp.endIndex)])
 			self.variables.append(node)
@@ -350,6 +372,34 @@ class RouteWildCard: RouteNode {
 		return s
 	}
 
+}
+
+class RouteTrailingWildCard: RouteWildCard {
+    
+    override func descriptionTabbed(_ tabCount: Int) -> String {
+        var s = "/**"
+        
+        if let _ = self.handler {
+            s.append("+h\n")
+        } else {
+            s.append("\n")
+        }
+        s.append(self.descriptionTabbedInner(tabCount))
+        return s
+    }
+    
+    override func addPathSegments(generator gen: ComponentGenerator, handler: RouteMap.RequestHandler) throws {
+        var m = gen
+        if let _ = m.next() {
+            throw RouteException.InvalidRoute
+        } else {
+            self.handler = handler
+        }
+    }
+    
+    override func findHandler(currentComponent curComp: String, generator: ComponentGenerator, webResponse: WebResponse) -> RouteMap.RequestHandler? {
+        return self.handler
+    }
 }
 
 class RouteVariable: RouteNode {

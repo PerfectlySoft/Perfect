@@ -158,9 +158,9 @@ public class NetTCP : Closeable {
 	/// Switches the socket to server mode. Socket should have been previously bound using the `bind` function.
 	public func listen(backlog: Int32 = 128) {
 	#if os(Linux)
-		SwiftGlibc.listen(fd.fd, backlog)
+		let _ = SwiftGlibc.listen(fd.fd, backlog)
 	#else
-		Darwin.listen(fd.fd, backlog)
+		let _ = Darwin.listen(fd.fd, backlog)
 	#endif
 	}
 	
@@ -170,18 +170,18 @@ public class NetTCP : Closeable {
 		if fd.fd != invalidSocket {
 		#if os(Linux)
 			shutdown(fd.fd, 2) // !FIX!
-			SwiftGlibc.close(fd.fd)
+			let _ = SwiftGlibc.close(fd.fd)
 		#else
 			shutdown(fd.fd, SHUT_RDWR)
-			Darwin.close(fd.fd)
+			let _ = Darwin.close(fd.fd)
 		#endif
 			
 			fd.fd = invalidSocket
 			
 			if self.semaphore != nil {
-				self.semaphore!.lock()
-				self.semaphore!.signal()
-				self.semaphore!.unlock()
+                if self.semaphore!.lock() && self.semaphore!.signal() {
+                    let _ = self.semaphore!.unlock()
+                }
 			}
 		}
 	}
@@ -346,9 +346,9 @@ public class NetTCP : Closeable {
 			NetEvent.add(socket: self.fd.fd, what: .Write, timeoutSeconds: NetEvent.noTimeout) {
 				_, w in
 				what = w
-				s?.lock()
-				s?.signal()
-				s?.unlock()
+				let _ = s?.lock()
+				let _ = s?.signal()
+				let _ = s?.unlock()
 			}
 		}
 		
@@ -365,7 +365,7 @@ public class NetTCP : Closeable {
 			
 			if sent == -1 {
 				if isEAgain(err: sent) { // flow
-					s!.lock()
+					let _ = s!.lock()
 					waitFunc()
 				} else { // error
 					break
@@ -376,12 +376,12 @@ public class NetTCP : Closeable {
 				if totalSent == length {
 					return true
 				}
-				s!.lock()
+				let _ = s!.lock()
 				waitFunc()
 			}
 			
-			s!.wait()
-			s!.unlock()
+			let _ = s!.wait()
+			let _ = s!.unlock()
 			if case .Write = what {
 			
 			} else {
@@ -519,9 +519,9 @@ public class NetTCP : Closeable {
 		NetEvent.add(socket: fd.fd, what: .Read, timeoutSeconds: NetEvent.noTimeout) { [weak self]
 			_, _ in
 			
-			self?.semaphore!.lock()
-			self?.semaphore!.signal()
-			self?.semaphore!.unlock()
+			let _ = self?.semaphore!.lock()
+			let _ = self?.semaphore!.signal()
+			let _ = self?.semaphore!.unlock()
 		}
 	}
 	
@@ -544,10 +544,10 @@ public class NetTCP : Closeable {
 					callBack(self.makeFromFd(accRes))
 				}
 			} else if self.isEAgain(err: Int(accRes)) {
-				self.semaphore!.lock()
+				let _ = self.semaphore!.lock()
 				waitAccept()
-				self.semaphore!.wait()
-				self.semaphore!.unlock()
+				let _ = self.semaphore!.wait()
+				let _ = self.semaphore!.unlock()
 			} else {
 				let errStr = String(validatingUTF8: strerror(Int32(errno))) ?? "NO MESSAGE"
 				print("Unexpected networking error: \(errno) '\(errStr)'")

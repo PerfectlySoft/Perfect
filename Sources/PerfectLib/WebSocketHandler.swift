@@ -231,27 +231,27 @@ public class WebSocket {
 
 		self.nextIsContinuation = !final
 
-		sendBuffer.import8Bits(from: byte1)
+		let _ = sendBuffer.import8Bits(from: byte1)
 
 		let payloadSize = bytes.count
 		if payloadSize < smallPayloadSize {
 
 			let byte2 = UInt8(payloadSize)
 
-			sendBuffer.import8Bits(from: byte2)
+			let _ = sendBuffer.import8Bits(from: byte2)
 
 		} else if payloadSize <= Int(UINT16_MAX) {
 
-			sendBuffer.import8Bits(from: UInt8(smallPayloadSize))
+			let _ = sendBuffer.import8Bits(from: UInt8(smallPayloadSize))
 				.import16Bits(from: UInt16(payloadSize).hostToNet)
 
 		} else {
 
-			sendBuffer.import8Bits(from: UInt8(1+smallPayloadSize))
+			let _ = sendBuffer.import8Bits(from: UInt8(1+smallPayloadSize))
 				.import64Bits(from: UInt64(payloadSize).hostToNet)
 
 		}
-		sendBuffer.importBytes(from: bytes)
+		let _ = sendBuffer.importBytes(from: bytes)
 		self.socket.write(bytes: sendBuffer.data) {
 			_ in
 			completion()

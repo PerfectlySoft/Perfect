@@ -44,4 +44,3 @@ let package = Package(
 
 products.append(Product(name: "PerfectLib", type: .Library(.Dynamic), modules: "PerfectLib"))
 
-//print("\(package.toTOML())")

@@ -28,7 +28,9 @@ import Darwin
 /// When a request is received, the server will instantiate a `WebRequest`/`WebResponse` pair and they will handle the remainder of the request.
 public class FastCGIServer {
 
-	private var net: NetTCP?
+    private var net: NetTCP?
+    /// Switch to user after binding socket file
+    public var runAsUser: String?
 
 	/// Empty public initializer
 	public init() {
@@ -46,8 +48,12 @@ public class FastCGIServer {
 		try pipe.bind(address: name)
 		pipe.listen()
 		chmod(name, mode_t(S_IRWXU|S_IRWXO|S_IRWXG))
-
-		self.net = pipe
+        
+        if let runAs = self.runAsUser {
+            try PerfectServer.switchTo(userName: runAs)
+        }
+		
+        self.net = pipe
 
 		defer { pipe.close() }
 

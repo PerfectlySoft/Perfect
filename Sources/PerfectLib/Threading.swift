@@ -81,9 +81,9 @@ public struct Threading {
 		}
 
 		public func doWithLock(closure: () throws -> ()) rethrows {
-			self.lock()
+			let _ = self.lock()
 			defer {
-				self.unlock()
+				let _ = self.unlock()
 			}
 			try closure()
 		}
@@ -193,17 +193,17 @@ public struct Threading {
 		}
 		
 		public func doWithReadLock(closure: () throws -> ()) rethrows {
-			self.readLock()
+			let _ = self.readLock()
 			defer {
-				self.unlock()
+				let _ = self.unlock()
 			}
 			try closure()
 		}
 		
 		public func doWithWriteLock(closure: () throws -> ()) rethrows {
-			self.writeLock()
+			let _ = self.writeLock()
 			defer {
-				self.unlock()
+				let _ = self.unlock()
 			}
 			try closure()
 		}

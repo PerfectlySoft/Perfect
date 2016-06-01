@@ -168,7 +168,7 @@ class FastCGIRequest : WebConnection {
 	func makeEndRequestBody(requestId rid: Int, appStatus: Int, protocolStatus: Int) -> [UInt8] {
 		
 		let b = Bytes()
-		b.import8Bits(from: fcgiVersion1)
+		let _ = b.import8Bits(from: fcgiVersion1)
 			.import8Bits(from: fcgiEndRequest)
 			.import16Bits(from: UInt16(rid).hostToNet)
 			.import16Bits(from: UInt16(8).hostToNet)
@@ -187,25 +187,25 @@ class FastCGIRequest : WebConnection {
 		let b = Bytes()
 		
 		if count > fcgiBodyChunkSize {
-			b.importBytes(from: makeStdoutBody(requestId: rid, data: data, firstPos: firstPos, count: fcgiBodyChunkSize))
-			b.importBytes(from: makeStdoutBody(requestId: rid, data: data, firstPos: fcgiBodyChunkSize + firstPos, count: count - fcgiBodyChunkSize))
+			let _ = b.importBytes(from: makeStdoutBody(requestId: rid, data: data, firstPos: firstPos, count: fcgiBodyChunkSize))
+                .importBytes(from: makeStdoutBody(requestId: rid, data: data, firstPos: fcgiBodyChunkSize + firstPos, count: count - fcgiBodyChunkSize))
 		} else {
 			
 			let padBytes = count % 8
-			b.import8Bits(from: fcgiVersion1)
+			let _ = b.import8Bits(from: fcgiVersion1)
 				.import8Bits(from: fcgiStdout)
 				.import16Bits(from: UInt16(rid).hostToNet)
 				.import16Bits(from: UInt16(count).hostToNet)
 				.import8Bits(from: UInt8(padBytes))
 				.import8Bits(from: 0)
 			if firstPos == 0 && count == data.count {
-				b.importBytes(from: data)
+				let _ = b.importBytes(from: data)
 			} else {
-				b.importBytes(from: data[firstPos..<count])
+				let _ = b.importBytes(from: data[firstPos..<count])
 			}
 			if padBytes > 0 {
 				for _ in 1...padBytes {
-					b.import8Bits(from: 0)
+					let _ = b.import8Bits(from: 0)
 				}
 			}
 		}
