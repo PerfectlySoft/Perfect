@@ -17,6 +17,12 @@
 //===----------------------------------------------------------------------===//
 //
 
+#if os(Linux)
+    import SwiftGlibc
+#else
+    import Darwin
+#endif
+
 /// Default directory for server-side modules. Modules in this directory are loaded at server startup.
 public var serverPerfectLibraries = "PerfectLibraries/" // !FIX! or obsolete
 
