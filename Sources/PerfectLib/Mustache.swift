@@ -90,7 +90,7 @@ public protocol MustachePageHandler {
     func extendValuesForResponse(context contxt: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector)
 }
 
-/** Convenience function to being a mustache template request
+/** Convenience function to begin a mustache template request
  
 ```swift
 Routing.Routes["/"] = {
