@@ -192,9 +192,9 @@ public class SysProcess : Closeable {
 	public func wait(hang: Bool = true) throws -> Int32 {
 		var code = Int32(0)
 		let status = waitpid(self.pid, &code, WUNTRACED | (hang ? 0 : WNOHANG))
-		if status == -1 {
-			try ThrowSystemError()
-		}
+        guard status != -1 else {
+            try ThrowSystemError()
+        }
 		self.pid = -1
 		close()
 		return code

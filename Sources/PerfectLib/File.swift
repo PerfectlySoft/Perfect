@@ -417,10 +417,6 @@ public class File : Closeable {
 
 		let readCount = read(CInt(fd), ptr, bSize)
 		guard readCount >= 0 else {
-			
-			ptr.deinitialize(count: bSize)
-			ptr.deallocateCapacity(bSize)
-			
 			try ThrowFileError()
 		}
 		if readCount < bSize {

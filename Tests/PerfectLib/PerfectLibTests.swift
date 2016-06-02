@@ -241,7 +241,7 @@ class PerfectLibTests: XCTestCase {
 			try file.openTruncate()
 
 			for testDic in testData {
-				try file.write(string: "--" + boundary + "\r\n")
+				let _ = try file.write(string: "--" + boundary + "\r\n")
 
 				let testName = testDic["name"]!
 				let testValue = testDic["value"]!
@@ -249,21 +249,21 @@ class PerfectLibTests: XCTestCase {
 
 				if let _ = isFile {
 
-					try file.write(string: "Content-Disposition: form-data; name=\"\(testName)\"; filename=\"\(testName).txt\"\r\n")
-					try file.write(string: "Content-Type: text/plain\r\n\r\n")
-					try file.write(string: testValue)
-					try file.write(string: "\r\n")
+					let _ = try file.write(string: "Content-Disposition: form-data; name=\"\(testName)\"; filename=\"\(testName).txt\"\r\n")
+					let _ = try file.write(string: "Content-Type: text/plain\r\n\r\n")
+					let _ = try file.write(string: testValue)
+					let _ = try file.write(string: "\r\n")
 
 				} else {
 
-					try file.write(string: "Content-Disposition: form-data; name=\"\(testName)\"\r\n\r\n")
-					try file.write(string: testValue)
-					try file.write(string: "\r\n")
+					let _ = try file.write(string: "Content-Disposition: form-data; name=\"\(testName)\"\r\n\r\n")
+					let _ = try file.write(string: testValue)
+					let _ = try file.write(string: "\r\n")
 				}
 
 			}
 
-			try file.write(string: "--" + boundary + "--")
+			let _ = try file.write(string: "--" + boundary + "--")
 
 			for num in 1...2048 {
 
@@ -816,7 +816,11 @@ class PerfectLibTests: XCTestCase {
 		do {
 			let template = try MustacheParser().parse(string: usingTemplate)
 			let d = ["name":"The name"] as [String:Any]
-			let context = MustacheEvaluationContext(map: d)
+            
+            let connection = HTTPServer.HTTPWebConnection()
+            let response = WebResponse(connection, request: WebRequest(connection))
+            
+            let context = MustacheEvaluationContext(webResponse: response, map: d)
 			let collector = MustacheEvaluationOutputCollector()
 			template.evaluate(context: context, collector: collector)
 
@@ -831,7 +835,7 @@ class PerfectLibTests: XCTestCase {
 		let url = "https://www.treefrog.ca"
 		let curl = CURL(url: url)
 
-		curl.setOption(CURLOPT_SSL_VERIFYPEER, int: 0)
+		let _ = curl.setOption(CURLOPT_SSL_VERIFYPEER, int: 0)
 
 		XCTAssert(curl.url == url)
 
