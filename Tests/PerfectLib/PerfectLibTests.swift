@@ -343,18 +343,18 @@ class PerfectLibTests: XCTestCase {
 			try file.openTruncate()
 
 			for testDic in testData {
-				try file.write(string: "--" + boundary + "\r\n")
+				let _ = try file.write(string: "--" + boundary + "\r\n")
 
 				let testName = testDic["name"]!
 				let testValue = testDic["value"]!
 
-				try file.write(string: "Content-Disposition: form-data; name=\"\(testName)\"; filename=\"\(testName).txt\"\r\n")
-				try file.write(string: "Content-Type: text/plain\r\n\r\n")
-				try file.write(string: testValue)
-				try file.write(string: "\r\n")
+				let _ = try file.write(string: "Content-Disposition: form-data; name=\"\(testName)\"; filename=\"\(testName).txt\"\r\n")
+				let _ = try file.write(string: "Content-Type: text/plain\r\n\r\n")
+				let _ = try file.write(string: testValue)
+				let _ = try file.write(string: "\r\n")
 			}
 
-			try file.write(string: "--" + boundary + "--")
+			let _ = try file.write(string: "--" + boundary + "--")
 
 			for num in 1...1 {
 
@@ -428,7 +428,7 @@ class PerfectLibTests: XCTestCase {
 					return
 				}
 				let b = Bytes()
-				b.import8Bits(from: 1)
+				let _ = b.import8Bits(from: 1)
 				do {
 					n.write(bytes: b.data) {
 						sent in
@@ -453,7 +453,7 @@ class PerfectLibTests: XCTestCase {
 					return
 				}
 				let b = Bytes()
-				b.import8Bits(from: 1)
+				let _ = b.import8Bits(from: 1)
 				do {
 					n.readBytesFully(count: 1, timeoutSeconds: 5.0) {
 						read in
@@ -537,7 +537,7 @@ class PerfectLibTests: XCTestCase {
 					return
 				}
 				let b = Bytes()
-				b.import8Bits(from: 1)
+				let _ = b.import8Bits(from: 1)
 				do {
 					n.readBytesFully(count: 1, timeoutSeconds: 2.0) {
 						read in
@@ -586,7 +586,7 @@ class PerfectLibTests: XCTestCase {
 		do {
 
 			try testFile.openTruncate()
-			try testFile.write(string: testContents)
+			let _ = try testFile.write(string: testContents)
 			testFile.close()
 			try testFile.openRead()
 
@@ -868,13 +868,54 @@ class PerfectLibTests: XCTestCase {
 		XCTAssert(header.count > 0)
 		XCTAssert(body.count > 0)
 	}
+    
+    func testCURLAsync() {
+        
+        let url = "https://www.treefrog.ca"
+        let curl = CURL(url: url)
+        
+        let _ = curl.setOption(CURLOPT_SSL_VERIFYPEER, int: 0)
+        
+        XCTAssert(curl.url == url)
+        
+        #if swift(>=3.0)
+            let clientExpectation = self.expectation(withDescription: "client")
+        #else
+            let clientExpectation = self.expectationWithDescription("client")
+        #endif
+        
+        curl.perform {
+            code, header, body in
+            
+            XCTAssert(0 == code, "Request error code \(code)")
+            
+            let response = curl.responseCode
+            XCTAssert(response == 200, "\(response)")
+            XCTAssert(header.count > 0)
+            XCTAssert(body.count > 0)
+            
+            clientExpectation.fulfill()
+        }
+        
+        #if swift(>=3.0)
+            self.waitForExpectations(withTimeout: 10000) {
+                _ in
+                
+            }
+        #else
+            self.waitForExpectationsWithTimeout(10000) {
+            (_: NSError?) in
+            
+            }
+        #endif
+    }
 
     func testCURLHeader() {
         let url = "https://httpbin.org/headers"
         let header = ("Accept", "application/json")
 
         let curl = CURL(url: url)
-        curl.setOption(CURLOPT_HTTPHEADER, s: "\(header.0): \(header.1)" )
+        let _ = curl.setOption(CURLOPT_HTTPHEADER, s: "\(header.0): \(header.1)" )
         let response = curl.performFully()
         XCTAssert(response.0 == 0)
 
@@ -898,12 +939,12 @@ class PerfectLibTests: XCTestCase {
         let url = "https://httpbin.org/post"
         let curl = CURL(url: url)
 
-        curl.setOption(CURLOPT_POST, int: 1)
+        let _ = curl.setOption(CURLOPT_POST, int: 1)
 
         let postParamString = "key1=value1&key2=value2"
         let byteArray = UTF8Encoding.decode(string: postParamString)
-        curl.setOption(CURLOPT_POSTFIELDS, v: UnsafeMutablePointer<UInt8>(byteArray))
-        curl.setOption(CURLOPT_POSTFIELDSIZE, int: byteArray.count)
+        let _ = curl.setOption(CURLOPT_POSTFIELDS, v: UnsafeMutablePointer<UInt8>(byteArray))
+        let _ = curl.setOption(CURLOPT_POSTFIELDSIZE, int: byteArray.count)
 
         let response = curl.performFully()
         XCTAssert(response.0 == 0)
@@ -1316,6 +1357,7 @@ extension PerfectLibTests {
 					("testICUFormatDate", testICUFormatDate),
 					("testMustacheParser1", testMustacheParser1),
 					("testCURL", testCURL),
+					("testCURLAsync", testCURLAsync),
 					("testCURLHeader", testCURLHeader),
 					("testCURLPost", testCURLPost),
 					("testTCPSSLClient", testTCPSSLClient),
