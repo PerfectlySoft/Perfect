@@ -171,7 +171,7 @@ public extension Threading {
 			p in
 		#if swift(>=3.0)
 			if let pCheck = p {
-				let unleakyObject = Unmanaged<IsThisRequired>.fromOpaque(OpaquePointer(pCheck)).takeRetainedValue()
+                let unleakyObject = Unmanaged<IsThisRequired>.fromOpaque(UnsafePointer<()>(pCheck)).takeRetainedValue()
 				unleakyObject.closure()
 			}
 		#else
@@ -182,11 +182,7 @@ public extension Threading {
 		#endif
 			return nil
 		}
-	#if swift(>=3.0)
-		let leakyObject = UnsafeMutablePointer<Void>(OpaquePointer(bitPattern: Unmanaged.passRetained(holderObject)))
-	#else
 		let leakyObject = UnsafeMutablePointer<Void>(Unmanaged.passRetained(holderObject).toOpaque())
-	#endif
 		pthread_create(&thrdSlf, &attr, pthreadFunc, leakyObject)
 	}
 
