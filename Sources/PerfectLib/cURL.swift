@@ -74,11 +74,7 @@ public class CURL {
 
 	func setCurlOpts() {
 		curl_easy_setopt_long(self.curl!, CURLOPT_NOSIGNAL, 1)
-	#if swift(>=3.0)
-		let opaqueMe = UnsafeMutablePointer<Void>(OpaquePointer(bitPattern: Unmanaged.passUnretained(self)))
-	#else
-		let opaqueMe = UnsafeMutablePointer<Void>(Unmanaged.passUnretained(self).toOpaque())
-	#endif
+		let opaqueMe = Unmanaged.passUnretained(self).toOpaque()
 		let _ = setOption(CURLOPT_HEADERDATA, v: opaqueMe)
 		let _ = setOption(CURLOPT_WRITEDATA, v: opaqueMe)
 		let _ = setOption(CURLOPT_READDATA, v: opaqueMe)
@@ -86,7 +82,7 @@ public class CURL {
 		let headerReadFunc: curl_func = {
 			(a, size, num, p) -> Int in
 		#if swift(>=3.0)
-			let crl = Unmanaged<CURL>.fromOpaque(OpaquePointer(p!)).takeUnretainedValue()
+			let crl = Unmanaged<CURL>.fromOpaque(p!).takeUnretainedValue()
 			if let bytes = UnsafeMutablePointer<UInt8>(a) {
 				let fullCount = size*num
 				for idx in 0..<fullCount {
@@ -113,7 +109,7 @@ public class CURL {
 			(a, size, num, p) -> Int in
 
 		#if swift(>=3.0)
-			let crl = Unmanaged<CURL>.fromOpaque(OpaquePointer(p!)).takeUnretainedValue()
+			let crl = Unmanaged<CURL>.fromOpaque(p!).takeUnretainedValue()
 			if let bytes = UnsafeMutablePointer<UInt8>(a) {
 				let fullCount = size*num
 				for idx in 0..<fullCount {
