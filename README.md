@@ -83,7 +83,7 @@ You can view the full source code for [PerfectTemplate](https://github.com/Perfe
 Swift Package Manager can generate an Xcode project which can run the PerfectTemplate server and provide full source code editing and debugging for your project. Enter the following in your terminal:
 
 ```
-swift build --generate-xcodeproj
+swift package generate-xcodeproj
 ```
 
 Open the generated file "PerfectTemplate.xcodeproj". Ensure that you have selected the executable target and selected it to run on "My Mac". You can now run and debug the server.
