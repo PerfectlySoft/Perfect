@@ -20,6 +20,9 @@
 // NOTE: This HTTP/2 client is competent enough to operate with Apple's push notification service, but
 // still lacks some functionality to make it general purpose. Consider it a work in-progress.
 
+import PerfectNet
+import PerfectThread
+
 #if os(Linux)
 import SwiftGlibc
 #endif
@@ -348,14 +351,14 @@ public class HTTP2Client {
 
 			if let net = self?.net {
 
-				while net.fd.isValid {
+				while net.isValid {
 
 					if let s = self {
 
 						s.frameReadEvent.doWithLock {
 							s.frameReadOK = false
 							s.readOneFrame()
-							if !s.frameReadOK && net.fd.isValid {
+							if !s.frameReadOK && net.isValid {
 								let _ = s.frameReadEvent.wait()
 							}
 						}
@@ -380,7 +383,7 @@ public class HTTP2Client {
 	}
 
 	public var isConnected: Bool {
-		return self.net.fd.isValid
+		return self.net.isValid
 	}
 
 	public func connect(host hst: String, port: UInt16, ssl: Bool, timeoutSeconds: Double, callback: (Bool) -> ()) {
@@ -626,7 +629,7 @@ public class HTTP2Client {
 	}
 
 	func writeHTTP2Frame(_ frame: HTTP2Frame, callback: (Bool) -> ()) {
-		if !net.fd.isValid {
+		if !net.isValid {
 			callback(false)
 		} else if !net.writeFully(bytes: frame.headerBytes()) {
 			callback(false)

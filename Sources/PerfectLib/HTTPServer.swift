@@ -17,6 +17,9 @@
 //===----------------------------------------------------------------------===//
 //
 
+import PerfectNet
+import PerfectThread
+
 let httpReadSize = 1024 * 4
 let httpReadTimeout = 5.0
 

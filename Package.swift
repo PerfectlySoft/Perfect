@@ -19,25 +19,17 @@
 
 import PackageDescription
 
+var urls = ["https://github.com/PerfectlySoft/Perfect-Net.git", "https://github.com/PerfectlySoft/Perfect-libcurl.git"]
+
 #if os(Linux)
-let package = Package(
-	name: "PerfectLib",
-	targets: [],
-	dependencies: [
-	              	.Package(url: "https://github.com/PerfectlySoft/Perfect-libcurl.git", versions: Version(0,0,0)..<Version(10,0,0)),
-	              	.Package(url: "https://github.com/PerfectlySoft/Perfect-OpenSSL-Linux.git", versions: Version(0,0,0)..<Version(10,0,0)),
-									.Package(url: "https://github.com/PerfectlySoft/Perfect-LinuxBridge.git", versions: Version(0,0,0)..<Version(10,0,0))
-	],
-	exclude: ["Sources/LinuxBridge", "Sources/OpenSSL", "Sources/cURL"]
-)
+urls += ["https://github.com/PerfectlySoft/Perfect-OpenSSL-Linux.git", "https://github.com/PerfectlySoft/Perfect-LinuxBridge.git"]
 #else
+urls += ["https://github.com/PerfectlySoft/Perfect-OpenSSL.git"]
+#endif
+
 let package = Package(
 	name: "PerfectLib",
 	targets: [],
-	dependencies: [
-	              	.Package(url: "https://github.com/PerfectlySoft/Perfect-libcurl.git", versions: Version(0,0,0)..<Version(10,0,0)),
-	              	.Package(url: "https://github.com/PerfectlySoft/Perfect-OpenSSL.git", versions: Version(0,0,0)..<Version(10,0,0))
-	],
-	exclude: ["Sources/LinuxBridge", "Sources/OpenSSL", "Sources/cURL"]
+	dependencies: urls.map { .Package(url: $0, versions: Version(0,0,0)..<Version(10,0,0)) },
+	exclude: []
 )
-#endif

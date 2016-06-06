@@ -17,6 +17,9 @@
 //===----------------------------------------------------------------------===//
 //
 
+import PerfectNet
+import PerfectThread
+
 #if os(Linux)
 import SwiftGlibc
 #else

@@ -17,6 +17,8 @@
 //===----------------------------------------------------------------------===//
 //
 
+import PerfectThread
+
 /// This class bundles together the values which will be used to set a cookie in the outgoing response
 public struct Cookie {
 	public let name: String?

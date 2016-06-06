@@ -17,6 +17,8 @@
 //===----------------------------------------------------------------------===//
 //
 
+import PerfectNet
+
 #if os(Linux)
 import SwiftGlibc
 import LinuxBridge
@@ -53,7 +55,7 @@ public class WebSocket {
 	public var readTimeoutSeconds: Double = -1.0
 	private var socket: NetTCP { return self.connection.connection }
 	/// Indicates if the socket is still likely connected or if it has been closed.
-	public var isConnected: Bool { return self.socket.fd.isValid }
+	public var isConnected: Bool { return self.socket.isValid }
 	private var nextIsContinuation = false
 	private let readBuffer = Bytes()
 
@@ -63,7 +65,7 @@ public class WebSocket {
 
 	/// Close the connection.
 	public func close() {
-		if self.socket.fd.isValid {
+		if self.socket.isValid {
 
 			self.sendMessage(opcode: .Close, bytes: [UInt8](), final: true) {
 				self.socket.close()

@@ -17,6 +17,8 @@
 //===----------------------------------------------------------------------===//
 //
 
+import PerfectNet
+
 #if os(Linux)
 import LinuxBridge
 #else
@@ -143,27 +145,6 @@ extension UInt8 {
 		return s
 	}
 }
-
-extension UnsignedInteger {
-	var hostIsLittleEndian: Bool { return 256.littleEndian == 256 }
-}
-
-protocol BytesSwappingUnsignedInteger: UnsignedInteger {
-	 var byteSwapped: Self { get }
-}
-
-extension BytesSwappingUnsignedInteger {
-	var hostToNet: Self {
-		return self.hostIsLittleEndian ? self.byteSwapped : self
-	}
-	var netToHost: Self {
-		return self.hostIsLittleEndian ? self.byteSwapped : self
-	}
-}
-
-extension UInt16: BytesSwappingUnsignedInteger {}
-extension UInt32: BytesSwappingUnsignedInteger {}
-extension UInt64: BytesSwappingUnsignedInteger {}
 
 extension String {
 	/// Returns the String with all special HTML characters encoded.
@@ -644,3 +625,29 @@ public func formatDate(_ date: Double, format: String, timezone inTimezone: Stri
 	}
 	try ThrowSystemError()
 }
+
+public extension NetNamedPipe {
+    /// Send the existing & opened `File`'s descriptor over the connection to the recipient
+    /// - parameter file: The `File` whose descriptor to send
+    /// - parameter callBack: The callback to call when the send completes. The parameter passed will be `true` if the send completed without error.
+    /// - throws: `PerfectError.NetworkError`
+    public func sendFile(_ file: File, callBack: (Bool) -> ()) throws {
+        try self.sendFd(Int32(file.fd), callBack: callBack)
+    }
+    
+    /// Receive an existing opened `File` descriptor from the sender
+    /// - parameter callBack: The callback to call when the receive completes. The parameter passed will be the received `File` object or nil.
+    /// - throws: `PerfectError.NetworkError`
+    public func receiveFile(callBack: (File?) -> ()) throws {
+        try self.receiveFd {
+            (fd: Int32) -> () in
+            
+            if fd == invalidSocket {
+                callBack(nil)
+            } else {
+                callBack(File(fd: fd, path: ""))
+            }
+        }
+    }
+}
+

@@ -54,3 +54,4 @@ PerfectServer/perfectserverhttp
 # SwiftPM
 .build/
 Packages/
+PerfectLib.xcodeproj/

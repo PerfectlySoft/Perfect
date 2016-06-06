@@ -17,6 +17,8 @@
 //===----------------------------------------------------------------------===//
 //
 
+import PerfectThread
+
 let mustacheExtension = "mustache"
 
 private var mustacheTemplateCache = [String: (Int, MustacheTemplate)]()
