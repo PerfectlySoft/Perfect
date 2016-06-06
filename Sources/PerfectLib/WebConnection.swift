@@ -17,6 +17,8 @@
 //===----------------------------------------------------------------------===//
 //
 
+import PerfectNet
+
 /// This protocol represents a generalized web server connection.
 public protocol WebConnection {
 	/// The TCP based connection

@@ -17,6 +17,8 @@
 //===----------------------------------------------------------------------===//
 //
 
+import PerfectNet
+
 // values which are part of the FastCGI protocol but are unused in this implementation are commented out
 
 #if os(Linux)
