@@ -19,7 +19,7 @@
 
 import PackageDescription
 
-var urls = ["https://github.com/PerfectlySoft/Perfect-Net.git", "https://github.com/PerfectlySoft/Perfect-libcurl.git"]
+var urls = ["https://github.com/PerfectlySoft/Perfect-Net.git"]
 
 #if os(Linux)
 urls += ["https://github.com/PerfectlySoft/Perfect-OpenSSL-Linux.git", "https://github.com/PerfectlySoft/Perfect-LinuxBridge.git"]

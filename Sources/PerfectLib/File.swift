@@ -43,7 +43,7 @@ import Darwin
 let fileCopyBufferSize = 16384
 
 /// Provides access to a file on the local file system
-public class File : Closeable {
+public class File {
 	
 	var openMode = Int(O_RDONLY)
 	var fd = -1
