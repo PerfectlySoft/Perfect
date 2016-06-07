@@ -142,23 +142,17 @@ public class WebRequest {
 
 	/// An array of `MimeReader.BodySpec` objects which provide access to each file which was uploaded
 	public lazy var fileUploads: [MimeReader.BodySpec] = {
-		var c = Array<MimeReader.BodySpec>()
-		if let mime = self.connection.mimes {
-			for body in mime.bodySpecs where body.file != nil {
-				c.append(body)
-			}
-		}
-		return c
+        if let mime = self.connection.mimes {
+            return mime.bodySpecs.filter { $0.file != nil }
+        }
+        return Array<MimeReader.BodySpec>()
 	}()
 
 	/// Return the raw POST body as a byte array
 	/// This is mainly useful when POSTing non-url-encoded and not-multipart form data
 	/// For example, if the content-type were application/json you could use this function to get the raw JSON data as bytes
 	public lazy var postBodyBytes: [UInt8] = {
-		if let stdin = self.connection.stdin {
-			return stdin
-		}
-		return [UInt8]()
+		return self.connection.stdin ?? [UInt8]()
 	}()
 
 	/// Return the raw POST body as a String
