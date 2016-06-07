@@ -159,10 +159,8 @@ public class WebRequest {
 	public lazy var fileUploads: [MimeReader.BodySpec] = {
 		var c = Array<MimeReader.BodySpec>()
 		if let mime = self.connection.mimes {
-			for body in mime.bodySpecs {
-				if body.file != nil {
-					c.append(body)
-				}
+			for body in mime.bodySpecs where body.file != nil {
+				c.append(body)
 			}
 		}
 		return c
@@ -183,8 +181,7 @@ public class WebRequest {
 	/// For example, if the content-type were application/json you could use this function to get the raw JSON data as a String
 	public lazy var postBodyString: String = {
 		if let stdin = self.connection.stdin {
-			let qs = UTF8Encoding.encode(bytes: stdin)
-			return qs
+			return UTF8Encoding.encode(bytes: stdin)
 		}
 		return ""
 	}()
@@ -193,24 +190,15 @@ public class WebRequest {
 	public lazy var postParams: [(String, String)] = {
 		var c = [(String, String)]()
 		if let mime = self.connection.mimes {
-			for body in mime.bodySpecs {
-				if body.file == nil {
-					c.append((body.fieldName, body.fieldValue))
-				}
+			for body in mime.bodySpecs where body.file == nil {
+				c.append((body.fieldName, body.fieldValue))
 			}
 		} else if let stdin = self.connection.stdin {
 			let qs = UTF8Encoding.encode(bytes: stdin)
-			let semiSplit = qs.characters.split(separator: "&").map { String($0) }
-			for paramPair in semiSplit {
-				let paramSplit = paramPair.characters.split(separator: "=", maxSplits: Int.max, omittingEmptySubsequences: false).map { String($0) }
-				if paramSplit.count == 2 {
-					let name = paramSplit[0].stringByReplacing(string: "+", withString: " ").stringByDecodingURL
-					let value = paramSplit[1].stringByReplacing(string: "+", withString: " ").stringByDecodingURL
-					if let n = name {
-						c.append((n, value ?? ""))
-					}
-				}
-			}
+            let eqSplit = qs.characters.split(separator: "&").map {
+                self.bSplit($0, on: "=")
+            }
+            return self.toValidPairs(eqSplit)
 		}
 		return c
     }()
