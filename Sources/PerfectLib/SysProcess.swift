@@ -123,13 +123,13 @@ public class SysProcess {
 		}
 
 	#if os(Linux)
-		let _ = DSwiftGlibc.close(fSTDIN[0])
-		let _ = DSwiftGlibc.close(fSTDOUT[1])
-		let _ = DSwiftGlibc.close(fSTDERR[1])
+		let _ = SwiftGlibc.close(fSTDIN[0])
+		let _ = SwiftGlibc.close(fSTDOUT[1])
+		let _ = SwiftGlibc.close(fSTDERR[1])
 		if spawnRes != 0 {
-			let _ = DSwiftGlibc.close(fSTDIN[1])
-			let _ = DSwiftGlibc.close(fSTDOUT[0])
-			let _ = DSwiftGlibc.close(fSTDERR[0])
+			let _ = SwiftGlibc.close(fSTDIN[1])
+			let _ = SwiftGlibc.close(fSTDOUT[0])
+			let _ = SwiftGlibc.close(fSTDERR[0])
 			try ThrowSystemError()
 		}
 	#else
