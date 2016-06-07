@@ -72,17 +72,13 @@ public class WebRequest {
     }
     
 	public lazy var documentRoot: String = {
-		var f = self.connection.requestParams["PERFECTSERVER_DOCUMENT_ROOT"]
-		var root = ""
-		if let r = f {
-			root = r
-		} else {
-			f = self.connection.requestParams["DOCUMENT_ROOT"]
-			if let r = f {
-				root = r
-			}
-		}
-		return root
+        let c = self.connection
+        if let root = c.requestParams["PERFECTSERVER_DOCUMENT_ROOT"] {
+            return root
+        } else if let root = c.requestParams["DOCUMENT_ROOT"] {
+            return root
+        }
+        return ""
 	}()
 
 	private var cachedHttpAuthorization: [String:String]? = nil
@@ -90,26 +86,15 @@ public class WebRequest {
 	/// Variables set by the URL routing process
 	public var urlVariables = [String:String]()
 
-	// !FIX! This had previously been lazy but utilizing .headers was crashing the Swift 3.0-dev compiler
-	// Temp work around is to be indirect
 	/// A `Dictionary` containing all HTTP header names and values
 	/// Only HTTP headers are included in the result. Any "meta" headers, i.e. those provided by the web server, are discarded.
-	public var headers: [String:String] {
-		get {
-			return self.work_around_headers
-		}
-		set {
-			self.work_around_headers = newValue
-		}
-	}
-	private lazy var work_around_headers: [String:String] = {
-        var d = Dictionary<String, String>()
-        for (key, value) in self.connection.requestParams {
-            if key.begins(with: "HTTP_") {
-                let index = key.index(key.startIndex, offsetBy: 5)
-                let nKey = key[index..<key.endIndex].stringByReplacing(string: "_", withString: "-")
-                d[nKey] = value
-            }
+	public lazy var headers: [String:String] = {
+        var d = [String:String]()
+        for (key, value) in self.connection.requestParams
+            where key.begins(with: "HTTP_") {
+            let index = key.index(key.startIndex, offsetBy: 5)
+            let nKey = key[index..<key.endIndex].stringByReplacing(string: "_", withString: "-")
+            d[nKey] = value
         }
         return d
     }()
@@ -120,10 +105,10 @@ public class WebRequest {
     
     private func toValidPairs(_ a: [[String.CharacterView]]) -> [(String, String)] {
         let valueUp = a.filter {
-            $0.count == 2
+                $0.count == 2
             }.map {
                 (String($0[0]).stringByDecodingURL ?? "", String($0[1]).stringByDecodingURL ?? "")
-        }
+            }
         return valueUp.filter {
             !$0.0.isEmpty
         }
@@ -188,11 +173,8 @@ public class WebRequest {
 
 	/// A tuple array containing each POST parameter name/value pair
 	public lazy var postParams: [(String, String)] = {
-		var c = [(String, String)]()
 		if let mime = self.connection.mimes {
-			for body in mime.bodySpecs where body.file == nil {
-				c.append((body.fieldName, body.fieldValue))
-			}
+            return mime.bodySpecs.filter { $0.file == nil }.map { ($0.fieldName, $0.fieldValue) }
 		} else if let stdin = self.connection.stdin {
 			let qs = UTF8Encoding.encode(bytes: stdin)
             let eqSplit = qs.characters.split(separator: "&").map {
@@ -200,25 +182,12 @@ public class WebRequest {
             }
             return self.toValidPairs(eqSplit)
 		}
-		return c
+        return [(String, String)]()
     }()
 
 	/// Returns the first GET or POST parameter with the given name
-	public func param(name: String) -> String? {
-		for p in self.queryParams
-			where p.0 == name {
-				return p.1
-		}
-		for p in self.postParams
-			where p.0 == name {
-				return p.1
-		}
-		return nil
-	}
-
-	/// Returns the first GET or POST parameter with the given name
 	/// Returns the supplied default value if the parameter was not found
-	public func param(name: String, defaultValue: String) -> String {
+	public func param(name: String, defaultValue: String? = nil) -> String? {
 		for p in self.queryParams
 			where p.0 == name {
 				return p.1
@@ -232,28 +201,14 @@ public class WebRequest {
 
 	/// Returns all GET or POST parameters with the given name
 	public func params(named: String) -> [String] {
-		var a = [String]()
-		for p in self.queryParams
-			where p.0 == named {
-				a.append(p.1)
-		}
-		for p in self.postParams
-			where p.0 == named {
-				a.append(p.1)
-		}
+        let a = self.params().filter { $0.0 == named }.map { $0.1 }
 		return a
 	}
 
 	/// Returns all GET or POST parameters
-	public func params() -> [(String,String)]? {
-		var a = [(String,String)]()
-		for p in self.queryParams {
-			a.append(p)
-		}
-		for p in self.postParams {
-			a.append(p)
-		}
-		return a.count > 0 ? a : nil
+	public func params() -> [(String, String)] {
+		let a = self.queryParams + self.postParams
+		return a
 	}
 
 	private func get(_ named: String) -> String? {
