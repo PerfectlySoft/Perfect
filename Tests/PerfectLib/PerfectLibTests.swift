@@ -402,178 +402,6 @@ class PerfectLibTests: XCTestCase {
 		}
 	}
 
-	func testClientServer() {
-
-		let port = UInt16(6500)
-
-		do {
-
-			let server = NetTCP()
-			let client = NetTCP()
-
-			try server.bind(port: port, address: "127.0.0.1")
-			server.listen()
-
-		#if swift(>=3.0)
-			let serverExpectation = self.expectation(withDescription: "server")
-			let clientExpectation = self.expectation(withDescription: "client")
-		#else
-			let serverExpectation = self.expectationWithDescription("server")
-			let clientExpectation = self.expectationWithDescription("client")
-		#endif
-
-			try server.accept(timeoutSeconds: NetEvent.noTimeout) {
-				(inn: NetTCP?) -> () in
-				guard let n = inn else {
-					XCTAssertNotNil(inn)
-					return
-				}
-				let b = Bytes()
-				let _ = b.import8Bits(from: 1)
-				do {
-					n.write(bytes: b.data) {
-						sent in
-
-						XCTAssertTrue(sent == 1)
-
-						n.readBytesFully(count: 1, timeoutSeconds: 5.0) {
-							read in
-							XCTAssert(read != nil)
-							XCTAssert(read?.count == 1)
-						}
-
-						serverExpectation.fulfill()
-					}
-				}
-			}
-
-			try client.connect(address: "127.0.0.1", port: port, timeoutSeconds: 5) {
-				(inn: NetTCP?) -> () in
-				guard let n = inn else {
-					XCTAssertNotNil(inn)
-					return
-				}
-				let b = Bytes()
-				let _ = b.import8Bits(from: 1)
-				do {
-					n.readBytesFully(count: 1, timeoutSeconds: 5.0) {
-						read in
-
-						XCTAssert(read != nil)
-						XCTAssert(read!.count == 1)
-
-						n.write(bytes: b.data) {
-							sent in
-
-							XCTAssertTrue(sent == 1)
-
-							clientExpectation.fulfill()
-						}
-					}
-				}
-			}
-		#if swift(>=3.0)
-			self.waitForExpectations(withTimeout: 10000, handler: {
-				_ in
-				server.close()
-				client.close()
-			})
-		#else
-			self.waitForExpectationsWithTimeout(10000, handler: {
-				_ in
-				server.close()
-				client.close()
-			})
-		#endif
-
-		} catch PerfectError.NetworkError(let code, let msg) {
-			XCTAssert(false, "Exception: \(code) \(msg)")
-		} catch let e {
-			XCTAssert(false, "Exception: \(e)")
-		}
-	}
-
-	func testThreadSleep() {
-		let now = getNow()
-		Threading.sleep(seconds: 1.9)
-		let nower = getNow()
-		XCTAssert(nower - now >= 2.0)
-	}
-
-	func testClientServerReadTimeout() {
-
-		let port = UInt16(6500)
-
-		do {
-
-			let server = NetTCP()
-			let client = NetTCP()
-
-			try server.bind(port: port, address: "127.0.0.1")
-			server.listen()
-
-			#if swift(>=3.0)
-				let serverExpectation = self.expectation(withDescription: "server")
-				let clientExpectation = self.expectation(withDescription: "client")
-			#else
-				let serverExpectation = self.expectationWithDescription("server")
-				let clientExpectation = self.expectationWithDescription("client")
-			#endif
-
-			try server.accept(timeoutSeconds: NetEvent.noTimeout) {
-				(inn: NetTCP?) -> () in
-				guard let _ = inn else {
-					XCTAssertNotNil(inn)
-					return
-				}
-				Threading.sleep(seconds: 5)
-				serverExpectation.fulfill()
-			}
-
-			var once = false
-			try client.connect(address: "127.0.0.1", port: port, timeoutSeconds: 5) {
-				(inn: NetTCP?) -> () in
-				guard let n = inn else {
-					XCTAssertNotNil(inn)
-					return
-				}
-				let b = Bytes()
-				let _ = b.import8Bits(from: 1)
-				do {
-					n.readBytesFully(count: 1, timeoutSeconds: 2.0) {
-						read in
-
-						XCTAssert(read == nil)
-						XCTAssert(once == false)
-						once = !once
-						Threading.sleep(seconds: 7)
-						XCTAssert(once == true)
-						clientExpectation.fulfill()
-					}
-				}
-			}
-
-		#if swift(>=3.0)
-			self.waitForExpectations(withTimeout: 10000, handler: {
-				_ in
-				server.close()
-				client.close()
-			})
-		#else
-			self.waitForExpectationsWithTimeout(10000, handler: {
-				_ in
-				server.close()
-				client.close()
-			})
-		#endif
-
-		} catch PerfectError.NetworkError(let code, let msg) {
-			XCTAssert(false, "Exception: \(code) \(msg)")
-		} catch let e {
-			XCTAssert(false, "Exception: \(e)")
-		}
-	}
-
 	func testNetSendFile() {
 
 		let testFile = File("/tmp/file_to_send.txt")
@@ -829,90 +657,6 @@ class PerfectLibTests: XCTestCase {
 		} catch {
 			XCTAssert(false)
 		}
-	}
-
-    func testTCPSSLClient() {
-
-		let address = "www.treefrog.ca"
-		let requestString = [UInt8](("GET / HTTP/1.0\r\nHost: \(address)\r\n\r\n").utf8)
-		let requestCount = requestString.count
-	#if swift(>=3.0)
-		let clientExpectation = self.expectation(withDescription: "client")
-	#else
-		let clientExpectation = self.expectationWithDescription("client")
-	#endif
-		let net = NetTCPSSL()
-
-		let setOk = net.setDefaultVerifyPaths()
-		XCTAssert(setOk, "Unable to setDefaultVerifyPaths \(net.sslErrorCode(resultCode: 1))")
-
-		do {
-			try net.connect(address: address, port: 443, timeoutSeconds: 5.0) {
-				(net: NetTCP?) -> () in
-
-				if let ssl = net as? NetTCPSSL {
-
-					ssl.beginSSL {
-						(success: Bool) in
-
-						XCTAssert(success, "Unable to begin SSL \(ssl.errorStr(forCode: Int32(ssl.errorCode())))")
-						if !success {
-							clientExpectation.fulfill()
-							return
-						}
-
-						do {
-							let x509 = ssl.peerCertificate
-							XCTAssert(x509 != nil)
-							let peerKey = x509?.publicKeyBytes
-							XCTAssert(peerKey != nil && peerKey!.count > 0)
-						}
-
-						ssl.write(bytes: requestString) {
-							(sent:Int) -> () in
-
-							XCTAssert(sent == requestCount)
-
-							ssl.readBytesFully(count: 1, timeoutSeconds: 5.0) {
-								(readBytes: [UInt8]?) -> () in
-
-								XCTAssert(readBytes != nil && readBytes!.count > 0)
-
-								let s1 = UTF8Encoding.encode(bytes: readBytes!)
-
-								ssl.readSomeBytes(count: 4096) {
-									(readBytes: [UInt8]?) -> () in
-
-									XCTAssert(readBytes != nil && readBytes!.count > 0)
-
-									let s = s1 + UTF8Encoding.encode(bytes: readBytes!)
-
-									XCTAssert(s.begins(with: "HTTP/1.1 200 OK"))
-
-									clientExpectation.fulfill()
-								}
-							}
-						}
-					}
-				} else {
-					XCTAssert(false, "Did not get NetTCPSSL back after connect")
-				}
-			}
-		} catch {
-			XCTAssert(false, "Exception thrown")
-		}
-
-	#if swift(>=3.0)
-		self.waitForExpectations(withTimeout: 10000) {
-			_ in
-			net.close()
-		}
-	#else
-		self.waitForExpectationsWithTimeout(10000) {
-			(_: NSError?) in
-			net.close()
-		}
-	#endif
 	}
 
 	func testStringBeginsWith() {
@@ -1173,6 +917,18 @@ class PerfectLibTests: XCTestCase {
         }
     }
     
+    func testDeletingPathExtension() {
+        let path = "/a/b/c.txt"
+        let del = path.stringByDeletingPathExtension
+        XCTAssert("/a/b/c" == del)
+    }
+    
+    func testGetPathExtension() {
+        let path = "/a/b/c.txt"
+        let ext = path.pathExtension
+        XCTAssert("txt" == ext)
+    }
+    
     func testRoutingFindPerformance() {
         for i in 0..<10000 {
             Routing.Routes["/foo/\(i)/baz"] = { _, _ in }
@@ -1203,9 +959,6 @@ extension PerfectLibTests {
 					("testJSONConvertibleObject", testJSONConvertibleObject),
 					("testJSONEncodeDecode", testJSONEncodeDecode),
 					("testJSONDecodeUnicode", testJSONDecodeUnicode),
-					("testClientServer", testClientServer),
-					("testThreadSleep", testThreadSleep),
-					("testClientServerReadTimeout", testClientServerReadTimeout),
 					("testNetSendFile", testNetSendFile),
 					("testSysProcess", testSysProcess),
 					("testStringByEncodingHTML", testStringByEncodingHTML),
@@ -1220,7 +973,6 @@ extension PerfectLibTests {
 					("testSubstringWith", testSubstringWith),
 					("testICUFormatDate", testICUFormatDate),
 					("testMustacheParser1", testMustacheParser1),
-					("testTCPSSLClient", testTCPSSLClient),
 					("testHPACKEncode", testHPACKEncode),
 					("testWebConnectionHeadersWellFormed", testWebConnectionHeadersWellFormed),
 					("testWebConnectionHeadersLF", testWebConnectionHeadersLF),
