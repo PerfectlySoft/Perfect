@@ -546,7 +546,7 @@ extension String {
 	}
 
 	var stringByResolvingSymlinksInPath: String {
-		return File(self).realPath()
+		return File(self).realPath
 
 //		let absolute = self.beginsWithSeparator
 //		let components = self.pathComponents(false)
@@ -678,7 +678,7 @@ public extension NetNamedPipe {
             if fd == invalidSocket {
                 callBack(nil)
             } else {
-                callBack(File(fd: fd, path: ""))
+                callBack(File("", fd: fd))
             }
         }
     }

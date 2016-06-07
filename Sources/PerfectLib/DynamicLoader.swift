@@ -40,8 +40,8 @@ struct DynamicLoader {
 		let resolvedPath = at.stringByResolvingSymlinksInPath
 		let moduleName = resolvedPath.lastPathComponent.stringByDeletingPathExtension
 		let file = File(resolvedPath + "/" + moduleName)
-		if file.exists() {
-			let realPath = file.realPath()
+		if file.exists {
+			let realPath = file.realPath
 			return self.loadRealPath(realPath, moduleName: moduleName)
 		}
 		return false

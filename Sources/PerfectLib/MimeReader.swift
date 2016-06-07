@@ -92,7 +92,7 @@ public final class MimeReader {
 		/// Clean up the BodySpec, possibly closing and deleting any associated temporary file.
 		public func cleanup() {
 			if let f = self.file {
-				if f.exists() {
+				if f.exists {
 					f.delete()
 				}
 				self.file = nil
@@ -130,8 +130,8 @@ public final class MimeReader {
 //	}
 	
 	func openTempFile(spec spc: BodySpec) {
-		spc.file = File(tempFilePrefix: self.tempDirectory + kPerfectTempPrefix)
-		spc.tmpFileName = spc.file!.path()
+		spc.file = TemporaryFile(withPrefix: self.tempDirectory + kPerfectTempPrefix)
+		spc.tmpFileName = spc.file!.path
 	}
 	
 	func isBoundaryStart(bytes byts: [UInt8], start: Array<UInt8>.Index) -> Bool {
@@ -346,7 +346,7 @@ public final class MimeReader {
 								
 								// end of file data
 								spec.file!.close()
-								chmod(spec.file!.path(), mode_t(S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH))
+								chmod(spec.file!.path, mode_t(S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH))
 								break
 								
 							} else if position.distance(to: end) - 2 < self.boundary.characters.count {

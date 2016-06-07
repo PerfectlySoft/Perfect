@@ -27,7 +27,7 @@ private let mustacheTemplateCacheLock = Threading.RWLock()
 private func getTemplateFromCache(_ path: String) throws -> MustacheTemplate {
 	let file = File(path)
 	var template: MustacheTemplate?
-	let modDate = file.modificationTime()
+	let modDate = file.modificationTime
 	
 	mustacheTemplateCacheLock.doWithReadLock {
 		if let fnd = mustacheTemplateCache[path] where fnd.0 == modDate {
@@ -41,9 +41,9 @@ private func getTemplateFromCache(_ path: String) throws -> MustacheTemplate {
 		if let fnd = mustacheTemplateCache[path] where fnd.0 == modDate {
 			template = fnd.1.clone() as? MustacheTemplate
 		} else {
-			try file.openRead()
+			try file.open()
 			defer { file.close() }
-			let bytes = try file.readSomeBytes(count: file.size())
+			let bytes = try file.readSomeBytes(count: file.size)
 			
 			let parser = MustacheParser()
 			let str = UTF8Encoding.encode(bytes: bytes)
@@ -380,14 +380,14 @@ public class MustachePartialTag : MustacheTag {
 		let fullPath = pageDir + "/" + self.tag + "." + mustacheExtension
 		
 		let file = File(fullPath)
-		guard file.exists() else {
+		guard file.exists else {
 			print("Exception while executing partial \(tag): file not found")
 			return
 		}
 		do {
-			try file.openRead()
+			try file.open()
 			defer { file.close() }
-			let bytes = try file.readSomeBytes(count: file.size())
+			let bytes = try file.readSomeBytes(count: file.size)
 			
 			// !FIX! cache parsed mustache files
 			// check mod dates for recompilation

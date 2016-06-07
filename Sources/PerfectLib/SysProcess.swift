@@ -144,9 +144,9 @@ public class SysProcess {
 		}
 	#endif
 		self.pid = procPid
-		self.stdin = File(fd: fSTDIN[1], path: "")
-		self.stdout = File(fd: fSTDOUT[0], path: "")
-		self.stderr = File(fd: fSTDERR[0], path: "")
+		self.stdin = File("stdin", fd: fSTDIN[1])
+		self.stdout = File("stdout", fd: fSTDOUT[0])
+		self.stderr = File("stderr", fd: fSTDERR[0])
 	}
 
 	deinit {
