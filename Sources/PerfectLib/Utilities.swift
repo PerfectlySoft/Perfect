@@ -626,6 +626,34 @@ public func formatDate(_ date: Double, format: String, timezone inTimezone: Stri
 	try ThrowSystemError()
 }
 
+extension UnicodeScalar {
+    
+    /// Returns true if the UnicodeScalar is a white space character
+    public func isWhiteSpace() -> Bool {
+        return isspace(Int32(self.value)) != 0
+    }
+    /// Returns true if the UnicodeScalar is a digit character
+    public func isDigit() -> Bool {
+        return isdigit(Int32(self.value)) != 0
+    }
+    /// Returns true if the UnicodeScalar is an alpha-numeric character
+    public func isAlphaNum() -> Bool {
+        return isalnum(Int32(self.value)) != 0
+    }
+    /// Returns true if the UnicodeScalar is a hexadecimal character
+    public func isHexDigit() -> Bool {
+        if self.isDigit() {
+            return true
+        }
+        switch self {
+        case "A", "B", "C", "D", "E", "F", "a", "b", "c", "d", "e", "f":
+            return true
+        default:
+            return false
+        }
+    }
+}
+
 public extension NetNamedPipe {
     /// Send the existing & opened `File`'s descriptor over the connection to the recipient
     /// - parameter file: The `File` whose descriptor to send
