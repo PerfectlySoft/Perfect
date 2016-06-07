@@ -378,24 +378,8 @@ public class MustachePartialTag : MustacheTag {
 		
 		let pageDir = page.stringByDeletingLastPathComponent
 		let fullPath = pageDir + "/" + self.tag + "." + mustacheExtension
-		
-		let file = File(fullPath)
-		guard file.exists else {
-			print("Exception while executing partial \(tag): file not found")
-			return
-		}
-		do {
-			try file.open()
-			defer { file.close() }
-			let bytes = try file.readSomeBytes(count: file.size)
-			
-			// !FIX! cache parsed mustache files
-			// check mod dates for recompilation
-			
-			let parser = MustacheParser()
-			let str = UTF8Encoding.encode(bytes: bytes)
-			let template = try parser.parse(string: str)
-			
+        do {
+			let template = try getTemplateFromCache(fullPath)
 			template.evaluatePragmas(context: contxt, collector: collector)
 			
 			let newContext = contxt.newChildContext()
