@@ -70,7 +70,7 @@ public class File {
 	public convenience init(tempFilePrefix: String) {
 		let template = tempFilePrefix + "XXXXXX"
 		let utf8 = template.utf8
-		let name = UnsafeMutablePointer<Int8>.allocatingCapacity(utf8.count + 1)
+		let name = UnsafeMutablePointer<Int8>(allocatingCapacity:  utf8.count + 1)
 		var i = utf8.startIndex
 		for index in 0..<utf8.count {
 			name[index] = Int8(utf8[i])
