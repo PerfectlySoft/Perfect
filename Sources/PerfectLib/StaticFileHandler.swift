@@ -32,7 +32,7 @@ public struct StaticFileHandler {
 		let documentRoot = req.documentRoot
 		let file = File(documentRoot + "/" + requestUri)
 		
-		guard file.exists() else {
+		guard file.exists else {
 			response.setStatus(code: 404, message: "Not Found")
 			response.appendBody(string: "The file \(requestUri) was not found.")
 			// !FIX! need 404.html or some such thing
@@ -59,8 +59,8 @@ public struct StaticFileHandler {
             }
         }
         
-        let size = file.size()
-        let contentType = MimeType.forExtension(file.path().pathExtension)
+        let size = file.size
+        let contentType = MimeType.forExtension(file.path.pathExtension)
         
 		resp.setStatus(code: 200, message: "OK")
 		resp.addHeader(name: "Content-Type", value: contentType)
@@ -80,12 +80,12 @@ public struct StaticFileHandler {
 	}
 	
     func performRangeRequest(rangeRequest: String, request: WebRequest, response: WebResponse, file: File) {
-        let size = file.size()
+        let size = file.size
         let ranges = self.parseRangeHeader(fromHeader: rangeRequest, max: size)
         if ranges.count == 1 {
             let range = ranges[0]
             let rangeCount = range.count
-            let contentType = MimeType.forExtension(file.path().pathExtension)
+            let contentType = MimeType.forExtension(file.path.pathExtension)
             
             response.setStatus(code: 206, message: "Partial Content")
             response.addHeader(name: "Content-Length", value: "\(rangeCount)")
@@ -96,7 +96,7 @@ public struct StaticFileHandler {
                 return response.requestCompleted()
             }
             
-            let _ = file.setMarker(to: range.lowerBound)
+            let _ = file.marker = range.lowerBound
             
             return self.sendFile(remainingBytes: rangeCount, response: response, file: file) {
                 ok in
@@ -112,7 +112,7 @@ public struct StaticFileHandler {
     }
     
     func getETag(file f: File) -> String {
-        let eTagStr = f.internalPath + "\(f.modificationTime())"
+        let eTagStr = f.internalPath + "\(f.modificationTime)"
         let eTag = eTagStr.utf8.sha1
         let eTagReStr = eTag.map { $0.hexString }.joined(separator: "")
         

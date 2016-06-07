@@ -45,79 +45,63 @@ let fileCopyBufferSize = 16384
 /// Provides access to a file on the local file system
 public class File {
 	
-	var openMode = Int(O_RDONLY)
 	var fd = -1
 	var internalPath = ""
 	
+    /// Checks that the file exists on the file system
+    /// - returns: True if the file exists or false otherwise
+    public var exists: Bool {
+        return access(internalPath, F_OK) != -1
+    }
+    
+    /// Returns true if the file has been opened
+    public var isOpen: Bool {
+        return fd != -1
+    }
+    
+    /// Returns the file's path
+    public var path: String { return internalPath }
+    
+    /// Returns the file path. If the file is a symbolic link, the link will be resolved.
+    public var realPath: String {
+        let maxPath = 2048
+        if isLink {
+            var ary = [UInt8](repeating: 0, count: maxPath)
+            let buffer = UnsafeMutablePointer<Int8>(ary)
+            let res = readlink(internalPath, buffer, maxPath)
+            if res != -1 {
+                ary.removeLast(maxPath - res)
+                let trailPath = UTF8Encoding.encode(bytes: ary)
+                if trailPath[trailPath.startIndex] != "/" && trailPath[trailPath.startIndex] != "." {
+                    return internalPath.stringByDeletingLastPathComponent + "/" + trailPath
+                }
+                return trailPath
+            }
+        }
+        return internalPath
+    }
+    
+    /// Returns the modification date for the file in the standard UNIX format of seconds since 1970/01/01 00:00:00 GMT
+    /// - returns: The date as Int
+    public var modificationTime: Int {
+        var st = stat()
+        let res = isOpen ?  fstat(Int32(fd), &st) : stat(internalPath, &st)
+        guard res == 0 else {
+            return Int.max
+        }
+        #if os(Linux)
+            return Int(st.st_mtim.tv_sec)
+        #else
+            return Int(st.st_mtimespec.tv_sec)
+        #endif
+    }
+    
 	/// Create a file object given a path and open mode
 	/// - parameter path: Path to the file which will be accessed
-	/// - parameter openMode: Default mode with which the file will be opened. Defaults to read-only. The file can be opened in any other mode by calling the accosiated openXXX function.
-	public init(_ path: String, openMode: Int = Int(O_RDONLY)) {
+    /// - parameter fd: The file descriptor, if any, for an already opened file
+	public init(_ path: String, fd: Int32 = -1) {
 		self.internalPath = path
-		self.openMode = openMode
-	}
-
-	/// Create a file object given an already opened file descriptor
-	/// - parameter fd: The file descriptor
-	/// - parameter path: The path to the file which has been previously opened. Defaults to no path.
-	public init(fd: Int32, path: String = "") {
-		self.fd = Int(fd)
-		self.internalPath = path
-	}
-	
-	/// Create a temporary file, usually in the system's /tmp/ directory
-	/// - parameter tempFilePrefix: The prefix for the temporary file's name. Random characters will be appended to the file's eventual name.
-	public convenience init(tempFilePrefix: String) {
-		let template = tempFilePrefix + "XXXXXX"
-		let utf8 = template.utf8
-		let name = UnsafeMutablePointer<Int8>(allocatingCapacity:  utf8.count + 1)
-		var i = utf8.startIndex
-		for index in 0..<utf8.count {
-			name[index] = Int8(utf8[i])
-		#if swift(>=3.0)
-			i = utf8.index(after: i)
-		#else
-			i = i.advanced(by: 1)
-		#endif
-		}
-		name[utf8.count] = 0
-		
-		let fd = mkstemp(name)
-		let tmpFileName = String(validatingUTF8: name)!
-		
-		name.deallocateCapacity(utf8.count + 1)
-		
-		self.init(fd: fd, path: tmpFileName)
-	}
-	
-	/// Returns the file's path
-	public func path() -> String { return internalPath }
-	
-	/// Returns the file path. If the file is a symbolic link, the link will be resolved.
-	public func realPath() -> String {
-		let maxPath = 2048
-		if isLink() {
-			var ary = [UInt8](repeating: 0, count: maxPath)
-			let buffer = UnsafeMutablePointer<Int8>(ary)
-			let res = readlink(internalPath, buffer, maxPath)
-			if res != -1 {
-				ary.removeLast(maxPath - res)
-				let trailPath = UTF8Encoding.encode(bytes: ary)
-				if trailPath[trailPath.startIndex] != "/" && trailPath[trailPath.startIndex] != "." {
-					return internalPath.stringByDeletingLastPathComponent + "/" + trailPath
-				}
-				return trailPath
-			}
-		}
-		return internalPath
-	}
-	
-	/// Closes and deletes the file
-	public func delete() {
-		if isOpen() {
-			close()
-		}
-		unlink(path())
+        self.fd = Int(fd)
 	}
 	
 	/// Closes the file if it had been opened
@@ -128,7 +112,6 @@ public class File {
 		#else
 			let _ = Darwin.close(CInt(fd))
 		#endif
-			
 			fd = -1
 		}
 	}
@@ -137,241 +120,159 @@ public class File {
 	public func abandon() {
 		fd = -1
 	}
-	
-	/// Opens the file using the default open mode.
+}
+
+public extension File {
+    /// The open mode for the file.
+    public enum OpenMode {
+        /// Opens the file for read-only access.
+        case read
+        /// Opens the file for write-only access, creating the file if it did not exist.
+        case write
+        /// Opens the file for read-write access, creating the file if it did not exist.
+        case readWrite
+        /// Opens the file for read-write access, creating the file if it did not exist and moving the file marker to the end.
+        case append
+        /// Opens the file for read-write access, creating the file if it did not exist and setting the file's size to zero.
+        case truncate
+        
+        var toMode: Int {
+            switch self {
+            case .read:         return Int(O_RDONLY)
+            case .write:        return Int(O_WRONLY|O_CREAT)
+            case .readWrite:    return Int(O_RDWR|O_CREAT)
+            case .append:       return Int(O_RDWR|O_APPEND|O_CREAT)
+            case .truncate:     return Int(O_RDWR|O_TRUNC|O_CREAT)
+            }
+        }
+    }
+    
+	/// Opens the file using the given mode.
 	/// - throws: `PerfectError.FileError`
-	public func open() throws {
-		
+    public func open(_ mode: OpenMode = .read) throws {
+        if fd != -1 {
+            close()
+        }
 	#if os(Linux)
-		let openFd = linux_open(internalPath, CInt(openMode), mode_t(S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP))
+		let openFd = linux_open(internalPath, CInt(mode.toMode), mode_t(S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP))
 	#else
-		let openFd = Darwin.open(internalPath, CInt(openMode), mode_t(S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP))
+		let openFd = Darwin.open(internalPath, CInt(mode.toMode), mode_t(S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP))
 	#endif
-		
 		guard openFd != -1 else {
 			try ThrowFileError()
 		}
 		fd = Int(openFd)
 	}
-	
-	/// Opens the file for read-only access.
-	/// - throws: `PerfectError.FileError`
-	public func openRead() throws {
-		openMode = Int(O_RDONLY)
-		try open()
-	}
-	
-	/// Opens the file for read-write access, creating the file if it did not exist.
-	/// - throws: `PerfectError.FileError`
-	public func openWrite() throws {
-		openMode = Int(O_RDWR|O_CREAT)
-		try open()
-	}
-	
-	/// Opens the file for write-only access, creating the file if it did not exist.
-	/// - throws: `PerfectError.FileError`
-	public func openWriteOnly() throws {
-		openMode = Int(O_WRONLY|O_CREAT)
-		try open()
-	}
-	
-	/// Opens the file for read-write access, creating the file if it did not exist and moving the file marker to the end.
-	/// - throws: `PerfectError.FileError`
-	public func openAppend() throws {
-		openMode = Int(O_RDWR|O_APPEND|O_CREAT)
-		try open()
-	}
-	
-	/// Opens the file for read-write access, creating the file if it did not exist and setting the file's size to zero.
-	/// - throws: `PerfectError.FileError`
-	public func openTruncate() throws {
-		openMode = Int(O_RDWR|O_TRUNC|O_CREAT)
-		try open()
-	}
-	
-	/// Opens the file for read-only access.
-	/// - parameter path: The path
-	/// - throws: `PerfectError.FileError`
-	public func openRead(path: String) throws {
-		internalPath = path
-		openMode = Int(O_RDONLY)
-		try open()
-	}
-	
-	/// Opens the file for read-write access, creating the file if it did not exist.
-	/// - parameter path: The path
-	/// - throws: `PerfectError.FileError`
-	public func openWrite(path: String) throws {
-		internalPath = path
-		openMode = Int(O_RDWR|O_CREAT)
-		try open()
-	}
-	
-	/// Opens the file for write-only access, creating the file if it did not exist.
-	/// - parameter path: The path
-	/// - throws: `PerfectError.FileError`
-	public func openWriteOnly(path: String) throws {
-		internalPath = path
-		openMode = Int(O_WRONLY|O_CREAT)
-		try open()
-	}
-	
-	/// Opens the file for read-write access, creating the file if it did not exist and moving the file marker to the end.
-	/// - parameter path: The path
-	/// - throws: `PerfectError.FileError`
-	public func openAppend(path: String) throws {
-		internalPath = path
-		openMode = Int(O_RDWR|O_APPEND|O_CREAT)
-		try open()
-	}
-	
-	/// Opens the file for read-write access, creating the file if it did not exist and setting the file's size to zero.
-	/// - parameter path: The path
-	/// - throws: `PerfectError.FileError`
-	public func openTruncate(path: String) throws {
-		internalPath = path
-		openMode = Int(O_RDWR|O_TRUNC|O_CREAT)
-		try open()
-	}
-	
-	/// Returns the value of the file's current position marker
-	/// - returns: The file marker value
-	public func marker() -> Int {
-		if isOpen() {
-			return Int(lseek(Int32(self.fd), 0, SEEK_CUR))
-		}
-		return 0
-	}
-	
-	/// Sets the file's position marker given the `to` and `whence` parameters.
-	/// - parameter to: The new position
-	/// - parameter whence: Whence to set it from. Once of `SEEK_SET`, `SEEK_CUR`, `SEEK_END`.
-	/// - returns: The new position marker value
-	public func setMarker(to toInt: Int, whence: Int32 = SEEK_CUR) -> Int {
-		if !isOpen() {
-			do { try openRead() } catch { return -1 }
-		}
-		return Int(lseek(Int32(self.fd), off_t(toInt), whence))
-	}
-	
-	/// Returns the modification date for the file in the standard UNIX format of seconds since 1970/01/01 00:00:00 GMT
-	/// - returns: The date as Int
-	public func modificationTime() -> Int {
-		var st = stat()
-		let res = isOpen() ?  fstat(Int32(fd), &st) : stat(internalPath, &st)
-		guard res == 0 else {
-			return Int.max
-		}
-#if os(Linux)
-		return Int(st.st_mtim.tv_sec)
-#else
-		return Int(st.st_mtimespec.tv_sec)
-#endif
-	}
-	
-	/// Moves the file to the new location, optionally overwriting any existing file
-	/// - parameter path: The path to move the file to
-	/// - parameter overWrite: Indicates that any existing file at the destination path should first be deleted
-	/// - returns: Returns a new file object representing the new location
-	/// - throws: `PerfectError.FileError`
-	public func moveTo(path: String, overWrite: Bool = false) throws -> File {
-		let destFile = File(path)
-		if destFile.exists() {
-			if overWrite {
-				destFile.delete()
-			} else {
-				throw PerfectError.FileError(-1, "Can not overwrite existing file")
-			}
-		}
-		close()
-		let res = rename(self.path(), path)
-		if res == 0 {
-			return destFile
-		}
-		if errno == EXDEV {
-			let _ = try self.copyTo(path: path, overWrite: overWrite)
-			self.delete()
-			return destFile
-		}
-		try ThrowFileError()
-	}
-	
-	/// Copies the file to the new location, optionally overwriting any existing file
-	/// - parameter path: The path to copy the file to
-	/// - parameter overWrite: Indicates that any existing file at the destination path should first be deleted
-	/// - returns: Returns a new file object representing the new location
-	/// - throws: `PerfectError.FileError`
-	public func copyTo(path pth: String, overWrite: Bool = false) throws -> File {
-		let destFile = File(pth)
-		if destFile.exists() {
-			if overWrite {
-				destFile.delete()
-			} else {
-				throw PerfectError.FileError(-1, "Can not overwrite existing file")
-			}
-		}
-		let wasOpen = self.isOpen()
-		let oldMarker = self.marker()
-		if !wasOpen {
-			try openRead()
-		} else {
-			let _ = setMarker(to: 0)
-		}
-		defer {
-			if !wasOpen {
-				close()
-			} else {
-				let _ = setMarker(to: oldMarker)
-			}
-		}
-		
-		try destFile.openTruncate()
-		
-		var bytes = try self.readSomeBytes(count: fileCopyBufferSize)
-		while bytes.count > 0 {
-			let _ = try destFile.write(bytes: bytes)
-			bytes = try self.readSomeBytes(count: fileCopyBufferSize)
-		}
-		
-		destFile.close()
-		return destFile
-	}
-	
-	/// Checks that the file exists on the file system
-	/// - returns: True if the file exists or false otherwise
-	public func exists() -> Bool {
-		return access(internalPath, F_OK) != -1
-	}
-	
-	func sizeOr(_ value: Int) -> Int {
-		var st = stat()
-		let statRes = isOpen() ?  fstat(Int32(fd), &st) : stat(internalPath, &st)
-		guard statRes != -1 else {
-			return 0
-		}
-		if (Int32(st.st_mode) & Int32(S_IFMT)) == Int32(S_IFREG) {
-			return Int(st.st_size)
-		}
-		return value
-	}
-	
+}
+
+public extension File {
+    /// The current file read/write position.
+    public var marker: Int {
+        /// Returns the value of the file's current position marker
+        get {
+            if isOpen {
+                return Int(lseek(Int32(self.fd), 0, SEEK_CUR))
+            }
+            return 0
+        }
+        /// Sets the file's position marker given the value as measured from the begining of the file.
+        set {
+            lseek(Int32(self.fd), off_t(newValue), SEEK_SET)
+        }
+    }
+}
+
+public extension File {
+    
+    /// Closes and deletes the file
+    public func delete() {
+        close()
+        unlink(path)
+    }
+    
+    /// Moves the file to the new location, optionally overwriting any existing file
+    /// - parameter path: The path to move the file to
+    /// - parameter overWrite: Indicates that any existing file at the destination path should first be deleted
+    /// - returns: Returns a new file object representing the new location
+    /// - throws: `PerfectError.FileError`
+    public func moveTo(path: String, overWrite: Bool = false) throws -> File {
+        let destFile = File(path)
+        if destFile.exists {
+            if overWrite {
+                destFile.delete()
+            } else {
+                throw PerfectError.FileError(-1, "Can not overwrite existing file")
+            }
+        }
+        close()
+        let res = rename(self.path, path)
+        if res == 0 {
+            return destFile
+        }
+        if errno == EXDEV {
+            let _ = try self.copyTo(path: path, overWrite: overWrite)
+            self.delete()
+            return destFile
+        }
+        try ThrowFileError()
+    }
+
+    /// Copies the file to the new location, optionally overwriting any existing file
+    /// - parameter path: The path to copy the file to
+    /// - parameter overWrite: Indicates that any existing file at the destination path should first be deleted
+    /// - returns: Returns a new file object representing the new location
+    /// - throws: `PerfectError.FileError`
+    public func copyTo(path pth: String, overWrite: Bool = false) throws -> File {
+        let destFile = File(pth)
+        if destFile.exists {
+            if overWrite {
+                destFile.delete()
+            } else {
+                throw PerfectError.FileError(-1, "Can not overwrite existing file")
+            }
+        }
+        let wasOpen = self.isOpen
+        let oldMarker = self.marker
+        if !wasOpen {
+            try open()
+        } else {
+            let _ = marker = 0
+        }
+        defer {
+            if !wasOpen {
+                close()
+            } else {
+                let _ = marker = oldMarker
+            }
+        }
+        
+        try destFile.open(.truncate)
+        
+        var bytes = try self.readSomeBytes(count: fileCopyBufferSize)
+        while bytes.count > 0 {
+            let _ = try destFile.write(bytes: bytes)
+            bytes = try self.readSomeBytes(count: fileCopyBufferSize)
+        }
+        
+        destFile.close()
+        return destFile
+    }
+}
+
+public extension File {
+    
 	/// Returns the size of the file in bytes
-	public func size() -> Int {
+    public var size: Int {
 		var st = stat()
-		let statRes = isOpen() ?  fstat(Int32(fd), &st) : stat(internalPath, &st)
+		let statRes = isOpen ?  fstat(Int32(fd), &st) : stat(internalPath, &st)
 		guard statRes != -1 else {
 			return 0
 		}
 		return Int(st.st_size)
 	}
 	
-	/// Returns true if the file has been opened
-	public func isOpen() -> Bool {
-		return fd != -1
-	}
-	
 	/// Returns true if the file is a symbolic link
-	public func isLink() -> Bool {
+    public var isLink: Bool {
 		var st = stat()
 		let statRes = lstat(internalPath, &st)
 		guard statRes != -1 else {
@@ -382,9 +283,9 @@ public class File {
 	}
 	
 	/// Returns true if the file is actually a directory
-	public func isDir() -> Bool {
+    public var isDir: Bool {
 		var st = stat()
-		let statRes = isOpen() ?  fstat(Int32(fd), &st) : stat(internalPath, &st)
+		let statRes = isOpen ?  fstat(Int32(fd), &st) : stat(internalPath, &st)
 		guard statRes != -1 else {
 			return false
 		}
@@ -393,25 +294,39 @@ public class File {
 	}
 	
 	/// Returns the UNIX style permissions for the file
-	public func perms() -> Int {
+    public var perms: Int {
 		var st = stat()
-		let statRes = isOpen() ?  fstat(Int32(fd), &st) : stat(internalPath, &st)
+		let statRes = isOpen ?  fstat(Int32(fd), &st) : stat(internalPath, &st)
 		guard statRes != -1 else {
 			return 0
 		}
 		let mode = st.st_mode
 		return Int(Int32(mode) ^ Int32(S_IFMT))
-	}
-	
+    }
+}
+
+public extension File {
+
 	/// Reads up to the indicated number of bytes from the file
 	/// - parameter count: The maximum number of bytes to read
 	/// - returns: The bytes read as an array of UInt8. May have a count of zero.
 	/// - throws: `PerfectError.FileError`
-	public func readSomeBytes(count cnt: Int) throws -> [UInt8] {
-		if !isOpen() {
-			try openRead()
-		}
-		let bSize = min(cnt, self.sizeOr(cnt))
+	public func readSomeBytes(count: Int) throws -> [UInt8] {
+		try open()
+        
+        func sizeOr(_ value: Int) -> Int {
+            var st = stat()
+            let statRes = isOpen ?  fstat(Int32(fd), &st) : stat(internalPath, &st)
+            guard statRes != -1 else {
+                return 0
+            }
+            if (Int32(st.st_mode) & Int32(S_IFMT)) == Int32(S_IFREG) {
+                return Int(st.st_size)
+            }
+            return value
+        }
+        
+		let bSize = min(count, sizeOr(count))
 		var ary = [UInt8](repeating: 0, count: bSize)
 		let ptr = UnsafeMutablePointer<UInt8>(ary)
 
@@ -427,24 +342,19 @@ public class File {
 	
 	/// Reads the entire file as a string
 	public func readString() throws -> String {
-		let bytes = try self.readSomeBytes(count: self.size())
+		let bytes = try self.readSomeBytes(count: self.size)
 		return UTF8Encoding.encode(bytes: bytes)
-	}
+    }
+}
+
+public extension File {
 	
 	/// Writes the string to the file using UTF-8 encoding
 	/// - parameter s: The string to write
 	/// - returns: Returns the number of bytes which were written
 	/// - throws: `PerfectError.FileError`
-	public func write(string strng: String) throws -> Int {
-		return try write(bytes: Array(strng.utf8))
-	}
-	
-	/// Writes the array of bytes to the file
-	/// - parameter bytes: The bytes to write
-	/// - returns: The number of bytes which were written
-	/// - throws: `PerfectError.FileError`
-	public func write(bytes byts: [UInt8]) throws -> Int {
-		return try write(bytes: byts, dataPosition: 0, length: byts.count)
+	public func write(string: String) throws -> Int {
+		return try write(bytes: Array(string.utf8))
 	}
 	
 	/// Write the indicated bytes to the file
@@ -452,26 +362,29 @@ public class File {
 	/// - parameter dataPosition: The offset within `bytes` at which to begin writing.
 	/// - parameter length: The number of bytes to write.
 	/// - throws: `PerfectError.FileError`
-	public func write(bytes byts: [UInt8], dataPosition: Int, length: Int) throws -> Int {
-		
-		let ptr = UnsafeMutablePointer<UInt8>(byts).advanced(by: dataPosition)
-		#if os(Linux)
-		let wrote = SwiftGlibc.write(Int32(fd), ptr, length)
-		#else
-		let wrote = Darwin.write(Int32(fd), ptr, length)
-		#endif
-		guard wrote == length else {
+	public func write(bytes: [UInt8], dataPosition: Int = 0, length: Int = Int.max) throws -> Int {
+        let len = min(bytes.count - dataPosition, length)
+		let ptr = UnsafeMutablePointer<UInt8>(bytes).advanced(by: dataPosition)
+    #if os(Linux)
+		let wrote = SwiftGlibc.write(Int32(fd), ptr, len)
+	#else
+		let wrote = Darwin.write(Int32(fd), ptr, len)
+	#endif
+		guard wrote == len else {
 			try ThrowFileError()
 		}
 		return wrote
 	}
+}
+
+public extension File {
 	
 	/// Attempts to place an advisory lock starting from the current position marker up to the indicated byte count. This function will block the current thread until the lock can be performed.
 	/// - parameter byteCount: The number of bytes to lock
 	/// - throws: `PerfectError.FileError`
 	public func lock(byteCount: Int) throws {
-		if !isOpen() {
-			try openWrite()
+		if !isOpen {
+			try open(.write)
 		}
 		let res = lockf(Int32(self.fd), F_LOCK, off_t(byteCount))
 		guard res == 0 else {
@@ -483,8 +396,8 @@ public class File {
 	/// - parameter byteCount: The number of bytes to unlock
 	/// - throws: `PerfectError.FileError`
 	public func unlock(byteCount: Int) throws {
-		if !isOpen() {
-			try openWrite()
+		if !isOpen {
+			try open(.write)
 		}
 		let res = lockf(Int32(self.fd), F_ULOCK, off_t(byteCount))
 		guard res == 0 else {
@@ -496,8 +409,8 @@ public class File {
 	/// - parameter byteCount: The number of bytes to lock
 	/// - throws: `PerfectError.FileError`
 	public func tryLock(byteCount: Int) throws {
-		if !isOpen() {
-			try openWrite()
+		if !isOpen {
+			try open(.write)
 		}
 		let res = lockf(Int32(self.fd), F_TLOCK, off_t(byteCount))
 		guard res == 0 else {
@@ -510,8 +423,8 @@ public class File {
 	/// - returns: True if the file is locked
 	/// - throws: `PerfectError.FileError`
 	public func testLock(byteCount: Int) throws -> Bool {
-		if !isOpen() {
-			try openWrite()
+		if !isOpen {
+			try open(.write)
 		}
 		let res = Int(lockf(Int32(self.fd), F_TEST, off_t(byteCount)))
 		guard res == 0 || res == Int(EACCES) || res == Int(EAGAIN) else {
@@ -521,36 +434,55 @@ public class File {
 	}
 }
 
+// Subclass to represent a file which can not be closed
 private final class UnclosableFile : File {
-	
-	init(fd: Int32) {
-		super.init(fd: fd, path: "")
+    override init(_ path: String, fd: Int32) {
+		super.init(path, fd: fd)
 	}
-	
 	override func close() {
 		// nothing
 	}
 }
 
+/// A temporary, randomly named file.
+public final class TemporaryFile: File {
+    /// Create a temporary file, usually in the system's /tmp/ directory
+    /// - parameter withPrefix: The prefix for the temporary file's name. Random characters will be appended to the file's eventual name.
+    public convenience init(withPrefix: String) {
+        let template = withPrefix + "XXXXXX"
+        let utf8 = template.utf8
+        let name = UnsafeMutablePointer<Int8>(allocatingCapacity:  utf8.count + 1)
+        var i = utf8.startIndex
+        for index in 0..<utf8.count {
+            name[index] = Int8(utf8[i])
+            #if swift(>=3.0)
+                i = utf8.index(after: i)
+            #else
+                i = i.advanced(by: 1)
+            #endif
+        }
+        name[utf8.count] = 0
+        
+        let fd = mkstemp(name)
+        let tmpFileName = String(validatingUTF8: name)!
+        
+        name.deallocateCapacity(utf8.count + 1)
+        
+        self.init(tmpFileName, fd: fd)
+    }
+}
+
 /// This file can be used to write to standard in
-public func FileStdin() -> File {
-	return UnclosableFile(fd: STDIN_FILENO)
+public var fileStdin: File {
+    return UnclosableFile("/dev/stdin", fd: STDIN_FILENO)
 }
 
 /// This file can be used to write to standard out
-public func FileStdout() -> File {
-	return UnclosableFile(fd: STDOUT_FILENO)
+public var fileStdout: File {
+	return UnclosableFile("/dev/stdout", fd: STDOUT_FILENO)
 }
 
 /// This file can be used to write to standard error
-public func FileStderr() -> File {
-	return UnclosableFile(fd: STDERR_FILENO)
+public var fileStderr: File {
+	return UnclosableFile("/dev/stderr", fd: STDERR_FILENO)
 }
-
-
-
-
-
-
-
-

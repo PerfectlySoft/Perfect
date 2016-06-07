@@ -205,118 +205,6 @@ class PerfectLibTests: XCTestCase {
 		XCTAssert(emojiStr == "😳")
 	}
 
-	func testMimeReader() {
-
-		let boundary = "---------------------------9051914041544843365972754266"
-
-		var testData = Array<Dictionary<String, String>>()
-		let numTestFields = 1 + _rand(to: 100)
-
-		for idx in 0..<numTestFields {
-			var testDic = Dictionary<String, String>()
-
-			testDic["name"] = "test_field_\(idx)"
-
-			let isFile = _rand(to: 3) == 2
-			if isFile {
-				var testValue = ""
-				for _ in 1..<_rand(to: 1000) {
-					testValue.append("O")
-				}
-				testDic["value"] = testValue
-				testDic["file"] = "1"
-			} else {
-				var testValue = ""
-				for _ in 0..<_rand(to: 1000) {
-					testValue.append("O")
-				}
-				testDic["value"] = testValue
-			}
-
-			testData.append(testDic)
-		}
-
-		let file = File("/tmp/mimeReaderTest.txt")
-		do {
-
-			try file.openTruncate()
-
-			for testDic in testData {
-				let _ = try file.write(string: "--" + boundary + "\r\n")
-
-				let testName = testDic["name"]!
-				let testValue = testDic["value"]!
-				let isFile = testDic["file"]
-
-				if let _ = isFile {
-
-					let _ = try file.write(string: "Content-Disposition: form-data; name=\"\(testName)\"; filename=\"\(testName).txt\"\r\n")
-					let _ = try file.write(string: "Content-Type: text/plain\r\n\r\n")
-					let _ = try file.write(string: testValue)
-					let _ = try file.write(string: "\r\n")
-
-				} else {
-
-					let _ = try file.write(string: "Content-Disposition: form-data; name=\"\(testName)\"\r\n\r\n")
-					let _ = try file.write(string: testValue)
-					let _ = try file.write(string: "\r\n")
-				}
-
-			}
-
-			let _ = try file.write(string: "--" + boundary + "--")
-
-			for num in 1...2048 {
-
-				file.close()
-				try file.openRead()
-
-//				print("Test run: \(num) bytes with \(numTestFields) fields")
-
-				let mimeReader = MimeReader("multipart/form-data; boundary=" + boundary)
-
-				XCTAssertEqual(mimeReader.boundary, "--" + boundary)
-
-				var bytes = try file.readSomeBytes(count: num)
-				while bytes.count > 0 {
-					mimeReader.addToBuffer(bytes: bytes)
-					bytes = try file.readSomeBytes(count: num)
-				}
-
-				XCTAssertEqual(mimeReader.bodySpecs.count, testData.count)
-
-				var idx = 0
-				for body in mimeReader.bodySpecs {
-
-					let testDic = testData[idx]
-					idx += 1
-					XCTAssertEqual(testDic["name"]!, body.fieldName)
-					if let _ = testDic["file"] {
-
-						let file = File(body.tmpFileName)
-						try file.openRead()
-						let contents = try file.readSomeBytes(count: file.size())
-						file.close()
-
-						let decoded = UTF8Encoding.encode(bytes: contents)
-						let v = testDic["value"]!
-						XCTAssertEqual(v, decoded)
-					} else {
-						XCTAssertEqual(testDic["value"]!, body.fieldValue)
-					}
-
-					body.cleanup()
-				}
-			}
-
-			file.close()
-			file.delete()
-
-		} catch let e {
-			XCTAssert(false, "\(e)")
-		}
-	}
-
 	func testMimeReaderSimple() {
 
 		let boundary = "--6"
@@ -341,7 +229,7 @@ class PerfectLibTests: XCTestCase {
 		let file = File("/tmp/mimeReaderTest.txt")
 		do {
 
-			try file.openTruncate()
+			try file.open(.truncate)
 
 			for testDic in testData {
 				let _ = try file.write(string: "--" + boundary + "\r\n")
@@ -360,7 +248,7 @@ class PerfectLibTests: XCTestCase {
 			for num in 1...1 {
 
 				file.close()
-				try file.openRead()
+				try file.open()
 
 				let mimeReader = MimeReader("multipart/form-data; boundary=" + boundary)
 
@@ -382,8 +270,8 @@ class PerfectLibTests: XCTestCase {
 					XCTAssertEqual(testDic["name"]!, body.fieldName)
 
 					let file = File(body.tmpFileName)
-					try file.openRead()
-					let contents = try file.readSomeBytes(count: file.size())
+					try file.open()
+					let contents = try file.readSomeBytes(count: file.size)
 					file.close()
 
 					let decoded = UTF8Encoding.encode(bytes: contents)
@@ -408,16 +296,16 @@ class PerfectLibTests: XCTestCase {
 		let testContents = "Here are the contents"
 		let sock = "/tmp/foo.sock"
 		let sockFile = File(sock)
-		if sockFile.exists() {
+		if sockFile.exists {
 			sockFile.delete()
 		}
 
 		do {
 
-			try testFile.openTruncate()
+			try testFile.open(.truncate)
 			let _ = try testFile.write(string: testContents)
 			testFile.close()
-			try testFile.openRead()
+			try testFile.open()
 
 			let server = NetNamedPipe()
 			let client = NetNamedPipe()
@@ -466,7 +354,7 @@ class PerfectLibTests: XCTestCase {
 						XCTAssertNotNil(f)
 
 						do {
-							let testDataRead = try f!.readSomeBytes(count: f!.size())
+							let testDataRead = try f!.readSomeBytes(count: f!.size)
 							if testDataRead.count > 0 {
 								XCTAssertEqual(UTF8Encoding.encode(bytes: testDataRead), testContents)
 							} else {
@@ -948,7 +836,117 @@ class PerfectLibTests: XCTestCase {
         }
     }
     
-    
+    func testMimeReader() {
+        
+        let boundary = "---------------------------9051914041544843365972754266"
+        
+        var testData = Array<Dictionary<String, String>>()
+        let numTestFields = 1 + _rand(to: 100)
+        
+        for idx in 0..<numTestFields {
+            var testDic = Dictionary<String, String>()
+            
+            testDic["name"] = "test_field_\(idx)"
+            
+            let isFile = _rand(to: 3) == 2
+            if isFile {
+                var testValue = ""
+                for _ in 1..<_rand(to: 1000) {
+                    testValue.append("O")
+                }
+                testDic["value"] = testValue
+                testDic["file"] = "1"
+            } else {
+                var testValue = ""
+                for _ in 0..<_rand(to: 1000) {
+                    testValue.append("O")
+                }
+                testDic["value"] = testValue
+            }
+            
+            testData.append(testDic)
+        }
+        
+        let file = File("/tmp/mimeReaderTest.txt")
+        do {
+            
+            try file.open(.truncate)
+            
+            for testDic in testData {
+                let _ = try file.write(string: "--" + boundary + "\r\n")
+                
+                let testName = testDic["name"]!
+                let testValue = testDic["value"]!
+                let isFile = testDic["file"]
+                
+                if let _ = isFile {
+                    
+                    let _ = try file.write(string: "Content-Disposition: form-data; name=\"\(testName)\"; filename=\"\(testName).txt\"\r\n")
+                    let _ = try file.write(string: "Content-Type: text/plain\r\n\r\n")
+                    let _ = try file.write(string: testValue)
+                    let _ = try file.write(string: "\r\n")
+                    
+                } else {
+                    
+                    let _ = try file.write(string: "Content-Disposition: form-data; name=\"\(testName)\"\r\n\r\n")
+                    let _ = try file.write(string: testValue)
+                    let _ = try file.write(string: "\r\n")
+                }
+                
+            }
+            
+            let _ = try file.write(string: "--" + boundary + "--")
+            
+            for num in 1...2048 {
+                
+                file.close()
+                try file.open()
+                
+                //				print("Test run: \(num) bytes with \(numTestFields) fields")
+                
+                let mimeReader = MimeReader("multipart/form-data; boundary=" + boundary)
+                
+                XCTAssertEqual(mimeReader.boundary, "--" + boundary)
+                
+                var bytes = try file.readSomeBytes(count: num)
+                while bytes.count > 0 {
+                    mimeReader.addToBuffer(bytes: bytes)
+                    bytes = try file.readSomeBytes(count: num)
+                }
+                
+                XCTAssertEqual(mimeReader.bodySpecs.count, testData.count)
+                
+                var idx = 0
+                for body in mimeReader.bodySpecs {
+                    
+                    let testDic = testData[idx]
+                    idx += 1
+                    XCTAssertEqual(testDic["name"]!, body.fieldName)
+                    if let _ = testDic["file"] {
+                        
+                        let file = File(body.tmpFileName)
+                        try file.open()
+                        let contents = try file.readSomeBytes(count: file.size)
+                        file.close()
+                        
+                        let decoded = UTF8Encoding.encode(bytes: contents)
+                        let v = testDic["value"]!
+                        XCTAssertEqual(v, decoded)
+                    } else {
+                        XCTAssertEqual(testDic["value"]!, body.fieldValue)
+                    }
+                    
+                    body.cleanup()
+                }
+            }
+            
+            file.close()
+            file.delete()
+            
+        } catch let e {
+            XCTAssert(false, "\(e)")
+        }
+    }
 }
 
 extension PerfectLibTests {
