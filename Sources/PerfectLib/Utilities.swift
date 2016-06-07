@@ -288,8 +288,8 @@ extension String {
 		defer {
 			u.deallocateCapacity(sizeof(uuid_t))
 		}
-		uuid_parse(self, u)
-		return uuid_t(u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15])
+        uuid_parse(self, u)
+        return uuid_fromPointer(u)
 	}
 
 	public static func fromUUID(uuid: uuid_t) -> String {
@@ -308,6 +308,11 @@ extension String {
 	}
 }
 
+private func uuid_fromPointer(_ u: UnsafeMutablePointer<UInt8>) -> uuid_t {
+    // is there a better way?
+    return uuid_t(u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15])
+}
+
 public func empty_uuid() -> uuid_t {
 	return uuid_t(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 }
@@ -318,8 +323,7 @@ public func random_uuid() -> uuid_t {
 		u.deallocateCapacity(sizeof(uuid_t))
 	}
 	uuid_generate_random(u)
-	// is there a better way?
-	return uuid_t(u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15])
+	return uuid_fromPointer(u)
 }
 
 extension String {
