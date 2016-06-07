@@ -284,7 +284,7 @@ extension String {
 	/// Parse uuid string
 	/// Results undefined if the string is not a valid UUID
 	public func asUUID() -> uuid_t {
-		let u = UnsafeMutablePointer<UInt8>.allocatingCapacity(sizeof(uuid_t))
+		let u = UnsafeMutablePointer<UInt8>(allocatingCapacity:  sizeof(uuid_t))
 		defer {
 			u.deallocateCapacity(sizeof(uuid_t))
 		}
@@ -293,8 +293,8 @@ extension String {
 	}
 
 	public static func fromUUID(uuid: uuid_t) -> String {
-		let u = UnsafeMutablePointer<UInt8>.allocatingCapacity(sizeof(uuid_t))
-		let unu = UnsafeMutablePointer<Int8>.allocatingCapacity(37) // as per spec. 36 + null
+		let u = UnsafeMutablePointer<UInt8>(allocatingCapacity:  sizeof(uuid_t))
+		let unu = UnsafeMutablePointer<Int8>(allocatingCapacity:  37) // as per spec. 36 + null
 
 		defer {
 			u.deallocateCapacity(sizeof(uuid_t))
@@ -313,7 +313,7 @@ public func empty_uuid() -> uuid_t {
 }
 
 public func random_uuid() -> uuid_t {
-	let u = UnsafeMutablePointer<UInt8>.allocatingCapacity(sizeof(uuid_t))
+	let u = UnsafeMutablePointer<UInt8>(allocatingCapacity:  sizeof(uuid_t))
 	defer {
 		u.deallocateCapacity(sizeof(uuid_t))
 	}
@@ -615,7 +615,7 @@ public func formatDate(_ date: Double, format: String, timezone inTimezone: Stri
 	var time = time_t(date / 1000.0)
 	gmtime_r(&time, &t)
 	let maxResults = 1024
-	let results = UnsafeMutablePointer<Int8>.allocatingCapacity(maxResults)
+	let results = UnsafeMutablePointer<Int8>(allocatingCapacity:  maxResults)
 	defer {
 		results.deallocateCapacity(maxResults)
 	}

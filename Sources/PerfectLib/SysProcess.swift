@@ -52,7 +52,7 @@ public class SysProcess {
 		typealias maybeCChar = UnsafeMutablePointer<CChar>
 	#endif
 		
-		let cArgs = UnsafeMutablePointer<maybeCChar>.allocatingCapacity(cArgsCount + 2)
+		let cArgs = UnsafeMutablePointer<maybeCChar>(allocatingCapacity:  cArgsCount + 2)
 
 		defer { cArgs.deinitialize(count: cArgsCount + 2) ; cArgs.deallocateCapacity(cArgsCount + 2) }
 
@@ -65,7 +65,7 @@ public class SysProcess {
 		}
 
 		let cEnvCount = env != nil ? env!.count : 0
-		let cEnv = UnsafeMutablePointer<maybeCChar>.allocatingCapacity(cEnvCount + 1)
+		let cEnv = UnsafeMutablePointer<maybeCChar>(allocatingCapacity:  cEnvCount + 1)
 
 		defer { cEnv.deinitialize(count: cEnvCount + 1) ; cEnv.deallocateCapacity(cEnvCount + 1) }
 
@@ -76,9 +76,9 @@ public class SysProcess {
 			idx += 1
 		}
 
-		let fSTDIN = UnsafeMutablePointer<Int32>.allocatingCapacity(2)
-		let fSTDOUT = UnsafeMutablePointer<Int32>.allocatingCapacity(2)
-		let fSTDERR = UnsafeMutablePointer<Int32>.allocatingCapacity(2)
+		let fSTDIN = UnsafeMutablePointer<Int32>(allocatingCapacity:  2)
+		let fSTDOUT = UnsafeMutablePointer<Int32>(allocatingCapacity:  2)
+		let fSTDERR = UnsafeMutablePointer<Int32>(allocatingCapacity:  2)
 
 		defer {
 			fSTDIN.deinitialize(count: 2) ; fSTDIN.deallocateCapacity(2)

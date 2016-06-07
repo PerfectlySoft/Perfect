@@ -139,9 +139,9 @@ public struct Dir {
 
 		var ent = dirent()
 	#if swift(>=3.0)
-		let entPtr = UnsafeMutablePointer<UnsafeMutablePointer<dirent>?>.allocatingCapacity(1)
+		let entPtr = UnsafeMutablePointer<UnsafeMutablePointer<dirent>?>(allocatingCapacity:  1)
 	#else
-		let entPtr = UnsafeMutablePointer<UnsafeMutablePointer<dirent>>.allocatingCapacity(1)
+		let entPtr = UnsafeMutablePointer<UnsafeMutablePointer<dirent>>(allocatingCapacity:  1)
 	#endif
 		defer { entPtr.deallocateCapacity(1) }
 
