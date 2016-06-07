@@ -57,7 +57,6 @@ public final class MimeReader {
 	/// Array of BodySpecs representing each part that was parsed.
 	public var bodySpecs = [BodySpec]()
 	
-	var maxFileSize = -1
 	var (multi, gotFile) = (false, false)
 	var buffer = [UInt8]()
 	let tempDirectory: String
@@ -123,12 +122,7 @@ public final class MimeReader {
 			}
 		}
 	}
-	
-// not implimented
-//	public func setMaxFileSize(size: Int) {
-//		self.maxFileSize = size
-//	}
-	
+		
 	func openTempFile(spec spc: BodySpec) {
 		spc.file = TemporaryFile(withPrefix: self.tempDirectory + kPerfectTempPrefix)
 		spc.tmpFileName = spc.file!.path
@@ -358,7 +352,6 @@ public final class MimeReader {
 									continue
 								}
 							}
-							
 						}
 					}
 					// write as much data as we reasonably can
@@ -429,8 +422,3 @@ public final class MimeReader {
 		return self.multi
 	}
 }
-
-
-
-
-

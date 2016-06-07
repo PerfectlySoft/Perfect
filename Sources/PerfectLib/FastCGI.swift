@@ -79,7 +79,7 @@ class FastCGIRequest : WebConnection {
 	
 	var connection: NetTCP
 	var requestId: UInt16 = 0
-	var requestParams: Dictionary<String, String> = Dictionary<String, String>()
+    var requestParams = [String:String]()
 	var stdin: [UInt8]? = nil
 	var mimes: MimeReader? = nil
 	

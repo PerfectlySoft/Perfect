@@ -27,30 +27,30 @@ import PerfectThread
 import SwiftGlibc
 #endif
 
-let HTTP2_DATA = UInt8(0x0)
-let HTTP2_HEADERS = UInt8(0x1)
-let HTTP2_PRIORITY = UInt8(0x2)
-let HTTP2_RST_STREAM = UInt8(0x3)
-let HTTP2_SETTINGS = UInt8(0x4)
-let HTTP2_PUSH_PROMISE = UInt8(0x5)
-let HTTP2_PING = UInt8(0x6)
-let HTTP2_GOAWAY = UInt8(0x7)
-let HTTP2_WINDOW_UPDATE = UInt8(0x8)
-let HTTP2_CONTINUATION = UInt8(0x9)
+let HTTP2_DATA: UInt8 = 0x0
+let HTTP2_HEADERS: UInt8 = 0x1
+let HTTP2_PRIORITY: UInt8 = 0x2
+let HTTP2_RST_STREAM: UInt8 = 0x3
+let HTTP2_SETTINGS: UInt8 = 0x4
+let HTTP2_PUSH_PROMISE: UInt8 = 0x5
+let HTTP2_PING: UInt8 = 0x6
+let HTTP2_GOAWAY: UInt8 = 0x7
+let HTTP2_WINDOW_UPDATE: UInt8 = 0x8
+let HTTP2_CONTINUATION: UInt8 = 0x9
 
-let HTTP2_END_STREAM = UInt8(0x1)
-let HTTP2_END_HEADERS = UInt8(0x4)
-let HTTP2_PADDED = UInt8(0x8)
-let HTTP2_FLAG_PRIORITY = UInt8(0x20)
+let HTTP2_END_STREAM: UInt8 = 0x1
+let HTTP2_END_HEADERS: UInt8 = 0x4
+let HTTP2_PADDED: UInt8 = 0x8
+let HTTP2_FLAG_PRIORITY: UInt8 = 0x20
 let HTTP2_SETTINGS_ACK = HTTP2_END_STREAM
 let HTTP2_PING_ACK = HTTP2_END_STREAM
 
-let SETTINGS_HEADER_TABLE_SIZE = UInt16(0x1)
-let SETTINGS_ENABLE_PUSH = UInt16(0x2)
-let SETTINGS_MAX_CONCURRENT_STREAMS = UInt16(0x3)
-let SETTINGS_INITIAL_WINDOW_SIZE = UInt16(0x4)
-let SETTINGS_MAX_FRAME_SIZE = UInt16(0x5)
-let SETTINGS_MAX_HEADER_LIST_SIZE = UInt16(0x6)
+let SETTINGS_HEADER_TABLE_SIZE: UInt16 = 0x1
+let SETTINGS_ENABLE_PUSH: UInt16 = 0x2
+let SETTINGS_MAX_CONCURRENT_STREAMS: UInt16 = 0x3
+let SETTINGS_INITIAL_WINDOW_SIZE: UInt16 = 0x4
+let SETTINGS_MAX_FRAME_SIZE: UInt16 = 0x5
+let SETTINGS_MAX_HEADER_LIST_SIZE: UInt16 = 0x6
 
 public struct HTTP2Frame {
 	let length: UInt32 // 24-bit
@@ -460,7 +460,7 @@ public class HTTP2Client {
 
 					if let ba = frame.payload where ba.count > 0 {
 						let bytes = Bytes(existingBytes: ba)
-						var padLength = UInt8(0)
+						var padLength: UInt8 = 0
 						//										var streamDep = UInt32(0)
 						//										var weight = UInt8(0)
 
@@ -510,11 +510,11 @@ public class HTTP2Client {
 
 		do {
 
-			try encoder.encodeHeader(out: headerBytes, name: ":method", value: method.description)
-			try encoder.encodeHeader(out: headerBytes, name: ":scheme", value: scheme)
-			try encoder.encodeHeader(out: headerBytes, name: ":path", value: path ?? "/", sensitive: false, incrementalIndexing: false)
-			try encoder.encodeHeader(out: headerBytes, name: "host", value: self.host)
-			try encoder.encodeHeader(out: headerBytes, name: "content-length", value: "\(request.postBodyBytes.count)")
+			try encoder.encodeHeader(out: headerBytes, nameStr: ":method", valueStr: method.description)
+			try encoder.encodeHeader(out: headerBytes, nameStr: ":scheme", valueStr: scheme)
+			try encoder.encodeHeader(out: headerBytes, nameStr: ":path", valueStr: path ?? "/", sensitive: false, incrementalIndexing: false)
+			try encoder.encodeHeader(out: headerBytes, nameStr: "host", valueStr: self.host)
+			try encoder.encodeHeader(out: headerBytes, nameStr: "content-length", valueStr: "\(request.postBodyBytes.count)")
 
 			for (name, value) in request.headers {
 				let lowered  = name.lowercased()

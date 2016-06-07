@@ -39,13 +39,6 @@ public struct GenerateFromPointer<T> : IteratorProtocol {
 		self.from = from
 		self.count = count
 	}
-	#if swift(>=3.0)
-	#else
-	public init(from: UnsafeMutablePointer<T>?, count: Int) {
-		self.from = from!
-		self.count = count
-	}
-	#endif
 
 	/// Return the next element or nil if the sequence has been exhausted.
 	mutating public func next() -> Element? {
