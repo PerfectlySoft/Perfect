@@ -491,23 +491,35 @@ extension String {
 		return joined
 	}
 
+    private func lastPathSeparator(in unis: String.CharacterView) -> String.CharacterView.Index {
+        let startIndex = unis.startIndex
+        var endIndex = unis.endIndex
+        while endIndex != startIndex {
+            if unis[unis.index(before: endIndex)] != Character(pathSeparator) {
+                break
+            }
+            endIndex = unis.index(before: endIndex)
+        }
+        return endIndex
+    }
+    
+    private func lastExtensionSeparator(in unis: String.CharacterView, endIndex: String.CharacterView.Index) -> String.CharacterView.Index {
+        var endIndex = endIndex
+        while endIndex != startIndex {
+            endIndex = unis.index(before: endIndex)
+            if unis[endIndex] == Character(extensionSeparator) {
+                break
+            }
+        }
+        return endIndex
+    }
+    
 	var stringByDeletingPathExtension: String {
 		let unis = self.characters
 		let startIndex = unis.startIndex
-		var endIndex = unis.endIndex
-		while endIndex != startIndex {
-			if unis[unis.index(before: endIndex)] != Character(pathSeparator) {
-				break
-			}
-			endIndex = unis.index(before: endIndex)
-		}
+		var endIndex = lastPathSeparator(in: unis)
 		let noTrailsIndex = endIndex
-		while endIndex != startIndex {
-			endIndex = unis.index(before: endIndex)
-			if unis[endIndex] == Character(extensionSeparator) {
-				break
-			}
-		}
+		endIndex = lastExtensionSeparator(in: unis, endIndex: endIndex)
 		guard endIndex != startIndex else {
 			if noTrailsIndex == startIndex {
 				return self
@@ -520,20 +532,9 @@ extension String {
 	var pathExtension: String {
 		let unis = self.characters
 		let startIndex = unis.startIndex
-		var endIndex = unis.endIndex
-		while endIndex != startIndex {
-			if unis[unis.index(before: endIndex)] != Character(pathSeparator) {
-				break
-			}
-			endIndex = unis.index(before: endIndex)
-		}
-		let noTrailsIndex = endIndex
-		while endIndex != startIndex {
-			endIndex = unis.index(before: endIndex)
-			if unis[endIndex] == Character(extensionSeparator) {
-				break
-			}
-		}
+        var endIndex = lastPathSeparator(in: unis)
+        let noTrailsIndex = endIndex
+        endIndex = lastExtensionSeparator(in: unis, endIndex: endIndex)
 		guard endIndex != startIndex else {
 			return ""
 		}
