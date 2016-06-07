@@ -312,7 +312,9 @@ public extension File {
 	/// - returns: The bytes read as an array of UInt8. May have a count of zero.
 	/// - throws: `PerfectError.FileError`
 	public func readSomeBytes(count: Int) throws -> [UInt8] {
-		try open()
+        if !isOpen {
+            try open()
+        }
         
         func sizeOr(_ value: Int) -> Int {
             var st = stat()
@@ -451,15 +453,11 @@ public final class TemporaryFile: File {
     public convenience init(withPrefix: String) {
         let template = withPrefix + "XXXXXX"
         let utf8 = template.utf8
-        let name = UnsafeMutablePointer<Int8>(allocatingCapacity:  utf8.count + 1)
+        let name = UnsafeMutablePointer<Int8>(allocatingCapacity: utf8.count + 1)
         var i = utf8.startIndex
         for index in 0..<utf8.count {
             name[index] = Int8(utf8[i])
-            #if swift(>=3.0)
-                i = utf8.index(after: i)
-            #else
-                i = i.advanced(by: 1)
-            #endif
+            i = utf8.index(after: i)
         }
         name[utf8.count] = 0
         
