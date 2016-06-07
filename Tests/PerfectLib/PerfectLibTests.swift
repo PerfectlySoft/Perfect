@@ -947,6 +947,30 @@ class PerfectLibTests: XCTestCase {
             XCTAssert(false, "\(e)")
         }
     }
+    
+    func testWebRequestQueryParam() {
+        let req = WebRequest(HTTPServer.HTTPWebConnection())
+        
+        req.queryString = "yabba=dabba&doo=fi☃&fi=&fo=fum"
+        
+        XCTAssert(req.param(name: "doo") == "fi☃")
+        XCTAssert(req.param(name: "fi") == "")
+    }
+    
+    func testWebRequestCookie() {
+        let req = WebRequest(HTTPServer.HTTPWebConnection())
+        
+        req.httpCookie = "yabba=dabba; doo=fi☃; fi=; fo=fum"
+        
+        for cookie in req.cookies {
+            if cookie.0 == "doo" {
+                XCTAssert(cookie.1 == "fi☃")
+            }
+            if cookie.0 == "fi" {
+                XCTAssert(cookie.1 == "")
+            }
+        }
+    }
 }
 
 extension PerfectLibTests {
@@ -988,7 +1012,12 @@ extension PerfectLibTests {
 					("testRoutingTrailingWild1", testRoutingTrailingWild1),
 					("testRoutingTrailingWild2", testRoutingTrailingWild2),
 					
-					("testMimeReaderSimple", testMimeReaderSimple)
+					("testMimeReaderSimple", testMimeReaderSimple),
+					("testDeletingPathExtension", testDeletingPathExtension),
+					("testGetPathExtension", testGetPathExtension),
+					
+					("testWebRequestQueryParam", testWebRequestQueryParam),
+					("testWebRequestCookie", testWebRequestCookie)
         ]
     }
 }
