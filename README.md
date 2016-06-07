@@ -10,7 +10,7 @@
 [![Twitter](https://img.shields.io/badge/Twitter-@PerfectlySoft-brightgreen.svg?style=flat)](http://twitter.com/PerfectlySoft)
 [![Join the chat at https://gitter.im/PerfectlySoft/Perfect](https://img.shields.io/badge/Gitter-Join%20Chat-brightgreen.svg)](https://gitter.im/PerfectlySoft/Perfect?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-**The master branch of this project currently compiles with the 3.0 *DEVELOPMENT-SNAPSHOT-2016-05-31-a* toolchain using Swift Package Manager.**
+**The master branch of this project currently compiles with the 3.0 *DEVELOPMENT-SNAPSHOT-2016-06-06-a* toolchain using Swift Package Manager.**
 
 Perfect is an application server for Linux or OS X which provides a framework for developing web and other REST services in the Swift programming language. Its primary focus is on facilitating mobile apps which require backend server software, enabling you to use one language for both front and back ends.
 
