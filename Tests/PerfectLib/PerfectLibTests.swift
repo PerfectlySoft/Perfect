@@ -672,6 +672,10 @@ class PerfectLibTests: XCTestCase {
 			XCTAssertTrue(connection.requestParams["HTTP_X_BAR"] == "foo foo", "\(connection.requestParams)")
 			XCTAssertTrue(connection.contentType == "application/x-www-form-urlencoded", "\(connection.requestParams)")
 		}
+        
+        let request = WebRequest(connection)
+        
+        XCTAssertTrue(request.headers["X-BAR"] == "foo foo", "\(request.headers)")        
 	}
 
 	func testWebConnectionHeadersTooLarge() {
@@ -838,7 +842,7 @@ class PerfectLibTests: XCTestCase {
     
     func testMimeReader() {
         
-        let boundary = "---------------------------9051914041544843365972754266"
+        let boundary = "----9051914041544843365972754266"
         
         var testData = Array<Dictionary<String, String>>()
         let numTestFields = 1 + _rand(to: 100)
@@ -902,7 +906,7 @@ class PerfectLibTests: XCTestCase {
                 file.close()
                 try file.open()
                 
-                //				print("Test run: \(num) bytes with \(numTestFields) fields")
+                //print("Test run: \(num) bytes with \(numTestFields) fields")
                 
                 let mimeReader = MimeReader("multipart/form-data; boundary=" + boundary)
                 
