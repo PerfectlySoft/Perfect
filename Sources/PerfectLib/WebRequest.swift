@@ -214,7 +214,7 @@ public class WebRequest {
 			}
 		}
 		return c
-		}()
+    }()
 
 	/// Returns the first GET or POST parameter with the given name
 	public func param(name: String) -> String? {
