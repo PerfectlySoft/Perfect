@@ -950,18 +950,22 @@ class PerfectLibTests: XCTestCase {
     
     func testWebRequestQueryParam() {
         let req = WebRequest(HTTPServer.HTTPWebConnection())
-        
-        req.queryString = "yabba=dabba&doo=fi☃&fi=&fo=fum"
-        
-        XCTAssert(req.param(name: "doo") == "fi☃")
+        req.queryString = "yabba=dabba&doo=fi+☃&fi=&fo=fum"
+        XCTAssert(req.param(name: "doo") == "fi ☃")
+        XCTAssert(req.param(name: "fi") == "")
+    }
+    
+    func testWebRequestPostParam() {
+        let con = HTTPServer.HTTPWebConnection()
+        let req = WebRequest(con)
+        con.stdin = Array("yabba=dabba&doo=fi+☃&fi=&fo=fum".utf8)
+        XCTAssert(req.param(name: "doo") == "fi ☃")
         XCTAssert(req.param(name: "fi") == "")
     }
     
     func testWebRequestCookie() {
         let req = WebRequest(HTTPServer.HTTPWebConnection())
-        
         req.httpCookie = "yabba=dabba; doo=fi☃; fi=; fo=fum"
-        
         for cookie in req.cookies {
             if cookie.0 == "doo" {
                 XCTAssert(cookie.1 == "fi☃")
@@ -1017,7 +1021,8 @@ extension PerfectLibTests {
 					("testGetPathExtension", testGetPathExtension),
 					
 					("testWebRequestQueryParam", testWebRequestQueryParam),
-					("testWebRequestCookie", testWebRequestCookie)
+					("testWebRequestCookie", testWebRequestCookie),
+					("testWebRequestPostParam", testWebRequestPostParam)
         ]
     }
 }
