@@ -103,55 +103,56 @@ public class WebRequest {
 		}
 	}
 	private lazy var work_around_headers: [String:String] = {
-			var d = Dictionary<String, String>()
-			for (key, value) in self.connection.requestParams {
-				if key.begins(with: "HTTP_") {
-					let index = key.index(key.startIndex, offsetBy: 5)
-					let nKey = key[index..<key.endIndex].stringByReplacing(string: "_", withString: "-")
-					d[nKey] = value
-				}
-			}
-			return d
-		}()
+        var d = Dictionary<String, String>()
+        for (key, value) in self.connection.requestParams {
+            if key.begins(with: "HTTP_") {
+                let index = key.index(key.startIndex, offsetBy: 5)
+                let nKey = key[index..<key.endIndex].stringByReplacing(string: "_", withString: "-")
+                d[nKey] = value
+            }
+        }
+        return d
+    }()
 
+    private func bSplit(_ c: String.CharacterView, on: Character) -> [String.CharacterView] {
+        return c.split(separator: on, maxSplits: Int.max, omittingEmptySubsequences: false)
+    }
+    
+    private func toValidPairs(_ a: [[String.CharacterView]]) -> [(String, String)] {
+        let valueUp = a.filter {
+            $0.count == 2
+            }.map {
+                (String($0[0]).stringByDecodingURL ?? "", String($0[1]).stringByDecodingURL ?? "")
+        }
+        return valueUp.filter {
+            !$0.0.isEmpty
+        }
+    }
+    
 	/// A tuple array containing each incoming cookie name/value pair
 	public lazy var cookies: [(String, String)] = {
-		var c = [(String, String)]()
-		if let rawCookie = self.httpCookie {
-			let semiSplit = rawCookie.characters.split(separator: ";").map { (chars: String.CharacterView) in String(chars.filter { $0 != " " }) }
-			for cookiePair in semiSplit {
-
-				let cookieSplit = cookiePair.characters.split(separator: "=", maxSplits: Int.max, omittingEmptySubsequences: false).map { (chars: String.CharacterView) in String(chars.filter { $0 != " " }) }
-				if cookieSplit.count == 2 {
-					let name = cookieSplit[0].stringByDecodingURL
-					let value = cookieSplit[1].stringByDecodingURL
-					if let n = name {
-						c.append((n, value ?? ""))
-					}
-				}
-			}
-		}
-		return c
+        guard let qs = self.httpCookie else {
+            return [(String, String)]()
+        }
+        // chaining this properly breaks swift
+        let eqSplit = qs.characters.split(separator: ";").map {
+            (chars: String.CharacterView) in String(chars.filter { $0 != " " })
+        }.map {
+            self.bSplit($0.characters, on: "=")
+        }
+        return self.toValidPairs(eqSplit)
 	}()
 
 	/// A tuple array containing each GET/search/query parameter name/value pair
 	public lazy var queryParams: [(String, String)] = {
-		var c = [(String, String)]()
-		if let qs = self.queryString {
-			let semiSplit = qs.characters.split(separator: "&").map { String($0) }
-			for paramPair in semiSplit {
-
-				let paramSplit = paramPair.characters.split(separator: "=", maxSplits: Int.max, omittingEmptySubsequences: false).map { String($0) }
-				if paramSplit.count == 2 {
-					let name = paramSplit[0].stringByDecodingURL
-					let value = paramSplit[1].stringByDecodingURL
-					if let n = name {
-						c.append((n, value ?? ""))
-					}
-				}
-			}
-		}
-		return c
+		guard let qs = self.queryString else {
+            return [(String, String)]()
+        }
+        // chaining this properly breaks swift
+        let eqSplit = qs.characters.split(separator: "&").map {
+            self.bSplit($0, on: "=")
+        }
+        return self.toValidPairs(eqSplit)
 	}()
 
 	/// An array of `MimeReader.BodySpec` objects which provide access to each file which was uploaded
@@ -197,12 +198,10 @@ public class WebRequest {
 					c.append((body.fieldName, body.fieldValue))
 				}
 			}
-
 		} else if let stdin = self.connection.stdin {
 			let qs = UTF8Encoding.encode(bytes: stdin)
 			let semiSplit = qs.characters.split(separator: "&").map { String($0) }
 			for paramPair in semiSplit {
-
 				let paramSplit = paramPair.characters.split(separator: "=", maxSplits: Int.max, omittingEmptySubsequences: false).map { String($0) }
 				if paramSplit.count == 2 {
 					let name = paramSplit[0].stringByReplacing(string: "+", withString: " ").stringByDecodingURL
@@ -244,7 +243,7 @@ public class WebRequest {
 	}
 
 	/// Returns all GET or POST parameters with the given name
-	public func params(named: String) -> [String]? {
+	public func params(named: String) -> [String] {
 		var a = [String]()
 		for p in self.queryParams
 			where p.0 == named {
@@ -254,7 +253,7 @@ public class WebRequest {
 			where p.0 == named {
 				a.append(p.1)
 		}
-		return a.count > 0 ? a : nil
+		return a
 	}
 
 	/// Returns all GET or POST parameters
@@ -390,45 +389,13 @@ public class WebRequest {
 		}
 	}
 	/// Returns the indicated HTTP header.
-	public func header(named nam: String) -> String? { return self.headers[nam.uppercased()] }
+	public func header(named: String) -> String? { return self.headers[named.uppercased()] }
 	/// Returns the raw request parameter header
 	public func rawHeader(named: String) -> String? { return self.connection.requestParams[named] }
 	/// Returns a Dictionary containing all raw request parameters.
 	public func raw() -> Dictionary<String, String> { return self.connection.requestParams }
-
-	private func extractField(from: String, named: String) -> String? {
-		guard let range = from.range(ofString: named + "=") else {
-			return nil
-		}
-
-		var currPos = range.upperBound
-		var ret = ""
-		let quoted = from[currPos] == "\""
-		if quoted {
-			currPos = from.index(after: currPos)
-			let tooFar = from.endIndex
-			while currPos != tooFar {
-				if from[currPos] == "\"" {
-					break
-				}
-				ret.append(from[currPos])
-				currPos = from.index(after: currPos)
-			}
-		} else {
-			let tooFar = from.endIndex
-			while currPos != tooFar {
-				if from[currPos] == "," {
-					break
-				}
-				ret.append(from[currPos])
-				currPos = from.index(after: currPos)
-			}
-		}
-		return ret
-	}
 }
 
 public func == (lhs: WebRequest.Method, rhs: WebRequest.Method) -> Bool {
     return lhs.description == rhs.description
 }
-
