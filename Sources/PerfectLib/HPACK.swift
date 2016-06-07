@@ -803,43 +803,43 @@ public final class HPACKEncoder {
 	}
 	
 	/// Encodes a new header field and value, writing the results to out Bytes.
-	public func encodeHeader(out owt: Bytes, name: String, value: String, sensitive: Bool = false, incrementalIndexing: Bool = true) throws {
-		return try encodeHeader(out: owt, name: UTF8Encoding.decode(string: name), value: UTF8Encoding.decode(string: value), sensitive: sensitive, incrementalIndexing: incrementalIndexing)
+	public func encodeHeader(out: Bytes, nameStr: String, valueStr: String, sensitive: Bool = false, incrementalIndexing: Bool = true) throws {
+		return try encodeHeader(out: out, name: UTF8Encoding.decode(string: nameStr), value: UTF8Encoding.decode(string: valueStr), sensitive: sensitive, incrementalIndexing: incrementalIndexing)
 	}
 	
 	/// Encodes a new header field and value, writing the results to out Bytes.
-	public func encodeHeader(out owt: Bytes, name: [UInt8], value: [UInt8], sensitive: Bool = false, incrementalIndexing: Bool = true) throws {
+	public func encodeHeader(out: Bytes, name: [UInt8], value: [UInt8], sensitive: Bool = false, incrementalIndexing: Bool = true) throws {
 		if sensitive {
 			let nameIndex = getNameIndex(name)
-			try encodeLiteral(out: owt, name: name, value: value, indexType: .Never, nameIndex: nameIndex)
+			try encodeLiteral(out: out, name: name, value: value, indexType: .Never, nameIndex: nameIndex)
 			return
 		}
 		if capacity == 0 {
 			let staticTableIndex = StaticTable.getIndex(name, value: value)
 			if staticTableIndex == -1 {
 				let nameIndex = StaticTable.getIndex(name)
-				try encodeLiteral(out: owt, name: name, value: value, indexType: .None, nameIndex: nameIndex)
+				try encodeLiteral(out: out, name: name, value: value, indexType: .None, nameIndex: nameIndex)
 			} else {
-				encodeInteger(out: owt, mask: 0x80, n: 7, i: staticTableIndex)
+				encodeInteger(out: out, mask: 0x80, n: 7, i: staticTableIndex)
 			}
 			return
 		}
 		let headerSize = HeaderField.sizeOf(name: name, value: value)
 		if headerSize > capacity {
 			let nameIndex = getNameIndex(name)
-			try encodeLiteral(out: owt, name: name, value: value, indexType: .None, nameIndex: nameIndex)
+			try encodeLiteral(out: out, name: name, value: value, indexType: .None, nameIndex: nameIndex)
 		} else if let headerField = getEntry(name, value: value) {
 			let index = getIndex(headerField.index) + StaticTable.length
-			encodeInteger(out: owt, mask: 0x80, n: 7, i: index)
+			encodeInteger(out: out, mask: 0x80, n: 7, i: index)
 		} else {
 			let staticTableIndex = StaticTable.getIndex(name, value: value)
 			if staticTableIndex != -1 {
-				encodeInteger(out: owt, mask: 0x80, n: 7, i: staticTableIndex)
+				encodeInteger(out: out, mask: 0x80, n: 7, i: staticTableIndex)
 			} else {
 				let nameIndex = getNameIndex(name)
 				ensureCapacity(headerSize: headerSize)
 				let indexType = incrementalIndexing ? IndexType.Incremental : IndexType.None
-				try encodeLiteral(out: owt, name: name, value: value, indexType: indexType, nameIndex: nameIndex)
+				try encodeLiteral(out: out, name: name, value: value, indexType: indexType, nameIndex: nameIndex)
 				add(name, value: value)
 			}
 		}
