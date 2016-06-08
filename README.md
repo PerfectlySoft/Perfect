@@ -50,10 +50,10 @@ brew link openssl --force
 ```
 
 ### Linux
-Perfect relies on libcurl and OpenSSL:
+Perfect relies on OpenSSL:
 
 ```
-sudo apt-get install libcurl-dev openssl
+sudo apt-get install openssl
 ```
 
 ### Build Starter Project
