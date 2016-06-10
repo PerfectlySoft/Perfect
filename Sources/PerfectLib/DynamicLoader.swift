@@ -50,30 +50,19 @@ struct DynamicLoader {
 	func loadLibrary(atPath at: String) -> Bool {
 		var fileName = at.lastPathComponent
 		if fileName.begins(with: "lib") {
-		#if swift(>=3.0)
 			fileName.characters.removeFirst(3)
-		#else
-			fileName.removeRange(fileName.startIndex..<fileName.startIndex.advancedBy(3))
-		#endif
 		}
 		let moduleName = fileName.stringByDeletingPathExtension
 		return self.loadRealPath(at, moduleName: moduleName)
 	}
 
 	private func loadRealPath(_ realPath: String, moduleName: String) -> Bool {
-#if swift(>=3.0)
 		guard let openRes = dlopen(realPath, RTLD_NOW|RTLD_LOCAL) else {
 			Log.warning(message: "Errno \(String(validatingUTF8: dlerror())!)")
 			return false
 		}
-#else
-		let openRes = dlopen(realPath, RTLD_NOW|RTLD_LOCAL)
-		guard nil != openRes else {
-			Log.warning(message: "Errno \(String(validatingUTF8: dlerror())!)")
-			return false
-		}
-#endif
-		// this is fragile
+
+        // this is fragile
 		let newModuleName = moduleName.stringByReplacing(string: "-", withString: "_").stringByReplacing(string: " ", withString: "_")
 		let symbolName = "_TF\(newModuleName.utf8.count)\(newModuleName)\(initFuncName.utf8.count)\(initFuncName)FT_T_"
 		let sym = dlsym(openRes, symbolName)
@@ -87,5 +76,4 @@ struct DynamicLoader {
 		}
 		return false
 	}
-
 }

@@ -71,25 +71,25 @@ n.pushIOS(configurationName, deviceToken: deviceId, expiration: 0, priority: 10,
 /// These correspond to what is described here:
 /// https://developer.apple.com/library/mac/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/TheNotificationPayload.html
 public enum IOSNotificationItem {
-	case AlertBody(String)
-	case AlertTitle(String)
-	case AlertTitleLoc(String, [String]?)
-	case AlertActionLoc(String)
-	case AlertLoc(String, [String]?)
-	case AlertLaunchImage(String)
-	case Badge(Int)
-	case Sound(String)
-	case ContentAvailable
-	case Category(String)
-	case CustomPayload(String, Any)
+	case alertBody(String)
+	case alertTitle(String)
+	case alertTitleLoc(String, [String]?)
+	case alertActionLoc(String)
+	case alertLoc(String, [String]?)
+	case alertLaunchImage(String)
+	case badge(Int)
+	case sound(String)
+	case contentAvailable
+	case category(String)
+	case customPayload(String, Any)
 }
 
 enum IOSItemId: UInt8 {
-	case DeviceToken = 1
-	case Payload = 2
-	case NotificationIdentifier = 3
-	case ExpirationDate = 4
-	case Priority = 5
+	case deviceToken = 1
+	case payload = 2
+	case notificationIdentifier = 3
+	case expirationDate = 4
+	case priority = 5
 }
 
 private let iosDeviceIdLength = 32
@@ -327,7 +327,7 @@ public class NotificationPusher {
 	func pushIOS(_ net: HTTP2Client, deviceToken: String, expiration: UInt32, priority: UInt8, notificationJson: [UInt8], callback: (NotificationResponse) -> ()) {
 		
 		let request = net.createRequest()
-		request.requestMethod = .Post
+		request.requestMethod = .post
 		request.postBodyBytes = notificationJson
 		request.headers["content-type"] = "application/json; charset=utf-8"
 		request.headers["apns-expiration"] = "\(expiration)"
@@ -378,33 +378,33 @@ public class NotificationPusher {
 		
 		for item in items {
 			switch item {
-			case .AlertBody(let s):
+			case .alertBody(let s):
 				alertBody = s
-			case .AlertTitle(let s):
+			case .alertTitle(let s):
 				alert["title"] = s
-			case .AlertTitleLoc(let s, let a):
+			case .alertTitleLoc(let s, let a):
 				alert["title-loc-key"] = s
 				if let titleLocArgs = a {
 					alert["title-loc-args"] = titleLocArgs
 				}
-			case .AlertActionLoc(let s):
+			case .alertActionLoc(let s):
 				alert["action-loc-key"] = s
-			case .AlertLoc(let s, let a):
+			case .alertLoc(let s, let a):
 				alert["loc-key"] = s
 				if let locArgs = a {
 					alert["loc-args"] = locArgs
 				}
-			case .AlertLaunchImage(let s):
+			case .alertLaunchImage(let s):
 				alert["launch-image"] = s
-			case .Badge(let i):
+			case .badge(let i):
 				aps["badge"] = i
-			case .Sound(let s):
+			case .sound(let s):
 				aps["sound"] = s
-			case .ContentAvailable:
+			case .contentAvailable:
 				aps["content-available"] = 1
-			case .Category(let s):
+			case .category(let s):
 				aps["category"] = s
-			case .CustomPayload(let s, let a):
+			case .customPayload(let s, let a):
 				dict[s] = a
 			}
 		}

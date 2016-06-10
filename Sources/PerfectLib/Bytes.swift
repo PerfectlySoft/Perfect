@@ -40,12 +40,6 @@ public final class Bytes {
 		self.data = existingBytes
 	}
 	
-	/// Create a new Bytes object containing `initialSize` values of zero
-	/// - parameter initialSize: The size of the initial array
-	public init(initialSize: Int) {
-		self.data = [UInt8](repeating: 0, count: initialSize)
-	}
-	
 	// -- IMPORT
 	/// Imports one UInt8 value appending it to the end of the array
 	/// - returns: The Bytes object

@@ -201,7 +201,7 @@ public extension File {
             if overWrite {
                 destFile.delete()
             } else {
-                throw PerfectError.FileError(-1, "Can not overwrite existing file")
+                throw PerfectError.fileError(-1, "Can not overwrite existing file")
             }
         }
         close()
@@ -228,7 +228,7 @@ public extension File {
             if overWrite {
                 destFile.delete()
             } else {
-                throw PerfectError.FileError(-1, "Can not overwrite existing file")
+                throw PerfectError.fileError(-1, "Can not overwrite existing file")
             }
         }
         let wasOpen = self.isOpen

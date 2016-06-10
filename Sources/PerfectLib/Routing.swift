@@ -18,7 +18,7 @@
 //
 
 private enum RouteException: ErrorProtocol {
-    case InvalidRoute
+    case invalidRoute
 }
 
 /// Holds the registered routes.
@@ -301,7 +301,7 @@ class RouteNode: CustomStringConvertible {
 		if let node = self.nodeForComponent(component: comp) {
 			try node.addPathSegments(generator: g, handler: h)
         } else {
-            throw RouteException.InvalidRoute
+            throw RouteException.invalidRoute
         }
 	}
 
@@ -392,7 +392,7 @@ class RouteTrailingWildCard: RouteWildCard {
     override func addPathSegments(generator gen: ComponentGenerator, handler: RouteMap.RequestHandler) throws {
         var m = gen
         if let _ = m.next() {
-            throw RouteException.InvalidRoute
+            throw RouteException.invalidRoute
         } else {
             self.handler = handler
         }

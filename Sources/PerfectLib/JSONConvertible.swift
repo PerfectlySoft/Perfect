@@ -55,14 +55,12 @@ public class JSONDecoding {
 }
 
 public protocol JSONConvertible {
-	
 	/// Returns the JSON encoded String for any JSONConvertible type.
 	func jsonEncodedString() throws -> String
 }
 
 // changed this to be a class due to Linux protocols failing 'as' tests
 public class JSONConvertibleObject: JSONConvertible {
-	
 	public init() {}
 	
 	public func setJSONValues(_ values:[String:Any]) {}
@@ -81,15 +79,12 @@ public extension JSONConvertibleObject {
 		}
 		return defaultValue
 	}
-//	func jsonEncodedString() throws -> String {
-//		return try self.getJSONValues().jsonEncodedString()
-//	}
 }
 
 public enum JSONConversionError: ErrorProtocol {
-	case NotConvertible(Any)
-	case InvalidKey(Any)
-	case SyntaxError
+	case notConvertible(Any)
+	case invalidKey(Any)
+	case syntaxError
 }
 
 private let jsonBackSlash = UnicodeScalar(UInt32(92))
@@ -176,7 +171,7 @@ extension Optional: JSONConvertible {
 		} else if let v = self! as? JSONConvertible {
 			return try v.jsonEncodedString()
 		}
-		throw JSONConversionError.NotConvertible(self)
+		throw JSONConversionError.notConvertible(self)
 	}
 }
 
@@ -214,7 +209,7 @@ func jsonEncodedStringWorkAround(_ o: Any) throws -> String {
 	case let jsonAble as [String:Any]:
 		return try jsonAble.jsonEncodedString()
 	default:
-		throw JSONConversionError.NotConvertible(o)
+		throw JSONConversionError.notConvertible(o)
 	}
 }
 
@@ -238,12 +233,10 @@ extension Array: JSONConvertible {
 extension Dictionary: JSONConvertible {
 	public func jsonEncodedString() throws -> String {
 		var s = "{"
-		
 		var first = true
-		
 		for (k, v) in self {
 			guard let strKey = k as? String else {
-				throw JSONConversionError.InvalidKey(k)
+				throw JSONConversionError.invalidKey(k)
 			}
 			if !first {
 				s.append(",")
@@ -254,30 +247,26 @@ extension Dictionary: JSONConvertible {
 			s.append(":")
 			s.append(try jsonEncodedStringWorkAround(v))
 		}
-		
 		s.append("}")
 		return s
-
 	}
 }
 
 /// Decode the JSON object represented by the String.
 extension String {
 	public func jsonDecode() throws -> JSONConvertible {
-		
 		let state = JSONDecodeState()
 		state.g = self.unicodeScalars.makeIterator()
 		
 		let o = try state.readObject()
 		if let _ = o as? JSONDecodeState.EOF {
-			throw JSONConversionError.SyntaxError
+			throw JSONConversionError.syntaxError
 		}
 		return o
 	}
 }
 
 private class JSONDecodeState {
-	
 	struct EOF: JSONConvertible {
 		func jsonEncodedString() throws -> String { return "" }
 	}
@@ -295,7 +284,6 @@ private class JSONDecodeState {
 	}
 	
 	func readObject() throws -> JSONConvertible {
-		
 		self.movePastWhite()
 		
 		guard let c = self.next() else {
@@ -307,7 +295,7 @@ private class JSONDecodeState {
 			var a = [Any]()
 			self.movePastWhite()
 			guard let c = self.next() else {
-				throw JSONConversionError.SyntaxError
+				throw JSONConversionError.syntaxError
 			}
 			if c != jsonCloseArray {
 				self.pushBack = c
@@ -315,13 +303,13 @@ private class JSONDecodeState {
 					a.append(try readObject())
 					self.movePastWhite()
 					guard let c = self.next() else {
-						throw JSONConversionError.SyntaxError
+						throw JSONConversionError.syntaxError
 					}
 					if c == jsonCloseArray {
 						break
 					}
 					if c != jsonComma {
-						throw JSONConversionError.SyntaxError
+						throw JSONConversionError.syntaxError
 					}
 				}
 			}
@@ -330,33 +318,33 @@ private class JSONDecodeState {
 			var d = [String:Any]()
 			self.movePastWhite()
 			guard let c = self.next() else {
-				throw JSONConversionError.SyntaxError
+				throw JSONConversionError.syntaxError
 			}
 			if c != jsonCloseObject {
 				self.pushBack = c
 				while true {
 					guard let key = try readObject() as? String else {
-						throw JSONConversionError.SyntaxError
+						throw JSONConversionError.syntaxError
 					}
 					self.movePastWhite()
 					guard let c = self.next() else {
-						throw JSONConversionError.SyntaxError
+						throw JSONConversionError.syntaxError
 					}
 					guard c == jsonColon else {
-						throw JSONConversionError.SyntaxError
+						throw JSONConversionError.syntaxError
 					}
 					self.movePastWhite()
 					d[key] = try readObject()
 					do {
 						self.movePastWhite()
 						guard let c = self.next() else {
-							throw JSONConversionError.SyntaxError
+							throw JSONConversionError.syntaxError
 						}
 						if c == jsonCloseObject {
 							break
 						}
 						if c != jsonComma {
-							throw JSONConversionError.SyntaxError
+							throw JSONConversionError.syntaxError
 						}
 					}
 				}
@@ -383,7 +371,7 @@ private class JSONDecodeState {
 				return JSONConvertibleNull()
 			}
 		}
-		throw JSONConversionError.SyntaxError
+		throw JSONConversionError.syntaxError
 	}
 	
 	func next() -> UnicodeScalar? {
@@ -423,10 +411,10 @@ private class JSONDecodeState {
 					for _ in 1...4 {
 						next = self.next()
 						guard let hexC = next else {
-							throw JSONConversionError.SyntaxError
+							throw JSONConversionError.syntaxError
 						}
 						guard hexC.isHexDigit() else {
-							throw JSONConversionError.SyntaxError
+							throw JSONConversionError.syntaxError
 						}
 						hexStr.append(hexC)
 					}
@@ -434,25 +422,25 @@ private class JSONDecodeState {
 					// if unicode is a high/low surrogate, it can't be converted directly by UnicodeScalar
 					// if it's a low surrogate (not expected), throw error
 					if case lowSurrogateLowerBound...lowSurrogateUpperBound = uint32Value {
-						throw JSONConversionError.SyntaxError
+						throw JSONConversionError.syntaxError
 					}
 					// if it's a high surrogate, find the low surrogate which the next unicode is supposed to be, then calculate the pair
 					if case highSurrogateLowerBound...highSurrogateUpperBound = uint32Value {
 						let highSurrogateValue = uint32Value
 						guard self.next() == jsonBackSlash else {
-							throw JSONConversionError.SyntaxError
+							throw JSONConversionError.syntaxError
 						}
 						guard self.next() == "u" else {
-							throw JSONConversionError.SyntaxError
+							throw JSONConversionError.syntaxError
 						}
 						var lowSurrogateHexStr = ""
 						for _ in 1...4 {
 							next = self.next()
 							guard let hexC = next else {
-								throw JSONConversionError.SyntaxError
+								throw JSONConversionError.syntaxError
 							}
 							guard hexC.isHexDigit() else {
-								throw JSONConversionError.SyntaxError
+								throw JSONConversionError.syntaxError
 							}
 							lowSurrogateHexStr.append(hexC)
 						}
@@ -475,7 +463,7 @@ private class JSONDecodeState {
 			
 			next = self.next()
 		}
-		throw JSONConversionError.SyntaxError
+		throw JSONConversionError.syntaxError
 	}
 	
 	func readNumber(firstChar first: UnicodeScalar) throws -> JSONConvertible {
@@ -523,25 +511,25 @@ private class JSONDecodeState {
 			next = self.next()
 		}
 		
-		throw JSONConversionError.SyntaxError
+		throw JSONConversionError.syntaxError
 	}
 	
 	func readTrue() throws -> Bool {
 		var next = self.next()
 		if next != "r" && next != "R" {
-			throw JSONConversionError.SyntaxError
+			throw JSONConversionError.syntaxError
 		}
 		next = self.next()
 		if next != "u" && next != "U" {
-			throw JSONConversionError.SyntaxError
+			throw JSONConversionError.syntaxError
 		}
 		next = self.next()
 		if next != "e" && next != "E" {
-			throw JSONConversionError.SyntaxError
+			throw JSONConversionError.syntaxError
 		}
 		next = self.next()
 		guard next != nil && !next!.isAlphaNum() else {
-			throw JSONConversionError.SyntaxError
+			throw JSONConversionError.syntaxError
 		}
 		pushBack = next!
 		return true
@@ -550,23 +538,23 @@ private class JSONDecodeState {
 	func readFalse() throws -> Bool {
 		var next = self.next()
 		if next != "a" && next != "A" {
-			throw JSONConversionError.SyntaxError
+			throw JSONConversionError.syntaxError
 		}
 		next = self.next()
 		if next != "l" && next != "L" {
-			throw JSONConversionError.SyntaxError
+			throw JSONConversionError.syntaxError
 		}
 		next = self.next()
 		if next != "s" && next != "S" {
-			throw JSONConversionError.SyntaxError
+			throw JSONConversionError.syntaxError
 		}
 		next = self.next()
 		if next != "e" && next != "E" {
-			throw JSONConversionError.SyntaxError
+			throw JSONConversionError.syntaxError
 		}
 		next = self.next()
 		guard next != nil && !next!.isAlphaNum() else {
-			throw JSONConversionError.SyntaxError
+			throw JSONConversionError.syntaxError
 		}
 		pushBack = next!
 		return false
@@ -575,19 +563,19 @@ private class JSONDecodeState {
 	func readNull() throws {
 		var next = self.next()
 		if next != "u" && next != "U" {
-			throw JSONConversionError.SyntaxError
+			throw JSONConversionError.syntaxError
 		}
 		next = self.next()
 		if next != "l" && next != "L" {
-			throw JSONConversionError.SyntaxError
+			throw JSONConversionError.syntaxError
 		}
 		next = self.next()
 		if next != "l" && next != "L" {
-			throw JSONConversionError.SyntaxError
+			throw JSONConversionError.syntaxError
 		}
 		next = self.next()
 		guard next != nil && !next!.isAlphaNum() else {
-			throw JSONConversionError.SyntaxError
+			throw JSONConversionError.syntaxError
 		}
 		pushBack = next!
 	}

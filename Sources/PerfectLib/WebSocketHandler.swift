@@ -34,7 +34,7 @@ public class WebSocket {
 
 	/// The various types of WebSocket messages.
 	public enum OpcodeType: UInt8 {
-		case Continuation = 0x0, Text = 0x1, Binary = 0x2, Close = 0x8, Ping = 0x9, Pong = 0xA, Invalid
+		case continuation = 0x0, text = 0x1, binary = 0x2, close = 0x8, ping = 0x9, pong = 0xA, invalid
 	}
 
 	private struct Frame {
@@ -67,7 +67,7 @@ public class WebSocket {
 	public func close() {
 		if self.socket.isValid {
 
-			self.sendMessage(opcode: .Close, bytes: [UInt8](), final: true) {
+			self.sendMessage(opcode: .close, bytes: [UInt8](), final: true) {
 				self.socket.close()
 			}
 		}
@@ -96,7 +96,7 @@ public class WebSocket {
 		let rsv1 = (byte1 & 0x40) != 0
 		let rsv2 = (byte1 & 0x20) != 0
 		let rsv3 = (byte1 & 0x10) != 0
-		let opcode = OpcodeType(rawValue: byte1 & 0xF) ?? .Invalid
+		let opcode = OpcodeType(rawValue: byte1 & 0xF) ?? .invalid
 
 		let maskBit = (byte2 & 0x80) != 0
 
@@ -165,13 +165,13 @@ public class WebSocket {
 
 			switch frame.opCode {
 			// check for and handle ping/pong
-			case .Ping:
-				self.sendMessage(opcode: .Pong, bytes: frame.bytesPayload, final: true) {
+			case .ping:
+				self.sendMessage(opcode: .pong, bytes: frame.bytesPayload, final: true) {
 					self.readFrame(completion: comp)
 				}
 				return
 			// check for and handle close
-			case .Close:
+			case .close:
 				self.close()
 				return comp(nil)
 			default:
@@ -193,7 +193,7 @@ public class WebSocket {
 	public func readStringMessage(continuation: (String?, opcode: OpcodeType, final: Bool) -> ()) {
 		self.readFrame {
 			frame in
-			continuation(frame?.stringPayload, opcode: frame?.opCode ?? .Invalid, final: frame?.fin ?? true)
+			continuation(frame?.stringPayload, opcode: frame?.opCode ?? .invalid, final: frame?.fin ?? true)
 		}
 	}
 
@@ -201,29 +201,29 @@ public class WebSocket {
 	public func readBytesMessage(continuation: ([UInt8]?, opcode: OpcodeType, final: Bool) -> ()) {
 		self.readFrame {
 			frame in
-			continuation(frame?.bytesPayload, opcode: frame?.opCode ?? .Invalid, final: frame?.fin ?? true)
+			continuation(frame?.bytesPayload, opcode: frame?.opCode ?? .invalid, final: frame?.fin ?? true)
 		}
 	}
 
 	/// Send binary data to thew client.
 	public func sendBinaryMessage(bytes: [UInt8], final: Bool, completion: () -> ()) {
-		self.sendMessage(opcode: .Binary, bytes: bytes, final: final, completion: completion)
+		self.sendMessage(opcode: .binary, bytes: bytes, final: final, completion: completion)
 	}
 
 	/// Send string data to the client.
 	public func sendStringMessage(string: String, final: Bool, completion: () -> ()) {
-		self.sendMessage(opcode: .Text, bytes: UTF8Encoding.decode(string: string), final: final, completion: completion)
+		self.sendMessage(opcode: .text, bytes: UTF8Encoding.decode(string: string), final: final, completion: completion)
 	}
 
 	/// Send a "pong" message to the client.
 	public func sendPong(completion: () -> ()) {
-		self.sendMessage(opcode: .Pong, bytes: [UInt8](), final: true, completion: completion)
+		self.sendMessage(opcode: .pong, bytes: [UInt8](), final: true, completion: completion)
 	}
 
 	/// Send a "ping" message to the client.
 	/// Expect a "pong" message to follow.
 	public func sendPing(completion: () -> ()) {
-		self.sendMessage(opcode: .Ping, bytes: [UInt8](), final: true, completion: completion)
+		self.sendMessage(opcode: .ping, bytes: [UInt8](), final: true, completion: completion)
 	}
 
 	private func sendMessage(opcode op: OpcodeType, bytes: [UInt8], final: Bool, completion: () -> ()) {

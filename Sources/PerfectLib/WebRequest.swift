@@ -29,20 +29,20 @@
 public class WebRequest {
 
     public enum Method: Hashable, CustomStringConvertible {
-        case Options, Get, Head, Post, Put, Delete, Trace, Connect, Custom(String)
+        case options, get, head, post, put, delete, trace, connect, custom(String)
         
         static func methodFrom(string: String) -> Method {
             
             switch string {
-            case "OPTIONS": return .Options
-            case "GET":     return .Get
-            case "HEAD":    return .Head
-            case "POST":    return .Post
-            case "PUT":     return .Put
-            case "DELETE":  return .Delete
-            case "TRACE":   return .Trace
-            case "CONNECT": return .Connect
-            default:        return .Custom(string)
+            case "OPTIONS": return .options
+            case "GET":     return .get
+            case "HEAD":    return .head
+            case "POST":    return .post
+            case "PUT":     return .put
+            case "DELETE":  return .delete
+            case "TRACE":   return .trace
+            case "CONNECT": return .connect
+            default:        return .custom(string)
             }
         }
         
@@ -52,15 +52,15 @@ public class WebRequest {
         
         public var description: String {
             switch self {
-            case .Options:  return "OPTIONS"
-            case .Get:      return "GET"
-            case .Head:     return "HEAD"
-            case .Post:     return "POST"
-            case .Put:      return "PUT"
-            case .Delete:   return "DELETE"
-            case .Trace:    return "TRACE"
-            case .Connect:  return "CONNECT"
-            case .Custom(let s): return s
+            case .options:  return "OPTIONS"
+            case .get:      return "GET"
+            case .head:     return "HEAD"
+            case .post:     return "POST"
+            case .put:      return "PUT"
+            case .delete:   return "DELETE"
+            case .trace:    return "TRACE"
+            case .connect:  return "CONNECT"
+            case .custom(let s): return s
             }
         }
     }

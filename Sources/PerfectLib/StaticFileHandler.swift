@@ -68,7 +68,7 @@ public struct StaticFileHandler {
         
         self.addETag(response: resp, file: file)
         
-		if case .Head = req.requestMethod {
+		if case .head = req.requestMethod {
 			return resp.requestCompleted()
 		}
 		
@@ -92,7 +92,7 @@ public struct StaticFileHandler {
             response.addHeader(name: "Content-Type", value: contentType)
             response.addHeader(name: "Content-Range", value: "bytes \(range.lowerBound)-\(range.upperBound-1)/\(size)")
             
-            if case .Head = request.requestMethod {
+            if case .head = request.requestMethod {
                 return response.requestCompleted()
             }
             
