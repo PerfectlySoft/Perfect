@@ -223,8 +223,8 @@ public class MustacheEvaluationContext {
 	}
 	
 	func getCurrentFilePath() -> String? {
-		if self.templateName != nil {
-			return self.templateName!
+		if self.templateName != nil && self.templatePath != nil {
+			return self.templatePath!
 		}
 		if self.parent != nil {
 			return self.parent!.getCurrentFilePath()
