@@ -28,12 +28,12 @@
 #endif
 
 enum MimeReadState {
-	case StateNone
-	case StateBoundary // next thing to be read will be a boundry
-	case StateHeader // read header lines until data starts
-	case StateFieldValue // read a simple value; name has already been set
-	case StateFile // read file data until boundry
-	case StateDone
+	case stateNone
+	case stateBoundary // next thing to be read will be a boundry
+	case stateHeader // read header lines until data starts
+	case stateFieldValue // read a simple value; name has already been set
+	case stateFile // read file data until boundry
+	case stateDone
 }
 
 let kMultiPartForm = "multipart/form-data"
@@ -60,7 +60,7 @@ public final class MimeReader {
 	var (multi, gotFile) = (false, false)
 	var buffer = [UInt8]()
 	let tempDirectory: String
-	var state: MimeReadState = .StateNone
+	var state: MimeReadState = .stateNone
 	
 	/// The boundary identifier.
 	public var boundary = ""
@@ -118,7 +118,7 @@ public final class MimeReader {
 				let boundaryString = contentType[startIndex..<endIndex]
 				self.boundary.append("--")
 				self.boundary.append(boundaryString)
-				self.state = .StateBoundary
+				self.state = .stateBoundary
 			}
 		}
 	}
@@ -198,11 +198,11 @@ public final class MimeReader {
 		
 		while position != end {
 			switch self.state {
-			case .StateDone, .StateNone:
+			case .stateDone, .stateNone:
 				
-				return .StateNone
+				return .stateNone
 				
-			case .StateBoundary:
+			case .stateBoundary:
 				
 				if position.distance(to: end) < self.boundary.characters.count + 2 {
 					self.buffer = Array(byts[position..<end])
@@ -211,20 +211,20 @@ public final class MimeReader {
 				} else {
 					position = position.advanced(by: self.boundary.characters.count)
 					if byts[position] == mime_dash && byts[position.advanced(by: 1)] == mime_dash {
-						self.state = .StateDone
+						self.state = .stateDone
 						position = position.advanced(by: 2)
 					} else {
-						self.state = .StateHeader
+						self.state = .stateHeader
 						self.bodySpecs.append(BodySpec())
 					}
-					if self.state != .StateDone {
+					if self.state != .stateDone {
 						position = position.advanced(by: 2) // line end
 					} else {
 						position = end
 					}
 				}
 				
-			case .StateHeader:
+			case .stateHeader:
 				
 				var eolPos = position
 				while eolPos.distance(to: end) > 1 {
@@ -271,14 +271,14 @@ public final class MimeReader {
 						position = position.advanced(by: 2)
 						if spec.fileName.characters.count > 0 {
 							openTempFile(spec: spec)
-							self.state = .StateFile
+							self.state = .stateFile
 						} else {
-							self.state = .StateFieldValue
+							self.state = .stateFieldValue
 							spec.fieldValueTempBytes = [UInt8]()
 						}
 					}
 				}
-			case .StateFieldValue:
+			case .stateFieldValue:
 				
 				let spec = self.bodySpecs.last!
 				while position != end {
@@ -296,7 +296,7 @@ public final class MimeReader {
 							if isBoundaryStart(bytes: byts, start: position.advanced(by: 2)) {
 								
 								position = position.advanced(by: 2)
-								self.state = .StateBoundary
+								self.state = .stateBoundary
 								spec.fieldValue = UTF8Encoding.encode(bytes: spec.fieldValueTempBytes!)
 								spec.fieldValueTempBytes = nil
 								break
@@ -318,7 +318,7 @@ public final class MimeReader {
 					position = position.advanced(by: 1)
 				}
 				
-			case .StateFile:
+			case .stateFile:
 				
 				let spec = self.bodySpecs.last!
 				while position != end {
@@ -336,7 +336,7 @@ public final class MimeReader {
 							if isBoundaryStart(bytes: byts, start: position.advanced(by: 2)) {
 								
 								position = position.advanced(by: 2)
-								self.state = .StateBoundary
+								self.state = .stateBoundary
 								
 								// end of file data
 								spec.file!.close()
@@ -382,7 +382,7 @@ public final class MimeReader {
 						spec.fileSize += try spec.file!.write(bytes: byts, dataPosition: position, length: length)
 					} catch let e {
 						Log.error(message: "Exception while writing file upload data: \(e)")
-						self.state = .StateNone
+						self.state = .stateNone
 						break
 					}
 					

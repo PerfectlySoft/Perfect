@@ -18,10 +18,11 @@
 //
 
 import Foundation
+
 #if os(Linux)
 import SwiftGlibc
 import LinuxBridge
-	#else
+#else
 import Darwin
 #endif
 
@@ -53,7 +54,6 @@ public struct Dir {
 	/// - parameter perms: The permissions for use for the new directory and preceeding directories which need to be created. Defaults to RWX-GUO
 	/// - throws: `PerfectError.FileError`
 	public func create(perms: Int = Int(S_IRWXG|S_IRWXU|S_IRWXO)) throws {
-
 		let pth = realPath()
 		var currPath = pth.begins(with: "/") ? "/" : ""
 
@@ -103,46 +103,27 @@ public struct Dir {
 	}
 
 #if os(Linux)
-	#if swift(>=3.0)
-		func readDir(_ d: OpaquePointer, _ dirEnt: inout dirent, _ endPtr: UnsafeMutablePointer<UnsafeMutablePointer<dirent>?>!) -> Int32 {
-			return readdir_r(d, &dirEnt, endPtr)
-		}
-	#endif
+    func readDir(_ d: OpaquePointer, _ dirEnt: inout dirent, _ endPtr: UnsafeMutablePointer<UnsafeMutablePointer<dirent>?>!) -> Int32 {
+        return readdir_r(d, &dirEnt, endPtr)
+    }
 #else
-	#if swift(>=3.0)
-		func readDir(_ d: UnsafeMutablePointer<DIR>, _ dirEnt: inout dirent, _ endPtr: UnsafeMutablePointer<UnsafeMutablePointer<dirent>?>!) -> Int32 {
-			return readdir_r(d, &dirEnt, endPtr)
-		}
-	#else
-		func readDir(_ d: UnsafeMutablePointer<DIR>, inout _ dirEnt: dirent, _ endPtr: UnsafeMutablePointer<UnsafeMutablePointer<dirent>>) -> Int32 {
-			return readdir_r(d, &dirEnt, endPtr)
-		}
-	#endif
+    func readDir(_ d: UnsafeMutablePointer<DIR>, _ dirEnt: inout dirent, _ endPtr: UnsafeMutablePointer<UnsafeMutablePointer<dirent>?>!) -> Int32 {
+        return readdir_r(d, &dirEnt, endPtr)
+    }
 #endif
 
 	/// Enumerates the contents of the directory passing the name of each contained element to the provided callback.
 	/// - parameter closure: The callback which will receive each entry's name
 	/// - throws: `PerfectError.FileError`
 	public func forEachEntry(closure: (name: String) -> ()) throws {
-		#if swift(>=3.0)
-		//let dir = opendir(realPath())
 		guard let dir = opendir(realPath()) else {
 			try ThrowFileError()
 		}
-		#else
-		let dir = opendir(realPath())
-		guard nil != dir else {
-			try ThrowFileError()
-		}
-		#endif
+            
 		defer { closedir(dir) }
 
 		var ent = dirent()
-	#if swift(>=3.0)
 		let entPtr = UnsafeMutablePointer<UnsafeMutablePointer<dirent>?>(allocatingCapacity:  1)
-	#else
-		let entPtr = UnsafeMutablePointer<UnsafeMutablePointer<dirent>>(allocatingCapacity:  1)
-	#endif
 		defer { entPtr.deallocateCapacity(1) }
 
 		while readDir(dir, &ent, entPtr) == 0 && entPtr.pointee != nil {
@@ -156,11 +137,7 @@ public struct Dir {
 
 			var nameBuf = [CChar]()
 			let mirror = Mirror(reflecting: name)
-		#if swift(>=3.0)
 			let childGen = mirror.children.makeIterator()
-		#else
-			let childGen = mirror.children.generate()
-		#endif
 			for _ in 0..<nameLen {
 				let (_, elem) = childGen.next()!
 				if (elem as! Int8) == 0 {

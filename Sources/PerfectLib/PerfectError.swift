@@ -30,13 +30,13 @@ import Darwin
 /// Some but not all of the exception types which may be thrown by the system
 public enum PerfectError : ErrorProtocol {
 	/// A network related error code and message.
-	case NetworkError(Int32, String)
+	case networkError(Int32, String)
 	/// A file system related error code and message.
-	case FileError(Int32, String)
+	case fileError(Int32, String)
 	/// A OS level error code and message.
-	case SystemError(Int32, String)
+	case systemError(Int32, String)
 	/// An API exception error message.
-	case APIError(String)
+	case apiError(String)
 }
 
 @noreturn
@@ -46,7 +46,7 @@ func ThrowFileError(file: String = #file, function: String = #function, line: In
 	
 //	print("FileError: \(err) \(msg)")
 	
-	throw PerfectError.FileError(err, msg + " \(file) \(function) \(line)")
+	throw PerfectError.fileError(err, msg + " \(file) \(function) \(line)")
 }
 
 @noreturn
@@ -56,7 +56,7 @@ func ThrowSystemError(file: String = #file, function: String = #function, line: 
 	
 //	print("SystemError: \(err) \(msg)")
 	
-	throw PerfectError.SystemError(err, msg + " \(file) \(function) \(line)")
+	throw PerfectError.systemError(err, msg + " \(file) \(function) \(line)")
 }
 
 @noreturn
@@ -66,5 +66,5 @@ func ThrowNetworkError(file: String = #file, function: String = #function, line:
 	
 //	print("NetworkError: \(err) \(msg)")
 	
-	throw PerfectError.NetworkError(err, msg + " \(file) \(function) \(line)")
+	throw PerfectError.networkError(err, msg + " \(file) \(function) \(line)")
 }

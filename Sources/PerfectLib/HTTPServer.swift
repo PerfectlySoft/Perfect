@@ -216,17 +216,17 @@ public class HTTPServer {
 		
 		guard socket.useCertificateChainFile(cert: sslCert) else {
 			let code = Int32(socket.errorCode())
-			throw PerfectError.NetworkError(code, "Error setting certificate chain file: \(socket.errorStr(forCode: code))")
+			throw PerfectError.networkError(code, "Error setting certificate chain file: \(socket.errorStr(forCode: code))")
 		}
 		
 		guard socket.usePrivateKeyFile(cert: sslKey) else {
 			let code = Int32(socket.errorCode())
-			throw PerfectError.NetworkError(code, "Error setting private key file: \(socket.errorStr(forCode: code))")
+			throw PerfectError.networkError(code, "Error setting private key file: \(socket.errorStr(forCode: code))")
 		}
 		
 		guard socket.checkPrivateKey() else {
 			let code = Int32(socket.errorCode())
-			throw PerfectError.NetworkError(code, "Error validating private key file: \(socket.errorStr(forCode: code))")
+			throw PerfectError.networkError(code, "Error validating private key file: \(socket.errorStr(forCode: code))")
 		}
 		
 		try socket.bind(port: prt, address: bindAddress)

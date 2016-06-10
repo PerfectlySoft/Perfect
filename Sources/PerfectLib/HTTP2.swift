@@ -52,7 +52,7 @@ let SETTINGS_INITIAL_WINDOW_SIZE: UInt16 = 0x4
 let SETTINGS_MAX_FRAME_SIZE: UInt16 = 0x5
 let SETTINGS_MAX_HEADER_LIST_SIZE: UInt16 = 0x6
 
-public struct HTTP2Frame {
+struct HTTP2Frame {
 	let length: UInt32 // 24-bit
 	let type: UInt8
 	let flags: UInt8
@@ -158,13 +158,13 @@ final class HTTP2Connection: WebConnection {
 
 }
 
-public class HTTP2WebRequest: WebRequest {
+class HTTP2WebRequest: WebRequest {
 
 }
 
-public class HTTP2WebResponse: WebResponse, HeaderListener {
+class HTTP2WebResponse: WebResponse, HeaderListener {
 
-	public func addHeader(name nam: [UInt8], value: [UInt8], sensitive: Bool) {
+	func addHeader(name nam: [UInt8], value: [UInt8], sensitive: Bool) {
 		let n = UTF8Encoding.encode(bytes: nam)
 		let v = UTF8Encoding.encode(bytes: value)
 
@@ -177,10 +177,10 @@ public class HTTP2WebResponse: WebResponse, HeaderListener {
 	}
 }
 
-public class HTTP2Client {
+class HTTP2Client {
 
 	enum StreamState {
-		case None, Idle, ReservedLocal, ReservedRemote, Open, HalfClosedRemote, HalfClosedLocal, Closed
+		case none, idle, reservedLocal, reservedRemote, open, halfClosedRemote, halfClosedLocal, closed
 	}
 
 	let net = NetTCPSSL()
@@ -199,13 +199,13 @@ public class HTTP2Client {
 	var frameReadOK = false
 
 	var newStreamId: UInt32 {
-		streams[streamCounter] = StreamState.None
+		streams[streamCounter] = StreamState.none
 		let s = streamCounter
 		streamCounter += 2
 		return s
 	}
 
-	public init() {
+	init() {
 
 	}
 
@@ -376,17 +376,17 @@ public class HTTP2Client {
 		}
 	}
 
-	public func close() {
+	func close() {
 		self.closeLock.doWithLock {
 			self.net.close()
 		}
 	}
 
-	public var isConnected: Bool {
+	var isConnected: Bool {
 		return self.net.isValid
 	}
 
-	public func connect(host hst: String, port: UInt16, ssl: Bool, timeoutSeconds: Double, callback: (Bool) -> ()) {
+	func connect(host hst: String, port: UInt16, ssl: Bool, timeoutSeconds: Double, callback: (Bool) -> ()) {
 		self.host = hst
 		self.ssl = ssl
 		self.timeoutSeconds = timeoutSeconds
@@ -420,7 +420,7 @@ public class HTTP2Client {
 		}
 	}
 
-	public func createRequest() -> HTTP2WebRequest {
+	func createRequest() -> HTTP2WebRequest {
 		return HTTP2WebRequest(HTTP2Connection(client: self))
 	}
 
@@ -442,7 +442,7 @@ public class HTTP2Client {
 						message = UTF8Encoding.encode(bytes: bytes.exportBytes(count: bytes.availableExportBytes))
 					}
 
-					let bytes2 = Bytes(initialSize: 8)
+					let bytes2 = Bytes()
 					let _ = bytes2.import32Bits(from: streamId.hostToNet)
                             .import32Bits(from: 0)
 					let frame2 = HTTP2Frame(length: 8, type: HTTP2_GOAWAY, flags: 0, streamId: streamId, payload: bytes2.data)
@@ -461,16 +461,16 @@ public class HTTP2Client {
 					if let ba = frame.payload where ba.count > 0 {
 						let bytes = Bytes(existingBytes: ba)
 						var padLength: UInt8 = 0
-						//										var streamDep = UInt32(0)
-						//										var weight = UInt8(0)
+//										var streamDep = UInt32(0)
+//										var weight = UInt8(0)
 
 						if padded {
 							padLength = bytes.export8Bits()
 						}
-						//										if priority {
-						//											streamDep = bytes.export32Bits()
-						//											weight = bytes.export8Bits()
-						//										}
+//										if priority {
+//											streamDep = bytes.export32Bits()
+//											weight = bytes.export8Bits()
+//										}
 						self.decodeHeaders(from: bytes, endPosition: ba.count - Int(padLength), listener: response)
 					}
 					streamOpen = (frame.flags & HTTP2_END_STREAM) == 0
@@ -498,9 +498,9 @@ public class HTTP2Client {
 		}
 	}
 
-	public func sendRequest(_ request: WebRequest, callback: (WebResponse?, String?) -> ()) {
+	func sendRequest(_ request: WebRequest, callback: (WebResponse?, String?) -> ()) {
 		let streamId = self.newStreamId
-		self.streams[streamId] = .Idle
+		self.streams[streamId] = .idle
 
 		let headerBytes = Bytes()
 
@@ -546,7 +546,7 @@ public class HTTP2Client {
 				callback(nil, nil)
 				return
 			}
-			s.streams[streamId] = .Open
+			s.streams[streamId] = .open
 			if hasData {
 
 				let frame2 = HTTP2Frame(length: UInt32(request.postBodyBytes.count), type: HTTP2_DATA, flags: HTTP2_END_STREAM, streamId: streamId, payload: request.postBodyBytes)

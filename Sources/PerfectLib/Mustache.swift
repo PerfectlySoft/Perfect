@@ -53,36 +53,36 @@ private func getTemplateFromCache(_ path: String) throws -> MustacheTemplate {
 		}
 	}
 	guard let templateW = template else {
-		throw PerfectError.SystemError(404, "The file \"\(path)\" was not found")
+		throw PerfectError.systemError(404, "The file \"\(path)\" was not found")
 	}
 	return templateW
 }
 
 enum MustacheTagType {
 	
-	case Plain // plain text
-	case Tag // some tag. not sure which yet
-	case Hash
-	case Slash
-	case Amp
-	case Caret
-	case Bang
-	case Partial
-	case Delims
-	case UnescapedName
-	case Name
-	case UnencodedName
-	case Pragma
-	case None
+	case plain // plain text
+	case tag // some tag. not sure which yet
+	case hash
+	case slash
+	case amp
+	case caret
+	case bang
+	case partial
+	case delims
+	case unescapedName
+	case name
+	case unencodedName
+	case pragma
+	case none
 	
 }
 
 /// This enum type represents the parsing and the runtime evaluation exceptions which may be generated.
 public enum MustacheError : ErrorProtocol {
 	/// The mustache template was malformed.
-	case SyntaxError(String)
+	case syntaxError(String)
 	/// An exception occurred while evaluating the template.
-	case EvaluationError(String)
+	case evaluationError(String)
 }
 
 /// A mustache handler, which should be passed to `mustacheRequest`, generates values to fill a mustache template
@@ -181,7 +181,7 @@ public class MustacheEvaluationContext {
         }
         
         guard let template = maybeTemplate else {
-            throw MustacheError.EvaluationError("No templatePath or templateContent")
+            throw MustacheError.evaluationError("No templatePath or templateContent")
         }
         
         template.evaluatePragmas(context: self, collector: collector)
@@ -265,7 +265,7 @@ public class MustacheEvaluationOutputCollector {
 
 /// An individual mustache tag or plain-text section
 public class MustacheTag {
-	var type = MustacheTagType.None
+	var type = MustacheTagType.none
 	var tag = ""
 	weak var parent: MustacheGroupTag?
 	
@@ -289,19 +289,19 @@ public class MustacheTag {
 	public func evaluate(context contxt: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) {
 		
 		switch type {
-		case .Plain:
+		case .plain:
 			let _ = collector.append(tag, encoded: false)
-		case .UnescapedName:
+		case .unescapedName:
 			let _ = collector.append(tag, encoded: false)
-		case .Name:
+		case .name:
 			if let value = contxt.getValue(named: tag) {
 				let _ = collector.append(String(value))
 			}
-		case .UnencodedName:
+		case .unencodedName:
 			if let value = contxt.getValue(named: tag) {
 				let _ = collector.append(String(value), encoded: false)
 			}
-		case .Pragma, .Bang:
+		case .pragma, .bang:
 			() // ignored
 		default:
 			print("Unhandled mustache tag type \(type)")
@@ -324,33 +324,33 @@ public class MustacheTag {
 	/// - returns: The resulting string, including the original delimiters and tag-type marker.
 	public func description() -> String {
 		
-		guard type != .Plain else {
+		guard type != .plain else {
 			return tag
 		}
 		
 		var s = delimOpen()
 		switch type {
-		case .Name:
+		case .name:
 			s.append(" ")
-		case .UnencodedName:
+		case .unencodedName:
 			s.append("{ ")
-		case .Hash:
+		case .hash:
 			s.append("# ")
-		case .Caret:
+		case .caret:
 			s.append("^ ")
-		case .Bang:
+		case .bang:
 			s.append("! ")
-		case .Partial:
+		case .partial:
 			s.append("> ")
-		case .UnescapedName:
+		case .unescapedName:
 			s.append("& ")
-		case .Pragma:
+		case .pragma:
 			s.append("% ")
 		default:
 			()
 		}
 		s.append(tag)
-		if type == .UnencodedName {
+		if type == .unencodedName {
 			s.append(" }" + delimClose())
 		} else {
 			s.append(" " + delimClose())
@@ -516,9 +516,9 @@ public class MustacheGroupTag : MustacheTag {
 	
 	/// Evaluate the tag in the given context.
 	public override func evaluate(context contxt: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector) {
-		if type == .Hash {
+		if type == .hash {
 			self.evaluatePos(context: contxt, collector: collector)
-		} else if type == .Caret {
+		} else if type == .caret {
 			self.evaluateNeg(context: contxt, collector: collector)
 		} else {
 			// optionally a warning?
@@ -639,21 +639,21 @@ public class MustacheParser {
 	}
 	
 	func consumeLoop() throws {
-		var type = MustacheTagType.Plain
+		var type = MustacheTagType.plain
 		repeat {
 			type = try consumeType(type)
 			// just loop it
-		} while type != .None
+		} while type != .none
 	}
 	
 	func consumeType(_ t: MustacheTagType) throws -> MustacheTagType {
 		switch t {
-		case .Plain:
+		case .plain:
 			return consumePlain()
-		case .Tag:
+		case .tag:
 			return try consumeTag()
 		default:
-			throw MustacheError.SyntaxError("Bad parsing logic in consumeType \(t)")
+			throw MustacheError.syntaxError("Bad parsing logic in consumeType \(t)")
 		}
 	}
 	
@@ -669,19 +669,19 @@ public class MustacheParser {
 	func consumePlain() -> MustacheTagType {
 		
 		let currTag = MustacheTag()
-		currTag.type = .Plain
+		currTag.type = .plain
 		
 		addChild(currTag)
 		
 		while true {
 			guard let e = next() else {
-				return .None
+				return .none
 			}
 			
 			if e == openDelimiters[0] {
 				testingPutback = String(e)
 				if consumePossibleOpenDelimiter(index: 1) {
-					return .Tag
+					return .tag
 				}
 				currTag.tag.append(testingPutback!)
 			} else {
@@ -728,7 +728,7 @@ public class MustacheParser {
 				let tagName = consumeTagName(firstChar: skipWhiteSpace())
 				let newTag = MustachePragmaTag()
 				newTag.tag = tagName
-				newTag.type = .Pragma
+				newTag.type = .pragma
 				addChild(newTag)
 				pragmas.append(newTag)
 				
@@ -736,7 +736,7 @@ public class MustacheParser {
 				let tagName = consumeTagName(firstChar: skipWhiteSpace())
 				let newTag = MustacheGroupTag()
 				newTag.tag = tagName
-				newTag.type = .Hash
+				newTag.type = .hash
 				addChild(newTag)
 				activeList = newTag
 				
@@ -744,7 +744,7 @@ public class MustacheParser {
 				let tagName = consumeTagName(firstChar: skipWhiteSpace())
 				let newTag = MustacheGroupTag()
 				newTag.tag = tagName
-				newTag.type = .Caret
+				newTag.type = .caret
 				addChild(newTag)
 				activeList = newTag
 				
@@ -752,27 +752,27 @@ public class MustacheParser {
 				let tagName = consumeTagName(firstChar: skipWhiteSpace())
 				let newTag = MustacheTag()
 				newTag.tag = tagName
-				newTag.type = .Bang
+				newTag.type = .bang
 				addChild(newTag)
 				
 			case "&": // unescaped name
 				let tagName = consumeTagName(firstChar: skipWhiteSpace())
 				let newTag = MustacheTag()
 				newTag.tag = tagName
-				newTag.type = .UnescapedName
+				newTag.type = .unescapedName
 				addChild(newTag)
 				
 			case ">": // partial
 				let tagName = consumeTagName(firstChar: skipWhiteSpace())
 				let newTag = MustachePartialTag()
 				newTag.tag = tagName
-				newTag.type = .Partial
+				newTag.type = .partial
 				addChild(newTag)
 				
 			case "/": // pop group. ensure names match
 				let tagName = consumeTagName(firstChar: skipWhiteSpace())
 				guard tagName == activeList!.tag else {
-					throw MustacheError.SyntaxError("The closing tag /" + tagName + " did not match " + activeList!.tag)
+					throw MustacheError.syntaxError("The closing tag /" + tagName + " did not match " + activeList!.tag)
 				}
 				activeList = activeList!.parent
 			
@@ -784,20 +784,20 @@ public class MustacheParser {
 				let tagName = consumeTagName(firstChar: skipWhiteSpace())
 				let newTag = MustacheTag()
 				newTag.tag = tagName
-				newTag.type = .UnencodedName
+				newTag.type = .unencodedName
 				addChild(newTag)
 				guard !handlingUnencodedName else {
-					throw MustacheError.SyntaxError("The unencoded tag " + tagName + " did not proper closing delimiters")
+					throw MustacheError.syntaxError("The unencoded tag " + tagName + " did not proper closing delimiters")
 				}
 			default:
 				let tagName = consumeTagName(firstChar: e)
 				let newTag = MustacheTag()
 				newTag.tag = tagName
-				newTag.type = .Name
+				newTag.type = .name
 				addChild(newTag)
 			}
 		}
-		return .Plain
+		return .plain
 	}
 	
 	// reads until closing delimiters
@@ -900,13 +900,13 @@ public class MustacheParser {
 			}
 			
 			guard e != nil && (e!).isWhiteSpace() else {
-				throw MustacheError.SyntaxError(errorMsg)
+				throw MustacheError.syntaxError(errorMsg)
 			}
 			
 			e = skipWhiteSpace()
 			
 			guard e != nil && !(e!).isWhiteSpace() else {
-				throw MustacheError.SyntaxError(errorMsg)
+				throw MustacheError.syntaxError(errorMsg)
 			}
 			
 			var closeD = String(e!)
@@ -924,16 +924,16 @@ public class MustacheParser {
 			if e != nil && (e!).isWhiteSpace() {
 				e = skipWhiteSpace()
 				guard e != nil && e! == "=" else {
-					throw MustacheError.SyntaxError(errorMsg)
+					throw MustacheError.syntaxError(errorMsg)
 				}
 			}
 			
 			e = skipWhiteSpace()
 			guard e != nil else {
-				throw MustacheError.SyntaxError(errorMsg)
+				throw MustacheError.syntaxError(errorMsg)
 			}
 			guard e! == closeDelimiters[0] && consumePossibleCloseDelimiter(index: 1) else {
-				throw MustacheError.SyntaxError(errorMsg)
+				throw MustacheError.syntaxError(errorMsg)
 			}
 			
 			setDelimiters(open: Array(openD.unicodeScalars), close: Array(closeD.unicodeScalars))
