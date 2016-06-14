@@ -25,8 +25,11 @@ public struct StaticFileHandler {
 	
 	public func handleRequest(request req: WebRequest, response: WebResponse) {
 		
-		var requestUri = req.requestURI ?? ""
-		if requestUri.ends(with: "/") {
+		var requestUri = req.requestURI ?? "/"
+        if requestUri.isEmpty {
+            requestUri = "/"
+        }
+		if requestUri[requestUri.index(before: requestUri.endIndex)] == "/" {
 			requestUri.append("index.html") // !FIX! needs to be configurable
 		}
 		let documentRoot = req.documentRoot

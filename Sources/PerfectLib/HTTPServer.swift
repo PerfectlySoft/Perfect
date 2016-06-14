@@ -600,9 +600,7 @@ public class HTTPServer {
 		}
 		
 		func pullOneHeaderLine(_ characters: String.CharacterView, range: Range<String.CharacterView.Index>) -> (String, Range<String.CharacterView.Index>) {
-			
-			var retStr = ""
-			
+						
 			// skip CRLF or LF
 			var initial = range.lowerBound
 			while initial < range.upperBound {
@@ -615,13 +613,12 @@ public class HTTPServer {
 				break
 			}
 			
+            var retStr = ""
+            
 			while initial < range.upperBound {
 				var c = characters[initial]
 				initial = characters.index(after: initial)
-				if c == characterCR {
-					// a single CR is invalid. either broken client or shenanigans
-					return ("", range)
-				}
+				
 				if c == characterCRLF || c == characterLF {
 					// check for folded header
 					if initial >= range.upperBound {
@@ -635,6 +632,9 @@ public class HTTPServer {
 					} else {
 						return (retStr, initial..<range.upperBound)
 					}
+//                } else if c == characterCR {
+//                    // a single CR is invalid. either broken client or shenanigans
+//                    return ("", range)
 				} else {
 					retStr.append(c)
 				}
