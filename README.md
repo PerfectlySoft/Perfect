@@ -94,6 +94,79 @@ swift package generate-xcodeproj
 
 Open the generated file "PerfectTemplate.xcodeproj". Ensure that you have selected the executable target and selected it to run on "My Mac". You can now run and debug the server.
 
+## Next Steps
+
+These example snippets show how to accomplish several common tasks that one might need to do when developing a Web/REST application. In all cases, the ```request``` and ```response``` variables refer, respectively, to the ```WebRequest``` and ```WebResponse``` objects which are given to your URL handlers.
+
+Consult the [API reference](http://www.perfect.org/docs/) for more details.
+
+### Get a client request header
+
+```swift
+if let acceptEncoding = request.header(named: "Accept-Encoding") {
+	...
+}
+// Many common HTTP request headers have their own accessors
+if let acceptEncoding2 = request.httpAcceptEncoding {
+	...
+}
+```
+
+### Get client GET or POST parameters
+
+```swift
+if let foo = request.param(name: "foo") {
+	...
+}   
+if let foo = request.param(name: "foo", defaultValue: "default foo") {
+	...
+}
+let foos: [String] = request.params(named: "foo")
+```
+
+### Get the current request URI
+
+```swift
+if let uri = request.requestURI {
+	...        
+}
+```
+
+### Access the server's document directory and return an image file to the client
+
+```swift
+let docRoot = request.documentRoot
+do {
+    let mrPebbles = File("\(docRoot)/mr_pebbles.jpg")
+    let imageSize = mrPebbles.size
+    let imageBytes = try mrPebbles.readSomeBytes(count: imageSize)
+    response.replaceHeader(name: "Content-Type", value: MimeType.forExtension("jpg"))
+    response.replaceHeader(name: "Content-Length", value: "\(imageBytes.count)")
+    response.appendBody(bytes: imageBytes)
+} catch {
+    response.setStatus(code: 500, message: "Internal Server Error")
+    response.appendBody(string: "Error handling request: \(error)")
+}
+response.requestCompleted()
+```
+
+### Get client cookies
+
+```swift
+for (cookieName, cookieValue) in request.cookies {
+	...
+}
+```
+
+### Set client cookie
+
+```swift
+let cookie = Cookie(name: "cookie-name", value: "the value", domain: nil,
+                    expires: .session, path: "/",
+                    secure: false, httpOnly: false)
+response.addCookie(cookie: cookie)
+```
+
 ## Repository Layout
 
 We have finished refactoring Perfect to support Swift Package Manager. The Perfect project has been split up into the following repositories:
