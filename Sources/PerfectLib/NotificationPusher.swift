@@ -23,64 +23,76 @@ import PerfectThread
 /**
 Example code:
 
-// BEGIN one-time initialization code
+    // BEGIN one-time initialization code
 
-let configurationName = "My configuration name - can be whatever"
+    let configurationName = "My configuration name - can be whatever"
 
-NotificationPusher.addConfigurationIOS(configurationName) {
-	(net:NetTCPSSL) in
+    NotificationPusher.addConfigurationIOS(configurationName) {
+        (net:NetTCPSSL) in
 
-	// This code will be called whenever a new connection to the APNS service is required.
-	// Configure the SSL related settings.
+        // This code will be called whenever a new connection to the APNS service is required.
+        // Configure the SSL related settings.
 
-	net.keyFilePassword = "if you have password protected key file"
+        net.keyFilePassword = "if you have password protected key file"
 
-	guard net.useCertificateChainFile("path/to/entrust_2048_ca.cer") &&
-		net.useCertificateFile("path/to/aps_development.pem") &&
-		net.usePrivateKeyFile("path/to/key.pem") &&
-		net.checkPrivateKey() else {
+        guard net.useCertificateChainFile("path/to/entrust_2048_ca.cer") &&
+            net.useCertificateFile("path/to/aps_development.pem") &&
+            net.usePrivateKeyFile("path/to/key.pem") &&
+            net.checkPrivateKey() else {
 
-		let code = Int32(net.errorCode())
-		print("Error validating private key file: \(net.errorStr(code))")
-		return
-	}
-}
+            let code = Int32(net.errorCode())
+            print("Error validating private key file: \(net.errorStr(code))")
+            return
+        }
+    }
 
-NotificationPusher.development = true // set to toggle to the APNS sandbox server
+    NotificationPusher.development = true // set to toggle to the APNS sandbox server
 
-// END one-time initialization code
+    // END one-time initialization code
 
-// BEGIN - individual notification push
+    // BEGIN - individual notification push
 
-let deviceId = "hex string device id"
-let ary = [IOSNotificationItem.AlertBody("This is the message"), IOSNotificationItem.Sound("default")]
-let n = NotificationPusher()
+    let deviceId = "hex string device id"
+    let ary = [IOSNotificationItem.AlertBody("This is the message"), IOSNotificationItem.Sound("default")]
+    let n = NotificationPusher()
 
-n.apnsTopic = "com.company.my-app"
+    n.apnsTopic = "com.company.my-app"
 
-n.pushIOS(configurationName, deviceToken: deviceId, expiration: 0, priority: 10, notificationItems: ary) {
-	response in
+    n.pushIOS(configurationName, deviceToken: deviceId, expiration: 0, priority: 10, notificationItems: ary) {
+        response in
 
-	print("NotificationResponse: \(response.code) \(response.body)")
-}
+        print("NotificationResponse: \(response.code) \(response.body)")
+    }
 
-// END - individual notification push
+    // END - individual notification push
+
 */
 
 /// Items to configure an individual notification push.
 /// These correspond to what is described here:
 /// https://developer.apple.com/library/mac/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/TheNotificationPayload.html
 public enum IOSNotificationItem {
+    /// alert body child property
 	case alertBody(String)
+    /// alert title child property
 	case alertTitle(String)
+    /// alert title-loc-key
 	case alertTitleLoc(String, [String]?)
+    /// alert action-loc-key
 	case alertActionLoc(String)
+    /// alert loc-key
 	case alertLoc(String, [String]?)
+    /// alert launch-image
 	case alertLaunchImage(String)
+    /// aps badge key
 	case badge(Int)
+    /// aps sound key
 	case sound(String)
+    /// aps content-available key
 	case contentAvailable
+    /// aps category key
 	case category(String)
+    /// custom payload data
 	case customPayload(String, Any)
 }
 
@@ -147,11 +159,7 @@ public struct NotificationResponse {
 /// The interface for APNS notifications.
 public class NotificationPusher {
 	
-	#if swift(>=3.0)
 	typealias ComponentGenerator = IndexingIterator<[String]>
-	#else
-	typealias ComponentGenerator = IndexingGenerator<[String]>
-	#endif
 	
 	/// On-demand configuration for SSL related functions.
 	public typealias netConfigurator = (NetTCPSSL) -> ()
@@ -254,6 +262,7 @@ public class NotificationPusher {
 		}
 	}
 	
+    /// Public initializer
 	public init() {
 
 	}

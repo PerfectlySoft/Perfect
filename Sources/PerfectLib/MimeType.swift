@@ -836,9 +836,9 @@ let mimeMap = ["123" : "application/vnd.lotus-1-2-3",
 	"zirz" : "application/vnd.zul",
 	"zmm" : "application/vnd.handheld-entertainment+xml"]
 
-
+/// Provides access to a table of mime types keyed by extension.
 public struct MimeType {
-	
+	/// Returns the mime type for the given extension. Defaults to application/octet-stream.
 	public static func forExtension(_ ext: String) -> String {
 		return mimeMap[ext.lowercased()] ?? "application/octet-stream"
 	}

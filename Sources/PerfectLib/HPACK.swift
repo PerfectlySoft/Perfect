@@ -748,7 +748,7 @@ private let huffmanEncoderInstance = HuffmanEncoder(codes: huffmanCodes, lengths
 private let huffmanDecoderInstance = HuffmanDecoder(codes: huffmanCodes, lengths: huffmanCodeLengths)
 
 /// Encodes headers according to the HPACK standard.
-public final class HPACKEncoder {
+final class HPACKEncoder {
 	
 	static let bucketSize = 17
 	static let empty = [UInt8]()
@@ -795,7 +795,7 @@ public final class HPACKEncoder {
 	}
 	
 	/// Construct an HPACKEncoder with the indicated maximum capacity.
-	public init(maxCapacity: Int = 256) {
+	init(maxCapacity: Int = 256) {
 		self.capacity = maxCapacity
 		self.head.after = self.head
 		self.head.before = self.head
@@ -803,12 +803,12 @@ public final class HPACKEncoder {
 	}
 	
 	/// Encodes a new header field and value, writing the results to out Bytes.
-	public func encodeHeader(out: Bytes, nameStr: String, valueStr: String, sensitive: Bool = false, incrementalIndexing: Bool = true) throws {
+	func encodeHeader(out: Bytes, nameStr: String, valueStr: String, sensitive: Bool = false, incrementalIndexing: Bool = true) throws {
 		return try encodeHeader(out: out, name: UTF8Encoding.decode(string: nameStr), value: UTF8Encoding.decode(string: valueStr), sensitive: sensitive, incrementalIndexing: incrementalIndexing)
 	}
 	
 	/// Encodes a new header field and value, writing the results to out Bytes.
-	public func encodeHeader(out: Bytes, name: [UInt8], value: [UInt8], sensitive: Bool = false, incrementalIndexing: Bool = true) throws {
+	func encodeHeader(out: Bytes, name: [UInt8], value: [UInt8], sensitive: Bool = false, incrementalIndexing: Bool = true) throws {
 		if sensitive {
 			let nameIndex = getNameIndex(name)
 			try encodeLiteral(out: out, name: name, value: value, indexType: .never, nameIndex: nameIndex)
@@ -1068,9 +1068,9 @@ public final class HPACKEncoder {
 
 /// Decodes headers which have been HPACK encoded.
 /// Decoding takes a HeaderListener object which receives each field/value as they are decoded.
-public final class HPACKDecoder {
+final class HPACKDecoder {
 	
-	public enum Exception: ErrorProtocol {
+	enum Exception: ErrorProtocol {
 		case decompressionException, illegalIndexValue, invalidMaxDynamicTableSize, maxDynamicTableSizeChangeRequested
 	}
 	
@@ -1102,7 +1102,7 @@ public final class HPACKDecoder {
 	var valueLength = 0
 	
 	/// Construct an HPACKDecoder with the given memory constraints.
-	public init(maxHeaderSize: Int = 256, maxHeaderTableSize: Int = 256) {
+	init(maxHeaderSize: Int = 256, maxHeaderTableSize: Int = 256) {
 		self.dynamicTable = DynamicTable(initialCapacity: maxHeaderTableSize)
 		self.maxHeaderSize = maxHeaderSize
 		self.maxDynamicTableSize = maxHeaderTableSize
@@ -1234,7 +1234,7 @@ public final class HPACKDecoder {
 	}
 	
 	/// Decode the headers, sending them sequentially to headerListener.
-	public func decode(input inpt: Bytes, headerListener: HeaderListener) throws {
+	func decode(input inpt: Bytes, headerListener: HeaderListener) throws {
 		while inpt.availableExportBytes > 0 {
 			switch state {
 			case .readHeaderRepresentation:
@@ -1469,57 +1469,3 @@ public final class HPACKDecoder {
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
