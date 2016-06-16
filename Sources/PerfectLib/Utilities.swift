@@ -97,17 +97,10 @@ public struct UTF8Encoding {
 		return Encoding.encode(codec: UTF8(), generator: gen)
 	}
 
-	#if swift(>=3.0)
 	/// Use a character sequence to create a String.
 	public static func encode<S : Sequence where S.Iterator.Element == UTF8.CodeUnit>(bytes byts: S) -> String {
 		return encode(generator: byts.makeIterator())
 	}
-	#else
-	/// Use a character sequence to create a String.
-	public static func encode<S : SequenceType where S.Generator.Element == UTF8.CodeUnit>(bytes bytes: S) -> String {
-		return encode(generator: bytes.generate())
-	}
-	#endif
 
 	/// Decode a String into an array of UInt8.
 	public static func decode(string str: String) -> Array<UInt8> {
@@ -219,6 +212,7 @@ extension String {
 		return newChar
 	}
 
+    /// Decode the % encoded characters in a URL and return result
 	public var stringByDecodingURL: String? {
 
 		let percent: UInt8 = 37
@@ -253,6 +247,7 @@ extension String {
 		return UTF8Encoding.encode(bytes: bytesArray)
 	}
 
+    /// Decode a hex string into resulting byte array
 	public var decodeHex: [UInt8]? {
 
 		var bytesArray = [UInt8]()
@@ -285,6 +280,7 @@ extension String {
         return uuid_fromPointer(u)
 	}
 
+    /// Returns a String representing the given uuid_t
 	public static func fromUUID(uuid: uuid_t) -> String {
 		let u = UnsafeMutablePointer<UInt8>(allocatingCapacity:  sizeof(uuid_t))
 		let unu = UnsafeMutablePointer<Int8>(allocatingCapacity:  37) // as per spec. 36 + null
@@ -306,10 +302,12 @@ private func uuid_fromPointer(_ u: UnsafeMutablePointer<UInt8>) -> uuid_t {
     return uuid_t(u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15])
 }
 
+/// Returns an empty all zeros uuid_t
 public func empty_uuid() -> uuid_t {
 	return uuid_t(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 }
 
+/// Generate and return a random uuid_t
 public func random_uuid() -> uuid_t {
 	let u = UnsafeMutablePointer<UInt8>(allocatingCapacity:  sizeof(uuid_t))
 	defer {
@@ -370,6 +368,7 @@ extension String {
 
 extension String {
 
+    /// Replace all occurrences of `string` with `withString`.
 	public func stringByReplacing(string strng: String, withString: String) -> String {
 
 		guard !strng.isEmpty else {
@@ -412,6 +411,7 @@ extension String {
 		return nil != self.range(ofString: strng)
 	}
 }
+
 #if os(OSX)
 extension String {
 
@@ -562,11 +562,7 @@ extension String {
 
 extension String {
 	func begins(with str: String) -> Bool {
-	#if swift(>=3.0)
 		return self.characters.starts(with: str.characters)
-	#else
-		return self.hasPrefix(str)
-	#endif
 	}
 
 	func ends(with str: String) -> Bool {

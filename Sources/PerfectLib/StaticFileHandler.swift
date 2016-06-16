@@ -17,12 +17,17 @@
 //===----------------------------------------------------------------------===//
 //
 
+/// A web request handler which can be used to return static disk-based files to the client.
+/// Supports byte ranges, ETags and streaming very large files.
 public struct StaticFileHandler {
 	
 	let chunkedBufferSize = 1024*200
 	
+    /// Public initializer
 	public init() {}
 	
+    /// Main entry point. A registered URL handler should call this and pass the request and response objects.
+    /// After calling this, the StaticFileHandler owns the request and will handle it until completion.
 	public func handleRequest(request req: WebRequest, response: WebResponse) {
 		
 		var requestUri = req.requestURI ?? "/"

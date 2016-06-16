@@ -89,6 +89,7 @@ public enum MustacheError : ErrorProtocol {
 /// Call `context.extendValues(with: values)` one or more times and then
 /// `context.requestCompleted(withCollector collector)` to complete the request and output the resulting content to the client.
 public protocol MustachePageHandler {
+    /// Called by the system when the handler needs to add values for the template.
     func extendValuesForResponse(context contxt: MustacheEvaluationContext, collector: MustacheEvaluationOutputCollector)
 }
 

@@ -77,7 +77,7 @@ public struct PerfectServer {
 		return "./" // !FIX! or obsolete
 	}
     
-    // Switch the current process to run with the permissions of the indicated user
+    /// Switch the current process to run with the permissions of the indicated user
     public static func switchTo(userName unam: String) throws {
         guard let pw = getpwnam(unam) else {
             try ThrowSystemError()

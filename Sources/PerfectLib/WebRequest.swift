@@ -27,9 +27,26 @@
 ///
 /// Access to the current WebRequest object is generally provided through the corresponding WebResponse object
 public class WebRequest {
-
+    /// HTTP request method types
     public enum Method: Hashable, CustomStringConvertible {
-        case options, get, head, post, put, delete, trace, connect, custom(String)
+        /// OPTIONS
+        case options,
+        /// GET
+        get,
+        /// HEAD
+        head,
+        /// POST
+        post,
+        /// PUT
+        put,
+        /// DELETE
+        delete,
+        /// TRACE
+        trace,
+        /// CONNECT
+        connect,
+        /// Any unaccounted for or custom method
+        custom(String)
         
         static func methodFrom(string: String) -> Method {
             
@@ -46,10 +63,12 @@ public class WebRequest {
             }
         }
         
+        /// Method String hash value
         public var hashValue: Int {
             return self.description.hashValue
         }
         
+        /// The method as a String
         public var description: String {
             switch self {
             case .options:  return "OPTIONS"
@@ -71,6 +90,7 @@ public class WebRequest {
         self.connection = c
     }
     
+    /// The web server's document root
 	public lazy var documentRoot: String = {
         let c = self.connection
         if let root = c.requestParams["PERFECTSERVER_DOCUMENT_ROOT"] {
@@ -333,6 +353,7 @@ public class WebRequest {
 	public func raw() -> Dictionary<String, String> { return self.connection.requestParams }
 }
 
+/// Compare two request methods
 public func == (lhs: WebRequest.Method, rhs: WebRequest.Method) -> Bool {
     return lhs.description == rhs.description
 }

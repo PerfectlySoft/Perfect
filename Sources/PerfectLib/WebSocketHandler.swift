@@ -34,7 +34,20 @@ public class WebSocket {
 
 	/// The various types of WebSocket messages.
 	public enum OpcodeType: UInt8 {
-		case continuation = 0x0, text = 0x1, binary = 0x2, close = 0x8, ping = 0x9, pong = 0xA, invalid
+        /// Continuation op code
+		case continuation = 0x0,
+        /// Text data indicator
+        text = 0x1,
+        /// Binary data indicator
+        binary = 0x2,
+        /// Close indicator
+        close = 0x8,
+        /// Ping message
+        ping = 0x9,
+        /// Ping response message
+        pong = 0xA,
+        /// Invalid op code
+        invalid
 	}
 
 	private struct Frame {
@@ -52,11 +65,15 @@ public class WebSocket {
 
 	private let connection: WebConnection
 	/// The read timeout, in seconds. By default this is -1, which means no timeout.
+    
 	public var readTimeoutSeconds: Double = -1.0
-	private var socket: NetTCP { return self.connection.connection }
-	/// Indicates if the socket is still likely connected or if it has been closed.
+	
+    private var socket: NetTCP { return self.connection.connection }
+	
+    /// Indicates if the socket is still likely connected or if it has been closed.
 	public var isConnected: Bool { return self.socket.isValid }
-	private var nextIsContinuation = false
+	
+    private var nextIsContinuation = false
 	private let readBuffer = Bytes()
 
 	init(connection: WebConnection) {
@@ -279,14 +296,17 @@ private let webSocketGUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
 /// It will initialize the session and then deliver it to the `WebSocketSessionHandler`.
 public struct WebSocketHandler {
 
+    /// Function which produces a WebSocketSessionHandler
 	public typealias HandlerProducer = (request: WebRequest, protocols: [String]) -> WebSocketSessionHandler?
 
 	private let handlerProducer: HandlerProducer
 
+    /// Initialize WebSocketHandler with a handler producer function
 	public init(handlerProducer: HandlerProducer) {
 		self.handlerProducer = handlerProducer
 	}
 
+    /// Handle the request and negotiate the WebSocket session
 	public func handleRequest(request: WebRequest, response: WebResponse) {
 
 		guard let upgrade = request.header(named: "Upgrade"),
@@ -364,16 +384,9 @@ public struct WebSocketHandler {
 		guard let amem = mem else {
 			return ""
 		}
-	#if swift(>=3.0)
 		guard let txt = UnsafeMutablePointer<UInt8>(amem.pointee.data) else {
 			return ""
 		}
-	#else
-		let txt = UnsafeMutablePointer<UInt8>(amem.pointee.data)
-		guard nil != txt else {
-			return ""
-		}
-	#endif
 		let ret = UTF8Encoding.encode(generator: GenerateFromPointer(from: txt, count: amem.pointee.length))
 		free(amem.pointee.data)
 		return ret
