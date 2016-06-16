@@ -10,7 +10,10 @@
 [![Twitter](https://img.shields.io/badge/Twitter-@PerfectlySoft-brightgreen.svg?style=flat)](http://twitter.com/PerfectlySoft)
 [![Join the chat at https://gitter.im/PerfectlySoft/Perfect](https://img.shields.io/badge/Gitter-Join%20Chat-brightgreen.svg)](https://gitter.im/PerfectlySoft/Perfect?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-**The master branch of this project currently compiles with *Swift 3.0 Preview 1** released June 13, 2016 using Swift Package Manager.**
+**The master branch of this project currently compiles with *Swift 3.0 Preview 1* released June 13, 2016 using Swift Package Manager.**
+
+**Important:** On OS X you must set the Xcode command line tools preference as follows:
+![Xcode Prefs](assets/xcode_prefs.png)
 
 Perfect is an application server for Linux or OS X which provides a framework for developing web and other REST services in the Swift programming language. Its primary focus is on facilitating mobile apps which require backend server software, enabling you to use one language for both front and back ends.
 
