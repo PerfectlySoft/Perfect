@@ -38,7 +38,7 @@ swift --version
 should produce something like the following:
 
 ```
-Apple Swift version 3.0-dev (LLVM 3863c393d9, Clang d03752fe45, Swift e996f0c248)
+Apple Swift version 3.0 (swiftlang-800.0.30 clang-800.0.24)
 Target: x86_64-apple-macosx10.9
 ```
 
