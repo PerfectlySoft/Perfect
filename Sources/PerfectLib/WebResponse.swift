@@ -21,11 +21,18 @@ import PerfectThread
 
 /// This class bundles together the values which will be used to set a cookie in the outgoing response
 public struct Cookie {
+    
+    public enum Expiration {
+        case session
+        case relativeSeconds(Int)
+        case absoluteSeconds(Int)
+        case absoluteDate(String)
+    }
+    
 	public let name: String?
 	public let value: String?
 	public let domain: String?
-	public let expires: String?
-	public let expiresIn: Double // seconds from now. may be negative. 0.0 means no expiry (session cookie)
+	public let expires: Expiration?
 	public let path: String?
 	public let secure: Bool?
 	public let httpOnly: Bool?
@@ -33,8 +40,7 @@ public struct Cookie {
 	public init(name: String?,
 		value: String?,
 		domain: String?,
-		expires: String?,
-		expiresIn: Double,
+		expires: Expiration?,
 		path: String?,
 		secure: Bool?,
 		httpOnly: Bool?) {
@@ -42,7 +48,6 @@ public struct Cookie {
 			self.value = value
 			self.domain = domain
 			self.expires = expires
-			self.expiresIn = expiresIn
 			self.path = path
 			self.secure = secure
 			self.httpOnly = httpOnly
@@ -248,11 +253,24 @@ public class WebResponse {
 				cookieLine.append(cookie.name!.stringByEncodingURL)
 				cookieLine.append("=")
 				cookieLine.append(cookie.value!.stringByEncodingURL)
-				if cookie.expiresIn != 0.0 {
-					let formattedDate = try! formatDate(now + secondsToICUDate(Int(cookie.expiresIn)*60),
-					                                    format: "%a, %d-%b-%Y %T GMT", timezone: "GMT")
-					cookieLine.append(";expires=" + formattedDate)
-				}
+                
+                if let expires = cookie.expires {
+                    switch expires {
+                    case .session: ()
+                    case .absoluteDate(let date):
+                        cookieLine.append(";expires=" + date)
+                    case .absoluteSeconds(let seconds):
+                        let formattedDate = try! formatDate(secondsToICUDate(seconds*60),
+                                                            format: "%a, %d-%b-%Y %T GMT",
+                                                            timezone: "GMT")
+                        cookieLine.append(";expires=" + formattedDate)
+                    case .relativeSeconds(let seconds):
+                        let formattedDate = try! formatDate(now + secondsToICUDate(seconds*60),
+                                                            format: "%a, %d-%b-%Y %T GMT",
+                                                            timezone: "GMT")
+                        cookieLine.append(";expires=" + formattedDate)
+                    }
+                }
 				if let path = cookie.path {
 					cookieLine.append("; path=" + path)
 				}
