@@ -23,6 +23,10 @@ import PerfectNet
 import PerfectThread
 @testable import PerfectLib
 
+#if os(Linux)
+import SwiftGlibc
+#endif
+
 class PerfectLibTests: XCTestCase {
 
 	override func setUp() {
@@ -524,10 +528,10 @@ class PerfectLibTests: XCTestCase {
 		do {
 			let template = try MustacheParser().parse(string: usingTemplate)
 			let d = ["name":"The name"] as [String:Any]
-            
+
             let connection = HTTPServer.HTTPWebConnection()
             let response = WebResponse(connection, request: WebRequest(connection))
-            
+
             let context = MustacheEvaluationContext(webResponse: response, map: d)
 			let collector = MustacheEvaluationOutputCollector()
 			template.evaluate(context: context, collector: collector)
@@ -663,10 +667,10 @@ class PerfectLibTests: XCTestCase {
 			XCTAssertTrue(connection.requestParams["HTTP_X_BAR"] == "foo foo", "\(connection.requestParams)")
 			XCTAssertTrue(connection.contentType == "application/x-www-form-urlencoded", "\(connection.requestParams)")
 		}
-        
+
         let request = WebRequest(connection)
-        
-        XCTAssertTrue(request.headers["X-BAR"] == "foo foo", "\(request.headers)")        
+
+        XCTAssertTrue(request.headers["X-BAR"] == "foo foo", "\(request.headers)")
 	}
 
 	func testWebConnectionHeadersTooLarge() {
@@ -688,51 +692,51 @@ class PerfectLibTests: XCTestCase {
 			XCTAssertTrue(connection.getStatus().0 == 413)
 		}
 	}
-    
+
     private class ShimWebConnection: WebConnection {
         let connection = NetTCP()
         var requestParams = [String:String]()
         var stdin: [UInt8]?
         var mimes: MimeReader?
         var status = (0, "")
-        
+
         func setStatus(code c: Int, message: String) { self.status = (c, message) }
         func getStatus() -> (Int, String) { return self.status }
         func writeHeader(line l: String) {}
         func writeHeader(bytes b: [UInt8], completion: (Bool) -> ()) { completion(true) }
         func writeBody(bytes b: [UInt8], completion: (Bool) -> ()) { completion(true) }
     }
-    
+
     func testRoutingFound() {
         Routing.Routes["/foo/bar/baz"] = { _, _ in }
         let conn = ShimWebConnection()
         let req = WebRequest(conn)
         let resp = WebResponse(conn, request: req)
         let fnd = Routing.Routes["/foo/bar/baz", resp]
-        
+
         XCTAssert(fnd != nil)
     }
-    
+
     func testRoutingNotFound() {
         Routing.Routes["/foo/bar/baz"] = { _, _ in }
         let conn = ShimWebConnection()
         let req = WebRequest(conn)
         let resp = WebResponse(conn, request: req)
         let fnd = Routing.Routes["/foo/bar/buck", resp]
-        
+
         XCTAssert(fnd == nil)
     }
-    
+
     func testRoutingWild() {
         Routing.Routes["/foo/*/baz/*"] = { _, _ in }
         let conn = ShimWebConnection()
         let req = WebRequest(conn)
         let resp = WebResponse(conn, request: req)
         let fnd = Routing.Routes["/foo/bar/baz/bum", resp]
-        
+
         XCTAssert(fnd != nil)
     }
-    
+
     func testRoutingTrailingWild1() {
         Routing.Routes["/foo/**"] = { _, _ in }
         let conn = ShimWebConnection()
@@ -742,23 +746,23 @@ class PerfectLibTests: XCTestCase {
             let fnd = Routing.Routes["/foo/bar/baz/bum", resp]
             XCTAssert(fnd != nil)
         }
-        
+
         do {
             let fnd = Routing.Routes["/foo/bar", resp]
             XCTAssert(fnd != nil)
         }
-        
+
         do {
             let fnd = Routing.Routes["/foo/", resp]
             XCTAssert(fnd != nil)
         }
-        
+
         do {
             let fnd = Routing.Routes["/fooo/", resp]
             XCTAssert(fnd == nil)
         }
     }
-    
+
     func testRoutingTrailingWild2() {
         Routing.Routes["**"] = { _, _ in }
         let conn = ShimWebConnection()
@@ -768,30 +772,30 @@ class PerfectLibTests: XCTestCase {
             let fnd = Routing.Routes["/foo/bar/baz/bum", resp]
             XCTAssert(fnd != nil)
         }
-        
+
         do {
             let fnd = Routing.Routes["/foo/bar", resp]
             XCTAssert(fnd != nil)
         }
-        
+
         do {
             let fnd = Routing.Routes["/foo/", resp]
             XCTAssert(fnd != nil)
         }
     }
-    
+
     func testRoutingVars() {
         Routing.Routes["/foo/{bar}/baz/{bum}"] = { _, _ in }
         let conn = ShimWebConnection()
         let req = WebRequest(conn)
         let resp = WebResponse(conn, request: req)
         let fnd = Routing.Routes["/foo/1/baz/2", resp]
-        
+
         XCTAssert(fnd != nil)
         XCTAssert(req.urlVariables["bar"] == "1")
         XCTAssert(req.urlVariables["bum"] == "2")
     }
-    
+
     func testRoutingAddPerformance() {
         self.measure {
             for i in 0..<10000 {
@@ -799,28 +803,28 @@ class PerfectLibTests: XCTestCase {
             }
         }
     }
-    
+
     func testDeletingPathExtension() {
         let path = "/a/b/c.txt"
         let del = path.stringByDeletingPathExtension
         XCTAssert("/a/b/c" == del)
     }
-    
+
     func testGetPathExtension() {
         let path = "/a/b/c.txt"
         let ext = path.pathExtension
         XCTAssert("txt" == ext)
     }
-    
+
     func testRoutingFindPerformance() {
         for i in 0..<10000 {
             Routing.Routes["/foo/\(i)/baz"] = { _, _ in }
         }
-        
+
         let conn = ShimWebConnection()
         let req = WebRequest(conn)
         let resp = WebResponse(conn, request: req)
-        
+
         self.measure {
             for i in 0..<10000 {
                 guard let _ = Routing.Routes["/foo/\(i)/baz", resp] else {
@@ -830,19 +834,19 @@ class PerfectLibTests: XCTestCase {
             }
         }
     }
-    
+
     func testMimeReader() {
-        
+
         let boundary = "----9051914041544843365972754266"
-        
+
         var testData = Array<Dictionary<String, String>>()
         let numTestFields = 1 + _rand(to: 100)
-        
+
         for idx in 0..<numTestFields {
             var testDic = Dictionary<String, String>()
-            
+
             testDic["name"] = "test_field_\(idx)"
-            
+
             let isFile = _rand(to: 3) == 2
             if isFile {
                 var testValue = ""
@@ -858,98 +862,98 @@ class PerfectLibTests: XCTestCase {
                 }
                 testDic["value"] = testValue
             }
-            
+
             testData.append(testDic)
         }
-        
+
         let file = File("/tmp/mimeReaderTest.txt")
         do {
-            
+
             try file.open(.truncate)
-            
+
             for testDic in testData {
                 let _ = try file.write(string: "--" + boundary + "\r\n")
-                
+
                 let testName = testDic["name"]!
                 let testValue = testDic["value"]!
                 let isFile = testDic["file"]
-                
+
                 if let _ = isFile {
-                    
+
                     let _ = try file.write(string: "Content-Disposition: form-data; name=\"\(testName)\"; filename=\"\(testName).txt\"\r\n")
                     let _ = try file.write(string: "Content-Type: text/plain\r\n\r\n")
                     let _ = try file.write(string: testValue)
                     let _ = try file.write(string: "\r\n")
-                    
+
                 } else {
-                    
+
                     let _ = try file.write(string: "Content-Disposition: form-data; name=\"\(testName)\"\r\n\r\n")
                     let _ = try file.write(string: testValue)
                     let _ = try file.write(string: "\r\n")
                 }
-                
+
             }
-            
+
             let _ = try file.write(string: "--" + boundary + "--")
-            
+
             for num in 1...2048 {
-                
+
                 file.close()
                 try file.open()
-                
+
                 //print("Test run: \(num) bytes with \(numTestFields) fields")
-                
+
                 let mimeReader = MimeReader("multipart/form-data; boundary=" + boundary)
-                
+
                 XCTAssertEqual(mimeReader.boundary, "--" + boundary)
-                
+
                 var bytes = try file.readSomeBytes(count: num)
                 while bytes.count > 0 {
                     mimeReader.addToBuffer(bytes: bytes)
                     bytes = try file.readSomeBytes(count: num)
                 }
-                
+
                 XCTAssertEqual(mimeReader.bodySpecs.count, testData.count)
-                
+
                 var idx = 0
                 for body in mimeReader.bodySpecs {
-                    
+
                     let testDic = testData[idx]
                     idx += 1
                     XCTAssertEqual(testDic["name"]!, body.fieldName)
                     if let _ = testDic["file"] {
-                        
+
                         let file = File(body.tmpFileName)
                         try file.open()
                         let contents = try file.readSomeBytes(count: file.size)
                         file.close()
-                        
+
                         let decoded = UTF8Encoding.encode(bytes: contents)
                         let v = testDic["value"]!
                         XCTAssertEqual(v, decoded)
                     } else {
                         XCTAssertEqual(testDic["value"]!, body.fieldValue)
                     }
-                    
+
                     body.cleanup()
                 }
             }
-            
+
             file.close()
             file.delete()
-            
+
         } catch let e {
             XCTAssert(false, "\(e)")
         }
     }
-    
+
     func testWebRequestQueryParam() {
         let req = WebRequest(HTTPServer.HTTPWebConnection())
         req.queryString = "yabba=dabba&doo=fi+☃&fi=&fo=fum"
         XCTAssert(req.param(name: "doo") == "fi ☃")
         XCTAssert(req.param(name: "fi") == "")
     }
-    
+
     func testWebRequestPostParam() {
         let con = HTTPServer.HTTPWebConnection()
         let req = WebRequest(con)
@@ -957,7 +961,7 @@ class PerfectLibTests: XCTestCase {
         XCTAssert(req.param(name: "doo") == "fi ☃")
         XCTAssert(req.param(name: "fi") == "")
     }
-    
+
     func testWebRequestCookie() {
         let req = WebRequest(HTTPServer.HTTPWebConnection())
         req.httpCookie = "yabba=dabba; doo=fi☃; fi=; fo=fum"
@@ -1001,7 +1005,7 @@ extension PerfectLibTests {
 					("testWebConnectionHeadersFolded", testWebConnectionHeadersFolded),
 					("testWebConnectionHeadersTooLarge", testWebConnectionHeadersTooLarge),
 					("testMimeReader", testMimeReader),
-					
+
 					("testRoutingFound", testRoutingFound),
 					("testRoutingNotFound", testRoutingNotFound),
 					("testRoutingWild", testRoutingWild),
@@ -1010,11 +1014,11 @@ extension PerfectLibTests {
 					("testRoutingFindPerformance", testRoutingFindPerformance),
 					("testRoutingTrailingWild1", testRoutingTrailingWild1),
 					("testRoutingTrailingWild2", testRoutingTrailingWild2),
-					
+
 					("testMimeReaderSimple", testMimeReaderSimple),
 					("testDeletingPathExtension", testDeletingPathExtension),
 					("testGetPathExtension", testGetPathExtension),
-					
+
 					("testWebRequestQueryParam", testWebRequestQueryParam),
 					("testWebRequestCookie", testWebRequestCookie),
 					("testWebRequestPostParam", testWebRequestPostParam)
