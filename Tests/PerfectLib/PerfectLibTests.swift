@@ -27,9 +27,7 @@ class PerfectLibTests: XCTestCase {
 
 	override func setUp() {
 		super.setUp()
-	#if os(OSX)
-		Foundation.srand(UInt32(time(nil)))
-	#else
+	#if os(Linux)
 		SwiftGlibc.srand(UInt32(time(nil)))
 	#endif
 		// Put setup code here. This method is called before the invocation of each test method in the class.
@@ -41,19 +39,12 @@ class PerfectLibTests: XCTestCase {
 		super.tearDown()
 	}
 
-	#if swift(>=3.0)
-	#else
-	func measure(block: ()->()) {
-		self.measureBlock(block)
-	}
-	#endif
-
 	func _rand(to upper: Int32) -> Int32 {
-		#if os(OSX)
-		return Foundation.rand() % Int32(upper)
-		#else
+    #if os(OSX)
+		return Int32(arc4random_uniform(UInt32(upper)))
+	#else
 		return SwiftGlibc.rand() % Int32(upper)
-		#endif
+	#endif
 	}
 
 	func testConcurrentQueue() {
@@ -392,7 +383,7 @@ class PerfectLibTests: XCTestCase {
 			})
 		#endif
 
-		} catch PerfectError.NetworkError(let code, let msg) {
+		} catch PerfectError.networkError(let code, let msg) {
 			XCTAssert(false, "Exception: \(code) \(msg)")
 		} catch let e {
 			XCTAssert(false, "Exception: \(e)")

@@ -72,7 +72,8 @@ public class File {
             if res != -1 {
                 ary.removeLast(maxPath - res)
                 let trailPath = UTF8Encoding.encode(bytes: ary)
-                if trailPath[trailPath.startIndex] != "/" && trailPath[trailPath.startIndex] != "." {
+                let lastChar = trailPath[trailPath.startIndex]
+                if lastChar != "/" && lastChar != "." {
                     return internalPath.stringByDeletingLastPathComponent + "/" + trailPath
                 }
                 return trailPath
