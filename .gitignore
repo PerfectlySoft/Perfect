@@ -55,3 +55,4 @@ PerfectServer/perfectserverhttp
 .build/
 Packages/
 PerfectLib.xcodeproj/
+docs/

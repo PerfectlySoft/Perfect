@@ -67,9 +67,10 @@ public struct Cookie {
 }
 
 /// Represents an outgoing web response. Handles the following tasks:
-/// - Collecting HTTP response headers & cookies.
-/// - Locating the response template file, parsing it, evaluating it and returning the resulting data.
-/// - Provides access to the WebRequest object.
+///
+/// * Collecting HTTP response headers & cookies.
+/// * Locating the response template file, parsing it, evaluating it and returning the resulting data.
+/// * Provides access to the WebRequest object.
 public class WebResponse {
 
 	var connection: WebConnection

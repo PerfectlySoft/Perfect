@@ -167,6 +167,22 @@ let cookie = Cookie(name: "cookie-name", value: "the value", domain: nil,
 response.addCookie(cookie: cookie)
 ```
 
+### Return JSON data to client
+
+```swift
+response.replaceHeader(name: "Content-Type", value: "application/json")
+let dict: [String:Any] = ["a":1, "b":0.1, "c": true, "d":[2, 4, 5, 7, 8]]
+    
+do {
+	let jsonString = try dict.jsonEncodedString()
+	response.appendBody(string: jsonString)
+} catch {
+	...
+}
+response.requestCompleted()
+```
+*This snippet uses the built-in JSON encoding. Feel free to bring in your own favorite JSON encoder/decoder.*
+
 ## Repository Layout
 
 We have finished refactoring Perfect to support Swift Package Manager. The Perfect project has been split up into the following repositories:
