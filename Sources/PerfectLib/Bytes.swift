@@ -43,6 +43,7 @@ public final class Bytes {
 	// -- IMPORT
 	/// Imports one UInt8 value appending it to the end of the array
 	/// - returns: The Bytes object
+    @discardableResult
 	public func import8Bits(from frm: UInt8) -> Bytes {
 		data.append(frm)
 		return self
@@ -50,6 +51,7 @@ public final class Bytes {
 	
 	/// Imports one UInt16 value appending it to the end of the array
 	/// - returns: The Bytes object
+    @discardableResult
 	public func import16Bits(from frm: UInt16) -> Bytes {
 		data.append(UInt8(frm & 0xFF))
 		data.append(UInt8((frm >> 8) & 0xFF))
@@ -58,6 +60,7 @@ public final class Bytes {
 	
 	/// Imports one UInt32 value appending it to the end of the array
 	/// - returns: The Bytes object
+    @discardableResult
 	public func import32Bits(from frm: UInt32) -> Bytes {
 		data.append(UInt8(frm & 0xFF))
 		data.append(UInt8((frm >> 8) & 0xFF))
@@ -68,6 +71,7 @@ public final class Bytes {
 	
 	/// Imports one UInt64 value appending it to the end of the array
 	/// - returns: The Bytes object
+    @discardableResult
 	public func import64Bits(from frm: UInt64) -> Bytes {
 		data.append(UInt8(frm & 0xFF))
 		data.append(UInt8((frm >> 8) & 0xFF))
@@ -82,6 +86,7 @@ public final class Bytes {
 	
 	/// Imports an array of UInt8 values appending them to the end of the array
 	/// - returns: The Bytes object
+    @discardableResult
 	public func importBytes(from frm: [UInt8]) -> Bytes {
 		data.append(contentsOf: frm)
 		return self
@@ -89,6 +94,7 @@ public final class Bytes {
 	
 	/// Imports the array values of the given Bytes appending them to the end of the array
 	/// - returns: The Bytes object
+    @discardableResult
 	public func importBytes(from frm: Bytes) -> Bytes {
 		data.append(contentsOf: frm.data)
 		return self
@@ -96,6 +102,7 @@ public final class Bytes {
 	
 	/// Imports an `ArraySlice` of UInt8 values appending them to the end of the array
 	/// - returns: The Bytes object
+    @discardableResult
 	public func importBytes(from frm: ArraySlice<UInt8>) -> Bytes {
 		data.append(contentsOf: frm)
 		return self
