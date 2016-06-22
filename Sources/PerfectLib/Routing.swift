@@ -89,7 +89,7 @@ public struct RouteMap: CustomStringConvertible {
 	}
 
 	/// Add a route to the system using the indicated HTTP request method.
-	/// `Routing.Routes[.Get, "/foo/*/baz"] = { request, response in ... }`
+	/// `Routing.Routes[.get, "/foo/*/baz"] = { request, response in ... }`
 	public subscript(method: WebRequest.Method, path: String) -> RequestHandler? {
 		get {
 			return nil // Swift does not currently allow set-only subscripts
@@ -110,7 +110,7 @@ public struct RouteMap: CustomStringConvertible {
 	}
 
 	/// Add an array of routes for a given handler using the indicated HTTP request method.
-	/// `Routing.Routes[.Get, ["/", "index.html"] ] = { request, response in ... }`
+	/// `Routing.Routes[.get, ["/", "index.html"] ] = { request, response in ... }`
 	public subscript(method: WebRequest.Method, paths: [String]) -> RequestHandler? {
 		get {
 			return nil // Swift does not currently allow set-only subscripts
@@ -132,12 +132,12 @@ public struct RouteMap: CustomStringConvertible {
 /// The system supports HTTP method based routing, wildcards and variables.
 ///
 /// Add routes in the following manner:
-/// ```
-/// 	Routing.Routes[.Get, ["/", "index.html"] ] = { request, response in ... }
+/// ``
+/// 	Routing.Routes[.get, ["/", "index.html"] ] = { request, response in ... }
 /// 	Routing.Routes["/foo/*/baz"] = { request, response in ... }
 /// 	Routing.Routes["/foo/bar/baz"] = { request, response in ... }
-/// 	Routing.Routes[.Get, "/user/{id}/baz"] = { request, response in ... }
-/// 	Routing.Routes[.Post, "/user/{id}/baz"] = { request, response in ... }
+/// 	Routing.Routes[.get, "/user/{id}/baz"] = { request, response in ... }
+/// 	Routing.Routes[.post, "/user/{id}/baz"] = { request, response in ... }
 /// 	Routing.Routes["**"] = { request, response in ... } // matches any path
 /// ```
 /// Variables set by the routing process can be accessed through the `WebRequest.urlVariables` dictionary.
