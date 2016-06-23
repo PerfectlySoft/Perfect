@@ -224,18 +224,15 @@ extension String {
 		var g = self.utf8.makeIterator()
 		while let c = g.next() {
 			if c == percent {
-
 				guard let c1v = g.next() else {
 					return nil
 				}
 				guard let c2v = g.next() else {
 					return nil
 				}
-
 				guard let newChar = String.byteFromHexDigits(one: c1v, two: c2v) else {
 					return nil
 				}
-
 				bytesArray.append(newChar)
 			} else if c == plus {
 				bytesArray.append(space)
@@ -243,7 +240,6 @@ extension String {
 				bytesArray.append(c)
 			}
 		}
-
 		return UTF8Encoding.encode(bytes: bytesArray)
 	}
 
@@ -662,7 +658,7 @@ public extension NetNamedPipe {
     /// - throws: `PerfectError.NetworkError`
     public func receiveFile(callBack: (File?) -> ()) throws {
         try self.receiveFd {
-            (fd: Int32) -> () in
+            fd in
             
             if fd == invalidSocket {
                 callBack(nil)
@@ -673,3 +669,19 @@ public extension NetNamedPipe {
     }
 }
 
+import OpenSSL
+
+extension String.UTF8View {
+    var sha1: [UInt8] {
+        let bytes = UnsafeMutablePointer<UInt8>(allocatingCapacity:  Int(SHA_DIGEST_LENGTH))
+        defer { bytes.deallocateCapacity(Int(SHA_DIGEST_LENGTH)) }
+        
+        SHA1(Array<UInt8>(self), (self.count), bytes)
+        
+        var r = [UInt8]()
+        for idx in 0..<Int(SHA_DIGEST_LENGTH) {
+            r.append(bytes[idx])
+        }
+        return r
+    }
+}
