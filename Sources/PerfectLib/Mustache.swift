@@ -164,7 +164,7 @@ public class MustacheEvaluationContext {
     /// formulated and returned to the client
     public func requestCompleted(withCollector collector: MustacheEvaluationOutputCollector) throws {
         self.webResponse.appendBody(string: try self.formulateResponse(withCollector: collector))
-        self.webResponse.requestCompleted()
+        self.webResponse.completed()
     }
     
     /// All the template values have been completed and resulting content should be
@@ -249,6 +249,7 @@ public class MustacheEvaluationOutputCollector {
 	/// Append a new string value to the collected output.
 	/// - parameter s: The string value which will be appended.
 	/// - parameter encoded: If true, the string value will be HTML encoded as it is appended. Defaults to true.
+    @discardableResult
 	public func append(_ s: String, encoded: Bool = true) -> MustacheEvaluationOutputCollector {
 		if encoded {
 			output.append(self.defaultEncodingFunc(s))
@@ -291,16 +292,16 @@ public class MustacheTag {
 		
 		switch type {
 		case .plain:
-			let _ = collector.append(tag, encoded: false)
+			collector.append(tag, encoded: false)
 		case .unescapedName:
-			let _ = collector.append(tag, encoded: false)
+			collector.append(tag, encoded: false)
 		case .name:
 			if let value = contxt.getValue(named: tag) {
-				let _ = collector.append(String(value))
+				collector.append(String(value))
 			}
 		case .unencodedName:
 			if let value = contxt.getValue(named: tag) {
-				let _ = collector.append(String(value), encoded: false)
+				collector.append(String(value), encoded: false)
 			}
 		case .pragma, .bang:
 			() // ignored
@@ -462,7 +463,7 @@ public class MustacheGroupTag : MustacheTag {
 					}
 				}
 			case let lambda as (String, MustacheEvaluationContext) -> String:
-				let _ = collector.append(lambda(bodyText(), contxt), encoded: false)
+				collector.append(lambda(bodyText(), contxt), encoded: false)
 			case let stringValue as String where stringValue.characters.count > 0:
 				for child in children {
 					child.evaluate(context: contxt, collector: collector)

@@ -109,9 +109,9 @@ public class File {
 	public func close() {
 		if fd != -1 {
 		#if os(Linux)
-			let _ = SwiftGlibc.close(CInt(fd))
+			_ = SwiftGlibc.close(CInt(fd))
 		#else
-			let _ = Darwin.close(CInt(fd))
+            _ = Darwin.close(CInt(fd))
 		#endif
 			fd = -1
 		}
@@ -211,7 +211,7 @@ public extension File {
             return destFile
         }
         if errno == EXDEV {
-            let _ = try self.copyTo(path: path, overWrite: overWrite)
+            _ = try self.copyTo(path: path, overWrite: overWrite)
             self.delete()
             return destFile
         }
@@ -238,13 +238,13 @@ public extension File {
         if !wasOpen {
             try open()
         } else {
-            let _ = marker = 0
+            _ = marker = 0
         }
         defer {
             if !wasOpen {
                 close()
             } else {
-                let _ = marker = oldMarker
+                _ = marker = oldMarker
             }
         }
         
