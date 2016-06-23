@@ -44,7 +44,17 @@ class HTTP11Request: HTTPRequest {
     var documentRoot = "./webroot"
     var urlVariables = [String:String]()
     
-    var headers = [String:String]()
+    private var headerStore = Dictionary<HTTPRequestHeader.Name, String>()
+    
+    var headers: AnyIterator<(HTTPRequestHeader.Name, String)> {
+        var g = self.headerStore.makeIterator()
+        return AnyIterator<(HTTPRequestHeader.Name, String)> {
+            guard let n = g.next() else {
+                return nil
+            }
+            return (n.key, n.value)
+        }
+    }
     
     lazy var postParams: [(String, String)] = {
         
@@ -91,11 +101,11 @@ class HTTP11Request: HTTPRequest {
     var mimes: MimeReader?
     
     var contentType: String? {
-        return self.headers["content-type"]
+        return self.headerStore[.contentType]
     }
     
     lazy var contentLength: Int = {
-        guard let cl = self.headers["content-length"] else {
+        guard let cl = self.headerStore[.contentLength] else {
             return 0
         }
         return Int(cl) ?? 0
@@ -105,6 +115,31 @@ class HTTP11Request: HTTPRequest {
     
     init(connection: NetTCP) {
         self.connection = connection
+    }
+    
+    func header(_ named: HTTPRequestHeader.Name) -> String? {
+        return headerStore[named]
+    }
+    
+    func addHeader(_ named: HTTPRequestHeader.Name, value: String) {
+        if let existing = headerStore[named] {
+            if existing == "cookie" {
+                self.headerStore[named] = existing + "; " + value
+            } else {
+                self.headerStore[named] = existing + ", " + value
+            }
+        } else {
+            self.headerStore[named] = value
+        }
+    }
+    
+    func setHeader(_ named: HTTPRequestHeader.Name, value: String) {
+        setHeader(named, value: value)
+    }
+    
+    func setHeader(named: String, value: String) {
+        let lowered = named.lowercased()
+        setHeader(HTTPRequestHeader.Name.fromStandard(name: lowered), value: value)
     }
     
     func readRequest(callback: StatusCallback) {
@@ -251,7 +286,7 @@ class HTTP11Request: HTTPRequest {
             fieldValue.append(c)
         }
         
-        self.headers[fieldName.lowercased()] = fieldValue
+        self.setHeader(named: fieldName, value: fieldValue)
         return true
     }
     

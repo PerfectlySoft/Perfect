@@ -135,7 +135,7 @@ final class HTTP2Response: HTTP11Response, HeaderListener {
 		case ":status":
 			self.status = HTTPResponseStatus.statusFrom(code: Int(v) ?? 200)
 		default:
-			headers.append((n, v))
+			headerStore.append((HTTPResponseHeader.Name.fromStandard(name: n), v))
 		}
 	}
 }
@@ -461,7 +461,7 @@ class HTTP2Client {
 			try encoder.encodeHeader(out: headerBytes, nameStr: "content-length", valueStr: "\(request.postBodyBytes?.count ?? 0)")
 
 			for (name, value) in request.headers {
-				let lowered  = name.lowercased()
+				let lowered  = name.standardName
 				var inc = true
 				// this is APNS specific in that Apple wants the apns-id and apns-expiration headers to be indexed on the first request but not indexed on subsequent requests
 				// !FIX! need to enable the caller to indicate policies such as this

@@ -154,16 +154,76 @@ public enum HTTPResponseStatus: CustomStringConvertible {
     }
 }
 
+/// This bundles together the values which will be used to set a cookie in the outgoing response
+public struct HTTPCookie {
+    /// Cookie expiration type
+    public enum Expiration {
+        /// Session cookie with no explicit expiration
+        case session
+        /// Expiratiuon in a number of seconds from now
+        case relativeSeconds(Int)
+        /// Expiration at an absolute time given in seconds from epoch
+        case absoluteSeconds(Int)
+        /// Custom expiration date string
+        case absoluteDate(String)
+    }
+    
+    /// Cookie name
+    public let name: String?
+    /// Cookie value
+    public let value: String?
+    /// Cookie domain
+    public let domain: String?
+    /// Cookie expiration
+    public let expires: Expiration?
+    /// Cookie path
+    public let path: String?
+    /// Cookie secure flag
+    public let secure: Bool?
+    /// Cookie http only flag
+    public let httpOnly: Bool?
+    
+    /// Cookie public initializer
+    public init(name: String?,
+                value: String?,
+                domain: String?,
+                expires: Expiration?,
+                path: String?,
+                secure: Bool?,
+                httpOnly: Bool?) {
+        self.name = name
+        self.value = value
+        self.domain = domain
+        self.expires = expires
+        self.path = path
+        self.secure = secure
+        self.httpOnly = httpOnly
+    }
+}
+
 public protocol HTTPResponse: class {
     var request: HTTPRequest { get }
     var status: HTTPResponseStatus { get set }
-    var headers: [(String, String)] { get set }
     var isStreaming: Bool { get set }
-    func addHeader(name: String, value: String)
-    func replaceHeader(name: String, value: String)
+    var completed: () -> () { get set }
+    
+    func header(_ named: HTTPResponseHeader.Name) -> String?
+    func addHeader(_ named: HTTPResponseHeader.Name, value: String)
+    func setHeader(_ named: HTTPResponseHeader.Name, value: String)
+    
+    var headers: AnyIterator<(HTTPResponseHeader.Name, String)> { get }
+    
+    func addCookie(_: HTTPCookie)
+    
     func appendBody(bytes: [UInt8])
     func appendBody(string: String)
     func setBody(json: [String:Any]) throws
     func push(callback: (Bool) -> ())
-    var completed: () -> () { get set }
 }
+
+
+
+
+
+
+

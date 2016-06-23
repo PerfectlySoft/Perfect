@@ -20,3 +20,20 @@
 // deprecated in P2.0
 public typealias WebResponse = HTTPResponse
 public typealias WebRequest = HTTPRequest
+
+public extension HTTPRequest {
+    
+    @available(*, unavailable, renamed:"path")
+    var requestURI: String? { return self.path }
+    
+}
+
+public extension HTTPResponse {
+    
+    @available(*, unavailable, renamed:"completed()")
+    func requestCompleted() {
+        self.completed()
+    }
+}
+
+
