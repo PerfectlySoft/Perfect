@@ -174,11 +174,7 @@ public struct Routing {
 
 class RouteNode: CustomStringConvertible {
     
-	#if swift(>=3.0)
 	typealias ComponentGenerator = IndexingIterator<[String]>
-	#else
-	typealias ComponentGenerator = IndexingGenerator<[String]>
-    #endif
 
     var handler: RouteMap.RequestHandler?
     var trailingWildCard: RouteNode?
