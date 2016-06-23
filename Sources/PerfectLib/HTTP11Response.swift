@@ -22,8 +22,15 @@ import PerfectThread
 
 class HTTP11Response: HTTPResponse {
     var status = HTTPResponseStatus.ok
-    var headers = [(String, String)]()
+    var headerStore = Array<(HTTPResponseHeader.Name, String)>()
     var bodyBytes = [UInt8]()
+    
+    var headers: AnyIterator<(HTTPResponseHeader.Name, String)> {
+        var g = self.headerStore.makeIterator()
+        return AnyIterator<(HTTPResponseHeader.Name, String)> {
+            g.next()
+        }
+    }
     
     var connection: NetTCP {
         return request.connection
@@ -32,12 +39,14 @@ class HTTP11Response: HTTPResponse {
     var isStreaming = false
     var wroteHeaders = false
     var completed: () -> ()
+    let request: HTTPRequest
+    var cookies = [HTTPCookie]()
     
     lazy var isKeepAlive: Bool = {
         // http 1.1 is keep-alive unless otherwise noted
         // http 1.0 is keep-alive if specifically noted
         // check header first
-        if let connection = self.request.headers["connection"] {
+        if let connection = self.request.header(.connection) {
             if connection.lowercased() == "keep-alive" {
                 return true
             }
@@ -51,30 +60,39 @@ class HTTP11Response: HTTPResponse {
         return version.0 == 1 && version.1 == 1
     }
     
-    let request: HTTPRequest
-    
     init(request: HTTPRequest) {
         self.request = request
         self.completed = { request.connection.close() }
     }
     
-    func addHeader(name: String, value: String) {
-        headers.append((name, value))
+    func addCookie(_ cookie: HTTPCookie) {
+        cookies.append(cookie)
     }
     
-    func replaceHeader(name: String, value: String) {
+    func header(_ named: HTTPResponseHeader.Name) -> String? {
+        for (n, v) in headerStore where n == named {
+            return v
+        }
+        return nil
+    }
+    
+    func addHeader(_ name: HTTPResponseHeader.Name, value: String) {
+        headerStore.append((name, value))
+    }
+    
+    func setHeader(_ name: HTTPResponseHeader.Name, value: String) {
         var fi = [Int]()
-        for i in 0..<headers.count {
-            let (n, _) = headers[i]
+        for i in 0..<headerStore.count {
+            let (n, _) = headerStore[i]
             if n == name {
                 fi.append(i)
             }
         }
         fi.reverse()
         for i in fi {
-            headers.remove(at: i)
+            headerStore.remove(at: i)
         }
-        addHeader(name: name, value: value)
+        addHeader(name, value: value)
     }
     
     func appendBody(bytes: [UInt8]) {
@@ -108,11 +126,12 @@ class HTTP11Response: HTTPResponse {
     func pushHeaders(callback: (Bool) -> ()) {
         wroteHeaders = true
         if isKeepAlive {
-            addHeader(name: "connection", value: "keep-alive")
+            addHeader(.connection, value: "keep-alive")
         }
         if isStreaming {
-            addHeader(name: "transfer-encoding", value: "chunked")
+            addHeader(.transferEncoding, value: "chunked")
         }
+        addCookies()
         var responseString = "HTTP/\(request.protocolVersion.0).\(request.protocolVersion.1) \(status)\r\n"
         for (n, v) in headers {
             responseString.append("\(n): \(v)\r\n")
@@ -167,6 +186,51 @@ class HTTP11Response: HTTPResponse {
                 callback(true)
             }
         }
+    }
+    
+    func addCookies() {
+        for cookie in self.cookies {
+            var cookieLine = ""
+            cookieLine.append(cookie.name!.stringByEncodingURL)
+            cookieLine.append("=")
+            cookieLine.append(cookie.value!.stringByEncodingURL)
+            
+            if let expires = cookie.expires {
+                switch expires {
+                case .session: ()
+                case .absoluteDate(let date):
+                    cookieLine.append(";expires=" + date)
+                case .absoluteSeconds(let seconds):
+                    let formattedDate = try! formatDate(secondsToICUDate(seconds*60),
+                                                        format: "%a, %d-%b-%Y %T GMT",
+                                                        timezone: "GMT")
+                    cookieLine.append(";expires=" + formattedDate)
+                case .relativeSeconds(let seconds):
+                    let formattedDate = try! formatDate(getNow() + secondsToICUDate(seconds*60),
+                                                        format: "%a, %d-%b-%Y %T GMT",
+                                                        timezone: "GMT")
+                    cookieLine.append(";expires=" + formattedDate)
+                }
+            }
+            if let path = cookie.path {
+                cookieLine.append("; path=" + path)
+            }
+            if let domain = cookie.domain {
+                cookieLine.append("; domain=" + domain)
+            }
+            if let secure = cookie.secure {
+                if secure == true {
+                    cookieLine.append("; secure")
+                }
+            }
+            if let httpOnly = cookie.httpOnly {
+                if httpOnly == true {
+                    cookieLine.append("; HttpOnly")
+                }
+            }
+            addHeader(.setCookie, value: cookieLine)
+        }
+        self.cookies.removeAll()
     }
 }
 

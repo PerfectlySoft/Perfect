@@ -47,11 +47,11 @@ public struct StaticFileHandler {
 	
 	func sendFile(request req: HTTPRequest, response resp: HTTPResponse, file: File) {
 		
-		resp.addHeader(name: "Accept-Ranges", value: "bytes")
+		resp.addHeader(.acceptRanges, value: "bytes")
 
-		if let rangeRequest = req.headers["range"] {
+		if let rangeRequest = req.header(.range) {
             return self.performRangeRequest(rangeRequest: rangeRequest, request: req, response: resp, file: file)
-        } else if let ifNoneMatch = req.headers["if-none-match"] {
+        } else if let ifNoneMatch = req.header(.ifNoneMatch) {
             let eTag = self.getETag(file: file)
             if ifNoneMatch == eTag {
                 resp.status = .notModified
@@ -63,8 +63,8 @@ public struct StaticFileHandler {
         let contentType = MimeType.forExtension(file.path.pathExtension)
         
 		resp.status = .ok
-		resp.addHeader(name: "Content-Type", value: contentType)
-		resp.addHeader(name: "Content-Length", value: "\(size)")
+		resp.addHeader(.contentType, value: contentType)
+		resp.addHeader(.contentLength, value: "\(size)")
         
         self.addETag(response: resp, file: file)
         
@@ -88,9 +88,9 @@ public struct StaticFileHandler {
             let contentType = MimeType.forExtension(file.path.pathExtension)
             
             response.status = .partialContent
-            response.addHeader(name: "Content-Length", value: "\(rangeCount)")
-            response.addHeader(name: "Content-Type", value: contentType)
-            response.addHeader(name: "Content-Range", value: "bytes \(range.lowerBound)-\(range.upperBound-1)/\(size)")
+            response.addHeader(.contentLength, value: "\(rangeCount)")
+            response.addHeader(.contentType, value: contentType)
+            response.addHeader(.contentRange, value: "bytes \(range.lowerBound)-\(range.upperBound-1)/\(size)")
             
             if case .head = request.method {
                 return response.completed()
@@ -121,8 +121,7 @@ public struct StaticFileHandler {
     
     func addETag(response resp: HTTPResponse, file: File) {
         let eTag = self.getETag(file: file)
-        
-        resp.addHeader(name: "ETag", value: eTag)
+        resp.addHeader(.eTag, value: eTag)
     }
     
 	func sendFile(remainingBytes remaining: Int, response: HTTPResponse, file: File, completion: (Bool) -> ()) {

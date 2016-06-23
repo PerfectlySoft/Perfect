@@ -31,8 +31,12 @@ public protocol HTTPRequest: class {
     var documentRoot: String { get }
     var connection: NetTCP { get }
     var urlVariables: [String:String] { get set }
-
-    var headers: [String:String] { get }
+    
+    func header(_ named: HTTPRequestHeader.Name) -> String?
+    func addHeader(_ named: HTTPRequestHeader.Name, value: String)
+    func setHeader(_ named: HTTPRequestHeader.Name, value: String)
+    
+    var headers: AnyIterator<(HTTPRequestHeader.Name, String)> { get }
     
     // impl note: these xParams vars could be implimented as a protocol extension parsing the raw
     // query/post string
@@ -84,7 +88,7 @@ public extension HTTPRequest {
     }
     
     public var cookies: [(String, String)] {
-        guard let cookie = self.headers["cookie"] else {
+        guard let cookie = self.header(.cookie) else {
             return [(String, String)]()
         }
         return cookie.characters.split(separator: ";").flatMap {
