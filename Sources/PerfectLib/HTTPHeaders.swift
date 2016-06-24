@@ -87,55 +87,59 @@ public enum HTTPRequestHeader {
             }
         }
         
+        static let lookupTable: [String:HTTPRequestHeader.Name] = [
+            "accept":.accept,
+            "accept-charset":.acceptCharset,
+            "accept-encoding":.acceptEncoding,
+            "accept-language":.acceptLanguage,
+            "accept-datetime":.acceptDatetime,
+            "authorization":.authorization,
+            "cache-control":.cacheControl,
+            "connection":.connection,
+            "cookie":.cookie,
+            "content-length":.contentLength,
+            "content-md5":.contentMD5,
+            "content-type":.contentType,
+            "date":.date,
+            "expect":.expect,
+            "forwarded":.forwarded,
+            "from":.from,
+            "host":.host,
+            "if-match":.ifMatch,
+            "if-modified-since":.ifModifiedSince,
+            "if-none-match":.ifNoneMatch,
+            "if-range":.ifRange,
+            "if-unmodified-since":.ifUnmodifiedSince,
+            "max-forwards":.maxForwards,
+            "origin":.origin,
+            "pragma":.pragma,
+            "proxy-authorization":.proxyAuthorization,
+            "range":.range,
+            "referer":.referer,
+            "te":.te,
+            "user-agent":.userAgent,
+            "upgrade":.upgrade,
+            "via":.via,
+            "warning":.warning,
+            "x-requested-with":.xRequestedWith,
+            "dnt":.dnt,
+            "x-forwarded-for":.xForwardedFor,
+            "x-forwarded-host":.xForwardedHost,
+            "x-forwarded-proto":.xForwardedProto,
+            "front-end-https":.frontEndHttps,
+            "x-http-method-override":.xHttpMethodOverride,
+            "x-att-deviceid":.xATTDeviceId,
+            "x-wap-profile":.xWapProfile,
+            "proxy-connection":.proxyConnection,
+            "x-uidh":.xUIDH,
+            "x-csrf-token":.xCsrfToken
+        ]
+        
         static func fromStandard(name: String) -> HTTPRequestHeader.Name {
-            switch name {
-            case "accept": return .accept
-            case "accept-charset": return .acceptCharset
-            case "accept-encoding": return .acceptEncoding
-            case "accept-language": return .acceptLanguage
-            case "accept-datetime": return .acceptDatetime
-            case "authorization": return .authorization
-            case "cache-control": return .cacheControl
-            case "connection": return .connection
-            case "cookie": return .cookie
-            case "content-length": return .contentLength
-            case "content-md5": return .contentMD5
-            case "content-type": return .contentType
-            case "date": return .date
-            case "expect": return .expect
-            case "forwarded": return .forwarded
-            case "from": return .from
-            case "host": return .host
-            case "if-match": return .ifMatch
-            case "if-modified-since": return .ifModifiedSince
-            case "if-none-match": return .ifNoneMatch
-            case "if-range": return .ifRange
-            case "if-unmodified-since": return .ifUnmodifiedSince
-            case "max-forwards": return .maxForwards
-            case "origin": return .origin
-            case "pragma": return .pragma
-            case "proxy-authorization": return .proxyAuthorization
-            case "range": return .range
-            case "referer": return .referer
-            case "te": return .te
-            case "user-agent": return .userAgent
-            case "upgrade": return .upgrade
-            case "via": return .via
-            case "warning": return .warning
-            case "x-requested-with": return .xRequestedWith
-            case "dnt": return .dnt
-            case "x-forwarded-for": return .xForwardedFor
-            case "x-forwarded-host": return .xForwardedHost
-            case "x-forwarded-proto": return .xForwardedProto
-            case "front-end-https": return .frontEndHttps
-            case "x-http-method-override": return .xHttpMethodOverride
-            case "x-att-deviceid": return .xATTDeviceId
-            case "x-wap-profile": return .xWapProfile
-            case "proxy-connection": return .proxyConnection
-            case "x-uidh": return .xUIDH
-            case "x-csrf-token": return .xCsrfToken
-            default: return .custom(name: name)
+            if let found = HTTPRequestHeader.Name.lookupTable[name] {
+                return found
             }
+            return .custom(name: name)
         }
     }
 }

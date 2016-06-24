@@ -205,7 +205,6 @@ public protocol HTTPResponse: class {
     var request: HTTPRequest { get }
     var status: HTTPResponseStatus { get set }
     var isStreaming: Bool { get set }
-    var completed: () -> () { get set }
     
     func header(_ named: HTTPResponseHeader.Name) -> String?
     func addHeader(_ named: HTTPResponseHeader.Name, value: String)
@@ -219,6 +218,7 @@ public protocol HTTPResponse: class {
     func appendBody(string: String)
     func setBody(json: [String:Any]) throws
     func push(callback: (Bool) -> ())
+    func completed()
 }
 
 

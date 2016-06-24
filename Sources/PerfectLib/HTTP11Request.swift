@@ -21,12 +21,22 @@ import PerfectNet
 
 private let httpMaxHeadersSize = 1024 * 8
 
-private let characterCR = Character("\r")
-private let characterLF = Character("\n")
-private let characterCRLF = Character("\r\n")
-private let characterSP = Character(" ")
-private let characterHT = Character("\t")
-private let characterColon = Character(":")
+private let characterCR: Character = "\r"
+private let characterLF: Character = "\n"
+private let characterCRLF: Character = "\r\n"
+private let characterSP: Character = " "
+private let characterHT: Character = "\t"
+private let characterColon: Character = ":"
+
+private let httpReadSize = 1024 * 4
+private let httpReadTimeout = 5.0
+
+let httpLF: UInt8 = 10
+let httpCR: UInt8 = 13
+
+private let httpSpace = UnicodeScalar(32)
+private let httpQuestion = UnicodeScalar(63)
+
 
 class HTTP11Request: HTTPRequest {
     var method: HTTPMethod  = .get
@@ -85,6 +95,9 @@ class HTTP11Request: HTTPRequest {
         guard let bytes = postBodyBytes else {
             return nil
         }
+        if bytes.isEmpty {
+            return ""
+        }
         return UTF8Encoding.encode(bytes: bytes)
     }
     var postFileUploads: [MimeReader.BodySpec]? {
@@ -134,7 +147,7 @@ class HTTP11Request: HTTPRequest {
     }
     
     func setHeader(_ named: HTTPRequestHeader.Name, value: String) {
-        setHeader(named, value: value)
+        headerStore[named] = value
     }
     
     func setHeader(named: String, value: String) {
