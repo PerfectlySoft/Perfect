@@ -20,16 +20,6 @@
 import PerfectNet
 import PerfectThread
 
-let httpReadSize = 1024 * 4
-let httpReadTimeout = 5.0
-
-let httpLF = UInt8(10)
-let httpCR = UInt8(13)
-let httpColon = UInt8(58)
-let httpSpace = UnicodeScalar(32)
-let httpQuestion = UnicodeScalar(63)
-
-
 /// Stand-alone HTTP server. Provides the same WebConnection based interface as the FastCGI server.
 public class HTTPServer {
 	
@@ -251,10 +241,10 @@ public class HTTPServer {
 	
 	func handleConnection(_ net: NetTCP) {
 		let req = HTTP11Request(connection: net)
-		req.readRequest {
+		req.readRequest { [weak self]
             status in
 			if case .ok = status {
-				self.runRequest(req)
+				self?.runRequest(req)
 			} else {
 				net.close()
 			}
@@ -263,25 +253,28 @@ public class HTTPServer {
 	
 	func runRequest(_ req: HTTP11Request) {
 		req.documentRoot = self.documentRoot
-		
+		let net = req.connection
         // !FIX! check for upgrade to http/2
         // switch to HTTP2Request/HTTP2Response
         
         let response = HTTP11Response(request: req)
         if response.isKeepAlive {
-            response.completed = { [weak self] in
-                self?.handleConnection(req.connection)
+            response.completedCallback = { [weak self] in
+                self?.handleConnection(net)
             }
         }
-        let oldCompletion = response.completed
-        response.completed = {
+        let oldCompletion = response.completedCallback
+        response.completedCallback = {
+            response.completedCallback = nil
             response.flush {
                 ok in
                 guard ok else {
-                    response.connection.close()
+                    net.close()
                     return
                 }
-                oldCompletion()
+                if let cb = oldCompletion {
+                    cb()
+                }
             }
         }
         Routing.handleRequest(req, response: response)

@@ -38,7 +38,7 @@ class HTTP11Response: HTTPResponse {
     
     var isStreaming = false
     var wroteHeaders = false
-    var completed: () -> ()
+    var completedCallback: (() -> ())?
     let request: HTTPRequest
     var cookies = [HTTPCookie]()
     
@@ -62,7 +62,16 @@ class HTTP11Response: HTTPResponse {
     
     init(request: HTTPRequest) {
         self.request = request
-        self.completed = { request.connection.close() }
+        let net = request.connection
+        self.completedCallback = {
+            net.close()
+        }
+    }
+    
+    func completed() {
+        if let cb = self.completedCallback {
+            cb()
+        }
     }
     
     func addCookie(_ cookie: HTTPCookie) {
@@ -88,7 +97,7 @@ class HTTP11Response: HTTPResponse {
                 fi.append(i)
             }
         }
-        fi.reverse()
+        fi = fi.reversed()
         for i in fi {
             headerStore.remove(at: i)
         }
@@ -134,7 +143,7 @@ class HTTP11Response: HTTPResponse {
         addCookies()
         var responseString = "HTTP/\(request.protocolVersion.0).\(request.protocolVersion.1) \(status)\r\n"
         for (n, v) in headers {
-            responseString.append("\(n): \(v)\r\n")
+            responseString.append("\(n.standardName): \(v)\r\n")
         }
         responseString.append("\r\n")
         connection.write(string: responseString) {
