@@ -58,8 +58,10 @@ public struct Dir {
 		var currPath = pth.begins(with: "/") ? "/" : ""
         for component in pth.pathComponents where component != "/" {
             currPath += component
-            guard !exists(currPath) else {
+            defer {
                 currPath += "/"
+            }
+            guard !exists(currPath) else {
                 continue
             }
             let res = mkdir(currPath, mode_t(perms))
