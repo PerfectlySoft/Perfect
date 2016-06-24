@@ -403,7 +403,9 @@ class HTTP11Request: HTTPRequest {
                 lastCRLFPair = i
             } else if c == httpCR {
                 guard i + 1 < self.workingBuffer.count else {
-                    self.workingBufferOffset = i
+                    if i - workingBufferOffset > 2 { // guard for break immediately before trailing LF
+                        self.workingBufferOffset = i
+                    }
                     break
                 }
                 guard self.workingBuffer[i+1] == httpLF else {

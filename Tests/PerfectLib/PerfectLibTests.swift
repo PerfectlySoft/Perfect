@@ -595,8 +595,8 @@ class PerfectLibTests: XCTestCase {
             guard case .ok = ok else {
             	return XCTAssert(false, "\(ok)")
             }
-			XCTAssertTrue(connection.headers["x-foo"] == "bar", "\(connection.headers)")
-			XCTAssertTrue(connection.headers["x-bar"] == "", "\(connection.headers)")
+            XCTAssertTrue(connection.header(.custom(name: "x-foo")) == "bar", "\(connection.headers)")
+			XCTAssertTrue(connection.header(.custom(name: "x-bar")) == "", "\(connection.headers)")
 			XCTAssertTrue(connection.contentType == "application/x-www-form-urlencoded", "\(connection.headers)")
 		}
 	}
@@ -614,8 +614,8 @@ class PerfectLibTests: XCTestCase {
             guard case .ok = ok else {
                 return XCTAssert(false, "\(ok)")
             }
-			XCTAssertTrue(connection.headers["x-foo"] == "bar", "\(connection.headers)")
-			XCTAssertTrue(connection.headers["x-bar"] == "", "\(connection.headers)")
+			XCTAssertTrue(connection.header(.custom(name: "x-foo")) == "bar", "\(connection.headers)")
+			XCTAssertTrue(connection.header(.custom(name: "x-bar")) == "", "\(connection.headers)")
 			XCTAssertTrue(connection.contentType == "application/x-www-form-urlencoded", "\(connection.headers)")
 		}
 	}
@@ -649,8 +649,8 @@ class PerfectLibTests: XCTestCase {
             guard case .ok = ok else {
                 return XCTAssert(false, "\(ok)")
             }
-			XCTAssertTrue(connection.headers["x-foo"] == "barbar", "\(connection.headers)")
-			XCTAssertTrue(connection.headers["x-bar"] == "foo foo", "\(connection.headers)")
+			XCTAssertTrue(connection.header(.custom(name: "x-foo")) == "barbar", "\(connection.headers)")
+			XCTAssertTrue(connection.header(.custom(name: "x-bar")) == "foo foo", "\(connection.headers)")
 			XCTAssertTrue(connection.contentType == "application/x-www-form-urlencoded", "\(connection.headers)")
 		}
 	}
@@ -919,7 +919,7 @@ class PerfectLibTests: XCTestCase {
 
     func testWebRequestCookie() {
         let req = HTTP11Request(connection: NetTCP())
-        req.headers["cookie"] = "yabba=dabba; doo=fi☃; fi=; fo=fum"
+        req.setHeader(.cookie, value: "yabba=dabba; doo=fi☃; fi=; fo=fum")
         for cookie in req.cookies {
             if cookie.0 == "doo" {
                 XCTAssert(cookie.1 == "fi☃")
@@ -934,11 +934,11 @@ class PerfectLibTests: XCTestCase {
         PerfectServer.initializeServices()
         
         let port = 8282 as UInt16
-        
+        let msg = "Hello, world!"
         Routing.Routes["/"] = {
             request, response in
-            response.addHeader(name: "content-type", value: "text/plain")
-            response.appendBody(string: "Hello, world!")
+            response.addHeader(.contentType, value: "text/plain")
+            response.appendBody(string: msg)
             response.completed()
         }
         let serverExpectation = self.expectation(withDescription: "server")
@@ -971,7 +971,7 @@ class PerfectLibTests: XCTestCase {
                         XCTAssert(false, "Could not connect to server")
                         return endClient()
                     }
-                    let reqStr = "GET / HTTP/1.0\r\n\r\n"
+                    let reqStr = "GET / HTTP/1.0\r\nHost: localhost:\(port)\r\nFrom: me@host.com\r\n\r\n"
                     net.write(string: reqStr) {
                         count in
                         
@@ -990,7 +990,10 @@ class PerfectLibTests: XCTestCase {
                             }
                             
                             let str = UTF8Encoding.encode(bytes: bytes)
-                            print(str)
+                            let splitted = str.characters.split(separator: "\r\n").map(String.init)
+                            
+                            XCTAssert(splitted.last == msg)
+                            
                             endClient()
                         }
                     }
@@ -1001,8 +1004,92 @@ class PerfectLibTests: XCTestCase {
             }
         }
         
-        
         self.waitForExpectations(withTimeout: 10000, handler: {
+            _ in
+            
+        })
+    }
+    
+    func testSlowClient() {
+        PerfectServer.initializeServices()
+        
+        let port = 8282 as UInt16
+        let msg = "Hello, world!"
+        Routing.Routes["/"] = {
+            request, response in
+            response.addHeader(.contentType, value: "text/plain")
+            response.appendBody(string: msg)
+            response.completed()
+        }
+        let serverExpectation = self.expectation(withDescription: "server")
+        let clientExpectation = self.expectation(withDescription: "client")
+        
+        let server = HTTPServer(documentRoot: "./webroot")
+        
+        func endClient() {
+            server.stop()
+            clientExpectation.fulfill()
+        }
+        
+        Threading.dispatch {
+            do {
+                try server.start(port: port)
+            } catch PerfectError.networkError(let err, let msg) {
+                XCTAssert(false, "Network error thrown: \(err) \(msg)")
+            } catch {
+                XCTAssert(false, "Error thrown: \(error)")
+            }
+            serverExpectation.fulfill()
+        }
+        Threading.sleep(seconds: 1.0)
+        Threading.dispatch {
+            do {
+                try NetTCP().connect(address: "127.0.0.1", port: port, timeoutSeconds: 5.0) {
+                    net in
+                    
+                    guard let net = net else {
+                        XCTAssert(false, "Could not connect to server")
+                        return endClient()
+                    }
+                    var reqIt = Array("GET / HTTP/1.0\r\nHost: localhost:\(port)\r\nFrom: me@host.com\r\n\r\n".utf8).makeIterator()
+                    func pushChar() {
+                        if let b = reqIt.next() {
+                            let a = [b]
+                            net.write(bytes: a) {
+                                wrote in
+                                guard 1 == wrote else {
+                                    XCTAssert(false, "Could not write request \(wrote) != \(1)")
+                                    return endClient()
+                                }
+                                Threading.sleep(seconds: 0.5)
+                                Threading.dispatch {
+                                    pushChar()
+                                }
+                            }
+                        } else {
+                            Threading.sleep(seconds: 2.0)
+                            net.readSomeBytes(count: 1024) {
+                                bytes in
+                                guard let bytes = bytes where bytes.count > 0 else {
+                                    XCTAssert(false, "Could not read bytes from server")
+                                    return endClient()
+                                }
+                                let str = UTF8Encoding.encode(bytes: bytes)
+                                let splitted = str.characters.split(separator: "\r\n").map(String.init)
+                                XCTAssert(splitted.last == msg)
+                                endClient()
+                            }
+                        }
+                    }
+                    pushChar()
+                }
+            } catch {
+                XCTAssert(false, "Error thrown: \(error)")
+                endClient()
+            }
+        }
+        
+        self.waitForExpectations(withTimeout: 20000, handler: {
             _ in
             
         })
@@ -1012,49 +1099,51 @@ class PerfectLibTests: XCTestCase {
 extension PerfectLibTests {
     static var allTests : [(String, (PerfectLibTests) -> () throws -> Void)] {
         return [
-					("testConcurrentQueue", testConcurrentQueue),
-					("testSerialQueue", testSerialQueue),
-					("testJSONConvertibleObject", testJSONConvertibleObject),
-					("testJSONEncodeDecode", testJSONEncodeDecode),
-					("testJSONDecodeUnicode", testJSONDecodeUnicode),
-					("testNetSendFile", testNetSendFile),
-					("testSysProcess", testSysProcess),
-					("testStringByEncodingHTML", testStringByEncodingHTML),
-					("testStringByEncodingURL", testStringByEncodingURL),
-					("testStringByDecodingURL", testStringByDecodingURL),
-					("testStringByDecodingURL2", testStringByDecodingURL2),
-					("testStringByReplacingString", testStringByReplacingString),
-					("testStringByReplacingString2", testStringByReplacingString2),
-					("testStringByReplacingString3", testStringByReplacingString3),
-					("testSubstringTo", testSubstringTo),
-					("testRangeTo", testRangeTo),
-					("testSubstringWith", testSubstringWith),
-					("testICUFormatDate", testICUFormatDate),
-					("testMustacheParser1", testMustacheParser1),
-					("testHPACKEncode", testHPACKEncode),
-					("testWebConnectionHeadersWellFormed", testWebConnectionHeadersWellFormed),
-					("testWebConnectionHeadersLF", testWebConnectionHeadersLF),
-					("testWebConnectionHeadersMalormed", testWebConnectionHeadersMalormed),
-					("testWebConnectionHeadersFolded", testWebConnectionHeadersFolded),
-					("testWebConnectionHeadersTooLarge", testWebConnectionHeadersTooLarge),
-					("testMimeReader", testMimeReader),
+            ("testConcurrentQueue", testConcurrentQueue),
+            ("testSerialQueue", testSerialQueue),
+            ("testJSONConvertibleObject", testJSONConvertibleObject),
+            ("testJSONEncodeDecode", testJSONEncodeDecode),
+            ("testJSONDecodeUnicode", testJSONDecodeUnicode),
+            ("testNetSendFile", testNetSendFile),
+            ("testSysProcess", testSysProcess),
+            ("testStringByEncodingHTML", testStringByEncodingHTML),
+            ("testStringByEncodingURL", testStringByEncodingURL),
+            ("testStringByDecodingURL", testStringByDecodingURL),
+            ("testStringByDecodingURL2", testStringByDecodingURL2),
+            ("testStringByReplacingString", testStringByReplacingString),
+            ("testStringByReplacingString2", testStringByReplacingString2),
+            ("testStringByReplacingString3", testStringByReplacingString3),
+            ("testSubstringTo", testSubstringTo),
+            ("testRangeTo", testRangeTo),
+            ("testSubstringWith", testSubstringWith),
+            ("testICUFormatDate", testICUFormatDate),
+            ("testMustacheParser1", testMustacheParser1),
+            ("testHPACKEncode", testHPACKEncode),
+            ("testWebConnectionHeadersWellFormed", testWebConnectionHeadersWellFormed),
+            ("testWebConnectionHeadersLF", testWebConnectionHeadersLF),
+            ("testWebConnectionHeadersMalormed", testWebConnectionHeadersMalormed),
+            ("testWebConnectionHeadersFolded", testWebConnectionHeadersFolded),
+            ("testWebConnectionHeadersTooLarge", testWebConnectionHeadersTooLarge),
+            ("testMimeReader", testMimeReader),
 
-					("testRoutingFound", testRoutingFound),
-					("testRoutingNotFound", testRoutingNotFound),
-					("testRoutingWild", testRoutingWild),
-					("testRoutingVars", testRoutingVars),
-					("testRoutingAddPerformance", testRoutingAddPerformance),
-					("testRoutingFindPerformance", testRoutingFindPerformance),
-					("testRoutingTrailingWild1", testRoutingTrailingWild1),
-					("testRoutingTrailingWild2", testRoutingTrailingWild2),
+            ("testRoutingFound", testRoutingFound),
+            ("testRoutingNotFound", testRoutingNotFound),
+            ("testRoutingWild", testRoutingWild),
+            ("testRoutingVars", testRoutingVars),
+            ("testRoutingAddPerformance", testRoutingAddPerformance),
+            ("testRoutingFindPerformance", testRoutingFindPerformance),
+            ("testRoutingTrailingWild1", testRoutingTrailingWild1),
+            ("testRoutingTrailingWild2", testRoutingTrailingWild2),
 
-					("testMimeReaderSimple", testMimeReaderSimple),
-					("testDeletingPathExtension", testDeletingPathExtension),
-					("testGetPathExtension", testGetPathExtension),
+            ("testMimeReaderSimple", testMimeReaderSimple),
+            ("testDeletingPathExtension", testDeletingPathExtension),
+            ("testGetPathExtension", testGetPathExtension),
 
-					("testWebRequestQueryParam", testWebRequestQueryParam),
-					("testWebRequestCookie", testWebRequestCookie),
-					("testWebRequestPostParam", testWebRequestPostParam)
+            ("testWebRequestQueryParam", testWebRequestQueryParam),
+            ("testWebRequestCookie", testWebRequestCookie),
+            ("testWebRequestPostParam", testWebRequestPostParam),
+            ("testSimpleHandler", testSimpleHandler),
+            ("testSlowClient", testSlowClient)
         ]
     }
 }
