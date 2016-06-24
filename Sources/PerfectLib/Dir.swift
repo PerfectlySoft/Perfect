@@ -56,19 +56,17 @@ public struct Dir {
 	public func create(perms: Int = Int(S_IRWXG|S_IRWXU|S_IRWXO)) throws {
 		let pth = realPath()
 		var currPath = pth.begins(with: "/") ? "/" : ""
-
-		for component in pth.pathComponents {
-			if component != "/" {
-				currPath += component
-				if !exists(currPath) {
-					let res = mkdir(currPath, mode_t(perms))
-					guard res != -1 else {
-						try ThrowFileError()
-					}
-				}
-				currPath += "/"
-			}
-		}
+        for component in pth.pathComponents where component != "/" {
+            currPath += component
+            guard !exists(currPath) else {
+                currPath += "/"
+                continue
+            }
+            let res = mkdir(currPath, mode_t(perms))
+            guard res != -1 else {
+                try ThrowFileError()
+            }
+        }
 	}
 
 	/// Deletes the directory. The directory must be empty in order to be successfuly deleted.
