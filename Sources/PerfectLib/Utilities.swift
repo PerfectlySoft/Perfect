@@ -224,18 +224,15 @@ extension String {
 		var g = self.utf8.makeIterator()
 		while let c = g.next() {
 			if c == percent {
-
 				guard let c1v = g.next() else {
 					return nil
 				}
 				guard let c2v = g.next() else {
 					return nil
 				}
-
 				guard let newChar = String.byteFromHexDigits(one: c1v, two: c2v) else {
 					return nil
 				}
-
 				bytesArray.append(newChar)
 			} else if c == plus {
 				bytesArray.append(space)
@@ -243,7 +240,6 @@ extension String {
 				bytesArray.append(c)
 			}
 		}
-
 		return UTF8Encoding.encode(bytes: bytesArray)
 	}
 
@@ -272,9 +268,9 @@ extension String {
 	/// Parse uuid string
 	/// Results undefined if the string is not a valid UUID
 	public func asUUID() -> uuid_t {
-		let u = UnsafeMutablePointer<UInt8>(allocatingCapacity:  sizeof(uuid_t))
+		let u = UnsafeMutablePointer<UInt8>(allocatingCapacity:  sizeof(uuid_t.self))
 		defer {
-			u.deallocateCapacity(sizeof(uuid_t))
+			u.deallocateCapacity(sizeof(uuid_t.self))
 		}
         uuid_parse(self, u)
         return uuid_fromPointer(u)
@@ -282,11 +278,11 @@ extension String {
 
     /// Returns a String representing the given uuid_t
 	public static func fromUUID(uuid: uuid_t) -> String {
-		let u = UnsafeMutablePointer<UInt8>(allocatingCapacity:  sizeof(uuid_t))
+		let u = UnsafeMutablePointer<UInt8>(allocatingCapacity:  sizeof(uuid_t.self))
 		let unu = UnsafeMutablePointer<Int8>(allocatingCapacity:  37) // as per spec. 36 + null
 
 		defer {
-			u.deallocateCapacity(sizeof(uuid_t))
+			u.deallocateCapacity(sizeof(uuid_t.self))
 			unu.deallocateCapacity(37)
 		}
 		u[0] = uuid.0;u[1] = uuid.1;u[2] = uuid.2;u[3] = uuid.3;u[4] = uuid.4;u[5] = uuid.5;u[6] = uuid.6;u[7] = uuid.7
@@ -309,9 +305,9 @@ public func empty_uuid() -> uuid_t {
 
 /// Generate and return a random uuid_t
 public func random_uuid() -> uuid_t {
-	let u = UnsafeMutablePointer<UInt8>(allocatingCapacity:  sizeof(uuid_t))
+	let u = UnsafeMutablePointer<UInt8>(allocatingCapacity:  sizeof(uuid_t.self))
 	defer {
-		u.deallocateCapacity(sizeof(uuid_t))
+		u.deallocateCapacity(sizeof(uuid_t.self))
 	}
 	uuid_generate_random(u)
 	return uuid_fromPointer(u)
@@ -662,7 +658,7 @@ public extension NetNamedPipe {
     /// - throws: `PerfectError.NetworkError`
     public func receiveFile(callBack: (File?) -> ()) throws {
         try self.receiveFd {
-            (fd: Int32) -> () in
+            fd in
             
             if fd == invalidSocket {
                 callBack(nil)
@@ -673,3 +669,19 @@ public extension NetNamedPipe {
     }
 }
 
+import OpenSSL
+
+extension String.UTF8View {
+    var sha1: [UInt8] {
+        let bytes = UnsafeMutablePointer<UInt8>(allocatingCapacity:  Int(SHA_DIGEST_LENGTH))
+        defer { bytes.deallocateCapacity(Int(SHA_DIGEST_LENGTH)) }
+        
+        SHA1(Array<UInt8>(self), (self.count), bytes)
+        
+        var r = [UInt8]()
+        for idx in 0..<Int(SHA_DIGEST_LENGTH) {
+            r.append(bytes[idx])
+        }
+        return r
+    }
+}

@@ -190,6 +190,7 @@ public final class MimeReader {
 		return accum
 	}
 	
+    @discardableResult
 	func internalAddToBuffer(bytes byts: [UInt8]) -> MimeReadState {
 		
 		var clearBuffer = true
@@ -408,9 +409,9 @@ public final class MimeReader {
 			
 			if self.buffer.count != 0 {
 				self.buffer.append(contentsOf: byts)
-				let _ = internalAddToBuffer(bytes: self.buffer)
+				internalAddToBuffer(bytes: self.buffer)
 			} else {
-				let _ = internalAddToBuffer(bytes: byts)
+				internalAddToBuffer(bytes: byts)
 			}
 		} else {
 			self.buffer.append(contentsOf: byts)

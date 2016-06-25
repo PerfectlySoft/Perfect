@@ -24,7 +24,7 @@ private enum RouteException: ErrorProtocol {
 /// Holds the registered routes.
 public struct RouteMap: CustomStringConvertible {
 
-	public typealias RequestHandler = (WebRequest, WebResponse) -> ()
+	public typealias RequestHandler = (HTTPRequest, HTTPResponse) -> ()
     
 	/// Pretty prints all route information.
 	public var description: String {
@@ -36,7 +36,7 @@ public struct RouteMap: CustomStringConvertible {
 	}
 
 	private let root = RouteNode() // root node for any request method
-	private var methodRoots = Dictionary<WebRequest.Method, RouteNode>() // by convention, use all upper cased method names for inserts/lookups
+	private var methodRoots = Dictionary<HTTPMethod, RouteNode>() // by convention, use all upper cased method names for inserts/lookups
 
     private func formatException(route r: String, error: ErrorProtocol) -> String {
         return "\(error) - \(r)"
@@ -44,13 +44,13 @@ public struct RouteMap: CustomStringConvertible {
     
 	// Lookup a route based on the URL path.
 	// Returns the handler if found.
-	subscript(path: String, webResponse: WebResponse) -> RequestHandler? {
+	subscript(path: String, webResponse: HTTPResponse) -> RequestHandler? {
 		get {
 			let components = path.lowercased().pathComponents
 			var g = components.makeIterator()
 			let _ = g.next() // "/"
 
-            let method = webResponse.request.requestMethod
+            let method = webResponse.request.method
 			if let root = self.methodRoots[method] {
 				if let handler = root.findHandler(currentComponent: "", generator: g, webResponse: webResponse) {
 					return handler
@@ -90,7 +90,7 @@ public struct RouteMap: CustomStringConvertible {
 
 	/// Add a route to the system using the indicated HTTP request method.
 	/// `Routing.Routes[.get, "/foo/*/baz"] = { request, response in ... }`
-	public subscript(method: WebRequest.Method, path: String) -> RequestHandler? {
+	public subscript(method: HTTPMethod, path: String) -> RequestHandler? {
 		get {
 			return nil // Swift does not currently allow set-only subscripts
 		}
@@ -111,7 +111,7 @@ public struct RouteMap: CustomStringConvertible {
 
 	/// Add an array of routes for a given handler using the indicated HTTP request method.
 	/// `Routing.Routes[.get, ["/", "index.html"] ] = { request, response in ... }`
-	public subscript(method: WebRequest.Method, paths: [String]) -> RequestHandler? {
+	public subscript(method: HTTPMethod, paths: [String]) -> RequestHandler? {
 		get {
 			return nil // Swift does not currently allow set-only subscripts
 		}
@@ -140,8 +140,8 @@ public struct RouteMap: CustomStringConvertible {
 /// 	Routing.Routes[.post, "/user/{id}/baz"] = { request, response in ... }
 /// 	Routing.Routes["**"] = { request, response in ... } // matches any path
 /// ```
-/// Variables set by the routing process can be accessed through the `WebRequest.urlVariables` dictionary.
-/// Note that a handler *MUST* call `WebResponse.requestCompleted()` when the request has completed.
+/// Variables set by the routing process can be accessed through the `HTTPRequest.urlVariables` dictionary.
+/// Note that a handler *MUST* call `HTTPResponse.requestCompleted()` when the request has completed.
 public struct Routing {
 
 	/// The routes which have been configured.
@@ -152,7 +152,6 @@ public struct Routing {
 		// user modules can overwrite this if desired
 		Routing.Routes["**"] = {
 			request, response in
-
 			StaticFileHandler().handleRequest(request: request, response: response)
 		}
 	}
@@ -161,26 +160,21 @@ public struct Routing {
 
 	/// Handle the request, triggering the routing system.
 	/// If a route is discovered the request is sent to the new handler.
-	public static func handleRequest(_ request: WebRequest, response: WebResponse) {
-		let pathInfo = request.requestURI?.characters.split(separator: "?").map { String($0) }.first ?? "/"
-
+	public static func handleRequest(_ request: HTTPRequest, response: HTTPResponse) {
+		let pathInfo = request.path
 		if let handler = Routing.Routes[pathInfo, response] {
 			handler(request, response)
 		} else {
-			response.setStatus(code: 404, message: "NOT FOUND")
+			response.status = .notFound
 			response.appendBody(string: "The file \(pathInfo) was not found.")
-			response.requestCompleted()
+			response.completed()
 		}
 	}
 }
 
 class RouteNode: CustomStringConvertible {
     
-	#if swift(>=3.0)
 	typealias ComponentGenerator = IndexingIterator<[String]>
-	#else
-	typealias ComponentGenerator = IndexingGenerator<[String]>
-    #endif
 
     var handler: RouteMap.RequestHandler?
     var trailingWildCard: RouteNode?
@@ -226,7 +220,7 @@ class RouteNode: CustomStringConvertible {
 		return s
 	}
 
-	func findHandler(currentComponent curComp: String, generator: ComponentGenerator, webResponse: WebResponse) -> RouteMap.RequestHandler? {
+	func findHandler(currentComponent curComp: String, generator: ComponentGenerator, webResponse: HTTPResponse) -> RouteMap.RequestHandler? {
 		var m = generator
 		if let p = m.next() where p != "/" {
 
@@ -280,7 +274,7 @@ class RouteNode: CustomStringConvertible {
 		return nil
 	}
 
-	func successfulRoute(currentComponent _: String, handler: RouteMap.RequestHandler, webResponse: WebResponse) -> RouteMap.RequestHandler {
+	func successfulRoute(currentComponent _: String, handler: RouteMap.RequestHandler, webResponse: HTTPResponse) -> RouteMap.RequestHandler {
 		return handler
 	}
 
@@ -398,7 +392,7 @@ class RouteTrailingWildCard: RouteWildCard {
         }
     }
     
-    override func findHandler(currentComponent curComp: String, generator: ComponentGenerator, webResponse: WebResponse) -> RouteMap.RequestHandler? {
+    override func findHandler(currentComponent curComp: String, generator: ComponentGenerator, webResponse: HTTPResponse) -> RouteMap.RequestHandler? {
         return self.handler
     }
 }
@@ -422,7 +416,7 @@ class RouteVariable: RouteNode {
 		return s
 	}
 
-	override func successfulRoute(currentComponent currComp: String, handler: RouteMap.RequestHandler, webResponse: WebResponse) -> RouteMap.RequestHandler {
+	override func successfulRoute(currentComponent currComp: String, handler: RouteMap.RequestHandler, webResponse: HTTPResponse) -> RouteMap.RequestHandler {
 		let request = webResponse.request
 		if let decodedComponent = currComp.stringByDecodingURL {
 			request.urlVariables[self.name] = decodedComponent
