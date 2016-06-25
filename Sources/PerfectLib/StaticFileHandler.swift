@@ -28,66 +28,58 @@ public struct StaticFileHandler {
 	
     /// Main entry point. A registered URL handler should call this and pass the request and response objects.
     /// After calling this, the StaticFileHandler owns the request and will handle it until completion.
-	public func handleRequest(request req: WebRequest, response: WebResponse) {
-		
-		var requestUri = req.requestURI ?? "/"
-        if requestUri.isEmpty {
-            requestUri = "/"
-        }
-		if requestUri[requestUri.index(before: requestUri.endIndex)] == "/" {
-			requestUri.append("index.html") // !FIX! needs to be configurable
+	public func handleRequest(request req: HTTPRequest, response: HTTPResponse) {
+        var path = req.path
+		if path[path.index(before: path.endIndex)] == "/" {
+			path.append("index.html") // !FIX! needs to be configurable
 		}
 		let documentRoot = req.documentRoot
-		let file = File(documentRoot + "/" + requestUri)
-		
+		let file = File(documentRoot + "/" + path)
 		guard file.exists else {
-			response.setStatus(code: 404, message: "Not Found")
-			response.appendBody(string: "The file \(requestUri) was not found.")
+			response.status = .notFound
+			response.appendBody(string: "The file \(path) was not found.")
 			// !FIX! need 404.html or some such thing
-			response.requestCompleted()
+			response.completed()
 			return
 		}
-		
 		self.sendFile(request: req, response: response, file: file)
 	}
 	
-	func sendFile(request req: WebRequest, response resp: WebResponse, file: File) {
+	func sendFile(request req: HTTPRequest, response resp: HTTPResponse, file: File) {
 		
-		resp.addHeader(name: "Accept-Ranges", value: "bytes")
-        
-		if let rangeRequest = req.header(named: "Range") {
-			
-			return self.performRangeRequest(rangeRequest: rangeRequest, request: req, response: resp, file: file)
-            
-        } else if let ifNoneMatch = req.header(named: "If-None-Match") {
+		resp.addHeader(.acceptRanges, value: "bytes")
+
+		if let rangeRequest = req.header(.range) {
+            return self.performRangeRequest(rangeRequest: rangeRequest, request: req, response: resp, file: file)
+        } else if let ifNoneMatch = req.header(.ifNoneMatch) {
             let eTag = self.getETag(file: file)
             if ifNoneMatch == eTag {
-                resp.setStatus(code: 304, message: "NOT MODIFIED")
-                return resp.requestCompleted()
+                resp.status = .notModified
+                return resp.completed()
             }
         }
         
         let size = file.size
         let contentType = MimeType.forExtension(file.path.pathExtension)
         
-		resp.setStatus(code: 200, message: "OK")
-		resp.addHeader(name: "Content-Type", value: contentType)
-		resp.addHeader(name: "Content-Length", value: "\(size)")
+		resp.status = .ok
+		resp.addHeader(.contentType, value: contentType)
+		resp.addHeader(.contentLength, value: "\(size)")
         
         self.addETag(response: resp, file: file)
         
-		if case .head = req.requestMethod {
-			return resp.requestCompleted()
+		if case .head = req.method {
+			return resp.completed()
 		}
 		
 		self.sendFile(remainingBytes: size, response: resp, file: file) {
 			ok in
 			file.close()
-			resp.requestCompleted()
+			resp.completed()
 		}
 	}
 	
-    func performRangeRequest(rangeRequest: String, request: WebRequest, response: WebResponse, file: File) {
+    func performRangeRequest(rangeRequest: String, request: HTTPRequest, response: HTTPResponse, file: File) {
         let size = file.size
         let ranges = self.parseRangeHeader(fromHeader: rangeRequest, max: size)
         if ranges.count == 1 {
@@ -95,13 +87,13 @@ public struct StaticFileHandler {
             let rangeCount = range.count
             let contentType = MimeType.forExtension(file.path.pathExtension)
             
-            response.setStatus(code: 206, message: "Partial Content")
-            response.addHeader(name: "Content-Length", value: "\(rangeCount)")
-            response.addHeader(name: "Content-Type", value: contentType)
-            response.addHeader(name: "Content-Range", value: "bytes \(range.lowerBound)-\(range.upperBound-1)/\(size)")
+            response.status = .partialContent
+            response.addHeader(.contentLength, value: "\(rangeCount)")
+            response.addHeader(.contentType, value: contentType)
+            response.addHeader(.contentRange, value: "bytes \(range.lowerBound)-\(range.upperBound-1)/\(size)")
             
-            if case .head = request.requestMethod {
-                return response.requestCompleted()
+            if case .head = request.method {
+                return response.completed()
             }
             
             let _ = file.marker = range.lowerBound
@@ -110,12 +102,12 @@ public struct StaticFileHandler {
                 ok in
                 
                 file.close()
-                response.requestCompleted()
+                response.completed()
             }
         } else if ranges.count > 0 {
             // !FIX! support multiple ranges
-            response.setStatus(code: 500, message: "INTERNAL SERVER ERROR")
-            return response.requestCompleted()
+            response.status = .internalServerError
+            return response.completed()
         }
     }
     
@@ -127,19 +119,18 @@ public struct StaticFileHandler {
         return eTagReStr
     }
     
-    func addETag(response resp: WebResponse, file: File) {
+    func addETag(response resp: HTTPResponse, file: File) {
         let eTag = self.getETag(file: file)
-        
-        resp.addHeader(name: "ETag", value: eTag)
+        resp.addHeader(.eTag, value: eTag)
     }
     
-	func sendFile(remainingBytes remaining: Int, response: WebResponse, file: File, completion: (Bool) -> ()) {
+	func sendFile(remainingBytes remaining: Int, response: HTTPResponse, file: File, completion: (Bool) -> ()) {
 		
 		let thisRead = min(chunkedBufferSize, remaining)
 		do {
 			let bytes = try file.readSomeBytes(count: thisRead)
 			response.appendBody(bytes: bytes)
-			response.pushBody {
+			response.push {
 				ok in
 				
 				if !ok || thisRead == remaining {

@@ -85,7 +85,7 @@ public class JSONConvertibleObject: JSONConvertible {
 
 /// Get the JSON keys/values from a custom object.
 public extension JSONConvertibleObject {
-    /// Get a named value from the Dictionary converting to the given type with a default value. 
+    /// Get a named value from the Dictionary converting to the given type with a default value.
     func getJSONValue<T: JSONConvertible>(named namd: String, from:[String:Any], defaultValue: T) -> T {
         let f = from[namd]
         if let v = f as? T {

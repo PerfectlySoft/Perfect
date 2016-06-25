@@ -10,7 +10,7 @@
 [![Twitter](https://img.shields.io/badge/Twitter-@PerfectlySoft-brightgreen.svg?style=flat)](http://twitter.com/PerfectlySoft)
 [![Join the chat at https://gitter.im/PerfectlySoft/Perfect](https://img.shields.io/badge/Gitter-Join%20Chat-brightgreen.svg)](https://gitter.im/PerfectlySoft/Perfect?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-**The master branch of this project currently compiles with *Swift 3.0 Preview 1* released June 13, 2016 using Swift Package Manager.**
+**The master branch of this project currently compiles with *DEVELOPMENT-SNAPSHOT-2016-06-20-a* released June 20th, 2016 using Swift Package Manager.**
 
 **Important:** On OS X you must set the Xcode command line tools preference as follows:
 ![Xcode Prefs](assets/xcode_prefs.png) 
@@ -38,7 +38,7 @@ swift --version
 should produce something like the following:
 
 ```
-Apple Swift version 3.0 (swiftlang-800.0.30 clang-800.0.24)
+Apple Swift version 3.0-dev (LLVM c191431197, Clang c6195325c5, Swift add621a959)
 Target: x86_64-apple-macosx10.9
 ```
 
@@ -96,18 +96,14 @@ Open the generated file "PerfectTemplate.xcodeproj". Ensure that you have select
 
 ## Next Steps
 
-These example snippets show how to accomplish several common tasks that one might need to do when developing a Web/REST application. In all cases, the ```request``` and ```response``` variables refer, respectively, to the ```WebRequest``` and ```WebResponse``` objects which are given to your URL handlers.
+These example snippets show how to accomplish several common tasks that one might need to do when developing a Web/REST application. In all cases, the ```request``` and ```response``` variables refer, respectively, to the ```HTTPRequest``` and ```HTTPResponse``` objects which are given to your URL handlers.
 
 Consult the [API reference](http://www.perfect.org/docs/) for more details.
 
 ### Get a client request header
 
 ```swift
-if let acceptEncoding = request.header(named: "Accept-Encoding") {
-	...
-}
-// Many common HTTP request headers have their own accessors
-if let acceptEncoding2 = request.httpAcceptEncoding {
+if let acceptEncoding = request.header(.acceptEncoding) {
 	...
 }
 ```
@@ -124,12 +120,10 @@ if let foo = request.param(name: "foo", defaultValue: "default foo") {
 let foos: [String] = request.params(named: "foo")
 ```
 
-### Get the current request URI
+### Get the current request path
 
 ```swift
-if let uri = request.requestURI {
-	...        
-}
+let path = request.path
 ```
 
 ### Access the server's document directory and return an image file to the client
@@ -140,14 +134,14 @@ do {
     let mrPebbles = File("\(docRoot)/mr_pebbles.jpg")
     let imageSize = mrPebbles.size
     let imageBytes = try mrPebbles.readSomeBytes(count: imageSize)
-    response.replaceHeader(name: "Content-Type", value: MimeType.forExtension("jpg"))
-    response.replaceHeader(name: "Content-Length", value: "\(imageBytes.count)")
+    response.setHeader(.contentType, value: MimeType.forExtension("jpg"))
+    response.setHeader(.contentLength, value: "\(imageBytes.count)")
     response.appendBody(bytes: imageBytes)
 } catch {
-    response.setStatus(code: 500, message: "Internal Server Error")
+    response.status = .internalServerError
     response.appendBody(string: "Error handling request: \(error)")
 }
-response.requestCompleted()
+response.completed()
 ```
 
 ### Get client cookies
@@ -161,25 +155,24 @@ for (cookieName, cookieValue) in request.cookies {
 ### Set client cookie
 
 ```swift
-let cookie = Cookie(name: "cookie-name", value: "the value", domain: nil,
+let cookie = HTTPCookie(name: "cookie-name", value: "the value", domain: nil,
                     expires: .session, path: "/",
                     secure: false, httpOnly: false)
-response.addCookie(cookie: cookie)
+response.addCookie(cookie)
 ```
 
 ### Return JSON data to client
 
 ```swift
-response.replaceHeader(name: "Content-Type", value: "application/json")
-let dict: [String:Any] = ["a":1, "b":0.1, "c": true, "d":[2, 4, 5, 7, 8]]
+response.setHeader(.contentType, value: "application/json")
+let d: [String:Any] = ["a":1, "b":0.1, "c": true, "d":[2, 4, 5, 7, 8]]
     
 do {
-	let jsonString = try dict.jsonEncodedString()
-	response.appendBody(string: jsonString)
+    try response.setBody(json: d)
 } catch {
-	...
+    //...
 }
-response.requestCompleted()
+response.completed()
 ```
 *This snippet uses the built-in JSON encoding. Feel free to bring in your own favorite JSON encoder/decoder.*
 
