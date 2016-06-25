@@ -268,9 +268,9 @@ extension String {
 	/// Parse uuid string
 	/// Results undefined if the string is not a valid UUID
 	public func asUUID() -> uuid_t {
-		let u = UnsafeMutablePointer<UInt8>(allocatingCapacity:  sizeof(uuid_t))
+		let u = UnsafeMutablePointer<UInt8>(allocatingCapacity:  sizeof(uuid_t.self))
 		defer {
-			u.deallocateCapacity(sizeof(uuid_t))
+			u.deallocateCapacity(sizeof(uuid_t.self))
 		}
         uuid_parse(self, u)
         return uuid_fromPointer(u)
@@ -278,11 +278,11 @@ extension String {
 
     /// Returns a String representing the given uuid_t
 	public static func fromUUID(uuid: uuid_t) -> String {
-		let u = UnsafeMutablePointer<UInt8>(allocatingCapacity:  sizeof(uuid_t))
+		let u = UnsafeMutablePointer<UInt8>(allocatingCapacity:  sizeof(uuid_t.self))
 		let unu = UnsafeMutablePointer<Int8>(allocatingCapacity:  37) // as per spec. 36 + null
 
 		defer {
-			u.deallocateCapacity(sizeof(uuid_t))
+			u.deallocateCapacity(sizeof(uuid_t.self))
 			unu.deallocateCapacity(37)
 		}
 		u[0] = uuid.0;u[1] = uuid.1;u[2] = uuid.2;u[3] = uuid.3;u[4] = uuid.4;u[5] = uuid.5;u[6] = uuid.6;u[7] = uuid.7
@@ -305,9 +305,9 @@ public func empty_uuid() -> uuid_t {
 
 /// Generate and return a random uuid_t
 public func random_uuid() -> uuid_t {
-	let u = UnsafeMutablePointer<UInt8>(allocatingCapacity:  sizeof(uuid_t))
+	let u = UnsafeMutablePointer<UInt8>(allocatingCapacity:  sizeof(uuid_t.self))
 	defer {
-		u.deallocateCapacity(sizeof(uuid_t))
+		u.deallocateCapacity(sizeof(uuid_t.self))
 	}
 	uuid_generate_random(u)
 	return uuid_fromPointer(u)
