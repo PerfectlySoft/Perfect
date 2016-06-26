@@ -42,7 +42,7 @@ public struct Dir {
 	}
 
 	/// Returns true if the directory exists
-	public func exists() -> Bool {
+    public var exists: Bool {
 		return exists(realPath())
 	}
 
@@ -111,7 +111,7 @@ public struct Dir {
         return readdir_r(d, &dirEnt, endPtr)
     }
 #endif
-
+    
 	/// Enumerates the contents of the directory passing the name of each contained element to the provided callback.
 	/// - parameter closure: The callback which will receive each entry's name
 	/// - throws: `PerfectError.FileError`
@@ -139,21 +139,21 @@ public struct Dir {
 			let mirror = Mirror(reflecting: name)
 			let childGen = mirror.children.makeIterator()
 			for _ in 0..<nameLen {
-				let (_, elem) = childGen.next()!
-				if (elem as! Int8) == 0 {
+                guard let (_, elem) = childGen.next() else {
+                    break
+                }
+				guard let elemI = elem as? Int8 where elemI != 0 else {
 					break
 				}
-				nameBuf.append(elem as! Int8)
+				nameBuf.append(elemI)
 			}
 			nameBuf.append(0)
-			if let name = String(validatingUTF8: nameBuf) {
-				if !(name == "." || name == "..") {
-					if Int32(type) == Int32(DT_DIR) {
-						closure(name: name + "/")
-					} else {
-						closure(name: name)
-					}
-				}
+			if let name = String(validatingUTF8: nameBuf) where !(name == "." || name == "..") {
+                if Int32(type) == Int32(DT_DIR) {
+                    closure(name: name + "/")
+                } else {
+                    closure(name: name)
+                }
 			}
 		}
 	}
