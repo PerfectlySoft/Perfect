@@ -140,13 +140,13 @@ final class HTTP2Response: HTTP11Response, HeaderListener {
 	}
 }
 
-class HTTP2Client {
+public class HTTP2Client {
 
 	enum StreamState {
 		case none, idle, reservedLocal, reservedRemote, open, halfClosedRemote, halfClosedLocal, closed
 	}
 
-	let net = NetTCPSSL()
+	public let net = NetTCPSSL()
 	var host = ""
 	var timeoutSeconds = 5.0
 	var ssl = true
@@ -168,7 +168,7 @@ class HTTP2Client {
 		return s
 	}
 
-	init() {
+	public init() {
 
 	}
 
@@ -320,17 +320,17 @@ class HTTP2Client {
 		}
 	}
 
-	func close() {
+	public func close() {
 		self.closeLock.doWithLock {
 			self.net.close()
 		}
 	}
 
-	var isConnected: Bool {
+	public var isConnected: Bool {
 		return self.net.isValid
 	}
 
-	func connect(host hst: String, port: UInt16, ssl: Bool, timeoutSeconds: Double, callback: (Bool) -> ()) {
+	public func connect(host hst: String, port: UInt16, ssl: Bool, timeoutSeconds: Double, callback: (Bool) -> ()) {
 		self.host = hst
 		self.ssl = ssl
 		self.timeoutSeconds = timeoutSeconds
@@ -364,7 +364,7 @@ class HTTP2Client {
 		}
 	}
 
-	func createRequest() -> HTTP2Request {
+	public func createRequest() -> HTTPRequest {
 		return HTTP2Request(connection: self.net)
 	}
 
@@ -442,7 +442,7 @@ class HTTP2Client {
 		}
 	}
 
-	func sendRequest(_ request: HTTPRequest, callback: (HTTPResponse?, String?) -> ()) {
+	public func sendRequest(_ request: HTTPRequest, callback: (HTTPResponse?, String?) -> ()) {
 		let streamId = self.newStreamId
 		self.streams[streamId] = .idle
 
