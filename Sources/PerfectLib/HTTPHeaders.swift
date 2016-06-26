@@ -36,7 +36,7 @@ public enum HTTPRequestHeader {
             return self.standardName.hashValue
         }
         
-        var standardName: String {
+        public var standardName: String {
             switch self {
             case .accept: return "accept"
             case .acceptCharset: return "accept-charset"
@@ -87,7 +87,7 @@ public enum HTTPRequestHeader {
             }
         }
         
-        static let lookupTable: [String:HTTPRequestHeader.Name] = [
+        public static let lookupTable: [String:HTTPRequestHeader.Name] = [
             "accept":.accept,
             "accept-charset":.acceptCharset,
             "accept-encoding":.acceptEncoding,
@@ -135,7 +135,7 @@ public enum HTTPRequestHeader {
             "x-csrf-token":.xCsrfToken
         ]
         
-        static func fromStandard(name: String) -> HTTPRequestHeader.Name {
+        public static func fromStandard(name: String) -> HTTPRequestHeader.Name {
             if let found = HTTPRequestHeader.Name.lookupTable[name] {
                 return found
             }
@@ -210,7 +210,7 @@ public enum HTTPResponseHeader {
             return self.standardName.hashValue
         }
         
-        var standardName: String {
+        public var standardName: String {
             switch self {
             case .accessControlAllowOrigin: return "Access-Control-Allow-Origin"
             case .acceptPatch: return "Accept-Patch"
@@ -268,7 +268,7 @@ public enum HTTPResponseHeader {
             }
         }
         
-        static func fromStandard(name: String) -> HTTPResponseHeader.Name {
+        public static func fromStandard(name: String) -> HTTPResponseHeader.Name {
             switch name {
             case "Access-Control-Allow-Origin": return .accessControlAllowOrigin
             case "Accept-Patch": return .acceptPatch
