@@ -44,51 +44,41 @@ public class SysProcess {
 	/// - parameter args: An optional array of String arguments which will be given to the process.
 	/// - parameter env: An optional array of environment variable name and value pairs.
 	/// - throws: `LassoError.SystemError`
-	public init(_ cmd: String, args: [String]?, env: [(String,String)]?) throws {
-		let cArgsCount = args != nil ? args!.count : 0
-	#if swift(>=3.0)
-		typealias maybeCChar = UnsafeMutablePointer<CChar>?
-	#else
-		typealias maybeCChar = UnsafeMutablePointer<CChar>
-	#endif
-		
-		let cArgs = UnsafeMutablePointer<maybeCChar>(allocatingCapacity:  cArgsCount + 2)
+    public init(_ cmd: String, args: [String]?, env: [(String,String)]?) throws {
+        typealias maybeCChar = UnsafeMutablePointer<CChar>?
+        
+		let cArgsCount = args?.count ?? 0
+		let cArgs = UnsafeMutablePointer<maybeCChar>(allocatingCapacity: cArgsCount + 2)
 
-		defer { cArgs.deinitialize(count: cArgsCount + 2) ; cArgs.deallocateCapacity(cArgsCount + 2) }
+		defer {
+            cArgs.deinitialize(count: cArgsCount + 2)
+            cArgs.deallocateCapacity(cArgsCount + 2)
+        }
 
 		cArgs[0] = strdup(cmd)
 		cArgs[cArgsCount + 1] = UnsafeMutablePointer<CChar>(nil)
-		var idx = 0
-		while idx < cArgsCount {
+		
+		for idx in 0..<cArgsCount {
 			cArgs[idx+1] = strdup(args![idx])
-			idx += 1
 		}
 
-		let cEnvCount = env != nil ? env!.count : 0
-		let cEnv = UnsafeMutablePointer<maybeCChar>(allocatingCapacity:  cEnvCount + 1)
+		let cEnvCount = env?.count ?? 0
+		let cEnv = UnsafeMutablePointer<maybeCChar>(allocatingCapacity: cEnvCount + 1)
 
 		defer { cEnv.deinitialize(count: cEnvCount + 1) ; cEnv.deallocateCapacity(cEnvCount + 1) }
 
 		cEnv[cEnvCount] = UnsafeMutablePointer<CChar>(nil)
-		idx = 0
-		while idx < cEnvCount {
+		for idx in 0..<cEnvCount {
 			cEnv[idx] = strdup(env![idx].0 + "=" + env![idx].1)
-			idx += 1
 		}
 
-		let fSTDIN = UnsafeMutablePointer<Int32>(allocatingCapacity:  2)
-		let fSTDOUT = UnsafeMutablePointer<Int32>(allocatingCapacity:  2)
-		let fSTDERR = UnsafeMutablePointer<Int32>(allocatingCapacity:  2)
+        var fSTDIN: [Int32] = [0, 0]
+		var fSTDOUT: [Int32] = [0, 0]
+		var fSTDERR: [Int32] = [0, 0]
 
-		defer {
-			fSTDIN.deinitialize(count: 2) ; fSTDIN.deallocateCapacity(2)
-			fSTDOUT.deinitialize(count: 2) ; fSTDOUT.deallocateCapacity(2)
-			fSTDERR.deinitialize(count: 2) ; fSTDERR.deallocateCapacity(2)
-		}
-
-		pipe(fSTDIN)
-		pipe(fSTDOUT)
-		pipe(fSTDERR)
+		pipe(UnsafeMutablePointer<Int32>(fSTDIN))
+		pipe(UnsafeMutablePointer<Int32>(fSTDOUT))
+		pipe(UnsafeMutablePointer<Int32>(fSTDERR))
 #if os(Linux)
 		var action = posix_spawn_file_actions_t()
 #else
@@ -110,36 +100,32 @@ public class SysProcess {
 		let spawnRes = posix_spawnp(&procPid, cmd, &action, nil, cArgs, cEnv)
 		posix_spawn_file_actions_destroy(&action)
 
-		idx = 0
-		while idx < cArgsCount {
+		for idx in 0..<cArgsCount {
 			free(cArgs[idx])
-			idx += 1
 		}
 
-		idx = 0
-		while idx < cEnvCount {
+		for idx in 0..<cEnvCount {
 			free(cEnv[idx])
-			idx += 1
 		}
 
 	#if os(Linux)
-		let _ = SwiftGlibc.close(fSTDIN[0])
-		let _ = SwiftGlibc.close(fSTDOUT[1])
-		let _ = SwiftGlibc.close(fSTDERR[1])
+		_ = SwiftGlibc.close(fSTDIN[0])
+		_ = SwiftGlibc.close(fSTDOUT[1])
+		_ = SwiftGlibc.close(fSTDERR[1])
 		if spawnRes != 0 {
-			let _ = SwiftGlibc.close(fSTDIN[1])
-			let _ = SwiftGlibc.close(fSTDOUT[0])
-			let _ = SwiftGlibc.close(fSTDERR[0])
+			_ = SwiftGlibc.close(fSTDIN[1])
+			_ = SwiftGlibc.close(fSTDOUT[0])
+			_ = SwiftGlibc.close(fSTDERR[0])
 			try ThrowSystemError()
 		}
 	#else
-		let _ = Darwin.close(fSTDIN[0])
-		let _ = Darwin.close(fSTDOUT[1])
-		let _ = Darwin.close(fSTDERR[1])
+		_ = Darwin.close(fSTDIN[0])
+		_ = Darwin.close(fSTDOUT[1])
+		_ = Darwin.close(fSTDERR[1])
 		if spawnRes != 0 {
-			let _ = Darwin.close(fSTDIN[1])
-			let _ = Darwin.close(fSTDOUT[0])
-			let _ = Darwin.close(fSTDERR[0])
+			_ = Darwin.close(fSTDIN[1])
+			_ = Darwin.close(fSTDOUT[0])
+			_ = Darwin.close(fSTDERR[0])
 			try ThrowSystemError()
 		}
 	#endif
