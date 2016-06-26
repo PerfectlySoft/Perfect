@@ -1094,6 +1094,64 @@ class PerfectLibTests: XCTestCase {
             
         })
     }
+    
+    func testDirCreate() {
+        let path = "/tmp/a/b/c/d/e/f/g"
+        do {
+            try Dir(path).create()
+            
+            XCTAssert(Dir(path).exists)
+            
+            var unPath = path
+            
+            while unPath != "/tmp" {
+                try Dir(unPath).delete()
+                unPath = unPath.stringByDeletingLastPathComponent
+            }
+        } catch {
+            XCTAssert(false, "Error while creating dirs: \(error)")
+        }
+    }
+    
+    func testDirCreateRel() {
+        let path = "a/b/c/d/e/f/g"
+        do {
+            try Dir(path).create()
+            
+            XCTAssert(Dir(path).exists)
+            
+            var unPath = path
+            
+            while !unPath.isEmpty {
+                try Dir(unPath).delete()
+                unPath = unPath.stringByDeletingLastPathComponent
+            }
+        } catch {
+            XCTAssert(false, "Error while creating dirs: \(error)")
+        }
+    }
+    
+    func testDirForEach() {
+        let dirs = ["a/", "b/", "c/"]
+        do {
+            try Dir("/tmp/a").create()
+            for d in dirs {
+                try Dir("/tmp/a/\(d)").create()
+            }
+            var ta = [String]()
+            try Dir("/tmp/a").forEachEntry {
+                name in
+                ta.append(name)
+            }
+            XCTAssert(ta == dirs)
+            for d in dirs {
+                try Dir("/tmp/a/\(d)").delete()
+            }
+            try Dir("/tmp/a").delete()
+        } catch {
+            XCTAssert(false, "Error while creating dirs: \(error)")
+        }
+    }
 }
 
 extension PerfectLibTests {
@@ -1143,7 +1201,11 @@ extension PerfectLibTests {
             ("testWebRequestCookie", testWebRequestCookie),
             ("testWebRequestPostParam", testWebRequestPostParam),
             ("testSimpleHandler", testSimpleHandler),
-            ("testSlowClient", testSlowClient)
+            ("testSlowClient", testSlowClient),
+            
+            ("testDirCreate", testDirCreate),
+            ("testDirCreateRel", testDirCreateRel),
+            ("testDirForEach", testDirForEach)
         ]
     }
 }

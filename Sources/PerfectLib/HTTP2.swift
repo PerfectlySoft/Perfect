@@ -297,26 +297,26 @@ public class HTTP2Client {
 			defer {
 				print("~HTTP2Client.startReadThread")
 			}
-			if let net = self?.net {
-				while net.isValid {
-					if let s = self {
-						s.frameReadEvent.doWithLock {
-							s.frameReadOK = false
-							s.readOneFrame()
-							if !s.frameReadOK && net.isValid {
-								_ = s.frameReadEvent.wait()
-							}
-						}
-						if !s.frameReadOK {
-							s.close()
-							break
-						}
-					} else {
-						net.close()
-						break
-					}
-				}
-			}
+            guard let net = self?.net else {
+                return
+            }
+            while net.isValid {
+                guard let s = self else {
+                    net.close()
+                    break
+                }
+                s.frameReadEvent.doWithLock {
+                    s.frameReadOK = false
+                    s.readOneFrame()
+                    if !s.frameReadOK && net.isValid {
+                        _ = s.frameReadEvent.wait()
+                    }
+                }
+                if !s.frameReadOK {
+                    s.close()
+                    break
+                }
+            }
 		}
 	}
 
