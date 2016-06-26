@@ -205,6 +205,7 @@ public protocol HTTPResponse: class {
     var request: HTTPRequest { get }
     var status: HTTPResponseStatus { get set }
     var isStreaming: Bool { get set }
+    var bodyBytes: [UInt8] { get set }
     
     func header(_ named: HTTPResponseHeader.Name) -> String?
     func addHeader(_ named: HTTPResponseHeader.Name, value: String)

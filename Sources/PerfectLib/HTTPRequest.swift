@@ -21,8 +21,8 @@
 import PerfectNet
 
 public protocol HTTPRequest: class {
-    var method: HTTPMethod { get }
-    var path: String { get }
+    var method: HTTPMethod { get set }
+    var path: String { get set }
     var queryParams: [(String, String)] { get }
     var protocolVersion: (Int, Int) { get }
     var remoteAddress: (host: String, port: UInt16) { get }
@@ -44,7 +44,7 @@ public protocol HTTPRequest: class {
     // incur unwanted overhead
     
     var postParams: [(String, String)] { get }
-    var postBodyBytes: [UInt8]? { get }
+    var postBodyBytes: [UInt8]? { get set }
     var postBodyString: String? { get }
     var postFileUploads: [MimeReader.BodySpec]? { get }
 }
