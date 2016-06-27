@@ -40,11 +40,11 @@ struct DynamicLoader {
 		let resolvedPath = at.stringByResolvingSymlinksInPath
 		let moduleName = resolvedPath.lastPathComponent.stringByDeletingPathExtension
 		let file = File(resolvedPath + "/" + moduleName)
-		if file.exists {
-			let realPath = file.realPath
-			return self.loadRealPath(realPath, moduleName: moduleName)
-		}
-		return false
+        guard file.exists else {
+            return false
+        }
+        let realPath = file.realPath
+        return self.loadRealPath(realPath, moduleName: moduleName)
 	}
 
 	func loadLibrary(atPath at: String) -> Bool {
@@ -66,14 +66,13 @@ struct DynamicLoader {
 		let newModuleName = moduleName.stringByReplacing(string: "-", withString: "_").stringByReplacing(string: " ", withString: "_")
 		let symbolName = "_TF\(newModuleName.utf8.count)\(newModuleName)\(initFuncName.utf8.count)\(initFuncName)FT_T_"
 		let sym = dlsym(openRes, symbolName)
-		if sym != nil {
-			let f: InitFunction = unsafeBitCast(sym, to: InitFunction.self)
-			f()
-			return true
-		} else {
-			Log.warning(message: "Error loading \(realPath). Symbol \(symbolName) not found.")
-			dlclose(openRes)
-		}
-		return false
+        guard sym != nil else {
+            Log.warning(message: "Error loading \(realPath). Symbol \(symbolName) not found.")
+            dlclose(openRes)
+            return false
+        }
+        let f: InitFunction = unsafeBitCast(sym, to: InitFunction.self)
+        f()
+        return true
 	}
 }
