@@ -152,6 +152,52 @@ public enum HTTPResponseStatus: CustomStringConvertible {
             return .custom(code: code, message: "Custom")
         }
     }
+    
+    public var code: Int {
+        switch self {
+        case .continue: return 100
+        case .switchingProtocols: return 101
+        case .ok: return 200
+        case .created: return 201
+        case .accepted: return 202
+        case .nonAuthoritativeInformation: return 203
+        case .noContent: return 204
+        case .resetContent: return 205
+        case .partialContent: return 206
+        case .multipleChoices: return 300
+        case .movedPermanently: return 301
+        case .found: return 302
+        case .seeOther: return 303
+        case .notModified: return 304
+        case .useProxy: return 305
+        case .temporaryRedirect: return 307
+        case .badRequest: return 400
+        case .unauthorized: return 401
+        case .paymentRequired: return 402
+        case .forbidden: return 403
+        case .notFound: return 404
+        case .methodNotAllowed: return 405
+        case .notAcceptable: return 406
+        case .proxyAuthenticationRequired: return 407
+        case .requestTimeout: return 408
+        case .conflict: return 409
+        case .gone: return 410
+        case .lengthRequired: return 411
+        case .preconditionFailed: return 412
+        case .requestEntityTooLarge: return 413
+        case .requestURITooLong: return 414
+        case .unsupportedMediaType: return 415
+        case .requestedRangeNotSatisfiable: return 416
+        case .expectationFailed: return 417
+        case .internalServerError: return 500
+        case .notImplemented: return 501
+        case .badGateway: return 502
+        case .serviceUnavailable: return 503
+        case .gatewayTimeout: return 504
+        case .httpVersionNotSupported: return 505
+        case .custom(let code, _): return code
+        }
+    }
 }
 
 /// This bundles together the values which will be used to set a cookie in the outgoing response
