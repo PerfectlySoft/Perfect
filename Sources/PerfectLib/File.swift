@@ -65,21 +65,22 @@ public class File {
     /// Returns the file path. If the file is a symbolic link, the link will be resolved.
     public var realPath: String {
         let maxPath = 2048
-        if isLink {
-            var ary = [UInt8](repeating: 0, count: maxPath)
-            let buffer = UnsafeMutablePointer<Int8>(ary)
-            let res = readlink(internalPath, buffer, maxPath)
-            if res != -1 {
-                ary.removeLast(maxPath - res)
-                let trailPath = UTF8Encoding.encode(bytes: ary)
-                let lastChar = trailPath[trailPath.startIndex]
-                if lastChar != "/" && lastChar != "." {
-                    return internalPath.stringByDeletingLastPathComponent + "/" + trailPath
-                }
-                return trailPath
-            }
+        guard isLink else {
+            return internalPath
         }
-        return internalPath
+        var ary = [UInt8](repeating: 0, count: maxPath)
+        let buffer = UnsafeMutablePointer<Int8>(ary)
+        let res = readlink(internalPath, buffer, maxPath)
+        guard res != -1 else {
+            return internalPath
+        }
+        ary.removeLast(maxPath - res)
+        let trailPath = UTF8Encoding.encode(bytes: ary)
+        let lastChar = trailPath[trailPath.startIndex]
+        guard lastChar != "/" && lastChar != "." else {
+            return trailPath
+        }
+        return internalPath.stringByDeletingLastPathComponent + "/" + trailPath
     }
     
     /// Returns the modification date for the file in the standard UNIX format of seconds since 1970/01/01 00:00:00 GMT
@@ -199,11 +200,10 @@ public extension File {
     public func moveTo(path: String, overWrite: Bool = false) throws -> File {
         let destFile = File(path)
         if destFile.exists {
-            if overWrite {
-                destFile.delete()
-            } else {
+            guard overWrite else {
                 throw PerfectError.fileError(-1, "Can not overwrite existing file")
             }
+            destFile.delete()
         }
         close()
         let res = rename(self.path, path)
@@ -227,11 +227,10 @@ public extension File {
     public func copyTo(path pth: String, overWrite: Bool = false) throws -> File {
         let destFile = File(pth)
         if destFile.exists {
-            if overWrite {
-                destFile.delete()
-            } else {
+            guard overWrite else {
                 throw PerfectError.fileError(-1, "Can not overwrite existing file")
             }
+            destFile.delete()
         }
         let wasOpen = self.isOpen
         let oldMarker = self.marker
