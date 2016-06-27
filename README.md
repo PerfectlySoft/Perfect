@@ -57,10 +57,10 @@ brew link openssl --force
 ```
 
 ### Linux
-Perfect relies on OpenSSL and uuid:
+Perfect relies on OpenSSL, libssl-dev and uuid:
 
 ```
-sudo apt-get install openssl uuid-dev
+sudo apt-get install openssl libssl-dev uuid-dev
 ```
 
 ### Build Starter Project
