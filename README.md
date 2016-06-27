@@ -13,7 +13,7 @@
 **The master branch of this project currently compiles with *DEVELOPMENT-SNAPSHOT-2016-06-20-a* released June 20th, 2016 using Swift Package Manager.**
 
 **Important:** On OS X you must set the Xcode command line tools preference as follows:
-![Xcode Prefs](assets/xcode_prefs.png) 
+![Xcode Prefs](http://www.perfect.org/docs/assets/xcode_prefs.png) 
 
 If you do not do this you will experience compile time errors when using SPM on the command line.
 
