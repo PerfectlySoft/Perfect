@@ -135,14 +135,14 @@ class HTTP11Request: HTTPRequest {
     }
     
     func addHeader(_ named: HTTPRequestHeader.Name, value: String) {
-        if let existing = headerStore[named] {
-            if existing == "cookie" {
-                self.headerStore[named] = existing + "; " + value
-            } else {
-                self.headerStore[named] = existing + ", " + value
-            }
-        } else {
+        guard let existing = headerStore[named] else {
             self.headerStore[named] = value
+            return
+        }
+        if named == .cookie {
+            self.headerStore[named] = existing + "; " + value
+        } else {
+            self.headerStore[named] = existing + ", " + value
         }
     }
     
