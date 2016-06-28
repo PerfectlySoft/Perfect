@@ -241,7 +241,7 @@ class HTTP11Request: HTTPRequest {
             hvers.append(c)
         }
         
-        self.method = HTTPMethod.methodFrom(string: method)
+        self.method = HTTPMethod.from(string: method)
         self.path = pathInfo
         self.queryString = queryString
         
