@@ -38,7 +38,7 @@ public enum HTTPMethod: Hashable, CustomStringConvertible {
     /// Any unaccounted for or custom method
     custom(String)
     
-    static func methodFrom(string: String) -> HTTPMethod {
+    public static func from(string: String) -> HTTPMethod {
         
         switch string {
         case "OPTIONS": return .options
