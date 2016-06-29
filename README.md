@@ -184,8 +184,7 @@ We have finished refactoring Perfect to support Swift Package Manager. The Perfe
 * [PerfectTemplate](https://github.com/PerfectlySoft/PerfectTemplate) - A simple starter project which compiles with SPM into a stand-alone executable HTTP server. This repository is ideal for starting on your own Perfect based project.
 * [PerfectDocs](https://github.com/PerfectlySoft/PerfectDocs) - Contains all API reference related material.
 * [PerfectExamples](https://github.com/PerfectlySoft/PerfectExamples) - All the Perfect example projects and documentation.
-* [PerfectEverything](https://github.com/PerfectlySoft/PerfectEverything) - This umbrella repository allows one to pull in all the related Perfect modules in one go, including the servers, examples, database connectors and documentation. This is a great place to start for people wishing to get up to speed with Perfect.
-* [PerfectServer](https://github.com/PerfectlySoft/PerfectServer) - Contains the PerfectServer variants, including the stand-alone HTTP and FastCGI servers. Those wishing to do a manual deployment should clone and build from this repository.
+* [PerfectTemplateFCGI](https://github.com/PerfectlySoft/PerfectTemplateFCGI) - A simple starter project which compiles with SPM into a FastCGI server suitable for use with Apache 2.4 or NGINX. This repository is ideal for starting on your own Perfect based project if you are required to use an existing server which supports FastCGI.
 * [Perfect-Redis](https://github.com/PerfectlySoft/Perfect-Redis) - Redis database connector.
 * [Perfect-SQLite](https://github.com/PerfectlySoft/Perfect-SQLite) - SQLite3 database connector.
 * [Perfect-PostgreSQL](https://github.com/PerfectlySoft/Perfect-PostgreSQL) - PostgreSQL database connector.
