@@ -139,6 +139,8 @@ class HTTP11Response: HTTPResponse {
         }
         if isStreaming {
             addHeader(.transferEncoding, value: "chunked")
+        } else if nil == header(.contentLength) {
+            setHeader(.contentLength, value: "\(bodyBytes.count)")
         }
         addCookies()
         var responseString = "HTTP/\(request.protocolVersion.0).\(request.protocolVersion.1) \(status)\r\n"
