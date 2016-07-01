@@ -135,7 +135,7 @@ class HTTP11Response: HTTPResponse {
     func pushHeaders(callback: (Bool) -> ()) {
         wroteHeaders = true
         if isKeepAlive {
-            addHeader(.connection, value: "keep-alive")
+            addHeader(.connection, value: "Keep-Alive")
         }
         if isStreaming {
             addHeader(.transferEncoding, value: "chunked")
@@ -149,7 +149,12 @@ class HTTP11Response: HTTPResponse {
         }
         responseString.append("\r\n")
         connection.write(string: responseString) {
-            _ in
+            sent in
+            guard sent > 0 else {
+                self.completedCallback = nil
+                self.connection.close()
+                return
+            }
             self.push(callback: callback)
         }
     }
@@ -174,7 +179,9 @@ class HTTP11Response: HTTPResponse {
         connection.write(bytes: sendA) {
             sent in
             guard sent == sendA.count else {
-                return callback(false)
+                self.completedCallback = nil
+                self.connection.close()
+                return
             }
             self.bodyBytes.append(httpCR)
             self.bodyBytes.append(httpLF)
@@ -191,7 +198,9 @@ class HTTP11Response: HTTPResponse {
             sent in
             self.bodyBytes.removeAll()
             guard bodyCount == sent else {
-                return callback(false)
+                self.completedCallback = nil
+                self.connection.close()
+                return
             }
             Threading.dispatch {
                 callback(true)
