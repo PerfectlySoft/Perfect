@@ -35,14 +35,23 @@ public struct StaticFileHandler {
 		}
 		let documentRoot = req.documentRoot
 		let file = File(documentRoot + "/" + path)
+        
+        func fnf(msg: String) {
+            response.status = .notFound
+            response.appendBody(string: msg)
+            // !FIX! need 404.html or some such thing
+            response.completed()
+        }
+        
 		guard file.exists else {
-			response.status = .notFound
-			response.appendBody(string: "The file \(path) was not found.")
-			// !FIX! need 404.html or some such thing
-			response.completed()
-			return
+            return fnf(msg: "The file \(path) was not found.")
 		}
-		self.sendFile(request: req, response: response, file: file)
+        do {
+            try file.open(.read)
+            self.sendFile(request: req, response: response, file: file)
+        } catch {
+            return fnf(msg: "The file \(path) could not be opened \(error).")
+        }
 	}
 	
 	func sendFile(request req: HTTPRequest, response resp: HTTPResponse, file: File) {
@@ -96,7 +105,7 @@ public struct StaticFileHandler {
                 return response.completed()
             }
             
-            let _ = file.marker = range.lowerBound
+            file.marker = range.lowerBound
             
             return self.sendFile(remainingBytes: rangeCount, response: response, file: file) {
                 ok in
