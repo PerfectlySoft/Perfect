@@ -35,9 +35,7 @@ public struct PerfectServer {
 	/// Performs any boot-strap level initialization such as creating databases or loading dynamic frameworks.
 	/// Should only be called once befor starting FastCGI server
 	public static func initializeServices() {
-		
 		NetEvent.initialize()
-		
 		Routing.initialize()
 		
 		let dl = DynamicLoader()
@@ -47,22 +45,20 @@ public struct PerfectServer {
         } else {
             baseDir = Dir(PerfectServer.homeDir + serverPerfectLibraries)
         }
-        Log.info(message: "Load libs from: \(baseDir.realPath())");
 		do {
 			try baseDir.forEachEntry { (name: String) -> () in
+				let fileName = baseDir.realPath() + "/" + name
 				if name.ends(with: ".framework") || name.ends(with: ".framework/") {
-					let fileName = baseDir.realPath() + "/" + name
 					if dl.loadFramework(atPath: fileName) {
-						print("Loaded "+name)
+						Log.info(message: "Loaded \(name) from \(baseDir.realPath())")
 					} else {
-						print("FAILED to load "+name)
+						Log.warning(message: "FAILED to load \(name) from \(baseDir.realPath())")
 					}
 				} else if name.ends(with: ".so") || name.ends(with: ".dylib") {
-					let fileName = baseDir.realPath() + "/" + name
 					if dl.loadLibrary(atPath: fileName) {
-						print("Loaded "+name)
+						Log.info(message: "Loaded \(name) from \(baseDir.realPath())")
 					} else {
-						print("FAILED to load "+name)
+						Log.warning(message: "FAILED to load \(name) from \(baseDir.realPath())")
 					}
 				}
 			}

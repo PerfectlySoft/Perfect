@@ -991,7 +991,7 @@ class PerfectLibTests: XCTestCase {
                             
                             let str = UTF8Encoding.encode(bytes: bytes)
                             let splitted = str.characters.split(separator: "\r\n").map(String.init)
-                            
+							
                             XCTAssert(splitted.last == msg)
                             
                             endClient()
@@ -1094,16 +1094,131 @@ class PerfectLibTests: XCTestCase {
             
         })
     }
-    
+	
+	static var oneSet = false, twoSet = false, threeSet = false
+	
+	func testRequestFilters() {
+		PerfectServer.initializeServices()
+		
+		let port = 8282 as UInt16
+		let msg = "Hello, world!"
+		
+		PerfectLibTests.oneSet = false
+		PerfectLibTests.twoSet = false
+		PerfectLibTests.threeSet = false
+		
+		struct Filter1: HTTPRequestFilter {
+			func filter(request: HTTPRequest, response: HTTPResponse, callback: (HTTPRequestFilterResult) -> ()) {
+				PerfectLibTests.oneSet = true
+				callback(.continue(request, response))
+			}
+		}
+		struct Filter2: HTTPRequestFilter {
+			func filter(request: HTTPRequest, response: HTTPResponse, callback: (HTTPRequestFilterResult) -> ()) {
+				XCTAssert(PerfectLibTests.oneSet)
+				XCTAssert(!PerfectLibTests.twoSet && !PerfectLibTests.threeSet)
+				PerfectLibTests.twoSet = true
+				callback(.execute(request, response))
+			}
+		}
+		struct Filter3: HTTPRequestFilter {
+			func filter(request: HTTPRequest, response: HTTPResponse, callback: (HTTPRequestFilterResult) -> ()) {
+				XCTAssert(false, "This filter should be skipped")
+				callback(.continue(request, response))
+			}
+		}
+		struct Filter4: HTTPRequestFilter {
+			func filter(request: HTTPRequest, response: HTTPResponse, callback: (HTTPRequestFilterResult) -> ()) {
+				XCTAssert(PerfectLibTests.oneSet && PerfectLibTests.twoSet)
+				XCTAssert(!PerfectLibTests.threeSet)
+				PerfectLibTests.threeSet = true
+				callback(.halt(request, response))
+			}
+		}
+		
+		let requestFilters: [(HTTPRequestFilter, HTTPFilterPriority)] = [(Filter1(), HTTPFilterPriority.high), (Filter2(), HTTPFilterPriority.medium), (Filter3(), HTTPFilterPriority.medium), (Filter4(), HTTPFilterPriority.low)]
+		
+		Routing.Routes["/"] = {
+			request, response in
+			XCTAssert(false, "This handler should not execute")
+			response.addHeader(.contentType, value: "text/plain")
+			response.appendBody(string: msg)
+			response.completed()
+		}
+		let serverExpectation = self.expectation(withDescription: "server")
+		let clientExpectation = self.expectation(withDescription: "client")
+		
+		let server = HTTPServer(documentRoot: "./webroot")
+		server.setFilters(request: requestFilters, response: [(HTTPResponseFilter, HTTPFilterPriority)]())
+		
+		func endClient() {
+			server.stop()
+			clientExpectation.fulfill()
+		}
+		
+		Threading.dispatch {
+			do {
+				try server.start(port: port)
+			} catch PerfectError.networkError(let err, let msg) {
+				XCTAssert(false, "Network error thrown: \(err) \(msg)")
+			} catch {
+				XCTAssert(false, "Error thrown: \(error)")
+			}
+			serverExpectation.fulfill()
+		}
+		Threading.sleep(seconds: 1.0)
+		Threading.dispatch {
+			do {
+				try NetTCP().connect(address: "127.0.0.1", port: port, timeoutSeconds: 5.0) {
+					net in
+					
+					guard let net = net else {
+						XCTAssert(false, "Could not connect to server")
+						return endClient()
+					}
+					let reqStr = "GET / HTTP/1.0\r\nHost: localhost:\(port)\r\nFrom: me@host.com\r\n\r\n"
+					net.write(string: reqStr) {
+						count in
+						
+						guard count == reqStr.utf8.count else {
+							XCTAssert(false, "Could not write request \(count) != \(reqStr.utf8.count)")
+							return endClient()
+						}
+						
+						Threading.sleep(seconds: 3.0)
+						net.readSomeBytes(count: 1024) {
+							bytes in
+							
+							guard let bytes = bytes where bytes.count > 0 else {
+								XCTAssert(false, "Could not read bytes from server")
+								return endClient()
+							}
+							
+							endClient()
+						}
+					}
+				}
+			} catch {
+				XCTAssert(false, "Error thrown: \(error)")
+				endClient()
+			}
+		}
+		
+		self.waitForExpectations(withTimeout: 10000, handler: {
+			_ in
+			XCTAssert(PerfectLibTests.oneSet && PerfectLibTests.twoSet && PerfectLibTests.threeSet)
+		})
+	}
+	
     func testDirCreate() {
         let path = "/tmp/a/b/c/d/e/f/g"
         do {
             try Dir(path).create()
-            
+			
             XCTAssert(Dir(path).exists)
-            
+			
             var unPath = path
-            
+			
             while unPath != "/tmp" {
                 try Dir(unPath).delete()
                 unPath = unPath.stringByDeletingLastPathComponent
@@ -1112,16 +1227,16 @@ class PerfectLibTests: XCTestCase {
             XCTAssert(false, "Error while creating dirs: \(error)")
         }
     }
-    
+	
     func testDirCreateRel() {
         let path = "a/b/c/d/e/f/g"
         do {
             try Dir(path).create()
-            
+			
             XCTAssert(Dir(path).exists)
-            
+			
             var unPath = path
-            
+			
             while !unPath.isEmpty {
                 try Dir(unPath).delete()
                 unPath = unPath.stringByDeletingLastPathComponent
@@ -1130,7 +1245,7 @@ class PerfectLibTests: XCTestCase {
             XCTAssert(false, "Error while creating dirs: \(error)")
         }
     }
-    
+	
     func testDirForEach() {
         let dirs = ["a/", "b/", "c/"]
         do {
@@ -1201,6 +1316,7 @@ extension PerfectLibTests {
             ("testWebRequestCookie", testWebRequestCookie),
             ("testWebRequestPostParam", testWebRequestPostParam),
             ("testSimpleHandler", testSimpleHandler),
+            ("testRequestFilters", testRequestFilters),
             ("testSlowClient", testSlowClient),
             
             ("testDirCreate", testDirCreate),
