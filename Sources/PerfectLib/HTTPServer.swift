@@ -38,10 +38,62 @@ public class HTTPServer {
 	/// This is important if utilizing the `WebRequest.serverName` "SERVER_NAME" variable.
 	public var serverName = ""
 	
+	private var requestFilters = [[HTTPRequestFilter]]()
+	private var responseFilters = [[HTTPResponseFilter]]()
+	
 	/// Initialize the server with a document root.
 	/// - parameter documentRoot: The document root for the server.
 	public init(documentRoot: String) {
 		self.documentRoot = documentRoot
+	}
+	
+	@discardableResult
+	public func setFilters(request: [(HTTPRequestFilter, HTTPFilterPriority)], response: [(HTTPResponseFilter, HTTPFilterPriority)]) -> HTTPServer {
+		do {
+			var high = [HTTPRequestFilter](), med = [HTTPRequestFilter](), low = [HTTPRequestFilter]()
+			for (filter, priority) in request {
+				switch priority {
+				case .high:
+					high.append(filter)
+				case .medium:
+					med.append(filter)
+				case .low:
+					low.append(filter)
+				}
+			}
+			if !high.isEmpty {
+				requestFilters.append(high)
+			}
+			if !med.isEmpty {
+				requestFilters.append(med)
+			}
+			if !low.isEmpty {
+				requestFilters.append(low)
+			}
+		}
+		do {
+			var high = [HTTPResponseFilter](), med = [HTTPResponseFilter](), low = [HTTPResponseFilter]()
+			for (filter, priority) in response {
+				switch priority {
+				case .high:
+					high.append(filter)
+				case .medium:
+					med.append(filter)
+				case .low:
+					low.append(filter)
+				}
+			}
+			if !high.isEmpty {
+				responseFilters.append(high)
+			}
+			if !med.isEmpty {
+				responseFilters.append(med)
+			}
+			if !low.isEmpty {
+				responseFilters.append(low)
+			}
+		}
+		return self
 	}
 	
 	/// Start the server on the indicated TCP port and optional address.
@@ -251,13 +303,13 @@ public class HTTPServer {
 		}
 	}
 	
-	func runRequest(_ req: HTTP11Request) {
-		req.documentRoot = self.documentRoot
-		let net = req.connection
+	func runRequest(_ request: HTTP11Request) {
+		request.documentRoot = self.documentRoot
+		let net = request.connection
         // !FIX! check for upgrade to http/2
         // switch to HTTP2Request/HTTP2Response
         
-        let response = HTTP11Response(request: req)
+        let response = HTTP11Response(request: request, filters: responseFilters.makeIterator())
         if response.isKeepAlive {
             response.completedCallback = { [weak self] in
                 self?.handleConnection(net)
@@ -277,6 +329,42 @@ public class HTTPServer {
                 }
             }
         }
-        Routing.handleRequest(req, response: response)
+		if requestFilters.isEmpty {
+			HTTPServer.routeRequest(request, response: response)
+		} else {
+			HTTPServer.filterRequest(request, response: response, allFilters: requestFilters.makeIterator())
+		}
+	}
+	
+	private static func filterRequest(_ request: HTTPRequest, response: HTTPResponse, allFilters: IndexingIterator<[[HTTPRequestFilter]]>) {
+		var filters = allFilters
+		if let prioFilters = filters.next() {
+			HTTPServer.filterRequest(request, response: response, allFilters: filters, prioFilters: prioFilters.makeIterator())
+		} else {
+			HTTPServer.routeRequest(request, response: response)
+		}
+	}
+	
+	private static func filterRequest(_ request: HTTPRequest, response: HTTPResponse, allFilters: IndexingIterator<[[HTTPRequestFilter]]>, prioFilters: IndexingIterator<[HTTPRequestFilter]>) {
+		var prioFilters = prioFilters
+		if let filter = prioFilters.next() {
+			filter.filter(request: request, response: response) {
+				result in
+				switch result {
+				case .continue(let req, let res):
+					HTTPServer.filterRequest(req, response: res, allFilters: allFilters, prioFilters: prioFilters)
+				case .execute(let req, let res):
+					HTTPServer.filterRequest(req, response: res, allFilters: allFilters)
+				case .halt(_, let res):
+					res.completed()
+				}
+			}
+		} else {
+			HTTPServer.filterRequest(request, response: response, allFilters: allFilters)
+		}
+	}
+	
+	private static func routeRequest(_ req: HTTPRequest, response: HTTPResponse) {
+		Routing.handleRequest(req, response: response)
 	}
 }

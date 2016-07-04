@@ -36,7 +36,7 @@ public struct RouteMap: CustomStringConvertible {
 	}
 
 	private let root = RouteNode() // root node for any request method
-	private var methodRoots = Dictionary<HTTPMethod, RouteNode>() // by convention, use all upper cased method names for inserts/lookups
+	private var methodRoots = Dictionary<HTTPMethod, RouteNode>()
 
     private func formatException(route r: String, error: ErrorProtocol) -> String {
         return "\(error) - \(r)"

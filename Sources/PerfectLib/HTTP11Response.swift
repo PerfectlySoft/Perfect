@@ -59,9 +59,12 @@ class HTTP11Response: HTTPResponse {
         let version = self.request.protocolVersion
         return version.0 == 1 && version.1 == 1
     }
-    
-    init(request: HTTPRequest) {
+	
+	let filters: IndexingIterator<[[HTTPResponseFilter]]>?
+	
+	init(request: HTTPRequest, filters: IndexingIterator<[[HTTPResponseFilter]]>? = nil) {
         self.request = request
+		self.filters = filters
         let net = request.connection
         self.completedCallback = {
             net.close()
