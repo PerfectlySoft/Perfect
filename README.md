@@ -12,7 +12,7 @@
 
 **The master branch of this project currently compiles with *DEVELOPMENT-SNAPSHOT-2016-06-20-a* released June 20th, 2016 using Swift Package Manager.**
 
-**Important:** On OS X you must select the proper toolchain in Xcode:
+**Important:** On OS X you must select the proper toolchain in Xcode (download: https://swift.org/download/#releases):
 
 ![Xcode Toolchain](http://www.perfect.org/docs/assets/choose_toolchain.png) 
 
