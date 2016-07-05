@@ -109,7 +109,7 @@ public class HTTPServer {
 	/// - parameter sslCert: The server SSL certificate file.
 	/// - parameter sslKey: The server SSL key file.
 	/// - parameter bindAddress: The local address on which to bind.
-	public func start(port: UInt16, sslCert: String, sslKey: String, dhParams: String? = nil, bindAddress: String = "0.0.0.0") throws {
+	public func start(port: UInt16, sslCert: String, sslKey: String, bindAddress: String = "0.0.0.0") throws {
 		
 		self.serverPort = port
 		self.serverAddress = bindAddress
@@ -129,108 +129,10 @@ public class HTTPServer {
 			"ECDHE-RSA-AES256-CBC-SHA384",
 			"ECDHE-RSA-AES128-CBC-SHA256",
 			"ECDHE-RSA-AES128-CBC-SHA",
-			
 			"ECDHE-RSA-AES256-SHA384",
 			"ECDHE-ECDSA-AES256-SHA384",
 			"ECDHE-RSA-AES256-SHA",
 			"ECDHE-ECDSA-AES256-SHA"
-			/*,
-			"SRP-DSS-AES-256-CBC-SHA",
-			"SRP-RSA-AES-256-CBC-SHA",
-			"SRP-AES-256-CBC-SHA",
-			"DH-DSS-AES256-GCM-SHA384",
-			"DHE-DSS-AES256-GCM-SHA384",
-			"DH-RSA-AES256-GCM-SHA384",
-			"DHE-RSA-AES256-GCM-SHA384",
-			"DHE-RSA-AES256-SHA256",
-			"DHE-DSS-AES256-SHA256",
-			"DH-RSA-AES256-SHA256",
-			"DH-DSS-AES256-SHA256",
-			"DHE-RSA-AES256-SHA",
-			"DHE-DSS-AES256-SHA",
-			"DH-RSA-AES256-SHA",
-			"DH-DSS-AES256-SHA",
-			"DHE-RSA-CAMELLIA256-SHA",
-			"DHE-DSS-CAMELLIA256-SHA",
-			"DH-RSA-CAMELLIA256-SHA",
-			"DH-DSS-CAMELLIA256-SHA",
-			"ECDH-RSA-AES256-GCM-SHA384",
-			"ECDH-ECDSA-AES256-GCM-SHA384",
-			"ECDH-RSA-AES256-SHA384",
-			"ECDH-ECDSA-AES256-SHA384",
-			"ECDH-RSA-AES256-SHA",
-			"ECDH-ECDSA-AES256-SHA",
-			"AES256-GCM-SHA384",
-			"AES256-SHA256",
-			"AES256-SHA",
-			"CAMELLIA256-SHA",
-			"PSK-AES256-CBC-SHA",
-			"ECDHE-RSA-AES128-SHA256",
-			"ECDHE-ECDSA-AES128-SHA256",
-			"ECDHE-RSA-AES128-SHA",
-			"ECDHE-ECDSA-AES128-SHA",
-			"SRP-DSS-AES-128-CBC-SHA",
-			"SRP-RSA-AES-128-CBC-SHA",
-			"SRP-AES-128-CBC-SHA",
-			"DH-DSS-AES128-GCM-SHA256",
-			"DHE-DSS-AES128-GCM-SHA256",
-			"DH-RSA-AES128-GCM-SHA256",
-			"DHE-RSA-AES128-GCM-SHA256",
-			"DHE-RSA-AES128-SHA256",
-			"DHE-DSS-AES128-SHA256",
-			"DH-RSA-AES128-SHA256",
-			"DH-DSS-AES128-SHA256",
-			"DHE-RSA-AES128-SHA",
-			"DHE-DSS-AES128-SHA",
-			"DH-RSA-AES128-SHA",
-			"DH-DSS-AES128-SHA",
-			"DHE-RSA-SEED-SHA",
-			"DHE-DSS-SEED-SHA",
-			"DH-RSA-SEED-SHA",
-			"DH-DSS-SEED-SHA",
-			"DHE-RSA-CAMELLIA128-SHA",
-			"DHE-DSS-CAMELLIA128-SHA",
-			"DH-RSA-CAMELLIA128-SHA",
-			"DH-DSS-CAMELLIA128-SHA",
-			"ECDH-RSA-AES128-GCM-SHA256",
-			"ECDH-ECDSA-AES128-GCM-SHA256",
-			"ECDH-RSA-AES128-SHA256",
-			"ECDH-ECDSA-AES128-SHA256",
-			"ECDH-RSA-AES128-SHA",
-			"ECDH-ECDSA-AES128-SHA",
-			"AES128-GCM-SHA256",
-			"AES128-SHA256",
-			"AES128-SHA",
-			"SEED-SHA",
-			"CAMELLIA128-SHA",
-			"IDEA-CBC-SHA",
-			"PSK-AES128-CBC-SHA",
-			"ECDHE-RSA-RC4-SHA",
-			"ECDHE-ECDSA-RC4-SHA",
-			"ECDH-RSA-RC4-SHA",
-			"ECDH-ECDSA-RC4-SHA",
-			"RC4-SHA",
-			"RC4-MD5",
-			"PSK-RC4-SHA",
-			"ECDHE-RSA-DES-CBC3-SHA",
-			"ECDHE-ECDSA-DES-CBC3-SHA",
-			"SRP-DSS-3DES-EDE-CBC-SHA",
-			"SRP-RSA-3DES-EDE-CBC-SHA",
-			"SRP-3DES-EDE-CBC-SHA",
-			"EDH-RSA-DES-CBC3-SHA",
-			"EDH-DSS-DES-CBC3-SHA",
-			"DH-RSA-DES-CBC3-SHA",
-			"DH-DSS-DES-CBC3-SHA",
-			"ECDH-RSA-DES-CBC3-SHA",
-			"ECDH-ECDSA-DES-CBC3-SHA",
-			"DES-CBC3-SHA",
-			"PSK-3DES-EDE-CBC-SHA",
-			"EDH-RSA-DES-CBC-SHA",
-			"EDH-DSS-DES-CBC-SHA",
-			"DH-RSA-DES-CBC-SHA",
-			"DH-DSS-DES-CBC-SHA",
-			"DES-CBC-SHA"
-			*/
 		]
 		socket.cipherList = cipherList
 		guard socket.useCertificateChainFile(cert: sslCert) else {
@@ -261,15 +163,17 @@ public class HTTPServer {
 	}
 	
 	func start() {
-		if let n = self.net {
-			self.serverAddress = n.sockName().0
-			n.forEachAccept {
-				[weak self] net in
-				if let net = net {
-					Threading.dispatch {
-						self?.handleConnection(net)
-					}
-				}
+		guard let n = self.net else {
+			Log.terminal(message: "Server could not be started. Socket was not initialized.")
+		}
+		self.serverAddress = n.sockName().0
+		n.forEachAccept {
+			[weak self] net in
+			guard let net = net else {
+				return
+			}
+			Threading.dispatch {
+				self?.handleConnection(net)
 			}
 		}
 	}
