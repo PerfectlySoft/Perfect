@@ -10,13 +10,9 @@
 [![Twitter](https://img.shields.io/badge/Twitter-@PerfectlySoft-brightgreen.svg?style=flat)](http://twitter.com/PerfectlySoft)
 [![Join the chat at https://gitter.im/PerfectlySoft/Perfect](https://img.shields.io/badge/Gitter-Join%20Chat-brightgreen.svg)](https://gitter.im/PerfectlySoft/Perfect?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-**The master branch of this project currently compiles with *DEVELOPMENT-SNAPSHOT-2016-06-20-a* released June 20th, 2016 using Swift Package Manager.**
+**The master branch of this project currently compiles with the default Swift 3.0 toolchain included in Xcode 8 beta 2. On Ubuntu use the *DEVELOPMENT-SNAPSHOT-2016-06-20-a* toolchain, released June 20th**
 
-**Important:** On OS X you must select the proper toolchain in Xcode:
-
-![Xcode Toolchain](http://www.perfect.org/docs/assets/choose_toolchain.png) 
-
-*And* set the Xcode command line tools preference as follows:
+**Important:** On OS X you must set the Xcode command line tools preference as follows:
 ![Xcode Prefs](http://www.perfect.org/docs/assets/xcode_prefs.png) 
 
 If you do not do this you will experience compile time errors when using SPM on the command line.
@@ -46,7 +42,7 @@ swift --version
 should produce something like the following:
 
 ```
-Apple Swift version 3.0-dev (LLVM c191431197, Clang c6195325c5, Swift add621a959)
+Apple Swift version 3.0 (swiftlang-800.0.33.1 clang-800.0.31)
 Target: x86_64-apple-macosx10.9
 ```
 
