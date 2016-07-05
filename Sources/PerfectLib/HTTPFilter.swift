@@ -17,16 +17,17 @@
 //===----------------------------------------------------------------------===//
 //
 
-/// Execution priority for request filters
+/// Execution priority for request filters.
 public enum HTTPFilterPriority {
 	/// Lowest priority. Run last.
 	case low
-	/// Medium
+	/// Medium priority.
 	case medium
 	/// Highest priority. Run first.
 	case high
 }
 
+/// Result from one filter.
 public enum HTTPRequestFilterResult {
 	/// Continue with filtering.
 	case `continue`(HTTPRequest, HTTPResponse)
@@ -37,18 +38,23 @@ public enum HTTPRequestFilterResult {
 	case execute(HTTPRequest, HTTPResponse)
 }
 
+/// Response from one filter.
 public enum HTTPResponseFilterResult {
-	/// Continue with response.
+	/// Continue with filtering.
 	case `continue`
+	/// Stop executing filters until the next push.
+	case done
 	/// Halt and close the request.
 	case halt
 }
 
+/// A filter which can be called to modify a HTTPRequest.
 public protocol HTTPRequestFilter {
 	/// Called once after the request has been read but before any handler is executed.
 	func filter(request: HTTPRequest, response: HTTPResponse, callback: (HTTPRequestFilterResult) -> ())
 }
 
+/// A filter which can be called to modify a HTTPResponse.
 public protocol HTTPResponseFilter {
 	/// Called once before headers are sent to the client.
 	func filterHeaders(response: HTTPResponse, callback: (HTTPResponseFilterResult) -> ())

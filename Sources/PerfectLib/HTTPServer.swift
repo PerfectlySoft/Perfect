@@ -48,8 +48,8 @@ public class HTTPServer {
 	}
 	
 	@discardableResult
-	public func setFilters(request: [(HTTPRequestFilter, HTTPFilterPriority)], response: [(HTTPResponseFilter, HTTPFilterPriority)]) -> HTTPServer {
-		do {
+	public func setFilters(request: [(HTTPRequestFilter, HTTPFilterPriority)]?, response: [(HTTPResponseFilter, HTTPFilterPriority)]?) -> HTTPServer {
+		if let request = request {
 			var high = [HTTPRequestFilter](), med = [HTTPRequestFilter](), low = [HTTPRequestFilter]()
 			for (filter, priority) in request {
 				switch priority {
@@ -71,7 +71,7 @@ public class HTTPServer {
 				requestFilters.append(low)
 			}
 		}
-		do {
+		if let response = response {
 			var high = [HTTPResponseFilter](), med = [HTTPResponseFilter](), low = [HTTPResponseFilter]()
 			for (filter, priority) in response {
 				switch priority {
@@ -309,7 +309,7 @@ public class HTTPServer {
         // !FIX! check for upgrade to http/2
         // switch to HTTP2Request/HTTP2Response
         
-        let response = HTTP11Response(request: request, filters: responseFilters.makeIterator())
+		let response = HTTP11Response(request: request, filters: responseFilters.isEmpty ? nil : responseFilters.makeIterator())
         if response.isKeepAlive {
             response.completedCallback = { [weak self] in
                 self?.handleConnection(net)
@@ -345,22 +345,23 @@ public class HTTPServer {
 		}
 	}
 	
-	private static func filterRequest(_ request: HTTPRequest, response: HTTPResponse, allFilters: IndexingIterator<[[HTTPRequestFilter]]>, prioFilters: IndexingIterator<[HTTPRequestFilter]>) {
+	private static func filterRequest(_ request: HTTPRequest, response: HTTPResponse,
+	                                  allFilters: IndexingIterator<[[HTTPRequestFilter]]>,
+	                                  prioFilters: IndexingIterator<[HTTPRequestFilter]>) {
 		var prioFilters = prioFilters
-		if let filter = prioFilters.next() {
-			filter.filter(request: request, response: response) {
-				result in
-				switch result {
-				case .continue(let req, let res):
-					HTTPServer.filterRequest(req, response: res, allFilters: allFilters, prioFilters: prioFilters)
-				case .execute(let req, let res):
-					HTTPServer.filterRequest(req, response: res, allFilters: allFilters)
-				case .halt(_, let res):
-					res.completed()
-				}
+		guard let filter = prioFilters.next() else {
+			return HTTPServer.filterRequest(request, response: response, allFilters: allFilters)
+		}
+		filter.filter(request: request, response: response) {
+			result in
+			switch result {
+			case .continue(let req, let res):
+				HTTPServer.filterRequest(req, response: res, allFilters: allFilters, prioFilters: prioFilters)
+			case .execute(let req, let res):
+				HTTPServer.filterRequest(req, response: res, allFilters: allFilters)
+			case .halt(_, let res):
+				res.completed()
 			}
-		} else {
-			HTTPServer.filterRequest(request, response: response, allFilters: allFilters)
 		}
 	}
 	

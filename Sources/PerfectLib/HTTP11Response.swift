@@ -76,6 +76,11 @@ class HTTP11Response: HTTPResponse {
             cb()
         }
     }
+	
+	func abort() {
+		self.completedCallback = nil
+		self.connection.close()
+	}
     
     func addCookie(_ cookie: HTTPCookie) {
         cookies.append(cookie)
@@ -127,8 +132,7 @@ class HTTP11Response: HTTPResponse {
                 return callback(false)
             }
             if self.isStreaming {
-                self.appendBody(string: "0\r\n\r\n")
-                self.pushNonStreamed(callback: callback)
+				self.pushNonStreamed(bytes: Array("0\r\n\r\n".utf8), callback: callback)
             } else {
                 callback(true)
             }
@@ -146,71 +150,147 @@ class HTTP11Response: HTTPResponse {
             setHeader(.contentLength, value: "\(bodyBytes.count)")
         }
         addCookies()
-        var responseString = "HTTP/\(request.protocolVersion.0).\(request.protocolVersion.1) \(status)\r\n"
-        for (n, v) in headers {
-            responseString.append("\(n.standardName): \(v)\r\n")
-        }
-        responseString.append("\r\n")
-        connection.write(string: responseString) {
-            sent in
-            guard sent > 0 else {
-                self.completedCallback = nil
-                self.connection.close()
-                return
-            }
-            self.push(callback: callback)
-        }
+		if let filters = self.filters {
+			return filterHeaders(allFilters: filters, callback: callback)
+		}
+		finishPushHeaders(callback: callback)
     }
-    
+	
+	func filterHeaders(allFilters: IndexingIterator<[[HTTPResponseFilter]]>, callback: (Bool) -> ()) {
+		var allFilters = allFilters
+		if let prioFilters = allFilters.next() {
+			return filterHeaders(allFilters: allFilters, prioFilters: prioFilters.makeIterator(), callback: callback)
+		}
+		finishPushHeaders(callback: callback)
+	}
+	
+	func filterHeaders(allFilters: IndexingIterator<[[HTTPResponseFilter]]>,
+	                   prioFilters: IndexingIterator<[HTTPResponseFilter]>,
+	                   callback: (Bool) -> ()) {
+		var prioFilters = prioFilters
+		guard let filter = prioFilters.next() else {
+			return filterHeaders(allFilters: allFilters, callback: callback)
+		}
+		filter.filterHeaders(response: self) {
+			result in
+			switch result {
+			case .continue:
+				self.filterHeaders(allFilters: allFilters, prioFilters: prioFilters, callback: callback)
+			case .done:
+				self.finishPushHeaders(callback: callback)
+			case .halt:
+				self.abort()
+			}
+		}
+	}
+
+	func finishPushHeaders(callback: (Bool) -> ()) {
+		var responseString = "HTTP/\(request.protocolVersion.0).\(request.protocolVersion.1) \(status)\r\n"
+		for (n, v) in headers {
+			responseString.append("\(n.standardName): \(v)\r\n")
+		}
+		responseString.append("\r\n")
+		connection.write(string: responseString) {
+			sent in
+			guard sent > 0 else {
+				return self.abort()
+			}
+			self.push(callback: callback)
+		}
+	}
+	
+	func filterBodyBytes(allFilters: IndexingIterator<[[HTTPResponseFilter]]>, callback: (bodyBytes: [UInt8]) -> ()) {
+		var allFilters = allFilters
+		if let prioFilters = allFilters.next() {
+			return filterBodyBytes(allFilters: allFilters, prioFilters: prioFilters.makeIterator(), callback: callback)
+		}
+		finishFilterBodyBytes(callback: callback)
+	}
+	
+	func filterBodyBytes(allFilters: IndexingIterator<[[HTTPResponseFilter]]>,
+	                     prioFilters: IndexingIterator<[HTTPResponseFilter]>,
+	                     callback: (bodyBytes: [UInt8]) -> ()) {
+		var prioFilters = prioFilters
+		guard let filter = prioFilters.next() else {
+			return filterBodyBytes(allFilters: allFilters, callback: callback)
+		}
+		filter.filterBody(response: self) {
+			result in
+			switch result {
+			case .continue:
+				self.filterBodyBytes(allFilters: allFilters, prioFilters: prioFilters, callback: callback)
+			case .done:
+				self.finishFilterBodyBytes(callback: callback)
+			case .halt:
+				self.abort()
+			}
+		}
+	}
+	
+	func finishFilterBodyBytes(callback: (bodyBytes: [UInt8]) -> ()) {
+		let bytes = self.bodyBytes
+		self.bodyBytes = [UInt8]()
+		callback(bodyBytes: bytes)
+	}
+	
+	func filteredBodyBytes(callback: (bodyBytes: [UInt8]) -> ()) {
+		if let filters = self.filters {
+			return filterBodyBytes(allFilters: filters, callback: callback)
+		}
+		finishFilterBodyBytes(callback: callback)
+	}
+	
     func push(callback: (Bool) -> ()) {
         if !wroteHeaders {
-            pushHeaders(callback: callback)
-        } else if isStreaming {
-            pushStreamed(callback: callback)
-        } else {
-            pushNonStreamed(callback: callback)
-        }
+            return pushHeaders(callback: callback)
+		}
+		filteredBodyBytes {
+			bytes in
+			if self.isStreaming {
+				return self.pushStreamed(bytes: bytes, callback: callback)
+			}
+			self.pushNonStreamed(bytes: bytes, callback: callback)
+		}
     }
     
-    func pushStreamed(callback: (Bool) -> ()) {
-        let bodyCount = bodyBytes.count
+    func pushStreamed(bytes: [UInt8], callback: (Bool) -> ()) {
+		let bodyCount = bytes.count
+		guard bodyCount > 0 else {
+			return callback(true)
+		}
+		let hexString = "\(String(bodyCount, radix: 16, uppercase: true))\r\n"
+		let sendA = Array(hexString.utf8)
+		self.pushNonStreamed(bytes: sendA) {
+			ok in
+			guard ok else {
+				return self.abort()
+			}
+			self.pushNonStreamed(bytes: bytes) {
+				ok in
+				guard ok else {
+					return self.abort()
+				}
+				self.pushNonStreamed(bytes: Array("\r\n".utf8), callback: callback)
+			}
+		}
+    }
+    
+    func pushNonStreamed(bytes: [UInt8], callback: (Bool) -> ()) {
+        let bodyCount = bytes.count
         guard bodyCount > 0 else {
             return callback(true)
         }
-        let hexString = "\(String(bodyCount, radix: 16, uppercase: true))\r\n"
-        let sendA = Array(hexString.utf8)
-        connection.write(bytes: sendA) {
+        connection.write(bytes: bytes) {
             sent in
-            guard sent == sendA.count else {
-                self.completedCallback = nil
-                self.connection.close()
-                return
-            }
-            self.bodyBytes.append(httpCR)
-            self.bodyBytes.append(httpLF)
-            self.pushNonStreamed(callback: callback)
-        }
-    }
-    
-    func pushNonStreamed(callback: (Bool) -> ()) {
-        let bodyCount = bodyBytes.count
-        guard bodyCount > 0 else {
-            return callback(true)
-        }
-        connection.write(bytes: bodyBytes) {
-            sent in
-            self.bodyBytes.removeAll()
             guard bodyCount == sent else {
-                self.completedCallback = nil
-                self.connection.close()
-                return
+                return self.abort()
             }
             Threading.dispatch {
                 callback(true)
             }
         }
     }
-    
+	
     func addCookies() {
         for cookie in self.cookies {
             var cookieLine = ""
@@ -256,19 +336,3 @@ class HTTP11Response: HTTPResponse {
         self.cookies.removeAll()
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

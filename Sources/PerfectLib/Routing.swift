@@ -156,6 +156,10 @@ public struct Routing {
 		}
 	}
 
+	static func reset() {
+		Routing.Routes = RouteMap()
+	}
+	
 	private init() {}
 
 	/// Handle the request, triggering the routing system.
