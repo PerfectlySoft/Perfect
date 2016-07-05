@@ -47,6 +47,9 @@ public class HTTPServer {
 		self.documentRoot = documentRoot
 	}
 	
+	/// Set the request and response filters. Each is provided alongb with its priority.
+	/// The filters can be provided in any order. High priority filters will be sorted able lower priorities.
+	/// Filters of equal prioritiy will maintain the order given here.
 	@discardableResult
 	public func setFilters(request: [(HTTPRequestFilter, HTTPFilterPriority)]?, response: [(HTTPResponseFilter, HTTPFilterPriority)]?) -> HTTPServer {
 		if let request = request {

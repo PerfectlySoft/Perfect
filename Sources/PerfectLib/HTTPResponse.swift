@@ -17,6 +17,7 @@
 //===----------------------------------------------------------------------===//
 //
 
+/// HTTP response status code/msg.
 public enum HTTPResponseStatus: CustomStringConvertible {
     case `continue`
     case switchingProtocols
@@ -59,7 +60,7 @@ public enum HTTPResponseStatus: CustomStringConvertible {
     case gatewayTimeout
     case httpVersionNotSupported
     case custom(code: Int, message: String)
-    
+    /// Returna the textual code and message pair.
     public var description: String {
         switch self {
         case .continue              : return "100 Continue"
@@ -152,7 +153,8 @@ public enum HTTPResponseStatus: CustomStringConvertible {
             return .custom(code: code, message: "Custom")
         }
     }
-    
+	
+	/// The numeric code for this response status.
     public var code: Int {
         switch self {
         case .continue: return 100
@@ -247,30 +249,43 @@ public struct HTTPCookie {
     }
 }
 
+/// An HTTP based response object.
+/// Contains all header and body data which will be delivered to the client.
 public protocol HTTPResponse: class {
+	/// The request object which instigated this response.
     var request: HTTPRequest { get }
+	/// The HTTP response status.
     var status: HTTPResponseStatus { get set }
+	/// Indicate that the response should attempt to stream all outgoing data.
+	/// This is primarily used when the resulting content length can not be known.
     var isStreaming: Bool { get set }
+	/// Body data waiting to be sent to the client.
+	/// This will be emptied after each chunk is sent.
     var bodyBytes: [UInt8] { get set }
-    
+    /// Returns the requested outgoing header value.
     func header(_ named: HTTPResponseHeader.Name) -> String?
+	/// Add a header to the outgoing response.
+	/// No check for duplicate or repeated headers will be made.
     func addHeader(_ named: HTTPResponseHeader.Name, value: String)
+	/// Set the indicated header value. 
+	/// If the header already exists then the existing value will be replaced.
     func setHeader(_ named: HTTPResponseHeader.Name, value: String)
-    
+    /// Provide access to all current header values.
     var headers: AnyIterator<(HTTPResponseHeader.Name, String)> { get }
-    
+    /// Add a cookie to the outgoing response.
     func addCookie(_: HTTPCookie)
-    
+    /// Append data to the bodyBytes member.
     func appendBody(bytes: [UInt8])
+	/// Append String data to the outgoing response.
+	/// All such data will be converted to a UTF-8 encoded [UInt8]
     func appendBody(string: String)
+	/// Encodes the Dictionary as a JSON string and converts that to a UTF-8 encoded [UInt8]
     func setBody(json: [String:Any]) throws
+	/// Push all currently available headers and body data to the client.
+	/// May be called multiple times.
     func push(callback: (Bool) -> ())
+	/// Indicate that the request has completed.
+	/// Any currently available headers and body data will be pushed to the client.
+	/// No further request related activities should be performed after calling this.
     func completed()
 }
-
-
-
-
-
-
-
