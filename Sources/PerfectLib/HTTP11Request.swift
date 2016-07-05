@@ -199,21 +199,20 @@ class HTTP11Request: HTTPRequest {
             if let b = b where b.count > 0 {
                 self?.putPostData(b)
                 self?.readBody(count: size - b.count, callback: callback)
-            } else {
-                self?.connection.readBytesFully(count: 1, timeoutSeconds: httpReadTimeout) {
-                    b in
-                    guard let b = b else {
-                        return callback(.requestTimeout)
-                    }
-                    self?.putPostData(b)
-                    self?.readBody(count: size - 1, callback: callback)
-                }
+				return
             }
-        }
+			self?.connection.readBytesFully(count: 1, timeoutSeconds: httpReadTimeout) {
+				b in
+				guard let b = b else {
+					return callback(.requestTimeout)
+				}
+				self?.putPostData(b)
+				self?.readBody(count: size - 1, callback: callback)
+			}
+		}
     }
     
     func processRequestLine(_ lineStr: String) {
-        
         var method = "", pathInfo = "", queryString = "", hvers = ""
         var gen = lineStr.unicodeScalars.makeIterator()
         
@@ -263,10 +262,8 @@ class HTTP11Request: HTTPRequest {
         var currIndex = characters.startIndex
         
         while currIndex < endIndex {
-            
             let c = characters[currIndex]
             currIndex = characters.index(after: currIndex)
-            
             if c == characterColon {
                 break
             }
@@ -279,7 +276,6 @@ class HTTP11Request: HTTPRequest {
         
         // skip LWS
         while currIndex < endIndex {
-            
             let c = characters[currIndex]
             if c == characterSP || c == characterHT {
                 currIndex = characters.index(after: currIndex)
@@ -289,10 +285,8 @@ class HTTP11Request: HTTPRequest {
         }
         
         while currIndex < endIndex {
-            
             let c = characters[currIndex]
             currIndex = characters.index(after: currIndex)
-            
             if c == characterCRLF || c == characterLF {
                 break
             }
@@ -308,7 +302,6 @@ class HTTP11Request: HTTPRequest {
         // skip CRLF or LF
         var initial = range.lowerBound
         while initial < range.upperBound {
-            
             let c = characters[initial]
             if c == characterCRLF || c == characterLF {
                 initial = characters.index(after: initial)
@@ -329,19 +322,16 @@ class HTTP11Request: HTTPRequest {
                     return (retStr, initial..<range.upperBound)
                 }
                 c = characters[initial]
-                
                 if c == characterSP || c == characterHT {
                     initial = characters.index(after: initial)
                     continue
-                } else {
-                    return (retStr, initial..<range.upperBound)
                 }
+				return (retStr, initial..<range.upperBound)
                 //                } else if c == characterCR {
                 //                    // a single CR is invalid. either broken client or shenanigans
                 //                    return ("", range)
-            } else {
-                retStr.append(c)
             }
+			retStr.append(c)
         }
         return ("", range)
     }
