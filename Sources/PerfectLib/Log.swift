@@ -35,6 +35,8 @@ public protocol Logger {
 }
 
 public struct ConsoleLogger: Logger {
+	public init(){}
+	
 	public func info(message: String) {
 		print(message)
 	}
@@ -58,6 +60,8 @@ public struct ConsoleLogger: Logger {
 }
 
 public struct SysLogger: Logger {
+	public init(){}
+	
 	func syslog(priority: Int32, message: String) {
 		withVaList([message]) {
 			vsyslog(priority, "%s", $0)
@@ -89,26 +93,26 @@ public struct SysLogger: Logger {
 
 /// Placeholder functions for logging system
 public struct Log {
-	public static var logger = ConsoleLogger()
+	public static var logger: Logger = ConsoleLogger()
 	
-	static func info(message: String) {
+	public static func info(message: String) {
 		Log.logger.info(message: message)
 	}
 	
-	static func warning(message: String) {
+	public static func warning(message: String) {
 		Log.logger.warning(message: message)
 	}
 	
-	static func error(message: String) {
+	public static func error(message: String) {
 		Log.logger.error(message: message)
 	}
 	
-	static func critical(message: String) {
+	public static func critical(message: String) {
 		Log.logger.critical(message: message)
 	}
 	
 	@noreturn
-	static func terminal(message: String) {
+	public static func terminal(message: String) {
 		Log.logger.terminal(message: message)
 	}
 }
