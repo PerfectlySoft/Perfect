@@ -47,54 +47,42 @@ public class HTTPServer {
 		self.documentRoot = documentRoot
 	}
 	
-	/// Set the request and response filters. Each is provided alongb with its priority.
+	/// Set the request filters. Each is provided along with its priority.
 	/// The filters can be provided in any order. High priority filters will be sorted able lower priorities.
-	/// Filters of equal prioritiy will maintain the order given here.
+	/// Filters of equal priority will maintain the order given here.
 	@discardableResult
-	public func setFilters(request: [(HTTPRequestFilter, HTTPFilterPriority)]?, response: [(HTTPResponseFilter, HTTPFilterPriority)]?) -> HTTPServer {
-		if let request = request {
-			var high = [HTTPRequestFilter](), med = [HTTPRequestFilter](), low = [HTTPRequestFilter]()
-			for (filter, priority) in request {
-				switch priority {
-				case .high:
-					high.append(filter)
-				case .medium:
-					med.append(filter)
-				case .low:
-					low.append(filter)
-				}
-			}
-			if !high.isEmpty {
-				requestFilters.append(high)
-			}
-			if !med.isEmpty {
-				requestFilters.append(med)
-			}
-			if !low.isEmpty {
-				requestFilters.append(low)
-			}
+	public func setRequestFilters(_ request: [(HTTPRequestFilter, HTTPFilterPriority)]) -> HTTPServer {
+		let high = request.filter { $0.1 == HTTPFilterPriority.high }.map { $0.0 },
+		    med = request.filter { $0.1 == HTTPFilterPriority.medium }.map { $0.0 },
+		    low = request.filter { $0.1 == HTTPFilterPriority.low }.map { $0.0 }
+		if !high.isEmpty {
+			requestFilters.append(high)
 		}
-		if let response = response {
-			var high = [HTTPResponseFilter](), med = [HTTPResponseFilter](), low = [HTTPResponseFilter]()
-			for (filter, priority) in response {
-				switch priority {
-				case .high:
-					high.append(filter)
-				case .medium:
-					med.append(filter)
-				case .low:
-					low.append(filter)
-				}
-			}
-			if !high.isEmpty {
-				responseFilters.append(high)
-			}
-			if !med.isEmpty {
-				responseFilters.append(med)
-			}
-			if !low.isEmpty {
-				responseFilters.append(low)
-			}
+		if !med.isEmpty {
+			requestFilters.append(med)
+		}
+		if !low.isEmpty {
+			requestFilters.append(low)
+		}
+		return self
+	}
+	
+	/// Set the response filters. Each is provided along with its priority.
+	/// The filters can be provided in any order. High priority filters will be sorted able lower priorities.
+	/// Filters of equal priority will maintain the order given here.
+	@discardableResult
+	public func setResponseFilters(_ response: [(HTTPResponseFilter, HTTPFilterPriority)]) -> HTTPServer {
+		let high = response.filter { $0.1 == HTTPFilterPriority.high }.map { $0.0 },
+			med = response.filter { $0.1 == HTTPFilterPriority.medium }.map { $0.0 },
+			low = response.filter { $0.1 == HTTPFilterPriority.low }.map { $0.0 }
+		if !high.isEmpty {
+			responseFilters.append(high)
+		}
+		if !med.isEmpty {
+			responseFilters.append(med)
+		}
+		if !low.isEmpty {
+			responseFilters.append(low)
 		}
 		return self
 	}

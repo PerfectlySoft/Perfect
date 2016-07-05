@@ -1248,7 +1248,7 @@ class PerfectLibTests: XCTestCase {
 		let clientExpectation = self.expectation(withDescription: "client")
 		
 		let server = HTTPServer(documentRoot: "./webroot")
-		server.setFilters(request: requestFilters, response: nil)
+		server.setRequestFilters(requestFilters)
 		
 		func endClient() {
 			server.stop()
@@ -1374,7 +1374,7 @@ class PerfectLibTests: XCTestCase {
 		let clientExpectation = self.expectation(withDescription: "client")
 		
 		let server = HTTPServer(documentRoot: "./webroot")
-		server.setFilters(request: nil, response: responseFilters)
+		server.setResponseFilters(responseFilters)
 		
 		func endClient() {
 			server.stop()
@@ -1517,7 +1517,7 @@ class PerfectLibTests: XCTestCase {
 		let clientExpectation = self.expectation(withDescription: "client")
 		
 		let server = HTTPServer(documentRoot: "./webroot")
-		server.setFilters(request: nil, response: responseFilters)
+		server.setResponseFilters(responseFilters)
 		
 		func endClient() {
 			server.stop()
