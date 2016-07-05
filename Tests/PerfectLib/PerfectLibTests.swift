@@ -1447,6 +1447,155 @@ class PerfectLibTests: XCTestCase {
 		})
 	}
 	
+	func testStreamingResponseFilters() {
+		PerfectServer.initializeServices()
+		let port = 8282 as UInt16
+		
+		struct Filter1: HTTPResponseFilter {
+			func filterHeaders(response: HTTPResponse, callback: (HTTPResponseFilterResult) -> ()) {
+				response.setHeader(.custom(name: "X-Custom"), value: "Value")
+				callback(.continue)
+			}
+			func filterBody(response: HTTPResponse, callback: (HTTPResponseFilterResult) -> ()) {
+				callback(.continue)
+			}
+		}
+		
+		struct Filter2: HTTPResponseFilter {
+			func filterHeaders(response: HTTPResponse, callback: (HTTPResponseFilterResult) -> ()) {
+				callback(.continue)
+			}
+			func filterBody(response: HTTPResponse, callback: (HTTPResponseFilterResult) -> ()) {
+				var b = response.bodyBytes
+				b = b.map { $0 == 65 ? 97 : $0 }
+				response.bodyBytes = b
+				callback(.continue)
+			}
+		}
+		
+		struct Filter3: HTTPResponseFilter {
+			func filterHeaders(response: HTTPResponse, callback: (HTTPResponseFilterResult) -> ()) {
+				callback(.continue)
+			}
+			func filterBody(response: HTTPResponse, callback: (HTTPResponseFilterResult) -> ()) {
+				var b = response.bodyBytes
+				b = b.map { $0 == 66 ? 98 : $0 }
+				response.bodyBytes = b
+				callback(.done)
+			}
+		}
+		
+		struct Filter4: HTTPResponseFilter {
+			func filterHeaders(response: HTTPResponse, callback: (HTTPResponseFilterResult) -> ()) {
+				callback(.continue)
+			}
+			func filterBody(response: HTTPResponse, callback: (HTTPResponseFilterResult) -> ()) {
+				XCTAssert(false, "This should not execute")
+				callback(.done)
+			}
+		}
+		
+		let responseFilters: [(HTTPResponseFilter, HTTPFilterPriority)] = [
+			(Filter1(), HTTPFilterPriority.high),
+			(Filter2(), HTTPFilterPriority.medium),
+			(Filter3(), HTTPFilterPriority.low),
+			(Filter4(), HTTPFilterPriority.low)
+		]
+		
+		Routing.Routes["/"] = {
+			request, response in
+			response.addHeader(.contentType, value: "text/plain")
+			response.isStreaming = true
+			response.appendBody(string: "ABZ")
+			response.push {
+				_ in
+				response.appendBody(string: "ABZ")
+				response.completed()
+			}
+		}
+		let serverExpectation = self.expectation(withDescription: "server")
+		let clientExpectation = self.expectation(withDescription: "client")
+		
+		let server = HTTPServer(documentRoot: "./webroot")
+		server.setFilters(request: nil, response: responseFilters)
+		
+		func endClient() {
+			server.stop()
+			clientExpectation.fulfill()
+		}
+		
+		Threading.dispatch {
+			do {
+				try server.start(port: port)
+			} catch PerfectError.networkError(let err, let msg) {
+				XCTAssert(false, "Network error thrown: \(err) \(msg)")
+			} catch {
+				XCTAssert(false, "Error thrown: \(error)")
+			}
+			serverExpectation.fulfill()
+		}
+		Threading.sleep(seconds: 1.0)
+		Threading.dispatch {
+			do {
+				try NetTCP().connect(address: "127.0.0.1", port: port, timeoutSeconds: 5.0) {
+					net in
+					
+					guard let net = net else {
+						XCTAssert(false, "Could not connect to server")
+						return endClient()
+					}
+					let reqStr = "GET / HTTP/1.0\r\nHost: localhost:\(port)\r\nFrom: me@host.com\r\n\r\n"
+					net.write(string: reqStr) {
+						count in
+						
+						guard count == reqStr.utf8.count else {
+							XCTAssert(false, "Could not write request \(count) != \(reqStr.utf8.count)")
+							return endClient()
+						}
+						
+						Threading.sleep(seconds: 3.0)
+						net.readSomeBytes(count: 2048) {
+							bytes in
+							
+							guard let bytes = bytes where bytes.count > 0 else {
+								XCTAssert(false, "Could not read bytes from server")
+								return endClient()
+							}
+							
+							let str = UTF8Encoding.encode(bytes: bytes)
+							let splitted = str.characters.split(separator: "\r\n", omittingEmptySubsequences: false).map(String.init)
+							let compare = ["HTTP/1.0 200 OK",
+							               "Content-Type: text/plain",
+							               "Transfer-Encoding: chunked",
+							               "X-Custom: Value",
+							               "",
+							               "3",
+							               "abZ",
+							               "3",
+							               "abZ",
+							               "0",
+							               "",
+							               ""]
+							XCTAssert(splitted.count == compare.count)
+							for (a, b) in zip(splitted, compare) {
+								XCTAssert(a == b, "\(splitted) != \(compare)")
+							}
+							
+							endClient()
+						}
+					}
+				}
+			} catch {
+				XCTAssert(false, "Error thrown: \(error)")
+				endClient()
+			}
+		}
+		
+		self.waitForExpectations(withTimeout: 10000, handler: {
+			_ in
+		})
+	}
+	
     func testDirCreate() {
         let path = "/tmp/a/b/c/d/e/f/g"
         do {
@@ -1556,6 +1705,9 @@ extension PerfectLibTests {
             ("testSimpleStreamingHandler", testSimpleStreamingHandler),
             
             ("testRequestFilters", testRequestFilters),
+            ("testResponseFilters", testResponseFilters),
+            ("testStreamingResponseFilters", testStreamingResponseFilters),
+            
             ("testSlowClient", testSlowClient),
             
             ("testDirCreate", testDirCreate),
