@@ -97,12 +97,23 @@ public class File {
             return Int(st.st_mtimespec.tv_sec)
         #endif
     }
-    
+	
+	static func resolveTilde(inPath: String) -> String {
+		if inPath[inPath.startIndex] == "~" {
+			var wexp = wordexp_t()
+			wordexp(inPath, &wexp, 0)
+			if let resolved = wexp.we_wordv[0], pth = String(validatingUTF8: resolved) {
+				return pth
+			}
+		}
+		return inPath
+	}
+	
 	/// Create a file object given a path and open mode
 	/// - parameter path: Path to the file which will be accessed
     /// - parameter fd: The file descriptor, if any, for an already opened file
 	public init(_ path: String, fd: Int32 = -1) {
-		self.internalPath = path
+		self.internalPath = File.resolveTilde(inPath: path)
         self.fd = Int(fd)
 	}
 	
