@@ -99,7 +99,7 @@ public class File {
     }
 	
 	static func resolveTilde(inPath: String) -> String {
-		if inPath[inPath.startIndex] == "~" {
+		if !inPath.isEmpty && inPath[inPath.startIndex] == "~" {
 			var wexp = wordexp_t()
 			wordexp(inPath, &wexp, 0)
 			if let resolved = wexp.we_wordv[0], pth = String(validatingUTF8: resolved) {
