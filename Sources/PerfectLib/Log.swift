@@ -26,74 +26,110 @@
 
 /// Placeholder functions for logging system
 public protocol Logger {
+	func debug(message: String)
 	func info(message: String)
 	func warning(message: String)
 	func error(message: String)
 	func critical(message: String)
-	@noreturn
 	func terminal(message: String)
 }
 
 public struct ConsoleLogger: Logger {
 	public init(){}
 	
+	public func debug(message: String) {
+		print("[DBG] " + message)
+	}
+	
 	public func info(message: String) {
-		print(message)
+		print("[INFO] " + message)
 	}
 	
 	public func warning(message: String) {
-		print(message)
+		print("[WARN] " + message)
 	}
 	
 	public func error(message: String) {
-		print(message)
+		print("[ERR] " + message)
 	}
 	
 	public func critical(message: String) {
-		print(message)
+		print("[CRIT] " + message)
 	}
 	
-	@noreturn
 	public func terminal(message: String) {
-		fatalError(message)
+		print("[TERM] " + message)
 	}
 }
 
 public struct SysLogger: Logger {
+	let consoleEcho = ConsoleLogger()
 	public init(){}
 	
-	func syslog(priority: Int32, message: String) {
-		withVaList([message]) {
+	func syslog(priority: Int32, _ args: CVarArg...) {
+		withVaList(args) {
 			vsyslog(priority, "%s", $0)
 		}
 	}
 	
+	public func debug(message: String) {
+		consoleEcho.debug(message: message)
+		message.withCString {
+			f in
+			syslog(priority: LOG_DEBUG, f)
+		}
+	}
+	
 	public func info(message: String) {
-		syslog(priority: LOG_INFO, message: message)
+		consoleEcho.info(message: message)
+		message.withCString {
+			f in
+			syslog(priority: LOG_INFO, f)
+		}
 	}
 	
 	public func warning(message: String) {
-		syslog(priority: LOG_WARNING, message: message)
+		consoleEcho.warning(message: message)
+		message.withCString {
+			f in
+			syslog(priority: LOG_WARNING, f)
+		}
 	}
 	
 	public func error(message: String) {
-		syslog(priority: LOG_ERR, message: message)
+		consoleEcho.error(message: message)
+		message.withCString {
+			f in
+			syslog(priority: LOG_ERR, f)
+		}
 	}
 	
 	public func critical(message: String) {
-		syslog(priority: LOG_CRIT, message: message)
+		consoleEcho.critical(message: message)
+		message.withCString {
+			f in
+			syslog(priority: LOG_CRIT, f)
+		}
 	}
 	
-	@noreturn
 	public func terminal(message: String) {
-		syslog(priority: LOG_EMERG, message: message)
-		fatalError(message)
+		consoleEcho.terminal(message: message)
+		message.withCString {
+			f in
+			syslog(priority: LOG_EMERG, f)
+		}
 	}
 }
 
 /// Placeholder functions for logging system
 public struct Log {
 	public static var logger: Logger = ConsoleLogger()
+	
+	public static func debug(message: @autoclosure () -> String) {
+//	#if DEBUG
+		Log.logger.debug(message: message())
+//	#endif
+	}
 	
 	public static func info(message: String) {
 		Log.logger.info(message: message)
@@ -114,5 +150,6 @@ public struct Log {
 	@noreturn
 	public static func terminal(message: String) {
 		Log.logger.terminal(message: message)
+		fatalError(message)
 	}
 }
