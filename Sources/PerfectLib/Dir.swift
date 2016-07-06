@@ -34,11 +34,8 @@ public struct Dir {
 
 	/// Create a new Dir object with the given path
 	public init(_ path: String) {
-		if path.ends(with: "/") {
-			self.internalPath = path
-		} else {
-			self.internalPath = path + "/"
-		}
+		let pth = path.ends(with: "/") ? path : path + "/"
+		self.internalPath = File.resolveTilde(inPath: pth)
 	}
 
 	/// Returns true if the directory exists
