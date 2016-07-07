@@ -7,8 +7,22 @@
 [![Docs](https://img.shields.io/badge/docs-99%25-yellow.svg?style=flat)](http://www.perfect.org/docs/)
 [![GitHub issues](https://img.shields.io/github/issues/PerfectlySoft/Perfect.svg)](https://github.com/PerfectlySoft/Perfect/issues)
 [![codebeat](https://codebeat.co/badges/85f8f628-6ce8-4818-867c-21b523484ee9)](https://codebeat.co/projects/github-com-perfectlysoft-perfect)
-[![Twitter](https://img.shields.io/badge/Twitter-@PerfectlySoft-brightgreen.svg?style=flat)](http://twitter.com/PerfectlySoft)
+[![Twitter](https://img.shields.io/badge/Twitter-@PerfectlySoft-blue.svg?style=flat)](http://twitter.com/PerfectlySoft)
 [![Join the chat at https://gitter.im/PerfectlySoft/Perfect](https://img.shields.io/badge/Gitter-Join%20Chat-brightgreen.svg)](https://gitter.im/PerfectlySoft/Perfect?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+**2016-07-07 NOTE:** We have moved the core HTTP, HTTPServer and Mustache code into their own repositories. This introduces compilation issues with existing code and you will need to import one or more of the following packages, depending on your usage:
+
+```swift
+import PerfectMustache
+import PerfectHTTP
+import PerfectHTTPServer
+```
+
+You will also need to adjust your Package.swift file. You should only need to change the Perfect dependency to the following:
+
+```"https://github.com/PerfectlySoft/Perfect-HTTPServer.git"```
+
+--
 
 **The master branch of this project currently compiles with the default Swift 3.0 toolchain included in Xcode 8 beta 2. On Ubuntu use the *DEVELOPMENT-SNAPSHOT-2016-06-20-a* toolchain, released June 20th.**
 
