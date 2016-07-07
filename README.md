@@ -20,7 +20,7 @@ import PerfectHTTPServer
 
 You will also need to adjust your Package.swift file. You should only need to change the Perfect dependency to the following:
 
-```"https://github.com/PerfectlySoft/Perfect-HTTPServer.git"```
+```https://github.com/PerfectlySoft/Perfect-HTTPServer.git```
 
 --
 
