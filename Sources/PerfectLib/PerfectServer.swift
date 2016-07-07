@@ -36,7 +36,6 @@ public struct PerfectServer {
 	/// Should only be called once befor starting FastCGI server
 	public static func initializeServices() {
 		NetEvent.initialize()
-		Routing.initialize()
 		
 		let dl = DynamicLoader()
         var baseDir : Dir
