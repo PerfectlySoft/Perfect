@@ -196,6 +196,39 @@ response.completed()
 ```
 *This snippet uses the built-in JSON encoding. Feel free to bring in your own favorite JSON encoder/decoder.*
 
+### Redirect the client
+
+```swift
+response.status = .movedPermanently
+response.setHeader(.location, value: "http://www.perfect.org/")
+response.completed()
+```
+
+### Filter and handle 404 errors in a custom manner
+
+```swift
+struct Filter404: HTTPResponseFilter {
+	func filterBody(response: HTTPResponse, callback: (HTTPResponseFilterResult) -> ()) {
+		callback(.continue)
+	}
+	
+	func filterHeaders(response: HTTPResponse, callback: (HTTPResponseFilterResult) -> ()) {
+		if case .notFound = response.status {
+			response.bodyBytes.removeAll()
+			response.appendBody(string: "The file \(response.request.path) was not found.")
+			response.setHeader(.contentLength, value: "\(response.bodyBytes.count)")
+			callback(.done)
+		} else {
+			callback(.continue)
+		}
+	}
+}
+
+try HTTPServer(documentRoot: webRoot)
+	.setResponseFilters([(Filter404(), .high)])
+	.start(port: 8181)
+```
+
 ## Repository Layout
 
 We have finished refactoring Perfect to support Swift Package Manager. The Perfect project has been split up into the following repositories:
