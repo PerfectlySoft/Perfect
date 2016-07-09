@@ -156,10 +156,10 @@ do {
     let imageBytes = try mrPebbles.readSomeBytes(count: imageSize)
     response.setHeader(.contentType, value: MimeType.forExtension("jpg"))
     response.setHeader(.contentLength, value: "\(imageBytes.count)")
-    response.appendBody(bytes: imageBytes)
+    response.setBody(bytes: imageBytes)
 } catch {
     response.status = .internalServerError
-    response.appendBody(string: "Error handling request: \(error)")
+    response.setBody(string: "Error handling request: \(error)")
 }
 response.completed()
 ```
@@ -215,7 +215,7 @@ struct Filter404: HTTPResponseFilter {
 	func filterHeaders(response: HTTPResponse, callback: (HTTPResponseFilterResult) -> ()) {
 		if case .notFound = response.status {
 			response.bodyBytes.removeAll()
-			response.appendBody(string: "The file \(response.request.path) was not found.")
+			response.setBody(string: "The file \(response.request.path) was not found.")
 			response.setHeader(.contentLength, value: "\(response.bodyBytes.count)")
 			callback(.done)
 		} else {
