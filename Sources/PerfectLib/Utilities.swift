@@ -273,7 +273,7 @@ public struct UUID {
 			u.deallocateCapacity(sizeof(uuid_t.self))
 		}
 		uuid_generate_random(u)
-		self.uuid = uuid_t(u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15])
+		self.uuid = UUID.uuidFromPointer(u)
 	}
 	
 	public init(_ string: String) {
@@ -282,16 +282,16 @@ public struct UUID {
 			u.deallocateCapacity(sizeof(uuid_t.self))
 		}
 		uuid_parse(string, u)
-		self.uuid = UUID.uuid_fromPointer(u)
-	}
-	
-	private static func uuid_fromPointer(_ u: UnsafeMutablePointer<UInt8>) -> uuid_t {
-		// is there a better way?
-		return uuid_t(u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15])
+		self.uuid = UUID.uuidFromPointer(u)
 	}
 	
 	init(_ uuid: uuid_t) {
 		self.uuid = uuid
+	}
+	
+	private static func uuidFromPointer(_ u: UnsafeMutablePointer<UInt8>) -> uuid_t {
+		// is there a better way?
+		return uuid_t(u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15])
 	}
 	
 	public var string: String {
@@ -301,8 +301,8 @@ public struct UUID {
 			u.deallocateCapacity(sizeof(uuid_t.self))
 			unu.deallocateCapacity(37)
 		}
-		u[0] = uuid.0;u[1] = uuid.1;u[2] = uuid.2;u[3] = uuid.3;u[4] = uuid.4;u[5] = uuid.5;u[6] = uuid.6;u[7] = uuid.7
-		u[8] = uuid.8;u[9] = uuid.9;u[10] = uuid.10;u[11] = uuid.11;u[12] = uuid.12;u[13] = uuid.13;u[14] = uuid.14;u[15] = uuid.15
+		var uu = self.uuid
+		memcpy(u, &uu, sizeof(uuid_t.self))
 		uuid_unparse_lower(u, unu)
 		return String(validatingUTF8: unu)!
 	}
