@@ -237,6 +237,8 @@ We have finished refactoring Perfect to support Swift Package Manager. The Perfe
 * [PerfectTemplate](https://github.com/PerfectlySoft/PerfectTemplate) - A simple starter project which compiles with SPM into a stand-alone executable HTTP server. This repository is ideal for starting on your own Perfect based project.
 * [PerfectDocs](https://github.com/PerfectlySoft/PerfectDocs) - Contains all API reference related material.
 * [PerfectExamples](https://github.com/PerfectlySoft/PerfectExamples) - All the Perfect example projects and documentation.
+* [Perfect-Mustache](https://github.com/PerfectlySoft/Perfect-Mustache) - Mustache template processor.
+* [Perfect-Notifications](https://github.com/PerfectlySoft/Perfect-Notifications) - iOS Notifications (APNS) Support.
 * [PerfectTemplateFCGI](https://github.com/PerfectlySoft/PerfectTemplateFCGI) - A simple starter project which compiles with SPM into a FastCGI server suitable for use with Apache 2.4 or NGINX. This repository is ideal for starting on your own Perfect based project if you are required to use an existing server which supports FastCGI.
 * [Perfect-Redis](https://github.com/PerfectlySoft/Perfect-Redis) - Redis database connector.
 * [Perfect-SQLite](https://github.com/PerfectlySoft/Perfect-SQLite) - SQLite3 database connector.
