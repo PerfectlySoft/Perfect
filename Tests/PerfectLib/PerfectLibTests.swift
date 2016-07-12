@@ -25,6 +25,7 @@ import PerfectThread
 
 #if os(Linux)
 import SwiftGlibc
+import Foundation
 #endif
 
 class PerfectLibTests: XCTestCase {
@@ -427,16 +428,16 @@ class PerfectLibTests: XCTestCase {
         let ext = path.pathExtension
         XCTAssert("txt" == ext)
     }
-	
+
     func testDirCreate() {
         let path = "/tmp/a/b/c/d/e/f/g"
         do {
             try Dir(path).create()
-			
+
             XCTAssert(Dir(path).exists)
-			
+
             var unPath = path
-			
+
             while unPath != "/tmp" {
                 try Dir(unPath).delete()
                 unPath = unPath.stringByDeletingLastPathComponent
@@ -445,25 +446,30 @@ class PerfectLibTests: XCTestCase {
             XCTAssert(false, "Error while creating dirs: \(error)")
         }
     }
-	
+
     func testDirCreateRel() {
         let path = "a/b/c/d/e/f/g"
         do {
             try Dir(path).create()
-			
             XCTAssert(Dir(path).exists)
-			
             var unPath = path
-			
-            while !unPath.isEmpty {
+            repeat {
                 try Dir(unPath).delete()
-                unPath = unPath.stringByDeletingLastPathComponent
-            }
+
+								// this was killing linux on the final path component
+								//unPath = unPath.stringByDeletingLastPathComponent
+
+								var splt = unPath.characters.split(separator: "/").map(String.init)
+								splt.removeLast()
+								unPath = splt.joined(separator: "/")
+
+            } while !unPath.isEmpty
         } catch {
+					print(error)
             XCTAssert(false, "Error while creating dirs: \(error)")
         }
     }
-	
+
     func testDirForEach() {
         let dirs = ["a/", "b/", "c/"]
         do {
@@ -476,7 +482,8 @@ class PerfectLibTests: XCTestCase {
                 name in
                 ta.append(name)
             }
-            XCTAssert(ta == dirs)
+						ta.sort()
+            XCTAssert(ta == dirs, "\(ta) == \(dirs)")
             for d in dirs {
                 try Dir("/tmp/a/\(d)").delete()
             }
@@ -507,10 +514,10 @@ extension PerfectLibTests {
             ("testSubstringTo", testSubstringTo),
             ("testRangeTo", testRangeTo),
             ("testSubstringWith", testSubstringWith),
-            
+
             ("testDeletingPathExtension", testDeletingPathExtension),
             ("testGetPathExtension", testGetPathExtension),
-            
+
             ("testDirCreate", testDirCreate),
             ("testDirCreateRel", testDirCreateRel),
             ("testDirForEach", testDirForEach)
