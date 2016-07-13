@@ -46,18 +46,18 @@ public struct PerfectServer {
         }
 		do {
 			try baseDir.forEachEntry { (name: String) -> () in
-				let fileName = baseDir.realPath() + "/" + name
+				let fileName = baseDir.realPath + "/" + name
 				if name.ends(with: ".framework") || name.ends(with: ".framework/") {
 					if dl.loadFramework(atPath: fileName) {
-						Log.info(message: "Loaded \(name) from \(baseDir.realPath())")
+						Log.info(message: "Loaded \(name) from \(baseDir.realPath)")
 					} else {
-						Log.warning(message: "FAILED to load \(name) from \(baseDir.realPath())")
+						Log.warning(message: "FAILED to load \(name) from \(baseDir.realPath)")
 					}
 				} else if name.ends(with: ".so") || name.ends(with: ".dylib") {
 					if dl.loadLibrary(atPath: fileName) {
-						Log.info(message: "Loaded \(name) from \(baseDir.realPath())")
+						Log.info(message: "Loaded \(name) from \(baseDir.realPath)")
 					} else {
-						Log.warning(message: "FAILED to load \(name) from \(baseDir.realPath())")
+						Log.warning(message: "FAILED to load \(name) from \(baseDir.realPath)")
 					}
 				}
 			}

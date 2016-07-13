@@ -310,12 +310,12 @@ public struct UUID {
 
 extension String {
 	
-	@available(*, unavailable, message: "Use UUID(_:String).uuid")
+	@available(*, unavailable, message: "Use UUID(_:String)")
 	public func asUUID() -> uuid_t {
 		return UUID(self).uuid
 	}
 	
-    @available(*, unavailable, message: "Use UUID(_:String)")
+    @available(*, unavailable, message: "Use UUID.string")
 	public static func fromUUID(uuid: uuid_t) -> String {
 		return UUID(uuid).string
 	}
