@@ -29,7 +29,9 @@ import Darwin
 /// This class represents a directory on the file system.
 /// It can be used for creating & inspecting directories and enumerating directory contents.
 public struct Dir {
-
+	
+	public typealias PermissionMode = File.PermissionMode
+	
 	var internalPath = ""
 
 	/// Create a new Dir object with the given path
@@ -50,7 +52,7 @@ public struct Dir {
 	/// Creates the directory using the provided permissions. All directories along the path will be created if need be.
 	/// - parameter perms: The permissions for use for the new directory and preceeding directories which need to be created. Defaults to RWX-GUO
 	/// - throws: `PerfectError.FileError`
-	public func create(perms: Int = Int(S_IRWXG|S_IRWXU|S_IRWXO)) throws {
+	public func create(perms: PermissionMode = [.rwxUser, .rxGroup, .rxOther]) throws {
 		let pth = realPath
 		var currPath = pth.begins(with: "/") ? "/" : ""
         for component in pth.pathComponents where component != "/" {
@@ -61,7 +63,7 @@ public struct Dir {
             guard !exists(currPath) else {
                 continue
             }
-            let res = mkdir(currPath, mode_t(perms))
+            let res = mkdir(currPath, perms.rawValue)
             guard res != -1 else {
                 try ThrowFileError()
             }
@@ -77,7 +79,7 @@ public struct Dir {
 		}
 	}
 
-	/// Returns the name of the directory
+	/// Returns the name of the directory.
 	public var name: String {
 		return internalPath.lastPathComponent
 	}
@@ -90,9 +92,19 @@ public struct Dir {
 		return Dir(internalPath.stringByDeletingLastPathComponent)
 	}
 
-	/// Returns the path to the current directory
+	/// Returns the path to the current directory.
 	public var path: String {
 		return internalPath
+	}
+	
+	/// Returns the UNIX style permissions for the directory.
+	public var perms: PermissionMode {
+		get {
+			return File(internalPath).perms
+		}
+		set {
+			File(internalPath).perms = newValue
+		}
 	}
 
 	var realPath: String {

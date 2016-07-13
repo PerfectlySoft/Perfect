@@ -492,6 +492,38 @@ class PerfectLibTests: XCTestCase {
             XCTAssert(false, "Error while creating dirs: \(error)")
         }
     }
+	
+	func testFilePerms() {
+		let fileName = "/tmp/\(UUID().string)"
+		let file = File(fileName)
+		do {
+			try file.open(.readWrite, permissions: [.readUser, .writeUser])
+			defer {
+				file.delete()
+			}
+			
+			let res = file.perms.contains([.readUser, .writeUser])
+			XCTAssert(res, "\(file.perms) != \([File.PermissionMode.readUser, File.PermissionMode.writeUser])")
+			
+		} catch {
+			XCTAssert(false, "Error testing file perms: \(error)")
+		}
+	}
+	
+	func testDirPerms() {
+		let fileName = "/tmp/\(UUID().string)"
+		let file = Dir(fileName)
+		do {
+			try file.create(perms: [.readUser, .writeUser])
+			
+			let res = file.perms.contains([.readUser, .writeUser])
+			XCTAssert(res, "\(file.perms) != \([File.PermissionMode.readUser, File.PermissionMode.writeUser])")
+			
+			try file.delete()
+		} catch {
+			XCTAssert(false, "Error testing file perms: \(error)")
+		}
+	}
 }
 
 extension PerfectLibTests {
@@ -520,7 +552,10 @@ extension PerfectLibTests {
 
             ("testDirCreate", testDirCreate),
             ("testDirCreateRel", testDirCreateRel),
-            ("testDirForEach", testDirForEach)
+            ("testDirForEach", testDirForEach),
+            
+            ("testFilePerms", testFilePerms),
+            ("testDirPerms", testDirPerms)
         ]
     }
 }

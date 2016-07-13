@@ -159,17 +159,54 @@ public extension File {
             }
         }
     }
+	/// A file or directory access permission value.
+	public struct PermissionMode: OptionSet {
+		public typealias Mode = mode_t
+		public let rawValue: Mode
+		public init(rawValue: Mode) {
+			self.rawValue = rawValue
+		}
+		/// Readable by user.
+		public static let readUser = PermissionMode(rawValue: S_IRUSR)
+		/// Writable by user.
+		public static let writeUser = PermissionMode(rawValue: S_IWUSR)
+		/// Executable by user.
+		public static let executeUser = PermissionMode(rawValue: S_IXUSR)
+		/// Readable by group.
+		public static let readGroup = PermissionMode(rawValue: S_IRGRP)
+		/// Writable by group.
+		public static let writeGroup = PermissionMode(rawValue: S_IWGRP)
+		/// Executable by group.
+		public static let executeGroup = PermissionMode(rawValue: S_IXGRP)
+		/// Readable by others.
+		public static let readOther = PermissionMode(rawValue: S_IROTH)
+		/// Writable by others.
+		public static let writeOther = PermissionMode(rawValue: S_IWOTH)
+		/// Executable by others.
+		public static let executeOther = PermissionMode(rawValue: S_IXOTH)
+		
+		/// Read, write, execute by user.
+		public static let rwxUser: PermissionMode = [.readUser, .writeUser, .executeUser]
+		/// Read, write by user and group.
+		public static let rwUserGroup: PermissionMode = [.readUser, .writeUser, .readGroup, .writeGroup]
+		
+		/// Read, execute by group.
+		public static let rxGroup: PermissionMode = [.readGroup, .executeGroup]
+		/// Read, execute by other.
+		public static let rxOther: PermissionMode = [.readOther, .executeOther]
+		
+	}
     
 	/// Opens the file using the given mode.
 	/// - throws: `PerfectError.FileError`
-    public func open(_ mode: OpenMode = .read) throws {
+	public func open(_ mode: OpenMode = .read, permissions: PermissionMode = .rwUserGroup) throws {
         if fd != -1 {
             close()
         }
 	#if os(Linux)
-		let openFd = linux_open(internalPath, CInt(mode.toMode), mode_t(S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP))
+		let openFd = linux_open(internalPath, CInt(mode.toMode), permissions.rawValue)
 	#else
-		let openFd = Darwin.open(internalPath, CInt(mode.toMode), mode_t(S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP))
+		let openFd = Darwin.open(internalPath, CInt(mode.toMode), permissions.rawValue)
 	#endif
 		guard openFd != -1 else {
 			try ThrowFileError()
@@ -306,14 +343,19 @@ public extension File {
 	}
 	
 	/// Returns the UNIX style permissions for the file
-    public var perms: Int {
-		var st = stat()
-		let statRes = isOpen ?  fstat(Int32(fd), &st) : stat(internalPath, &st)
-		guard statRes != -1 else {
-			return 0
+    public var perms: PermissionMode {
+		get {
+			var st = stat()
+			let statRes = isOpen ?  fstat(Int32(fd), &st) : stat(internalPath, &st)
+			guard statRes != -1 else {
+				return PermissionMode(rawValue: 0)
+			}
+			let mode = st.st_mode
+			return PermissionMode(rawValue: mode_t(Int32(mode) ^ Int32(S_IFMT)))
 		}
-		let mode = st.st_mode
-		return Int(Int32(mode) ^ Int32(S_IFMT))
+		set {
+			_ = chmod(internalPath, newValue.rawValue)
+		}
     }
 }
 
