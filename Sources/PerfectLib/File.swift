@@ -26,9 +26,14 @@ import LinuxBridge
 // Otherwise, export them from LinuxBridge
 let S_IRGRP = (S_IRUSR >> 3)
 let S_IWGRP	= (S_IWUSR >> 3)
+let S_IXGRP	= (S_IXUSR >> 3)
 let S_IRWXU = (__S_IREAD|__S_IWRITE|__S_IEXEC)
 let S_IRWXG = (S_IRWXU >> 3)
 let S_IRWXO = (S_IRWXG >> 3)
+let S_IROTH = (S_IRGRP >> 3)
+let S_IWOTH = (S_IWGRP >> 3)
+let S_IXOTH = (S_IXGRP >> 3)
+
 
 let SEEK_CUR: Int32 = 1
 let EXDEV = Int32(18)
@@ -44,24 +49,24 @@ let fileCopyBufferSize = 16384
 
 /// Provides access to a file on the local file system
 public class File {
-	
+
 	var fd = -1
 	var internalPath = ""
-	
+
     /// Checks that the file exists on the file system
     /// - returns: True if the file exists or false otherwise
     public var exists: Bool {
         return access(internalPath, F_OK) != -1
     }
-    
+
     /// Returns true if the file has been opened
     public var isOpen: Bool {
         return fd != -1
     }
-    
+
     /// Returns the file's path
     public var path: String { return internalPath }
-    
+
     /// Returns the file path. If the file is a symbolic link, the link will be resolved.
     public var realPath: String {
         let maxPath = 2048
@@ -82,7 +87,7 @@ public class File {
         }
         return internalPath.stringByDeletingLastPathComponent + "/" + trailPath
     }
-    
+
     /// Returns the modification date for the file in the standard UNIX format of seconds since 1970/01/01 00:00:00 GMT
     /// - returns: The date as Int
     public var modificationTime: Int {
@@ -97,7 +102,7 @@ public class File {
             return Int(st.st_mtimespec.tv_sec)
         #endif
     }
-	
+
 	static func resolveTilde(inPath: String) -> String {
 		if !inPath.isEmpty && inPath[inPath.startIndex] == "~" {
 			var wexp = wordexp_t()
@@ -108,7 +113,7 @@ public class File {
 		}
 		return inPath
 	}
-	
+
 	/// Create a file object given a path and open mode
 	/// - parameter path: Path to the file which will be accessed
     /// - parameter fd: The file descriptor, if any, for an already opened file
@@ -116,7 +121,7 @@ public class File {
 		self.internalPath = File.resolveTilde(inPath: path)
         self.fd = Int(fd)
 	}
-	
+
 	/// Closes the file if it had been opened
 	public func close() {
 		if fd != -1 {
@@ -128,7 +133,7 @@ public class File {
 			fd = -1
 		}
 	}
-	
+
 	/// Resets the internal file descriptor, leaving the file opened if it had been.
 	public func abandon() {
 		fd = -1
@@ -148,7 +153,7 @@ public extension File {
         case append
         /// Opens the file for read-write access, creating the file if it did not exist and setting the file's size to zero.
         case truncate
-        
+
         var toMode: Int {
             switch self {
             case .read:         return Int(O_RDONLY)
@@ -166,6 +171,13 @@ public extension File {
 		public init(rawValue: Mode) {
 			self.rawValue = rawValue
 		}
+
+#if os(Linux)
+		init(rawValue: Int32) {
+			self.init(rawValue: UInt32(rawValue))
+		}
+#endif
+
 		/// Readable by user.
 		public static let readUser = PermissionMode(rawValue: S_IRUSR)
 		/// Writable by user.
@@ -184,19 +196,19 @@ public extension File {
 		public static let writeOther = PermissionMode(rawValue: S_IWOTH)
 		/// Executable by others.
 		public static let executeOther = PermissionMode(rawValue: S_IXOTH)
-		
+
 		/// Read, write, execute by user.
 		public static let rwxUser: PermissionMode = [.readUser, .writeUser, .executeUser]
 		/// Read, write by user and group.
 		public static let rwUserGroup: PermissionMode = [.readUser, .writeUser, .readGroup, .writeGroup]
-		
+
 		/// Read, execute by group.
 		public static let rxGroup: PermissionMode = [.readGroup, .executeGroup]
 		/// Read, execute by other.
 		public static let rxOther: PermissionMode = [.readOther, .executeOther]
-		
+
 	}
-    
+
 	/// Opens the file using the given mode.
 	/// - throws: `PerfectError.FileError`
 	public func open(_ mode: OpenMode = .read, permissions: PermissionMode = .rwUserGroup) throws {
@@ -233,13 +245,13 @@ public extension File {
 }
 
 public extension File {
-    
+
     /// Closes and deletes the file
     public func delete() {
         close()
         unlink(path)
     }
-    
+
     /// Moves the file to the new location, optionally overwriting any existing file
     /// - parameter path: The path to move the file to
     /// - parameter overWrite: Indicates that any existing file at the destination path should first be deleted
@@ -294,22 +306,22 @@ public extension File {
                 _ = marker = oldMarker
             }
         }
-        
+
         try destFile.open(.truncate)
-        
+
         var bytes = try self.readSomeBytes(count: fileCopyBufferSize)
         while bytes.count > 0 {
             try destFile.write(bytes: bytes)
             bytes = try self.readSomeBytes(count: fileCopyBufferSize)
         }
-        
+
         destFile.close()
         return destFile
     }
 }
 
 public extension File {
-    
+
 	/// Returns the size of the file in bytes
     public var size: Int {
 		var st = stat()
@@ -319,7 +331,7 @@ public extension File {
 		}
 		return Int(st.st_size)
 	}
-	
+
 	/// Returns true if the file is a symbolic link
     public var isLink: Bool {
 		var st = stat()
@@ -330,7 +342,7 @@ public extension File {
 		let mode = st.st_mode
 		return (Int32(mode) & Int32(S_IFMT)) == Int32(S_IFLNK)
 	}
-	
+
 	/// Returns true if the file is actually a directory
     public var isDir: Bool {
 		var st = stat()
@@ -341,14 +353,14 @@ public extension File {
 		let mode = st.st_mode
 		return (Int32(mode) & Int32(S_IFMT)) == Int32(S_IFDIR)
 	}
-	
+
 	/// Returns the UNIX style permissions for the file
     public var perms: PermissionMode {
 		get {
 			var st = stat()
 			let statRes = isOpen ?  fstat(Int32(fd), &st) : stat(internalPath, &st)
 			guard statRes != -1 else {
-				return PermissionMode(rawValue: 0)
+				return PermissionMode(rawValue: PermissionMode.Mode(0))
 			}
 			let mode = st.st_mode
 			return PermissionMode(rawValue: mode_t(Int32(mode) ^ Int32(S_IFMT)))
@@ -369,7 +381,7 @@ public extension File {
         if !isOpen {
             try open()
         }
-        
+
         func sizeOr(_ value: Int) -> Int {
             var st = stat()
             let statRes = isOpen ?  fstat(Int32(fd), &st) : stat(internalPath, &st)
@@ -381,7 +393,7 @@ public extension File {
             }
             return value
         }
-        
+
 		let bSize = min(count, sizeOr(count))
 		var ary = [UInt8](repeating: 0, count: bSize)
 		let ptr = UnsafeMutablePointer<UInt8>(ary)
@@ -395,7 +407,7 @@ public extension File {
 		}
 		return ary
 	}
-	
+
 	/// Reads the entire file as a string
 	public func readString() throws -> String {
 		let bytes = try self.readSomeBytes(count: self.size)
@@ -404,7 +416,7 @@ public extension File {
 }
 
 public extension File {
-	
+
 	/// Writes the string to the file using UTF-8 encoding
 	/// - parameter s: The string to write
 	/// - returns: Returns the number of bytes which were written
@@ -413,7 +425,7 @@ public extension File {
 	public func write(string: String) throws -> Int {
 		return try write(bytes: Array(string.utf8))
 	}
-	
+
 	/// Write the indicated bytes to the file
 	/// - parameter bytes: The array of UInt8 to write.
 	/// - parameter dataPosition: The offset within `bytes` at which to begin writing.
@@ -436,7 +448,7 @@ public extension File {
 }
 
 public extension File {
-	
+
 	/// Attempts to place an advisory lock starting from the current position marker up to the indicated byte count. This function will block the current thread until the lock can be performed.
 	/// - parameter byteCount: The number of bytes to lock
 	/// - throws: `PerfectError.FileError`
@@ -449,7 +461,7 @@ public extension File {
 			try ThrowFileError()
 		}
 	}
-	
+
 	/// Unlocks the number of bytes starting from the current position marker up to the indicated byte count.
 	/// - parameter byteCount: The number of bytes to unlock
 	/// - throws: `PerfectError.FileError`
@@ -462,7 +474,7 @@ public extension File {
 			try ThrowFileError()
 		}
 	}
-	
+
 	/// Attempts to place an advisory lock starting from the current position marker up to the indicated byte count. This function will throw an exception if the file is already locked, but will not block the current thread.
 	/// - parameter byteCount: The number of bytes to lock
 	/// - throws: `PerfectError.FileError`
@@ -475,7 +487,7 @@ public extension File {
 			try ThrowFileError()
 		}
 	}
-	
+
 	/// Tests if the indicated bytes are locked
 	/// - parameter byteCount: The number of bytes to test
 	/// - returns: True if the file is locked
@@ -516,12 +528,12 @@ public final class TemporaryFile: File {
             i = utf8.index(after: i)
         }
         name[utf8.count] = 0
-        
+
         let fd = mkstemp(name)
         let tmpFileName = String(validatingUTF8: name)!
-        
+
         name.deallocateCapacity(utf8.count + 1)
-        
+
         self.init(tmpFileName, fd: fd)
     }
 }
