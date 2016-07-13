@@ -40,7 +40,7 @@ public struct Dir {
 
 	/// Returns true if the directory exists
     public var exists: Bool {
-		return exists(realPath())
+		return exists(realPath)
 	}
 
 	func exists(_ path: String) -> Bool {
@@ -51,7 +51,7 @@ public struct Dir {
 	/// - parameter perms: The permissions for use for the new directory and preceeding directories which need to be created. Defaults to RWX-GUO
 	/// - throws: `PerfectError.FileError`
 	public func create(perms: Int = Int(S_IRWXG|S_IRWXU|S_IRWXO)) throws {
-		let pth = realPath()
+		let pth = realPath
 		var currPath = pth.begins(with: "/") ? "/" : ""
         for component in pth.pathComponents where component != "/" {
             currPath += component
@@ -71,19 +71,19 @@ public struct Dir {
 	/// Deletes the directory. The directory must be empty in order to be successfuly deleted.
 	/// - throws: `PerfectError.FileError`
 	public func delete() throws {
-		let res = rmdir(realPath())
+		let res = rmdir(realPath)
 		guard res != -1 else {
 			try ThrowFileError()
 		}
 	}
 
 	/// Returns the name of the directory
-	public func name() -> String {
+	public var name: String {
 		return internalPath.lastPathComponent
 	}
 
 	/// Returns a Dir object representing the current Dir's parent. Returns nil if there is no parent.
-	public func parentDir() -> Dir? {
+	public var parentDir: Dir? {
 		guard internalPath != "/" else {
 			return nil // can not go up
 		}
@@ -91,11 +91,11 @@ public struct Dir {
 	}
 
 	/// Returns the path to the current directory
-	public func path() -> String {
+	public var path: String {
 		return internalPath
 	}
 
-	func realPath() -> String {
+	var realPath: String {
 		return internalPath.stringByResolvingSymlinksInPath
 	}
 
@@ -113,7 +113,7 @@ public struct Dir {
 	/// - parameter closure: The callback which will receive each entry's name
 	/// - throws: `PerfectError.FileError`
 	public func forEachEntry(closure: (name: String) -> ()) throws {
-		guard let dir = opendir(realPath()) else {
+		guard let dir = opendir(realPath) else {
 			try ThrowFileError()
 		}
             
