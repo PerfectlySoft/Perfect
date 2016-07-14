@@ -224,9 +224,10 @@ struct Filter404: HTTPResponseFilter {
 	}
 }
 
-try HTTPServer(documentRoot: webRoot)
-	.setResponseFilters([(Filter404(), .high)])
-	.start(port: 8181)
+let server = HTTPServer()
+server.setResponseFilters([(Filter404(), .high)])
+server.serverPort = 8181
+try server.start()
 ```
 
 ## Repository Layout
