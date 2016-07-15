@@ -188,7 +188,6 @@ public class SysProcess {
 			break
 		}
 		self.pid = -1
-		close()
 		return code
 	}
 
