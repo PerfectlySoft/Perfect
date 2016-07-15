@@ -177,10 +177,16 @@ public class SysProcess {
 	/// Determine if the process has completed running and retrieve its result code.
 	public func wait(hang: Bool = true) throws -> Int32 {
 		var code = Int32(0)
-		let status = waitpid(self.pid, &code, WUNTRACED | (hang ? 0 : WNOHANG))
-        guard status != -1 else {
-            try ThrowSystemError()
-        }
+		while true {
+			let status = waitpid(self.pid, &code, WUNTRACED | (hang ? 0 : WNOHANG))
+			if status == -1 && errno == EINTR {
+				continue
+			}
+			guard status != -1 else {
+				try ThrowSystemError()
+			}
+			break
+		}
 		self.pid = -1
 		close()
 		return code

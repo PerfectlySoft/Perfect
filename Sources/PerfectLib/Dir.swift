@@ -44,7 +44,21 @@ public struct Dir {
     public var exists: Bool {
 		return exists(realPath)
 	}
+	
+	public func setAsWorkingDir() throws {
+		let res = chdir(self.internalPath)
+		guard res == 0 else {
+			try ThrowFileError()
+		}
+	}
 
+	public static var workingDir: Dir {
+		let buffer = Array(repeating: 0 as UInt8, count: 2049)
+		let _ = getcwd(UnsafeMutablePointer<Int8>(buffer), 2048)
+		let path = String(validatingUTF8: UnsafeMutablePointer<Int8>(buffer)) ?? "."
+		return Dir(path)
+	}
+	
 	func exists(_ path: String) -> Bool {
 		return access(path, F_OK) != -1
 	}
