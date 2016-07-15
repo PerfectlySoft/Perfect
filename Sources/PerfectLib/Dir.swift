@@ -124,7 +124,7 @@ public struct Dir {
 	/// Enumerates the contents of the directory passing the name of each contained element to the provided callback.
 	/// - parameter closure: The callback which will receive each entry's name
 	/// - throws: `PerfectError.FileError`
-	public func forEachEntry(closure: (name: String) -> ()) throws {
+	public func forEachEntry(closure: (name: String) throws -> ()) throws {
 		guard let dir = opendir(realPath) else {
 			try ThrowFileError()
 		}
@@ -159,9 +159,9 @@ public struct Dir {
 			nameBuf.append(0)
 			if let name = String(validatingUTF8: nameBuf) where !(name == "." || name == "..") {
                 if Int32(type) == Int32(DT_DIR) {
-                    closure(name: name + "/")
+                    try closure(name: name + "/")
                 } else {
-                    closure(name: name)
+                    try closure(name: name)
                 }
 			}
 		}
