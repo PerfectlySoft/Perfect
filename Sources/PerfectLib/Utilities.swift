@@ -137,7 +137,22 @@ extension String {
 	public var stringByEncodingHTML: String {
 		var ret = ""
 		var g = self.unicodeScalars.makeIterator()
+		var lastWasCR = false
 		while let c = g.next() {
+			if c == UnicodeScalar(10) {
+				if lastWasCR {
+					lastWasCR = false
+					ret.append("\n")
+				} else {
+					ret.append("<br>\n")
+				}
+				continue
+			} else if c == UnicodeScalar(13) {
+				lastWasCR = true
+				ret.append("<br>\r")
+				continue
+			}
+			lastWasCR = false
 			if c < UnicodeScalar(0x0009) {
 				ret.append("&#x");
 				ret.append(UnicodeScalar(0x0030 + UInt32(c)));
