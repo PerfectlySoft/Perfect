@@ -267,8 +267,8 @@ class PerfectLibTests: XCTestCase {
 			try server.bind(address: sock)
 			server.listen()
 
-			let serverExpectation = self.expectation(withDescription: "server")
-			let clientExpectation = self.expectation(withDescription: "client")
+			let serverExpectation = self.expectation(description: "server")
+			let clientExpectation = self.expectation(description: "client")
 
 			try server.accept(timeoutSeconds: NetEvent.noTimeout) {
 				(inn: NetTCP?) -> () in
@@ -318,13 +318,13 @@ class PerfectLibTests: XCTestCase {
 					clientExpectation.fulfill()
 				}
 			}
-			self.waitForExpectations(withTimeout: 10000, handler: {
+			self.waitForExpectations(timeout: 10000) {
 				_ in
 				server.close()
 				client.close()
 				testFile.close()
 				testFile.delete()
-			})
+			}
 		} catch PerfectError.networkError(let code, let msg) {
 			XCTAssert(false, "Exception: \(code) \(msg)")
 		} catch let e {

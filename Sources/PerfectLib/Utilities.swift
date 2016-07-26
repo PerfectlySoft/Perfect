@@ -283,18 +283,18 @@ public struct UUID {
 	let uuid: uuid_t
 	
 	public init() {
-		let u = UnsafeMutablePointer<UInt8>(allocatingCapacity:  sizeof(uuid_t.self))
+		let u = UnsafeMutablePointer<UInt8>.allocate(capacity:  sizeof(uuid_t.self))
 		defer {
-			u.deallocateCapacity(sizeof(uuid_t.self))
+			u.deallocate(capacity: sizeof(uuid_t.self))
 		}
 		uuid_generate_random(u)
 		self.uuid = UUID.uuidFromPointer(u)
 	}
 	
 	public init(_ string: String) {
-		let u = UnsafeMutablePointer<UInt8>(allocatingCapacity:  sizeof(uuid_t.self))
+		let u = UnsafeMutablePointer<UInt8>.allocate(capacity:  sizeof(uuid_t.self))
 		defer {
-			u.deallocateCapacity(sizeof(uuid_t.self))
+			u.deallocate(capacity: sizeof(uuid_t.self))
 		}
 		uuid_parse(string, u)
 		self.uuid = UUID.uuidFromPointer(u)
@@ -310,11 +310,11 @@ public struct UUID {
 	}
 	
 	public var string: String {
-		let u = UnsafeMutablePointer<UInt8>(allocatingCapacity:  sizeof(uuid_t.self))
-		let unu = UnsafeMutablePointer<Int8>(allocatingCapacity:  37) // as per spec. 36 + null
+		let u = UnsafeMutablePointer<UInt8>.allocate(capacity:  sizeof(uuid_t.self))
+		let unu = UnsafeMutablePointer<Int8>.allocate(capacity:  37) // as per spec. 36 + null
 		defer {
-			u.deallocateCapacity(sizeof(uuid_t.self))
-			unu.deallocateCapacity(37)
+			u.deallocate(capacity: sizeof(uuid_t.self))
+			unu.deallocate(capacity: 37)
 		}
 		var uu = self.uuid
 		memcpy(u, &uu, sizeof(uuid_t.self))
@@ -632,9 +632,9 @@ public func formatDate(_ date: Double, format: String, timezone inTimezone: Stri
 	var time = time_t(date / 1000.0)
 	gmtime_r(&time, &t)
 	let maxResults = 1024
-	let results = UnsafeMutablePointer<Int8>(allocatingCapacity:  maxResults)
+	let results = UnsafeMutablePointer<Int8>.allocate(capacity:  maxResults)
 	defer {
-		results.deallocateCapacity(maxResults)
+		results.deallocate(capacity: maxResults)
 	}
 	let res = strftime(results, maxResults, format, &t)
 	if res > 0 {
@@ -701,8 +701,8 @@ import OpenSSL
 
 extension String.UTF8View {
     var sha1: [UInt8] {
-        let bytes = UnsafeMutablePointer<UInt8>(allocatingCapacity:  Int(SHA_DIGEST_LENGTH))
-        defer { bytes.deallocateCapacity(Int(SHA_DIGEST_LENGTH)) }
+        let bytes = UnsafeMutablePointer<UInt8>.allocate(capacity:  Int(SHA_DIGEST_LENGTH))
+        defer { bytes.deallocate(capacity: Int(SHA_DIGEST_LENGTH)) }
         
         SHA1(Array<UInt8>(self), (self.count), bytes)
         

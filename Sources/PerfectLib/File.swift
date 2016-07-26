@@ -107,7 +107,7 @@ public class File {
 		if !inPath.isEmpty && inPath[inPath.startIndex] == "~" {
 			var wexp = wordexp_t()
 			wordexp(inPath, &wexp, 0)
-			if let resolved = wexp.we_wordv[0], pth = String(validatingUTF8: resolved) {
+			if let resolved = wexp.we_wordv[0], let pth = String(validatingUTF8: resolved) {
 				return pth
 			}
 		}
@@ -521,7 +521,7 @@ public final class TemporaryFile: File {
     public convenience init(withPrefix: String) {
         let template = withPrefix + "XXXXXX"
         let utf8 = template.utf8
-        let name = UnsafeMutablePointer<Int8>(allocatingCapacity: utf8.count + 1)
+        let name = UnsafeMutablePointer<Int8>.allocate(capacity: utf8.count + 1)
         var i = utf8.startIndex
         for index in 0..<utf8.count {
             name[index] = Int8(utf8[i])
@@ -532,7 +532,7 @@ public final class TemporaryFile: File {
         let fd = mkstemp(name)
         let tmpFileName = String(validatingUTF8: name)!
 
-        name.deallocateCapacity(utf8.count + 1)
+        name.deallocate(capacity: utf8.count + 1)
 
         self.init(tmpFileName, fd: fd)
     }

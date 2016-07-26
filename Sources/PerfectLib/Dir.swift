@@ -146,8 +146,8 @@ public struct Dir {
 		defer { closedir(dir) }
 
 		var ent = dirent()
-		let entPtr = UnsafeMutablePointer<UnsafeMutablePointer<dirent>?>(allocatingCapacity:  1)
-		defer { entPtr.deallocateCapacity(1) }
+		let entPtr = UnsafeMutablePointer<UnsafeMutablePointer<dirent>?>.allocate(capacity:  1)
+		defer { entPtr.deallocate(capacity: 1) }
 
 		while readDir(dir, &ent, entPtr) == 0 && entPtr.pointee != nil {
 			let name = ent.d_name
@@ -165,13 +165,13 @@ public struct Dir {
                 guard let (_, elem) = childGen.next() else {
                     break
                 }
-				guard let elemI = elem as? Int8 where elemI != 0 else {
+				guard let elemI = elem as? Int8, elemI != 0 else {
 					break
 				}
 				nameBuf.append(elemI)
 			}
 			nameBuf.append(0)
-			if let name = String(validatingUTF8: nameBuf) where !(name == "." || name == "..") {
+			if let name = String(validatingUTF8: nameBuf), !(name == "." || name == "..") {
                 if Int32(type) == Int32(DT_DIR) {
                     try closure(name: name + "/")
                 } else {
