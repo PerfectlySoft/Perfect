@@ -26,7 +26,7 @@ https://github.com/PerfectlySoft/Perfect-HTTPServer.git
 
 --
 
-**The master branch of this project currently compiles with the default Swift 3.0 toolchain included in Xcode 8 beta 2. On Ubuntu use the *Swift 3.0 Preview 2* toolchain, released July 7th.**
+**The master branch of this project currently compiles with the July 25th Swift toolchain.**
 
 **Important:** On OS X you must set the Xcode command line tools preference as follows:
 ![Xcode Prefs](http://www.perfect.org/docs/assets/xcode_prefs.png) 
@@ -58,7 +58,7 @@ swift --version
 should produce something like the following:
 
 ```
-Apple Swift version 3.0 (swiftlang-800.0.33.1 clang-800.0.31)
+Apple Swift version 3.0-dev (LLVM 440a472499, Clang e10506ae1c, Swift 395e967875)
 Target: x86_64-apple-macosx10.9
 ```
 
