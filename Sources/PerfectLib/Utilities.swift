@@ -435,7 +435,7 @@ extension String {
 		return nil != self.range(ofString: strng)
 	}
 }
-
+/*
 #if os(OSX)
 extension String {
 
@@ -583,7 +583,7 @@ extension String {
 	}
 }
 #endif
-
+*/
 extension String {
 	func begins(with str: String) -> Bool {
 		return self.characters.starts(with: str.characters)

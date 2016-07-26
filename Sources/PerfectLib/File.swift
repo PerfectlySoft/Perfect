@@ -45,6 +45,8 @@ let F_OK: Int32 = 0
 import Darwin
 #endif
 
+import Foundation
+
 let fileCopyBufferSize = 16384
 
 /// Provides access to a file on the local file system
@@ -85,7 +87,7 @@ public class File {
         guard lastChar != "/" && lastChar != "." else {
             return trailPath
         }
-        return internalPath.stringByDeletingLastPathComponent + "/" + trailPath
+        return URL(fileURLWithPath: internalPath).deletingLastPathComponent().path + "/" + trailPath
     }
 
     /// Returns the modification date for the file in the standard UNIX format of seconds since 1970/01/01 00:00:00 GMT
