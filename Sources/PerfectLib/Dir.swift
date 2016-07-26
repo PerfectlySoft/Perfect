@@ -20,7 +20,6 @@
 import Foundation
 
 #if os(Linux)
-import SwiftGlibc
 import LinuxBridge
 #else
 import Darwin
@@ -29,9 +28,9 @@ import Darwin
 /// This class represents a directory on the file system.
 /// It can be used for creating & inspecting directories and enumerating directory contents.
 public struct Dir {
-	
+
 	public typealias PermissionMode = File.PermissionMode
-	
+
 	var internalPath = ""
 
 	/// Create a new Dir object with the given path
@@ -44,7 +43,7 @@ public struct Dir {
     public var exists: Bool {
 		return exists(realPath)
 	}
-	
+
 	public func setAsWorkingDir() throws {
 		let res = chdir(self.internalPath)
 		guard res == 0 else {
@@ -58,7 +57,7 @@ public struct Dir {
 		let path = String(validatingUTF8: UnsafeMutablePointer<Int8>(buffer)) ?? "."
 		return Dir(path)
 	}
-	
+
 	func exists(_ path: String) -> Bool {
 		return access(path, F_OK) != -1
 	}
@@ -110,7 +109,7 @@ public struct Dir {
 	public var path: String {
 		return internalPath
 	}
-	
+
 	/// Returns the UNIX style permissions for the directory.
 	public var perms: PermissionMode {
 		get {
@@ -134,7 +133,7 @@ public struct Dir {
         return readdir_r(d, &dirEnt, endPtr)
     }
 #endif
-    
+
 	/// Enumerates the contents of the directory passing the name of each contained element to the provided callback.
 	/// - parameter closure: The callback which will receive each entry's name
 	/// - throws: `PerfectError.FileError`
@@ -142,7 +141,7 @@ public struct Dir {
 		guard let dir = opendir(realPath) else {
 			try ThrowFileError()
 		}
-            
+
 		defer { closedir(dir) }
 
 		var ent = dirent()

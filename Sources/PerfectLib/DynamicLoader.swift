@@ -17,12 +17,12 @@
 //===----------------------------------------------------------------------===//
 //
 
+import Foundation
 #if os(Linux)
-	import SwiftGlibc
+
 #else
 	import Darwin
 #endif
-import Foundation
 
 struct DynamicLoader {
 

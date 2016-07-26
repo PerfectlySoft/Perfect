@@ -17,13 +17,22 @@
 //===----------------------------------------------------------------------===//
 //
 
-#if os(Linux)
-import SwiftGlibc
-import LinuxBridge
+import Foundation
 
+#if os(Linux)
+import LinuxBridge
 // !FIX! these are obviously sketchy
 // I hope SwiftGlibc to eventually include these
 // Otherwise, export them from LinuxBridge
+
+import var Glibc.S_IRUSR
+import var Glibc.S_IWUSR
+import var Glibc.S_IXUSR
+import var Glibc.S_IFMT
+import var Glibc.S_IFREG
+import var Glibc.S_IFDIR
+import var Glibc.S_IFLNK
+
 let S_IRGRP = (S_IRUSR >> 3)
 let S_IWGRP	= (S_IWUSR >> 3)
 let S_IXGRP	= (S_IXUSR >> 3)
@@ -34,7 +43,6 @@ let S_IROTH = (S_IRGRP >> 3)
 let S_IWOTH = (S_IWGRP >> 3)
 let S_IXOTH = (S_IXGRP >> 3)
 
-
 let SEEK_CUR: Int32 = 1
 let EXDEV = Int32(18)
 let EACCES = Int32(13)
@@ -44,8 +52,6 @@ let F_OK: Int32 = 0
 #else
 import Darwin
 #endif
-
-import Foundation
 
 let fileCopyBufferSize = 16384
 
