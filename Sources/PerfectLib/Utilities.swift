@@ -18,6 +18,7 @@
 //
 
 import PerfectNet
+import Foundation
 
 #if os(Linux)
 import LinuxBridge
@@ -435,155 +436,33 @@ extension String {
 		return nil != self.range(ofString: strng)
 	}
 }
-/*
-#if os(OSX)
+
 extension String {
-
-	var pathSeparator: UnicodeScalar {
-		return UnicodeScalar(47)
-	}
-
-	var extensionSeparator: UnicodeScalar {
-		return UnicodeScalar(46)
-	}
-
-	private var beginsWithSeparator: Bool {
-		let unis = self.characters
-		guard unis.count > 0 else {
-			return false
-		}
-		return unis[unis.startIndex] == Character(pathSeparator)
-	}
-
-	private var endsWithSeparator: Bool {
-		let unis = self.characters
-		guard unis.count > 0 else {
-			return false
-		}
-		return unis[unis.index(before: unis.endIndex)] == Character(pathSeparator)
-	}
-
-	private func pathComponents(addFirstLast addfl: Bool) -> [String] {
-		var r = [String]()
-		let unis = self.characters
-		guard unis.count > 0 else {
-			return r
-		}
-
-		if addfl && self.beginsWithSeparator {
-			r.append(String(pathSeparator))
-		}
-
-		r.append(contentsOf: self.characters.split(separator: Character(pathSeparator)).map { String($0) })
-
-		if addfl && self.endsWithSeparator {
-			if !self.beginsWithSeparator || r.count > 1 {
-				r.append(String(pathSeparator))
-			}
-		}
-		return r
-	}
-
 	var pathComponents: [String] {
-		return self.pathComponents(addFirstLast: true)
+		return URL(fileURLWithPath: self).pathComponents
 	}
 
 	var lastPathComponent: String {
-		let last = self.pathComponents(addFirstLast: false).last ?? ""
-		if last.isEmpty && self.characters.first == Character(pathSeparator) {
-			return String(pathSeparator)
-		}
-		return last
+		return URL(fileURLWithPath: self).lastPathComponent
 	}
 
-	var stringByDeletingLastPathComponent: String {
-		var comps = self.pathComponents(addFirstLast: false)
-		guard comps.count > 1 else {
-			if self.beginsWithSeparator {
-				return String(pathSeparator)
-			}
-			return ""
-		}
-		comps.removeLast()
-		let joined = comps.joined(separator: String(pathSeparator))
-		if self.beginsWithSeparator {
-			return String(pathSeparator) + joined
-		}
-		return joined
+	var deletingLastPathComponent: String {
+		return URL(fileURLWithPath: self).deletingLastPathComponent().path
 	}
-
-    private func lastPathSeparator(in unis: String.CharacterView) -> String.CharacterView.Index {
-        let startIndex = unis.startIndex
-        var endIndex = unis.endIndex
-        while endIndex != startIndex {
-            if unis[unis.index(before: endIndex)] != Character(pathSeparator) {
-                break
-            }
-            endIndex = unis.index(before: endIndex)
-        }
-        return endIndex
-    }
-    
-    private func lastExtensionSeparator(in unis: String.CharacterView, endIndex: String.CharacterView.Index) -> String.CharacterView.Index {
-        var endIndex = endIndex
-        while endIndex != startIndex {
-            endIndex = unis.index(before: endIndex)
-            if unis[endIndex] == Character(extensionSeparator) {
-                break
-            }
-        }
-        return endIndex
-    }
-    
-	var stringByDeletingPathExtension: String {
-		let unis = self.characters
-		let startIndex = unis.startIndex
-		var endIndex = lastPathSeparator(in: unis)
-		let noTrailsIndex = endIndex
-		endIndex = lastExtensionSeparator(in: unis, endIndex: endIndex)
-		guard endIndex != startIndex else {
-			if noTrailsIndex == startIndex {
-				return self
-			}
-			return self[startIndex..<noTrailsIndex]
-		}
-		return self[startIndex..<endIndex]
+	
+	var deletingPathExtension: String {
+		return URL(fileURLWithPath: self).deletingPathExtension().path
 	}
 
 	var pathExtension: String {
-		let unis = self.characters
-		let startIndex = unis.startIndex
-        var endIndex = lastPathSeparator(in: unis)
-        let noTrailsIndex = endIndex
-        endIndex = lastExtensionSeparator(in: unis, endIndex: endIndex)
-		guard endIndex != startIndex else {
-			return ""
-		}
-		return self[unis.index(after: endIndex)..<noTrailsIndex]
+		return URL(fileURLWithPath: self).pathExtension
 	}
 
-	var stringByResolvingSymlinksInPath: String {
-		return File(self).realPath
-
-//		let absolute = self.beginsWithSeparator
-//		let components = self.pathComponents(false)
-//		var s = absolute ? "/" : ""
-//		for component in components {
-//			if component == "." {
-//				s.appendContentsOf(".")
-//			} else if component == ".." {
-//				s.appendContentsOf("..")
-//			} else {
-//				let file = File(s + "/" + component)
-//				s = file.realPath()
-//			}
-//		}
-//		let ary = s.pathComponents(false) // get rid of slash runs
-//		return absolute ? "/" + ary.joinWithSeparator(String(pathSeparator)) : ary.joinWithSeparator(String(pathSeparator))
+	var resolvingSymlinksInPath: String {
+		return URL(fileURLWithPath: self).resolvingSymlinksInPath().path
 	}
 }
-#endif
-*/
+
 extension String {
 	func begins(with str: String) -> Bool {
 		return self.characters.starts(with: str.characters)

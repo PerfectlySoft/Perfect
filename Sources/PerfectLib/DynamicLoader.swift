@@ -38,9 +38,9 @@ struct DynamicLoader {
 	}
 
 	func loadFramework(atPath at: String) -> Bool {
-		let resolvedPath = URL(fileURLWithPath: at).resolvingSymlinksInPath()
-		let moduleName = resolvedPath.deletingPathExtension().lastPathComponent
-		let file = File(resolvedPath.path + "/" + moduleName)
+		let resolvedPath = at.resolvingSymlinksInPath
+		let moduleName = resolvedPath.deletingPathExtension.lastPathComponent
+		let file = File(resolvedPath + "/" + moduleName)
         guard file.exists else {
             return false
         }
@@ -49,7 +49,7 @@ struct DynamicLoader {
 	}
 
 	func loadLibrary(atPath at: String) -> Bool {
-		var moduleName = URL(fileURLWithPath: at).deletingPathExtension().lastPathComponent
+		var moduleName = at.deletingPathExtension.lastPathComponent
 		if moduleName.begins(with: "lib") {
 			moduleName.characters.removeFirst(3)
 		}
