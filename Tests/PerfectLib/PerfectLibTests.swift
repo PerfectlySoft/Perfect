@@ -466,13 +466,13 @@ class PerfectLibTests: XCTestCase {
 
     func testDeletingPathExtension() {
         let path = "/a/b/c.txt"
-        let del = path.stringByDeletingPathExtension
+        let del = URL(fileURLWithPath: path).deletingPathExtension().path
         XCTAssert("/a/b/c" == del)
     }
 
     func testGetPathExtension() {
         let path = "/a/b/c.txt"
-        let ext = path.pathExtension
+        let ext = URL(fileURLWithPath: path).pathExtension
         XCTAssert("txt" == ext)
     }
 
@@ -487,7 +487,7 @@ class PerfectLibTests: XCTestCase {
 
             while unPath != "/tmp" {
                 try Dir(unPath).delete()
-                unPath = unPath.stringByDeletingLastPathComponent
+                unPath = URL(fileURLWithPath: unPath).deletingLastPathComponent().path
             }
         } catch {
             XCTAssert(false, "Error while creating dirs: \(error)")
