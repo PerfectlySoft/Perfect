@@ -120,7 +120,7 @@ extension UInt8 {
 			|| ( cc >= 123 && cc <= 126 )
 			|| self == 43 )
 	}
-    
+
     // same as String(self, radix: 16)
     // but outputs two characters. i.e. 0 padded
 	var hexString: String {
@@ -282,7 +282,7 @@ extension String {
 
 public struct UUID {
 	let uuid: uuid_t
-	
+
 	public init() {
 		let u = UnsafeMutablePointer<UInt8>.allocate(capacity:  sizeof(uuid_t.self))
 		defer {
@@ -291,7 +291,7 @@ public struct UUID {
 		uuid_generate_random(u)
 		self.uuid = UUID.uuidFromPointer(u)
 	}
-	
+
 	public init(_ string: String) {
 		let u = UnsafeMutablePointer<UInt8>.allocate(capacity:  sizeof(uuid_t.self))
 		defer {
@@ -300,16 +300,16 @@ public struct UUID {
 		uuid_parse(string, u)
 		self.uuid = UUID.uuidFromPointer(u)
 	}
-	
+
 	init(_ uuid: uuid_t) {
 		self.uuid = uuid
 	}
-	
+
 	private static func uuidFromPointer(_ u: UnsafeMutablePointer<UInt8>) -> uuid_t {
 		// is there a better way?
 		return uuid_t(u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15])
 	}
-	
+
 	public var string: String {
 		let u = UnsafeMutablePointer<UInt8>.allocate(capacity:  sizeof(uuid_t.self))
 		let unu = UnsafeMutablePointer<Int8>.allocate(capacity:  37) // as per spec. 36 + null
@@ -325,12 +325,12 @@ public struct UUID {
 }
 
 extension String {
-	
+
 	@available(*, unavailable, message: "Use UUID(_:String)")
 	public func asUUID() -> uuid_t {
 		return UUID(self).uuid
 	}
-	
+
     @available(*, unavailable, message: "Use UUID.string")
 	public static func fromUUID(uuid: uuid_t) -> String {
 		return UUID(uuid).string
@@ -439,27 +439,30 @@ extension String {
 
 extension String {
 	var pathComponents: [String] {
-		return URL(fileURLWithPath: self).pathComponents
+		return URL(fileURLWithPath: self).pathComponents ?? [String]()
 	}
 
 	var lastPathComponent: String {
-		return URL(fileURLWithPath: self).lastPathComponent
+		return URL(fileURLWithPath: self).lastPathComponent ?? ""
 	}
 
 	var deletingLastPathComponent: String {
-		return URL(fileURLWithPath: self).deletingLastPathComponent().path
+		let pth = try? URL(fileURLWithPath: self).deletingLastPathComponent()
+		return pth?.path ?? ""
 	}
-	
+
 	var deletingPathExtension: String {
-		return URL(fileURLWithPath: self).deletingPathExtension().path
+		let pth = try? URL(fileURLWithPath: self).deletingPathExtension()
+		return pth?.path ?? ""
 	}
 
 	var pathExtension: String {
-		return URL(fileURLWithPath: self).pathExtension
+		return URL(fileURLWithPath: self).pathExtension ?? ""
 	}
 
 	var resolvingSymlinksInPath: String {
-		return URL(fileURLWithPath: self).resolvingSymlinksInPath().path
+		let pth = try? URL(fileURLWithPath: self).resolvingSymlinksInPath()
+		return pth?.path ?? ""
 	}
 }
 
@@ -524,7 +527,7 @@ public func formatDate(_ date: Double, format: String, timezone inTimezone: Stri
 }
 
 extension UnicodeScalar {
-    
+
     /// Returns true if the UnicodeScalar is a white space character
     public func isWhiteSpace() -> Bool {
         return isspace(Int32(self.value)) != 0
@@ -559,14 +562,14 @@ public extension NetNamedPipe {
     public func sendFile(_ file: File, callBack: (Bool) -> ()) throws {
         try self.sendFd(Int32(file.fd), callBack: callBack)
     }
-    
+
     /// Receive an existing opened `File` descriptor from the sender
     /// - parameter callBack: The callback to call when the receive completes. The parameter passed will be the received `File` object or nil.
     /// - throws: `PerfectError.NetworkError`
     public func receiveFile(callBack: (File?) -> ()) throws {
         try self.receiveFd {
             fd in
-            
+
             if fd == invalidSocket {
                 callBack(nil)
             } else {
@@ -582,9 +585,9 @@ extension String.UTF8View {
     var sha1: [UInt8] {
         let bytes = UnsafeMutablePointer<UInt8>.allocate(capacity:  Int(SHA_DIGEST_LENGTH))
         defer { bytes.deallocate(capacity: Int(SHA_DIGEST_LENGTH)) }
-        
+
         SHA1(Array<UInt8>(self), (self.count), bytes)
-        
+
         var r = [UInt8]()
         for idx in 0..<Int(SHA_DIGEST_LENGTH) {
             r.append(bytes[idx])
