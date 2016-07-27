@@ -43,7 +43,7 @@ public class SysProcess {
 	/// - parameter cmd: The path to the process which will be launched.
 	/// - parameter args: An optional array of String arguments which will be given to the process.
 	/// - parameter env: An optional array of environment variable name and value pairs.
-	/// - throws: `LassoError.SystemError`
+	/// - throws: `PerfectError.SystemError`
     public init(_ cmd: String, args: [String]?, env: [(String,String)]?) throws {
         typealias maybeCChar = UnsafeMutablePointer<CChar>?
         
