@@ -28,7 +28,7 @@ import Darwin
 #endif
 
 /// Some but not all of the exception types which may be thrown by the system
-public enum PerfectError : ErrorProtocol {
+public enum PerfectError : Error {
 	/// A network related error code and message.
 	case networkError(Int32, String)
 	/// A file system related error code and message.
@@ -39,8 +39,8 @@ public enum PerfectError : ErrorProtocol {
 	case apiError(String)
 }
 
-@noreturn
-func ThrowFileError(file: String = #file, function: String = #function, line: Int = #line) throws {
+
+func ThrowFileError(file: String = #file, function: String = #function, line: Int = #line) throws -> Never  {
 	let err = errno
 	let msg = String(validatingUTF8: strerror(err))!
 	
@@ -49,8 +49,8 @@ func ThrowFileError(file: String = #file, function: String = #function, line: In
 	throw PerfectError.fileError(err, msg + " \(file) \(function) \(line)")
 }
 
-@noreturn
-func ThrowSystemError(file: String = #file, function: String = #function, line: Int = #line) throws {
+
+func ThrowSystemError(file: String = #file, function: String = #function, line: Int = #line) throws -> Never  {
 	let err = errno
 	let msg = String(validatingUTF8: strerror(err))!
 	
@@ -59,8 +59,8 @@ func ThrowSystemError(file: String = #file, function: String = #function, line: 
 	throw PerfectError.systemError(err, msg + " \(file) \(function) \(line)")
 }
 
-@noreturn
-func ThrowNetworkError(file: String = #file, function: String = #function, line: Int = #line) throws {
+
+func ThrowNetworkError(file: String = #file, function: String = #function, line: Int = #line) throws -> Never  {
 	let err = errno
 	let msg = String(validatingUTF8: strerror(err))!
 	

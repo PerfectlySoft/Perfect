@@ -48,11 +48,11 @@ public class SysProcess {
         typealias maybeCChar = UnsafeMutablePointer<CChar>?
         
 		let cArgsCount = args?.count ?? 0
-		let cArgs = UnsafeMutablePointer<maybeCChar>(allocatingCapacity: cArgsCount + 2)
+		let cArgs = UnsafeMutablePointer<maybeCChar>.allocate(capacity: cArgsCount + 2)
 
 		defer {
             cArgs.deinitialize(count: cArgsCount + 2)
-            cArgs.deallocateCapacity(cArgsCount + 2)
+            cArgs.deallocate(capacity: cArgsCount + 2)
         }
 
 		cArgs[0] = strdup(cmd)
@@ -63,9 +63,9 @@ public class SysProcess {
 		}
 
 		let cEnvCount = env?.count ?? 0
-		let cEnv = UnsafeMutablePointer<maybeCChar>(allocatingCapacity: cEnvCount + 1)
+		let cEnv = UnsafeMutablePointer<maybeCChar>.allocate(capacity: cEnvCount + 1)
 
-		defer { cEnv.deinitialize(count: cEnvCount + 1) ; cEnv.deallocateCapacity(cEnvCount + 1) }
+		defer { cEnv.deinitialize(count: cEnvCount + 1) ; cEnv.deallocate(capacity: cEnvCount + 1) }
 
 		cEnv[cEnvCount] = UnsafeMutablePointer<CChar>(nil)
 		for idx in 0..<cEnvCount {

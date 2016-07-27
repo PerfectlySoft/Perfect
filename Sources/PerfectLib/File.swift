@@ -17,13 +17,22 @@
 //===----------------------------------------------------------------------===//
 //
 
-#if os(Linux)
-import SwiftGlibc
-import LinuxBridge
+import Foundation
 
+#if os(Linux)
+import LinuxBridge
 // !FIX! these are obviously sketchy
 // I hope SwiftGlibc to eventually include these
 // Otherwise, export them from LinuxBridge
+
+import var Glibc.S_IRUSR
+import var Glibc.S_IWUSR
+import var Glibc.S_IXUSR
+import var Glibc.S_IFMT
+import var Glibc.S_IFREG
+import var Glibc.S_IFDIR
+import var Glibc.S_IFLNK
+
 let S_IRGRP = (S_IRUSR >> 3)
 let S_IWGRP	= (S_IWUSR >> 3)
 let S_IXGRP	= (S_IXUSR >> 3)
@@ -33,7 +42,6 @@ let S_IRWXO = (S_IRWXG >> 3)
 let S_IROTH = (S_IRGRP >> 3)
 let S_IWOTH = (S_IWGRP >> 3)
 let S_IXOTH = (S_IXGRP >> 3)
-
 
 let SEEK_CUR: Int32 = 1
 let EXDEV = Int32(18)
@@ -85,7 +93,7 @@ public class File {
         guard lastChar != "/" && lastChar != "." else {
             return trailPath
         }
-        return internalPath.stringByDeletingLastPathComponent + "/" + trailPath
+        return internalPath.deletingLastPathComponent + "/" + trailPath
     }
 
     /// Returns the modification date for the file in the standard UNIX format of seconds since 1970/01/01 00:00:00 GMT
@@ -107,7 +115,7 @@ public class File {
 		if !inPath.isEmpty && inPath[inPath.startIndex] == "~" {
 			var wexp = wordexp_t()
 			wordexp(inPath, &wexp, 0)
-			if let resolved = wexp.we_wordv[0], pth = String(validatingUTF8: resolved) {
+			if let resolved = wexp.we_wordv[0], let pth = String(validatingUTF8: resolved) {
 				return pth
 			}
 		}
@@ -521,7 +529,7 @@ public final class TemporaryFile: File {
     public convenience init(withPrefix: String) {
         let template = withPrefix + "XXXXXX"
         let utf8 = template.utf8
-        let name = UnsafeMutablePointer<Int8>(allocatingCapacity: utf8.count + 1)
+        let name = UnsafeMutablePointer<Int8>.allocate(capacity: utf8.count + 1)
         var i = utf8.startIndex
         for index in 0..<utf8.count {
             name[index] = Int8(utf8[i])
@@ -532,7 +540,7 @@ public final class TemporaryFile: File {
         let fd = mkstemp(name)
         let tmpFileName = String(validatingUTF8: name)!
 
-        name.deallocateCapacity(utf8.count + 1)
+        name.deallocate(capacity: utf8.count + 1)
 
         self.init(tmpFileName, fd: fd)
     }
