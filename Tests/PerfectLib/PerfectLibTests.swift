@@ -89,7 +89,7 @@ class PerfectLibTests: XCTestCase {
 		XCTAssert(t1 == 3)
 	}
 
-	func testJSONConvertibleObject() {
+	func testJSONConvertibleObject1() {
 
 		class Test: JSONConvertibleObject {
 
@@ -116,6 +116,53 @@ class PerfectLibTests: XCTestCase {
 		} catch {
 			XCTAssert(false, "Exception \(error)")
 		}
+	}
+	
+	
+	
+	func testJSONConvertibleObject2() {
+		
+		class User: JSONConvertibleObject {
+			static let registerName = "user"
+			var firstName = ""
+			var lastName = ""
+			var age = 0
+			override func setJSONValues(_ values: [String : Any]) {
+				self.firstName = getJSONValue(named: "firstName", from: values, defaultValue: "")
+				self.lastName = getJSONValue(named: "lastName", from: values, defaultValue: "")
+				self.age = getJSONValue(named: "age", from: values, defaultValue: 0)
+			}
+			override func getJSONValues() -> [String : Any] {
+				return [
+					JSONDecoding.objectIdentifierKey:User.registerName,
+					"firstName":firstName,
+					"lastName":lastName,
+					"age":age
+				]
+			}
+		}
+		
+		// register the class. do this once
+		JSONDecoding.registerJSONDecodable(name: User.registerName, creator: { return User() })
+		
+		// encode and decode the object
+		let user = User()
+		user.firstName = "Donnie"
+		user.lastName = "Darko"
+		user.age = 17
+		
+		do {
+			let encoded = try user.jsonEncodedString()
+			print(encoded)
+			
+			guard let user2 = try encoded.jsonDecode() as? User else {
+				return XCTAssert(false, "Invalid object \(encoded)")
+			}
+			
+			XCTAssert(user.firstName == user2.firstName)
+			XCTAssert(user.lastName == user2.lastName)
+			XCTAssert(user.age == user2.age)
+		} catch {}
 	}
 
 	func testJSONEncodeDecode() {
@@ -220,8 +267,8 @@ class PerfectLibTests: XCTestCase {
 			try server.bind(address: sock)
 			server.listen()
 
-			let serverExpectation = self.expectation(withDescription: "server")
-			let clientExpectation = self.expectation(withDescription: "client")
+			let serverExpectation = self.expectation(description: "server")
+			let clientExpectation = self.expectation(description: "client")
 
 			try server.accept(timeoutSeconds: NetEvent.noTimeout) {
 				(inn: NetTCP?) -> () in
@@ -271,13 +318,13 @@ class PerfectLibTests: XCTestCase {
 					clientExpectation.fulfill()
 				}
 			}
-			self.waitForExpectations(withTimeout: 10000, handler: {
+			self.waitForExpectations(timeout: 10000) {
 				_ in
 				server.close()
 				client.close()
 				testFile.close()
 				testFile.delete()
-			})
+			}
 		} catch PerfectError.networkError(let code, let msg) {
 			XCTAssert(false, "Exception: \(code) \(msg)")
 		} catch let e {
@@ -419,7 +466,7 @@ class PerfectLibTests: XCTestCase {
 
     func testDeletingPathExtension() {
         let path = "/a/b/c.txt"
-        let del = path.stringByDeletingPathExtension
+        let del = path.deletingPathExtension
         XCTAssert("/a/b/c" == del)
     }
 
@@ -440,7 +487,7 @@ class PerfectLibTests: XCTestCase {
 
             while unPath != "/tmp" {
                 try Dir(unPath).delete()
-                unPath = unPath.stringByDeletingLastPathComponent
+                unPath = unPath.deletingLastPathComponent
             }
         } catch {
             XCTAssert(false, "Error while creating dirs: \(error)")
@@ -524,6 +571,31 @@ class PerfectLibTests: XCTestCase {
 			XCTAssert(false, "Error testing file perms: \(error)")
 		}
 	}
+	
+	func testBytesIO() {
+		let i8 = 254 as UInt8
+		let i16 = 54045 as UInt16
+		let i32 = 4160745471 as UInt32
+		let i64 = 17293541094125989887 as UInt64
+		
+		let bytes = Bytes()
+		
+		bytes.import64Bits(from: i64)
+			.import32Bits(from: i32)
+			.import16Bits(from: i16)
+			.import8Bits(from: i8)
+		
+		let bytes2 = Bytes()
+		bytes2.importBytes(from: bytes)
+		
+		XCTAssert(i64 == bytes2.export64Bits())
+		XCTAssert(i32 == bytes2.export32Bits())
+		XCTAssert(i16 == bytes2.export16Bits())
+		bytes2.position -= sizeof(UInt16.self)
+		XCTAssert(i16 == bytes2.export16Bits())
+		XCTAssert(bytes2.availableExportBytes == 1)
+		XCTAssert(i8 == bytes2.export8Bits())
+	}
 }
 
 extension PerfectLibTests {
@@ -531,7 +603,8 @@ extension PerfectLibTests {
         return [
             ("testConcurrentQueue", testConcurrentQueue),
             ("testSerialQueue", testSerialQueue),
-            ("testJSONConvertibleObject", testJSONConvertibleObject),
+            ("testJSONConvertibleObject1", testJSONConvertibleObject1),
+            ("testJSONConvertibleObject2", testJSONConvertibleObject2),
             ("testJSONEncodeDecode", testJSONEncodeDecode),
             ("testJSONDecodeUnicode", testJSONDecodeUnicode),
             ("testNetSendFile", testNetSendFile),
@@ -555,7 +628,9 @@ extension PerfectLibTests {
             ("testDirForEach", testDirForEach),
             
             ("testFilePerms", testFilePerms),
-            ("testDirPerms", testDirPerms)
+            ("testDirPerms", testDirPerms),
+            
+            ("testBytesIO", testBytesIO)
         ]
     }
 }

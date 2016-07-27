@@ -17,8 +17,9 @@
 //===----------------------------------------------------------------------===//
 //
 
+import Foundation
 #if os(Linux)
-    import SwiftGlibc
+
 #else
     import Darwin
 #endif
@@ -27,19 +28,19 @@
 /// A JSONConvertibleObject is a custom class or struct which can be converted to and from JSON.
 public class JSONDecoding {
     private init() {}
-    
+
     /// The key used in JSON data to indicate the type of custom object which was converted.
     public static let objectIdentifierKey = "_jsonobjid"
     /// Function which returns a new instance of a custom object which will have its members set based on the JSON data.
     public typealias JSONConvertibleObjectCreator = () -> JSONConvertibleObject
-    
+
     static private var jsonDecodableRegistry = [String:JSONConvertibleObjectCreator]()
-    
+
     /// Register a custom object to be JSON encoded/decoded.
     static public func registerJSONDecodable(name nam: String, creator: JSONConvertibleObjectCreator) {
         JSONDecoding.jsonDecodableRegistry[nam] = creator
     }
-    
+
     /// Instantiate a custom object based on the JSON data.
     /// The system will use the `JSONDecoding.objectIdentifierKey` key to locate the custom object creator.
     static public func createJSONConvertibleObject(values:[String:Any]) -> JSONConvertibleObject? {
@@ -48,7 +49,7 @@ public class JSONDecoding {
         }
         return JSONDecoding.createJSONConvertibleObject(name: objkey, values: values)
     }
-    
+
     /// Instantiate a custom object based on the JSON data.
     /// The system will use the `name` parameter to locate the custom object creator.
     static public func createJSONConvertibleObject(name: String, values:[String:Any]) -> JSONConvertibleObject? {
@@ -96,7 +97,7 @@ public extension JSONConvertibleObject {
 }
 
 /// An error occurring during JSON conversion.
-public enum JSONConversionError: ErrorProtocol {
+public enum JSONConversionError: Error {
     /// The object did not suppport JSON conversion.
     case notConvertible(Any)
     /// A provided key was not a String.
@@ -283,7 +284,7 @@ extension String {
     public func jsonDecode() throws -> JSONConvertible {
         let state = JSONDecodeState()
         state.g = self.unicodeScalars.makeIterator()
-        
+
         let o = try state.readObject()
         if let _ = o as? JSONDecodeState.EOF {
             throw JSONConversionError.syntaxError
@@ -296,10 +297,10 @@ private class JSONDecodeState {
     struct EOF: JSONConvertible {
         func jsonEncodedString() throws -> String { return "" }
     }
-    
+
     var g = String().unicodeScalars.makeIterator()
     var pushBack: UnicodeScalar?
-    
+
     func movePastWhite() {
         while let c = self.next() {
             if !c.isWhiteSpace() {
@@ -308,14 +309,14 @@ private class JSONDecodeState {
             }
         }
     }
-    
+
     func readObject() throws -> JSONConvertible {
         self.movePastWhite()
-        
+
         guard let c = self.next() else {
             return EOF()
         }
-        
+
         switch(c) {
         case jsonOpenArray:
             var a = [Any]()
@@ -399,7 +400,7 @@ private class JSONDecodeState {
         }
         throw JSONConversionError.syntaxError
     }
-    
+
     func next() -> UnicodeScalar? {
         if pushBack != nil {
             let c = pushBack!
@@ -408,14 +409,14 @@ private class JSONDecodeState {
         }
         return g.next()
     }
-    
+
     // the opening quote has been read
     func readString() throws -> String {
         var next = self.next()
         var esc = false
         var s = ""
         while let c = next {
-            
+
             if esc {
                 switch(c) {
                 case jsonBackSlash:
@@ -486,21 +487,21 @@ private class JSONDecodeState {
             } else {
                 s.append(c)
             }
-            
+
             next = self.next()
         }
         throw JSONConversionError.syntaxError
     }
-    
+
     func readNumber(firstChar first: UnicodeScalar) throws -> JSONConvertible {
         var s = ""
         var needPeriod = true, needExp = true
         s.append(first)
-        
+
         if first == "." {
             needPeriod = false
         }
-        
+
         var next = self.next()
         var last = first
         while let c = next {
@@ -516,14 +517,14 @@ private class JSONDecodeState {
             } else if c == "e" || c == "E" {
                 needExp = false
                 s.append(c)
-                
+
                 next = self.next()
                 if next != nil && (next! == "-" || next! == "+") {
                     s.append(next!)
                 } else {
                     pushBack = next!
                 }
-                
+
             } else if last.isDigit() {
                 pushBack = c
                 if needPeriod && needExp {
@@ -536,10 +537,10 @@ private class JSONDecodeState {
             last = c
             next = self.next()
         }
-        
+
         throw JSONConversionError.syntaxError
     }
-    
+
     func readTrue() throws -> Bool {
         var next = self.next()
         if next != "r" && next != "R" {
@@ -560,7 +561,7 @@ private class JSONDecodeState {
         pushBack = next!
         return true
     }
-    
+
     func readFalse() throws -> Bool {
         var next = self.next()
         if next != "a" && next != "A" {
@@ -585,7 +586,7 @@ private class JSONDecodeState {
         pushBack = next!
         return false
     }
-    
+
     func readNull() throws {
         var next = self.next()
         if next != "u" && next != "U" {

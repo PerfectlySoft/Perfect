@@ -18,6 +18,7 @@
 //
 
 import PerfectNet
+import Foundation
 
 #if os(Linux)
 import LinuxBridge
@@ -119,7 +120,7 @@ extension UInt8 {
 			|| ( cc >= 123 && cc <= 126 )
 			|| self == 43 )
 	}
-    
+
     // same as String(self, radix: 16)
     // but outputs two characters. i.e. 0 padded
 	var hexString: String {
@@ -281,40 +282,40 @@ extension String {
 
 public struct UUID {
 	let uuid: uuid_t
-	
+
 	public init() {
-		let u = UnsafeMutablePointer<UInt8>(allocatingCapacity:  sizeof(uuid_t.self))
+		let u = UnsafeMutablePointer<UInt8>.allocate(capacity:  sizeof(uuid_t.self))
 		defer {
-			u.deallocateCapacity(sizeof(uuid_t.self))
+			u.deallocate(capacity: sizeof(uuid_t.self))
 		}
 		uuid_generate_random(u)
 		self.uuid = UUID.uuidFromPointer(u)
 	}
-	
+
 	public init(_ string: String) {
-		let u = UnsafeMutablePointer<UInt8>(allocatingCapacity:  sizeof(uuid_t.self))
+		let u = UnsafeMutablePointer<UInt8>.allocate(capacity:  sizeof(uuid_t.self))
 		defer {
-			u.deallocateCapacity(sizeof(uuid_t.self))
+			u.deallocate(capacity: sizeof(uuid_t.self))
 		}
 		uuid_parse(string, u)
 		self.uuid = UUID.uuidFromPointer(u)
 	}
-	
+
 	init(_ uuid: uuid_t) {
 		self.uuid = uuid
 	}
-	
+
 	private static func uuidFromPointer(_ u: UnsafeMutablePointer<UInt8>) -> uuid_t {
 		// is there a better way?
 		return uuid_t(u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15])
 	}
-	
+
 	public var string: String {
-		let u = UnsafeMutablePointer<UInt8>(allocatingCapacity:  sizeof(uuid_t.self))
-		let unu = UnsafeMutablePointer<Int8>(allocatingCapacity:  37) // as per spec. 36 + null
+		let u = UnsafeMutablePointer<UInt8>.allocate(capacity:  sizeof(uuid_t.self))
+		let unu = UnsafeMutablePointer<Int8>.allocate(capacity:  37) // as per spec. 36 + null
 		defer {
-			u.deallocateCapacity(sizeof(uuid_t.self))
-			unu.deallocateCapacity(37)
+			u.deallocate(capacity: sizeof(uuid_t.self))
+			unu.deallocate(capacity: 37)
 		}
 		var uu = self.uuid
 		memcpy(u, &uu, sizeof(uuid_t.self))
@@ -324,12 +325,12 @@ public struct UUID {
 }
 
 extension String {
-	
+
 	@available(*, unavailable, message: "Use UUID(_:String)")
 	public func asUUID() -> uuid_t {
 		return UUID(self).uuid
 	}
-	
+
     @available(*, unavailable, message: "Use UUID.string")
 	public static func fromUUID(uuid: uuid_t) -> String {
 		return UUID(uuid).string
@@ -436,153 +437,34 @@ extension String {
 	}
 }
 
-#if os(OSX)
 extension String {
-
-	var pathSeparator: UnicodeScalar {
-		return UnicodeScalar(47)
-	}
-
-	var extensionSeparator: UnicodeScalar {
-		return UnicodeScalar(46)
-	}
-
-	private var beginsWithSeparator: Bool {
-		let unis = self.characters
-		guard unis.count > 0 else {
-			return false
-		}
-		return unis[unis.startIndex] == Character(pathSeparator)
-	}
-
-	private var endsWithSeparator: Bool {
-		let unis = self.characters
-		guard unis.count > 0 else {
-			return false
-		}
-		return unis[unis.index(before: unis.endIndex)] == Character(pathSeparator)
-	}
-
-	private func pathComponents(addFirstLast addfl: Bool) -> [String] {
-		var r = [String]()
-		let unis = self.characters
-		guard unis.count > 0 else {
-			return r
-		}
-
-		if addfl && self.beginsWithSeparator {
-			r.append(String(pathSeparator))
-		}
-
-		r.append(contentsOf: self.characters.split(separator: Character(pathSeparator)).map { String($0) })
-
-		if addfl && self.endsWithSeparator {
-			if !self.beginsWithSeparator || r.count > 1 {
-				r.append(String(pathSeparator))
-			}
-		}
-		return r
-	}
-
 	var pathComponents: [String] {
-		return self.pathComponents(addFirstLast: true)
+		return URL(fileURLWithPath: self).pathComponents ?? [String]()
 	}
 
 	var lastPathComponent: String {
-		let last = self.pathComponents(addFirstLast: false).last ?? ""
-		if last.isEmpty && self.characters.first == Character(pathSeparator) {
-			return String(pathSeparator)
-		}
-		return last
+		return URL(fileURLWithPath: self).lastPathComponent ?? ""
 	}
 
-	var stringByDeletingLastPathComponent: String {
-		var comps = self.pathComponents(addFirstLast: false)
-		guard comps.count > 1 else {
-			if self.beginsWithSeparator {
-				return String(pathSeparator)
-			}
-			return ""
-		}
-		comps.removeLast()
-		let joined = comps.joined(separator: String(pathSeparator))
-		if self.beginsWithSeparator {
-			return String(pathSeparator) + joined
-		}
-		return joined
+	var deletingLastPathComponent: String {
+		let pth = try? URL(fileURLWithPath: self).deletingLastPathComponent()
+		return pth?.path ?? ""
 	}
 
-    private func lastPathSeparator(in unis: String.CharacterView) -> String.CharacterView.Index {
-        let startIndex = unis.startIndex
-        var endIndex = unis.endIndex
-        while endIndex != startIndex {
-            if unis[unis.index(before: endIndex)] != Character(pathSeparator) {
-                break
-            }
-            endIndex = unis.index(before: endIndex)
-        }
-        return endIndex
-    }
-    
-    private func lastExtensionSeparator(in unis: String.CharacterView, endIndex: String.CharacterView.Index) -> String.CharacterView.Index {
-        var endIndex = endIndex
-        while endIndex != startIndex {
-            endIndex = unis.index(before: endIndex)
-            if unis[endIndex] == Character(extensionSeparator) {
-                break
-            }
-        }
-        return endIndex
-    }
-    
-	var stringByDeletingPathExtension: String {
-		let unis = self.characters
-		let startIndex = unis.startIndex
-		var endIndex = lastPathSeparator(in: unis)
-		let noTrailsIndex = endIndex
-		endIndex = lastExtensionSeparator(in: unis, endIndex: endIndex)
-		guard endIndex != startIndex else {
-			if noTrailsIndex == startIndex {
-				return self
-			}
-			return self[startIndex..<noTrailsIndex]
-		}
-		return self[startIndex..<endIndex]
+	var deletingPathExtension: String {
+		let pth = try? URL(fileURLWithPath: self).deletingPathExtension()
+		return pth?.path ?? ""
 	}
 
 	var pathExtension: String {
-		let unis = self.characters
-		let startIndex = unis.startIndex
-        var endIndex = lastPathSeparator(in: unis)
-        let noTrailsIndex = endIndex
-        endIndex = lastExtensionSeparator(in: unis, endIndex: endIndex)
-		guard endIndex != startIndex else {
-			return ""
-		}
-		return self[unis.index(after: endIndex)..<noTrailsIndex]
+		return URL(fileURLWithPath: self).pathExtension ?? ""
 	}
 
-	var stringByResolvingSymlinksInPath: String {
-		return File(self).realPath
-
-//		let absolute = self.beginsWithSeparator
-//		let components = self.pathComponents(false)
-//		var s = absolute ? "/" : ""
-//		for component in components {
-//			if component == "." {
-//				s.appendContentsOf(".")
-//			} else if component == ".." {
-//				s.appendContentsOf("..")
-//			} else {
-//				let file = File(s + "/" + component)
-//				s = file.realPath()
-//			}
-//		}
-//		let ary = s.pathComponents(false) // get rid of slash runs
-//		return absolute ? "/" + ary.joinWithSeparator(String(pathSeparator)) : ary.joinWithSeparator(String(pathSeparator))
+	var resolvingSymlinksInPath: String {
+		let pth = try? URL(fileURLWithPath: self).resolvingSymlinksInPath()
+		return pth?.path ?? ""
 	}
 }
-#endif
 
 extension String {
 	func begins(with str: String) -> Bool {
@@ -632,9 +514,9 @@ public func formatDate(_ date: Double, format: String, timezone inTimezone: Stri
 	var time = time_t(date / 1000.0)
 	gmtime_r(&time, &t)
 	let maxResults = 1024
-	let results = UnsafeMutablePointer<Int8>(allocatingCapacity:  maxResults)
+	let results = UnsafeMutablePointer<Int8>.allocate(capacity:  maxResults)
 	defer {
-		results.deallocateCapacity(maxResults)
+		results.deallocate(capacity: maxResults)
 	}
 	let res = strftime(results, maxResults, format, &t)
 	if res > 0 {
@@ -645,7 +527,7 @@ public func formatDate(_ date: Double, format: String, timezone inTimezone: Stri
 }
 
 extension UnicodeScalar {
-    
+
     /// Returns true if the UnicodeScalar is a white space character
     public func isWhiteSpace() -> Bool {
         return isspace(Int32(self.value)) != 0
@@ -680,14 +562,14 @@ public extension NetNamedPipe {
     public func sendFile(_ file: File, callBack: (Bool) -> ()) throws {
         try self.sendFd(Int32(file.fd), callBack: callBack)
     }
-    
+
     /// Receive an existing opened `File` descriptor from the sender
     /// - parameter callBack: The callback to call when the receive completes. The parameter passed will be the received `File` object or nil.
     /// - throws: `PerfectError.NetworkError`
     public func receiveFile(callBack: (File?) -> ()) throws {
         try self.receiveFd {
             fd in
-            
+
             if fd == invalidSocket {
                 callBack(nil)
             } else {
@@ -701,11 +583,11 @@ import OpenSSL
 
 extension String.UTF8View {
     var sha1: [UInt8] {
-        let bytes = UnsafeMutablePointer<UInt8>(allocatingCapacity:  Int(SHA_DIGEST_LENGTH))
-        defer { bytes.deallocateCapacity(Int(SHA_DIGEST_LENGTH)) }
-        
+        let bytes = UnsafeMutablePointer<UInt8>.allocate(capacity:  Int(SHA_DIGEST_LENGTH))
+        defer { bytes.deallocate(capacity: Int(SHA_DIGEST_LENGTH)) }
+
         SHA1(Array<UInt8>(self), (self.count), bytes)
-        
+
         var r = [UInt8]()
         for idx in 0..<Int(SHA_DIGEST_LENGTH) {
             r.append(bytes[idx])

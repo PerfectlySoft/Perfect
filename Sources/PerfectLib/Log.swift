@@ -147,8 +147,7 @@ public struct Log {
 		Log.logger.critical(message: message)
 	}
 	
-	@noreturn
-	public static func terminal(message: String) {
+	public static func terminal(message: String) -> Never  {
 		Log.logger.terminal(message: message)
 		fatalError(message)
 	}

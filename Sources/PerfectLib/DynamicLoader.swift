@@ -17,8 +17,9 @@
 //===----------------------------------------------------------------------===//
 //
 
+import Foundation
 #if os(Linux)
-	import SwiftGlibc
+
 #else
 	import Darwin
 #endif
@@ -37,8 +38,8 @@ struct DynamicLoader {
 	}
 
 	func loadFramework(atPath at: String) -> Bool {
-		let resolvedPath = at.stringByResolvingSymlinksInPath
-		let moduleName = resolvedPath.lastPathComponent.stringByDeletingPathExtension
+		let resolvedPath = at.resolvingSymlinksInPath
+		let moduleName = resolvedPath.deletingPathExtension.lastPathComponent
 		let file = File(resolvedPath + "/" + moduleName)
         guard file.exists else {
             return false
@@ -48,11 +49,10 @@ struct DynamicLoader {
 	}
 
 	func loadLibrary(atPath at: String) -> Bool {
-		var fileName = at.lastPathComponent
-		if fileName.begins(with: "lib") {
-			fileName.characters.removeFirst(3)
+		var moduleName = at.deletingPathExtension.lastPathComponent
+		if moduleName.begins(with: "lib") {
+			moduleName.characters.removeFirst(3)
 		}
-		let moduleName = fileName.stringByDeletingPathExtension
 		return self.loadRealPath(at, moduleName: moduleName)
 	}
 

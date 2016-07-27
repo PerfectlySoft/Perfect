@@ -20,7 +20,6 @@
 import Foundation
 
 #if os(Linux)
-import SwiftGlibc
 import LinuxBridge
 #else
 import Darwin
@@ -29,9 +28,9 @@ import Darwin
 /// This class represents a directory on the file system.
 /// It can be used for creating & inspecting directories and enumerating directory contents.
 public struct Dir {
-	
+
 	public typealias PermissionMode = File.PermissionMode
-	
+
 	var internalPath = ""
 
 	/// Create a new Dir object with the given path
@@ -44,7 +43,7 @@ public struct Dir {
     public var exists: Bool {
 		return exists(realPath)
 	}
-	
+
 	public func setAsWorkingDir() throws {
 		let res = chdir(self.internalPath)
 		guard res == 0 else {
@@ -58,7 +57,7 @@ public struct Dir {
 		let path = String(validatingUTF8: UnsafeMutablePointer<Int8>(buffer)) ?? "."
 		return Dir(path)
 	}
-	
+
 	func exists(_ path: String) -> Bool {
 		return access(path, F_OK) != -1
 	}
@@ -69,7 +68,7 @@ public struct Dir {
 	public func create(perms: PermissionMode = [.rwxUser, .rxGroup, .rxOther]) throws {
 		let pth = realPath
 		var currPath = pth.begins(with: "/") ? "/" : ""
-        for component in pth.pathComponents where component != "/" {
+		for component in pth.pathComponents where component != "/" {
             currPath += component
             defer {
                 currPath += "/"
@@ -103,14 +102,14 @@ public struct Dir {
 		guard internalPath != "/" else {
 			return nil // can not go up
 		}
-		return Dir(internalPath.stringByDeletingLastPathComponent)
+		return Dir(internalPath.deletingLastPathComponent)
 	}
 
 	/// Returns the path to the current directory.
 	public var path: String {
 		return internalPath
 	}
-	
+
 	/// Returns the UNIX style permissions for the directory.
 	public var perms: PermissionMode {
 		get {
@@ -122,7 +121,7 @@ public struct Dir {
 	}
 
 	var realPath: String {
-		return internalPath.stringByResolvingSymlinksInPath
+		return internalPath.resolvingSymlinksInPath
 	}
 
 #if os(Linux)
@@ -134,7 +133,7 @@ public struct Dir {
         return readdir_r(d, &dirEnt, endPtr)
     }
 #endif
-    
+
 	/// Enumerates the contents of the directory passing the name of each contained element to the provided callback.
 	/// - parameter closure: The callback which will receive each entry's name
 	/// - throws: `PerfectError.FileError`
@@ -142,12 +141,12 @@ public struct Dir {
 		guard let dir = opendir(realPath) else {
 			try ThrowFileError()
 		}
-            
+
 		defer { closedir(dir) }
 
 		var ent = dirent()
-		let entPtr = UnsafeMutablePointer<UnsafeMutablePointer<dirent>?>(allocatingCapacity:  1)
-		defer { entPtr.deallocateCapacity(1) }
+		let entPtr = UnsafeMutablePointer<UnsafeMutablePointer<dirent>?>.allocate(capacity:  1)
+		defer { entPtr.deallocate(capacity: 1) }
 
 		while readDir(dir, &ent, entPtr) == 0 && entPtr.pointee != nil {
 			let name = ent.d_name
@@ -165,13 +164,13 @@ public struct Dir {
                 guard let (_, elem) = childGen.next() else {
                     break
                 }
-				guard let elemI = elem as? Int8 where elemI != 0 else {
+				guard let elemI = elem as? Int8, elemI != 0 else {
 					break
 				}
 				nameBuf.append(elemI)
 			}
 			nameBuf.append(0)
-			if let name = String(validatingUTF8: nameBuf) where !(name == "." || name == "..") {
+			if let name = String(validatingUTF8: nameBuf), !(name == "." || name == "..") {
                 if Int32(type) == Int32(DT_DIR) {
                     try closure(name: name + "/")
                 } else {
