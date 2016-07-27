@@ -29,6 +29,14 @@ Perfect operates using either its own stand-alone HTTP/HTTPS server or through F
 
 Perfect is built on its own high performance completely asynchronous networking engine with the goal of providing a scalable option for internet services. It supports SSL out of the box and provides a suite of tools which are commonly required by internet servers, such as WebSockets and iOS push notifications, but does not limit your options. Feel free to swap in your own favorite JSON or templating systems, etc.
 
+## Issues
+
+We are transitioning to using JIRA for all bugs and support related issues, therefore the GitHub issues has been disabled.
+
+If you find a mistake, bug, or any other helpful suggestion you'd like to make on the docs please head over to [http://jira.perfect.org:8080/servicedesk/customer/portal/1](http://jira.perfect.org:8080/servicedesk/customer/portal/1) and raise it.
+
+A comprehensive list of open issues can be found at [http://jira.perfect.org:8080/projects/ISS/issues](http://jira.perfect.org:8080/projects/ISS/issues)
+
 ## Quick Start
 
 ### Swift 3.0
