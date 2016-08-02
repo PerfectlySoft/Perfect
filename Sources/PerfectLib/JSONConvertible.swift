@@ -180,6 +180,34 @@ extension UInt: JSONConvertible {
     }
 }
 
+extension Int32: JSONConvertible {
+    /// Convert an Int into JSON text.
+    public func jsonEncodedString() throws -> String {
+        return String(self)
+    }
+}
+
+extension Int64: JSONConvertible {
+    /// Convert an Int into JSON text.
+    public func jsonEncodedString() throws -> String {
+        return String(self)
+    }
+}
+
+extension UInt32: JSONConvertible {
+    /// Convert an Int into JSON text.
+    public func jsonEncodedString() throws -> String {
+        return String(self)
+    }
+}
+
+extension UInt64: JSONConvertible {
+    /// Convert an Int into JSON text.
+    public func jsonEncodedString() throws -> String {
+        return String(self)
+    }
+}
+
 extension Double: JSONConvertible {
     /// Convert a Double into JSON text.
     public func jsonEncodedString() throws -> String {
