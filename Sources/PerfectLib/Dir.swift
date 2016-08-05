@@ -53,8 +53,8 @@ public struct Dir {
 
 	public static var workingDir: Dir {
 		let buffer = Array(repeating: 0 as UInt8, count: 2049)
-		let _ = getcwd(UnsafeMutablePointer<Int8>(buffer), 2048)
-		let path = String(validatingUTF8: UnsafeMutablePointer<Int8>(buffer)) ?? "."
+		let _ = getcwd(UnsafeMutableRawPointer(mutating: buffer).assumingMemoryBound(to: Int8.self), 2048)
+		let path = String(validatingUTF8: UnsafeMutableRawPointer(mutating: buffer).assumingMemoryBound(to: Int8.self)) ?? "."
 		return Dir(path)
 	}
 
@@ -137,7 +137,7 @@ public struct Dir {
 	/// Enumerates the contents of the directory passing the name of each contained element to the provided callback.
 	/// - parameter closure: The callback which will receive each entry's name
 	/// - throws: `PerfectError.FileError`
-	public func forEachEntry(closure: (name: String) throws -> ()) throws {
+	public func forEachEntry(closure: (String) throws -> ()) throws {
 		guard let dir = opendir(realPath) else {
 			try ThrowFileError()
 		}
@@ -172,9 +172,9 @@ public struct Dir {
 			nameBuf.append(0)
 			if let name = String(validatingUTF8: nameBuf), !(name == "." || name == "..") {
                 if Int32(type) == Int32(DT_DIR) {
-                    try closure(name: name + "/")
+                    try closure(name + "/")
                 } else {
-                    try closure(name: name)
+                    try closure(name)
                 }
 			}
 		}

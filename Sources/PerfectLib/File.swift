@@ -82,7 +82,7 @@ public class File {
             return internalPath
         }
         var ary = [UInt8](repeating: 0, count: maxPath)
-        let buffer = UnsafeMutablePointer<Int8>(ary)
+		let buffer = UnsafeMutableRawPointer(mutating: ary).assumingMemoryBound(to: Int8.self)
         let res = readlink(internalPath, buffer, maxPath)
         guard res != -1 else {
             return internalPath
@@ -404,7 +404,7 @@ public extension File {
 
 		let bSize = min(count, sizeOr(count))
 		var ary = [UInt8](repeating: 0, count: bSize)
-		let ptr = UnsafeMutablePointer<UInt8>(ary)
+		let ptr = UnsafeMutableRawPointer(mutating: ary).assumingMemoryBound(to: Int8.self)
 
 		let readCount = read(CInt(fd), ptr, bSize)
 		guard readCount >= 0 else {
@@ -442,7 +442,7 @@ public extension File {
     @discardableResult
 	public func write(bytes: [UInt8], dataPosition: Int = 0, length: Int = Int.max) throws -> Int {
         let len = min(bytes.count - dataPosition, length)
-		let ptr = UnsafeMutablePointer<UInt8>(bytes).advanced(by: dataPosition)
+		let ptr = UnsafeMutableRawPointer(mutating: bytes).assumingMemoryBound(to: UInt8.self).advanced(by: dataPosition)
     #if os(Linux)
 		let wrote = SwiftGlibc.write(Int32(fd), ptr, len)
 	#else

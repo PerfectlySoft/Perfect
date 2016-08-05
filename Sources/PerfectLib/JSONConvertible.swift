@@ -106,21 +106,21 @@ public enum JSONConversionError: Error {
     case syntaxError
 }
 
-private let jsonBackSlash = UnicodeScalar(UInt32(92))
-private let jsonBackSpace = UnicodeScalar(UInt32(8))
-private let jsonFormFeed = UnicodeScalar(UInt32(12))
-private let jsonLF = UnicodeScalar(UInt32(10))
-private let jsonCR = UnicodeScalar(UInt32(13))
-private let jsonTab = UnicodeScalar(UInt32(9))
-private let jsonQuoteDouble = UnicodeScalar(UInt32(34))
+private let jsonBackSlash = UnicodeScalar(UInt32(92))!
+private let jsonBackSpace = UnicodeScalar(UInt32(8))!
+private let jsonFormFeed = UnicodeScalar(UInt32(12))!
+private let jsonLF = UnicodeScalar(UInt32(10))!
+private let jsonCR = UnicodeScalar(UInt32(13))!
+private let jsonTab = UnicodeScalar(UInt32(9))!
+private let jsonQuoteDouble = UnicodeScalar(UInt32(34))!
 
-private let jsonOpenObject = UnicodeScalar(UInt32(123))
-private let jsonOpenArray = UnicodeScalar(UInt32(91))
-private let jsonCloseObject = UnicodeScalar(UInt32(125))
-private let jsonCloseArray = UnicodeScalar(UInt32(93))
-private let jsonWhiteSpace = UnicodeScalar(UInt32(32))
-private let jsonColon = UnicodeScalar(UInt32(58))
-private let jsonComma = UnicodeScalar(UInt32(44))
+private let jsonOpenObject = UnicodeScalar(UInt32(123))!
+private let jsonOpenArray = UnicodeScalar(UInt32(91))!
+private let jsonCloseObject = UnicodeScalar(UInt32(125))!
+private let jsonCloseArray = UnicodeScalar(UInt32(93))!
+private let jsonWhiteSpace = UnicodeScalar(UInt32(32))!
+private let jsonColon = UnicodeScalar(UInt32(58))!
+private let jsonComma = UnicodeScalar(UInt32(44))!
 
 private let highSurrogateLowerBound = UInt32(strtoul("d800", nil, 16))
 private let highSurrogateUpperBound = UInt32(strtoul("dbff", nil, 16))
@@ -158,7 +158,7 @@ extension String: JSONConvertible {
             case jsonTab:
                 s.append("\\t")
             default:
-                s.append(uchar)
+                s.append(String(uchar))
             }
         }
         s.append("\"")
@@ -448,19 +448,19 @@ private class JSONDecodeState {
             if esc {
                 switch(c) {
                 case jsonBackSlash:
-                    s.append(jsonBackSlash)
+                    s.append(String(jsonBackSlash))
                 case jsonQuoteDouble:
-                    s.append(jsonQuoteDouble)
+                    s.append(String(jsonQuoteDouble))
                 case "b":
-                    s.append(jsonBackSpace)
+                    s.append(String(jsonBackSpace))
                 case "f":
-                    s.append(jsonFormFeed)
+                    s.append(String(jsonFormFeed))
                 case "n":
-                    s.append(jsonLF)
+                    s.append(String(jsonLF))
                 case "r":
-                    s.append(jsonCR)
+                    s.append(String(jsonCR))
                 case "t":
-                    s.append(jsonTab)
+                    s.append(String(jsonTab))
                 case "u":
                     var hexStr = ""
                     for _ in 1...4 {
@@ -471,7 +471,7 @@ private class JSONDecodeState {
                         guard hexC.isHexDigit() else {
                             throw JSONConversionError.syntaxError
                         }
-                        hexStr.append(hexC)
+                        hexStr.append(String(hexC))
                     }
                     var uint32Value = UInt32(strtoul(hexStr, nil, 16))
                     // if unicode is a high/low surrogate, it can't be converted directly by UnicodeScalar
@@ -497,15 +497,16 @@ private class JSONDecodeState {
                             guard hexC.isHexDigit() else {
                                 throw JSONConversionError.syntaxError
                             }
-                            lowSurrogateHexStr.append(hexC)
+                            lowSurrogateHexStr.append(String(hexC))
                         }
                         let lowSurrogateValue = UInt32(strtoul(lowSurrogateHexStr, nil, 16))
                         uint32Value = ( highSurrogateValue - highSurrogateLowerBound ) * surrogateStep + ( lowSurrogateValue - lowSurrogateLowerBound ) + surrogateBase
                     }
-                    let result = UnicodeScalar(uint32Value)
-                    s.append(result)
+					if let result = UnicodeScalar(uint32Value) {
+						s.append(String(Character(result)))
+					}
                 default:
-                    s.append(c)
+                    s.append(String(c))
                 }
                 esc = false
             } else if c == jsonBackSlash {
@@ -513,7 +514,7 @@ private class JSONDecodeState {
             } else if c == jsonQuoteDouble {
                 return s
             } else {
-                s.append(c)
+                s.append(String(c))
             }
 
             next = self.next()
@@ -524,7 +525,7 @@ private class JSONDecodeState {
     func readNumber(firstChar first: UnicodeScalar) throws -> JSONConvertible {
         var s = ""
         var needPeriod = true, needExp = true
-        s.append(first)
+        s.append(String(Character(first)))
 
         if first == "." {
             needPeriod = false
@@ -534,21 +535,21 @@ private class JSONDecodeState {
         var last = first
         while let c = next {
             if c.isDigit() {
-                s.append(c)
+                s.append(String(c))
             } else if c == "." && !needPeriod {
                 break
             } else if (c == "e" || c == "E") && !needExp {
                 break
             } else if c == "." {
                 needPeriod = false
-                s.append(c)
+                s.append(String(c))
             } else if c == "e" || c == "E" {
                 needExp = false
-                s.append(c)
+                s.append(String(c))
 
                 next = self.next()
                 if next != nil && (next! == "-" || next! == "+") {
-                    s.append(next!)
+                    s.append(String(next!))
                 } else {
                     pushBack = next!
                 }
