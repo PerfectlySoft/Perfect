@@ -44,51 +44,6 @@ class PerfectLibTests: XCTestCase {
 		super.tearDown()
 	}
 
-
-
-	func testConcurrentQueue() {
-		let q = Threading.getQueue(name: "concurrent", type: .concurrent)
-
-		var t1 = 0, t2 = 0, t3 = 0
-
-		q.dispatch {
-			t1 = 1
-			Threading.sleep(seconds: 5)
-		}
-		q.dispatch {
-			t2 = 1
-			Threading.sleep(seconds: 5)
-		}
-		q.dispatch {
-			t3 = 1
-			Threading.sleep(seconds: 5)
-		}
-		Threading.sleep(seconds: 1)
-
-		XCTAssert(t1 == 1 && t2 == 1 && t3 == 1)
-	}
-
-	func testSerialQueue() {
-		let q = Threading.getQueue(name: "serial", type: .serial)
-
-		var t1 = 0
-
-		q.dispatch {
-			XCTAssert(t1 == 0)
-			t1 = 1
-		}
-		q.dispatch {
-			XCTAssert(t1 == 1)
-			t1 = 2
-		}
-		q.dispatch {
-			XCTAssert(t1 == 2)
-			t1 = 3
-		}
-		Threading.sleep(seconds: 2)
-		XCTAssert(t1 == 3)
-	}
-
 	func testJSONConvertibleObject1() {
 
 		class Test: JSONConvertibleObject {
@@ -117,8 +72,6 @@ class PerfectLibTests: XCTestCase {
 			XCTAssert(false, "Exception \(error)")
 		}
 	}
-	
-	
 	
 	func testJSONConvertibleObject2() {
 		
@@ -591,7 +544,7 @@ class PerfectLibTests: XCTestCase {
 		XCTAssert(i64 == bytes2.export64Bits())
 		XCTAssert(i32 == bytes2.export32Bits())
 		XCTAssert(i16 == bytes2.export16Bits())
-		bytes2.position -= sizeof(UInt16.self)
+		bytes2.position -= MemoryLayout<UInt16>.size
 		XCTAssert(i16 == bytes2.export16Bits())
 		XCTAssert(bytes2.availableExportBytes == 1)
 		XCTAssert(i8 == bytes2.export8Bits())
@@ -601,8 +554,6 @@ class PerfectLibTests: XCTestCase {
 extension PerfectLibTests {
     static var allTests : [(String, (PerfectLibTests) -> () throws -> Void)] {
         return [
-            ("testConcurrentQueue", testConcurrentQueue),
-            ("testSerialQueue", testSerialQueue),
             ("testJSONConvertibleObject1", testJSONConvertibleObject1),
             ("testJSONConvertibleObject2", testJSONConvertibleObject2),
             ("testJSONEncodeDecode", testJSONEncodeDecode),

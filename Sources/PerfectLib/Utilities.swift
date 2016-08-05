@@ -57,34 +57,22 @@ public struct GenerateFromPointer<T> : IteratorProtocol {
 public struct Encoding {
 
 	/// Return a String given a character generator.
-	public static func encode<D : UnicodeCodec, G : IteratorProtocol where G.Element == D.CodeUnit>(codec inCodec: D, generator: G) -> String {
+	public static func encode<D : UnicodeCodec, G : IteratorProtocol>(codec inCodec: D, generator: G) -> String where G.Element == D.CodeUnit, G.Element == D.CodeUnit {
 		var encodedString = ""
 		var finished: Bool = false
 		var mutableDecoder = inCodec
 		var mutableGenerator = generator
 		repeat {
 			let decodingResult = mutableDecoder.decode(&mutableGenerator)
-			#if swift(>=3.0)
 			switch decodingResult {
 			case .scalarValue(let char):
-				encodedString.append(char)
+				encodedString.append(String(char))
 			case .emptyInput:
 				finished = true
 				/* ignore errors and unexpected values */
 			case .error:
 				finished = true
 			}
-			#else
-			switch decodingResult {
-				case .Result(let char):
-					encodedString.append(char)
-				case .EmptyInput:
-					finished = true
-					/* ignore errors and unexpected values */
-				case .Error:
-					finished = true
-			}
-			#endif
 		} while !finished
 		return encodedString
 	}
@@ -94,12 +82,12 @@ public struct Encoding {
 public struct UTF8Encoding {
 
 	/// Use a character generator to create a String.
-	public static func encode<G : IteratorProtocol where G.Element == UTF8.CodeUnit>(generator gen: G) -> String {
+	public static func encode<G : IteratorProtocol>(generator gen: G) -> String where G.Element == UTF8.CodeUnit {
 		return Encoding.encode(codec: UTF8(), generator: gen)
 	}
 
 	/// Use a character sequence to create a String.
-	public static func encode<S : Sequence where S.Iterator.Element == UTF8.CodeUnit>(bytes byts: S) -> String {
+	public static func encode<S : Sequence>(bytes byts: S) -> String where S.Iterator.Element == UTF8.CodeUnit {
 		return encode(generator: byts.makeIterator())
 	}
 
@@ -110,7 +98,7 @@ public struct UTF8Encoding {
 }
 
 extension UInt8 {
-	private var shouldURLEncode: Bool {
+	var shouldURLEncode: Bool {
 		let cc = self
 		return ( ( cc >= 128 )
 			|| ( cc < 33 )
@@ -126,9 +114,9 @@ extension UInt8 {
 	var hexString: String {
 		var s = ""
 		let b = self >> 4
-		s.append(UnicodeScalar(b > 9 ? b - 10 + 65 : b + 48))
+		s.append(String(Character(UnicodeScalar(b > 9 ? b - 10 + 65 : b + 48))))
 		let b2 = self & 0x0F
-		s.append(UnicodeScalar(b2 > 9 ? b2 - 10 + 65 : b2 + 48))
+		s.append(String(Character(UnicodeScalar(b2 > 9 ? b2 - 10 + 65 : b2 + 48))))
 		return s
 	}
 }
@@ -155,9 +143,11 @@ extension String {
 			}
 			lastWasCR = false
 			if c < UnicodeScalar(0x0009) {
-				ret.append("&#x");
-				ret.append(UnicodeScalar(0x0030 + UInt32(c)));
-				ret.append(";");
+				if let scale = UnicodeScalar(0x0030 + UInt32(c)) {
+					ret.append("&#x")
+					ret.append(String(Character(scale)))
+					ret.append(";")
+				}
 			} else if c == UnicodeScalar(0x0022) {
 				ret.append("&quot;")
 			} else if c == UnicodeScalar(0x0026) {
@@ -171,7 +161,7 @@ extension String {
 			} else if c > UnicodeScalar(126) {
 				ret.append("&#\(UInt32(c));")
 			} else {
-				ret.append(c)
+				ret.append(String(Character(c)))
 			}
 		}
 		return ret
@@ -183,10 +173,10 @@ extension String {
 		var g = self.utf8.makeIterator()
 		while let c = g.next() {
 			if c.shouldURLEncode {
-				ret.append(UnicodeScalar(37))
+				ret.append(String(Character(UnicodeScalar(37))))
 				ret.append(c.hexString)
 			} else {
-				ret.append(UnicodeScalar(c))
+				ret.append(String(Character(UnicodeScalar(c))))
 			}
 		}
 		return ret
@@ -284,18 +274,18 @@ public struct UUID {
 	let uuid: uuid_t
 
 	public init() {
-		let u = UnsafeMutablePointer<UInt8>.allocate(capacity:  sizeof(uuid_t.self))
+		let u = UnsafeMutablePointer<UInt8>.allocate(capacity:  MemoryLayout<uuid_t>.size)
 		defer {
-			u.deallocate(capacity: sizeof(uuid_t.self))
+			u.deallocate(capacity: MemoryLayout<uuid_t>.size)
 		}
 		uuid_generate_random(u)
 		self.uuid = UUID.uuidFromPointer(u)
 	}
 
 	public init(_ string: String) {
-		let u = UnsafeMutablePointer<UInt8>.allocate(capacity:  sizeof(uuid_t.self))
+		let u = UnsafeMutablePointer<UInt8>.allocate(capacity:  MemoryLayout<uuid_t>.size)
 		defer {
-			u.deallocate(capacity: sizeof(uuid_t.self))
+			u.deallocate(capacity: MemoryLayout<uuid_t>.size)
 		}
 		uuid_parse(string, u)
 		self.uuid = UUID.uuidFromPointer(u)
@@ -311,14 +301,14 @@ public struct UUID {
 	}
 
 	public var string: String {
-		let u = UnsafeMutablePointer<UInt8>.allocate(capacity:  sizeof(uuid_t.self))
+		let u = UnsafeMutablePointer<UInt8>.allocate(capacity:  MemoryLayout<uuid_t>.size)
 		let unu = UnsafeMutablePointer<Int8>.allocate(capacity:  37) // as per spec. 36 + null
 		defer {
-			u.deallocate(capacity: sizeof(uuid_t.self))
+			u.deallocate(capacity: MemoryLayout<uuid_t>.size)
 			unu.deallocate(capacity: 37)
 		}
 		var uu = self.uuid
-		memcpy(u, &uu, sizeof(uuid_t.self))
+		memcpy(u, &uu, MemoryLayout<uuid_t>.size)
 		uuid_unparse_lower(u, unu)
 		return String(validatingUTF8: unu)!
 	}
@@ -559,14 +549,14 @@ public extension NetNamedPipe {
     /// - parameter file: The `File` whose descriptor to send
     /// - parameter callBack: The callback to call when the send completes. The parameter passed will be `true` if the send completed without error.
     /// - throws: `PerfectError.NetworkError`
-    public func sendFile(_ file: File, callBack: (Bool) -> ()) throws {
+    public func sendFile(_ file: File, callBack: @escaping (Bool) -> ()) throws {
         try self.sendFd(Int32(file.fd), callBack: callBack)
     }
 
     /// Receive an existing opened `File` descriptor from the sender
     /// - parameter callBack: The callback to call when the receive completes. The parameter passed will be the received `File` object or nil.
     /// - throws: `PerfectError.NetworkError`
-    public func receiveFile(callBack: (File?) -> ()) throws {
+    public func receiveFile(callBack: @escaping (File?) -> ()) throws {
         try self.receiveFd {
             fd in
 

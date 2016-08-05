@@ -56,7 +56,7 @@ public class SysProcess {
         }
 
 		cArgs[0] = strdup(cmd)
-		cArgs[cArgsCount + 1] = UnsafeMutablePointer<CChar>(nil)
+		cArgs[cArgsCount + 1] = nil
 		
 		for idx in 0..<cArgsCount {
 			cArgs[idx+1] = strdup(args![idx])
@@ -67,7 +67,7 @@ public class SysProcess {
 
 		defer { cEnv.deinitialize(count: cEnvCount + 1) ; cEnv.deallocate(capacity: cEnvCount + 1) }
 
-		cEnv[cEnvCount] = UnsafeMutablePointer<CChar>(nil)
+		cEnv[cEnvCount] = nil
 		for idx in 0..<cEnvCount {
 			cEnv[idx] = strdup(env![idx].0 + "=" + env![idx].1)
 		}
@@ -76,13 +76,13 @@ public class SysProcess {
 		var fSTDOUT: [Int32] = [0, 0]
 		var fSTDERR: [Int32] = [0, 0]
 
-		pipe(UnsafeMutablePointer<Int32>(fSTDIN))
-		pipe(UnsafeMutablePointer<Int32>(fSTDOUT))
-		pipe(UnsafeMutablePointer<Int32>(fSTDERR))
+		pipe(UnsafeMutableRawPointer(mutating: fSTDIN).assumingMemoryBound(to: Int32.self))
+		pipe(UnsafeMutableRawPointer(mutating: fSTDOUT).assumingMemoryBound(to: Int32.self))
+		pipe(UnsafeMutableRawPointer(mutating: fSTDERR).assumingMemoryBound(to: Int32.self))
 #if os(Linux)
 		var action = posix_spawn_file_actions_t()
 #else
-		var action = posix_spawn_file_actions_t(nil)
+		var action = posix_spawn_file_actions_t(nil as OpaquePointer?)
 #endif
 		posix_spawn_file_actions_init(&action);
 		posix_spawn_file_actions_adddup2(&action, fSTDOUT[1], STDOUT_FILENO);
