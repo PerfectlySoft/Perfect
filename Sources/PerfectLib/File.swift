@@ -58,7 +58,7 @@ let fileCopyBufferSize = 16384
 /// Provides access to a file on the local file system
 public class File {
 
-	var fd = -1
+	public var fd = -1
 	var internalPath = ""
 
     /// Checks that the file exists on the file system
