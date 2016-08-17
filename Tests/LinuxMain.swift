@@ -1,7 +1,6 @@
 import XCTest
+@testable import PerfectLibTests
 
-import PerfectLibTestSuite
-
-var tests = [XCTestCaseEntry]()
-tests += PerfectLibTestSuite.allTests()
-XCTMain(tests)
+XCTMain([
+	testCase(PerfectLibTests.allTests),
+])
