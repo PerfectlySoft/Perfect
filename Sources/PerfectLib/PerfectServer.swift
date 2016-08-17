@@ -26,6 +26,12 @@
 /// Provides access to various system level features for the process.
 /// A static instance of this class is created at startup and all access to this object go through the `PerfectServer.staticPerfectServer` static property.
 public struct PerfectServer {
+	
+	@available(*, deprecated, message: "No longer required to call this")
+	public func initializeServices() {
+	
+	}
+	
     /// Switch the current process to run with the permissions of the indicated user
     public static func switchTo(userName unam: String) throws {
         guard let pw = getpwnam(unam) else {
