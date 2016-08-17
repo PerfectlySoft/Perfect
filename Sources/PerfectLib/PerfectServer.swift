@@ -28,7 +28,7 @@
 public struct PerfectServer {
 	
 	@available(*, deprecated, message: "No longer required to call this")
-	public func initializeServices() {
+	public static func initializeServices() {
 	
 	}
 	
