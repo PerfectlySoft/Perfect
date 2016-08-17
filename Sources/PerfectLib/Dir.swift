@@ -68,7 +68,7 @@ public struct Dir {
 	public func create(perms: PermissionMode = [.rwxUser, .rxGroup, .rxOther]) throws {
 		let pth = realPath
 		var currPath = pth.begins(with: "/") ? "/" : ""
-		for component in pth.pathComponents where component != "/" {
+		for component in pth.filePathComponents where component != "/" {
             currPath += component
             defer {
                 currPath += "/"
@@ -94,7 +94,7 @@ public struct Dir {
 
 	/// Returns the name of the directory.
 	public var name: String {
-		return internalPath.lastPathComponent
+		return internalPath.lastFilePathComponent
 	}
 
 	/// Returns a Dir object representing the current Dir's parent. Returns nil if there is no parent.
@@ -102,7 +102,7 @@ public struct Dir {
 		guard internalPath != "/" else {
 			return nil // can not go up
 		}
-		return Dir(internalPath.deletingLastPathComponent)
+		return Dir(internalPath.deletingLastFilePathComponent)
 	}
 
 	/// Returns the path to the current directory.
@@ -121,7 +121,7 @@ public struct Dir {
 	}
 
 	var realPath: String {
-		return internalPath.resolvingSymlinksInPath
+		return internalPath.resolvingSymlinksInFilePath
 	}
 
 #if os(Linux)

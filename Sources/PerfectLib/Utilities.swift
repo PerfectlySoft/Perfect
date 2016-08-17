@@ -17,7 +17,6 @@
 //===----------------------------------------------------------------------===//
 //
 
-import PerfectNet
 import Foundation
 
 #if os(Linux)
@@ -428,35 +427,6 @@ extension String {
 }
 
 extension String {
-	var pathComponents: [String] {
-		return URL(fileURLWithPath: self).pathComponents ?? [String]()
-	}
-
-	var lastPathComponent: String {
-		return URL(fileURLWithPath: self).lastPathComponent ?? ""
-	}
-
-	var deletingLastPathComponent: String {
-		let pth = try? URL(fileURLWithPath: self).deletingLastPathComponent()
-		return pth?.path ?? ""
-	}
-
-	var deletingPathExtension: String {
-		let pth = try? URL(fileURLWithPath: self).deletingPathExtension()
-		return pth?.path ?? ""
-	}
-
-	var pathExtension: String {
-		return URL(fileURLWithPath: self).pathExtension ?? ""
-	}
-
-	var resolvingSymlinksInPath: String {
-		let pth = try? URL(fileURLWithPath: self).resolvingSymlinksInPath()
-		return pth?.path ?? ""
-	}
-}
-
-extension String {
 	func begins(with str: String) -> Bool {
 		return self.characters.starts(with: str.characters)
 	}
@@ -544,44 +514,175 @@ extension UnicodeScalar {
     }
 }
 
-public extension NetNamedPipe {
-    /// Send the existing & opened `File`'s descriptor over the connection to the recipient
-    /// - parameter file: The `File` whose descriptor to send
-    /// - parameter callBack: The callback to call when the send completes. The parameter passed will be `true` if the send completed without error.
-    /// - throws: `PerfectError.NetworkError`
-    public func sendFile(_ file: File, callBack: @escaping (Bool) -> ()) throws {
-        try self.sendFd(Int32(file.fd), callBack: callBack)
-    }
+//public extension NetNamedPipe {
+//    /// Send the existing & opened `File`'s descriptor over the connection to the recipient
+//    /// - parameter file: The `File` whose descriptor to send
+//    /// - parameter callBack: The callback to call when the send completes. The parameter passed will be `true` if the send completed without error.
+//    /// - throws: `PerfectError.NetworkError`
+//    public func sendFile(_ file: File, callBack: @escaping (Bool) -> ()) throws {
+//        try self.sendFd(Int32(file.fd), callBack: callBack)
+//    }
+//
+//    /// Receive an existing opened `File` descriptor from the sender
+//    /// - parameter callBack: The callback to call when the receive completes. The parameter passed will be the received `File` object or nil.
+//    /// - throws: `PerfectError.NetworkError`
+//    public func receiveFile(callBack: @escaping (File?) -> ()) throws {
+//        try self.receiveFd {
+//            fd in
+//
+//            if fd == invalidSocket {
+//                callBack(nil)
+//            } else {
+//                callBack(File("", fd: fd))
+//            }
+//        }
+//    }
+//}
+//
+//import OpenSSL
+//
+//extension String.UTF8View {
+//    var sha1: [UInt8] {
+//        let bytes = UnsafeMutablePointer<UInt8>.allocate(capacity:  Int(SHA_DIGEST_LENGTH))
+//        defer { bytes.deallocate(capacity: Int(SHA_DIGEST_LENGTH)) }
+//
+//        SHA1(Array<UInt8>(self), (self.count), bytes)
+//
+//        var r = [UInt8]()
+//        for idx in 0..<Int(SHA_DIGEST_LENGTH) {
+//            r.append(bytes[idx])
+//        }
+//        return r
+//    }
+//}
 
-    /// Receive an existing opened `File` descriptor from the sender
-    /// - parameter callBack: The callback to call when the receive completes. The parameter passed will be the received `File` object or nil.
-    /// - throws: `PerfectError.NetworkError`
-    public func receiveFile(callBack: @escaping (File?) -> ()) throws {
-        try self.receiveFd {
-            fd in
 
-            if fd == invalidSocket {
-                callBack(nil)
-            } else {
-                callBack(File("", fd: fd))
-            }
-        }
-    }
-}
-
-import OpenSSL
-
-extension String.UTF8View {
-    var sha1: [UInt8] {
-        let bytes = UnsafeMutablePointer<UInt8>.allocate(capacity:  Int(SHA_DIGEST_LENGTH))
-        defer { bytes.deallocate(capacity: Int(SHA_DIGEST_LENGTH)) }
-
-        SHA1(Array<UInt8>(self), (self.count), bytes)
-
-        var r = [UInt8]()
-        for idx in 0..<Int(SHA_DIGEST_LENGTH) {
-            r.append(bytes[idx])
-        }
-        return r
-    }
+extension String {
+	
+	var filePathSeparator: UnicodeScalar {
+		return UnicodeScalar(47)
+	}
+	
+	var fileExtensionSeparator: UnicodeScalar {
+		return UnicodeScalar(46)
+	}
+	
+	public var beginsWithFilePathSeparator: Bool {
+		let unis = self.characters
+		guard unis.count > 0 else {
+			return false
+		}
+		return unis[unis.startIndex] == Character(filePathSeparator)
+	}
+	
+	public var endsWithFilePathSeparator: Bool {
+		let unis = self.characters
+		guard unis.count > 0 else {
+			return false
+		}
+		return unis[unis.index(before: unis.endIndex)] == Character(filePathSeparator)
+	}
+	
+	private func filePathComponents(addFirstLast addfl: Bool) -> [String] {
+		var r = [String]()
+		let unis = self.characters
+		guard unis.count > 0 else {
+			return r
+		}
+		
+		if addfl && self.beginsWithFilePathSeparator {
+			r.append(String(filePathSeparator))
+		}
+		
+		r.append(contentsOf: self.characters.split(separator: Character(filePathSeparator)).map { String($0) })
+		
+		if addfl && self.endsWithFilePathSeparator {
+			if !self.beginsWithFilePathSeparator || r.count > 1 {
+				r.append(String(filePathSeparator))
+			}
+		}
+		return r
+	}
+	
+	public var filePathComponents: [String] {
+		return self.filePathComponents(addFirstLast: true)
+	}
+	
+	public var lastFilePathComponent: String {
+		let last = self.filePathComponents(addFirstLast: false).last ?? ""
+		if last.isEmpty && self.characters.first == Character(filePathSeparator) {
+			return String(filePathSeparator)
+		}
+		return last
+	}
+	
+	public var deletingLastFilePathComponent: String {
+		var comps = self.filePathComponents(addFirstLast: false)
+		guard comps.count > 1 else {
+			if self.beginsWithFilePathSeparator {
+				return String(filePathSeparator)
+			}
+			return ""
+		}
+		comps.removeLast()
+		let joined = comps.joined(separator: String(filePathSeparator))
+		if self.beginsWithFilePathSeparator {
+			return String(filePathSeparator) + joined
+		}
+		return joined
+	}
+	
+	private func lastPathSeparator(in unis: String.CharacterView) -> String.CharacterView.Index {
+		let startIndex = unis.startIndex
+		var endIndex = unis.endIndex
+		while endIndex != startIndex {
+			if unis[unis.index(before: endIndex)] != Character(filePathSeparator) {
+				break
+			}
+			endIndex = unis.index(before: endIndex)
+		}
+		return endIndex
+	}
+	
+	private func lastExtensionSeparator(in unis: String.CharacterView, endIndex: String.CharacterView.Index) -> String.CharacterView.Index {
+		var endIndex = endIndex
+		while endIndex != startIndex {
+			endIndex = unis.index(before: endIndex)
+			if unis[endIndex] == Character(fileExtensionSeparator) {
+				break
+			}
+		}
+		return endIndex
+	}
+	
+	public var deletingFileExtension: String {
+		let unis = self.characters
+		let startIndex = unis.startIndex
+		var endIndex = lastPathSeparator(in: unis)
+		let noTrailsIndex = endIndex
+		endIndex = lastExtensionSeparator(in: unis, endIndex: endIndex)
+		guard endIndex != startIndex else {
+			if noTrailsIndex == startIndex {
+				return self
+			}
+			return self[startIndex..<noTrailsIndex]
+		}
+		return self[startIndex..<endIndex]
+	}
+	
+	public var filePathExtension: String {
+		let unis = self.characters
+		let startIndex = unis.startIndex
+		var endIndex = lastPathSeparator(in: unis)
+		let noTrailsIndex = endIndex
+		endIndex = lastExtensionSeparator(in: unis, endIndex: endIndex)
+		guard endIndex != startIndex else {
+			return ""
+		}
+		return self[unis.index(after: endIndex)..<noTrailsIndex]
+	}
+	
+	public var resolvingSymlinksInFilePath: String {
+		return File(self).realPath
+	}
 }

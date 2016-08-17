@@ -93,7 +93,7 @@ public class File {
         guard lastChar != "/" && lastChar != "." else {
             return trailPath
         }
-        return internalPath.deletingLastPathComponent + "/" + trailPath
+        return internalPath.deletingLastFilePathComponent + "/" + trailPath
     }
 
     /// Returns the modification date for the file in the standard UNIX format of seconds since 1970/01/01 00:00:00 GMT

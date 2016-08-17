@@ -17,61 +17,15 @@
 //===----------------------------------------------------------------------===//
 //
 
-import PerfectNet
-
 #if os(Linux)
     import SwiftGlibc
 #else
     import Darwin
 #endif
 
-/// Default directory for server-side modules. Modules in this directory are loaded at server startup.
-public var serverPerfectLibraries = "PerfectLibraries/" // !FIX! or obsolete
-
 /// Provides access to various system level features for the process.
 /// A static instance of this class is created at startup and all access to this object go through the `PerfectServer.staticPerfectServer` static property.
 public struct PerfectServer {
-	
-	/// Performs any boot-strap level initialization such as creating databases or loading dynamic frameworks.
-	/// Should only be called once befor starting FastCGI server
-	public static func initializeServices() {
-		NetEvent.initialize()
-		
-		let dl = DynamicLoader()
-        var baseDir : Dir
-        if serverPerfectLibraries.begins(with: "/") || serverPerfectLibraries.begins(with: "~/") || serverPerfectLibraries.begins(with: "./") {
-            baseDir = Dir(serverPerfectLibraries)
-        } else {
-            baseDir = Dir(PerfectServer.homeDir + serverPerfectLibraries)
-        }
-		do {
-			try baseDir.forEachEntry { (name: String) -> () in
-				let fileName = baseDir.realPath + "/" + name
-				if name.ends(with: ".framework") || name.ends(with: ".framework/") {
-					if dl.loadFramework(atPath: fileName) {
-						Log.info(message: "Loaded \(name) from \(baseDir.realPath)")
-					} else {
-						Log.warning(message: "FAILED to load \(name) from \(baseDir.realPath)")
-					}
-				} else if name.ends(with: ".so") || name.ends(with: ".dylib") {
-					if dl.loadLibrary(atPath: fileName) {
-						Log.info(message: "Loaded \(name) from \(baseDir.realPath)")
-					} else {
-						Log.warning(message: "FAILED to load \(name) from \(baseDir.realPath)")
-					}
-				}
-			}
-		} catch {
-			//print("Exception \(e)")
-		}
-	}
-	
-	/// The directory containing all configuration and runtime data for the current server process.
-	/// Not to be confused with the web server directory which only exists during an individual web request and in the mind of the web server itself.
-    public static var homeDir: String {
-		return "./" // !FIX! or obsolete
-	}
-    
     /// Switch the current process to run with the permissions of the indicated user
     public static func switchTo(userName unam: String) throws {
         guard let pw = getpwnam(unam) else {
