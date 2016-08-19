@@ -225,6 +225,7 @@ We have finished refactoring Perfect to support Swift Package Manager. The Perfe
 * [Perfect-PostgreSQL](https://github.com/PerfectlySoft/Perfect-PostgreSQL) - PostgreSQL database connector.
 * [Perfect-MySQL](https://github.com/PerfectlySoft/Perfect-MySQL) - MySQL database connector.
 * [Perfect-MongoDB](https://github.com/PerfectlySoft/Perfect-MongoDB) - MongoDB database connector.
+* [Perfect-FileMaker](https://github.com/PerfectlySoft/Perfect-FileMaker) - FileMaker Server database connector.
 * [Perfect-FastCGI-Apache2.4](https://github.com/PerfectlySoft/Perfect-FastCGI-Apache2.4) - Apache 2.4 FastCGI module; required for the Perfect FastCGI server variant.
 
 The database connectors are all stand-alone and can be used outside of the Perfect framework and server.
