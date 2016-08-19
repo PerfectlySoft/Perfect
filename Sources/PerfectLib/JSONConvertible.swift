@@ -37,7 +37,7 @@ public class JSONDecoding {
     static private var jsonDecodableRegistry = [String:JSONConvertibleObjectCreator]()
 
     /// Register a custom object to be JSON encoded/decoded.
-    static public func registerJSONDecodable(name nam: String, creator: JSONConvertibleObjectCreator) {
+    static public func registerJSONDecodable(name nam: String, creator: @escaping JSONConvertibleObjectCreator) {
         JSONDecoding.jsonDecodableRegistry[nam] = creator
     }
 
