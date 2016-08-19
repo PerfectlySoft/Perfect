@@ -71,7 +71,7 @@ public protocol JSONConvertible {
 // !FIX! changed this to be a class due to Linux protocols failing 'as' tests.
 // revisit this
 /// Base for a custom object which can be converted to and from JSON.
-public class JSONConvertibleObject: JSONConvertible {
+open class JSONConvertibleObject: JSONConvertible {
     /// Default initializer.
     public init() {}
     /// Get the JSON keys/value.
