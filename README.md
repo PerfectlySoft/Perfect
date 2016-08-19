@@ -8,227 +8,95 @@
 [![Twitter](https://img.shields.io/badge/Twitter-@PerfectlySoft-blue.svg?style=flat)](http://twitter.com/PerfectlySoft)
 [![Join the chat at https://gitter.im/PerfectlySoft/Perfect](https://img.shields.io/badge/Gitter-Join%20Chat-brightgreen.svg)](https://gitter.im/PerfectlySoft/Perfect?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-**The master branch of this project currently compiles with the August 15th Swift toolchain snapshot. [DEVELOPMENT-SNAPSHOT-2016-08-15-a](https://swift.org/download/#snapshots)**
+##Perfect: Server-Side Swift
 
-Perfect is an application server for Linux or OS X which provides a framework for developing web and other REST services in the Swift programming language. Its primary focus is on facilitating mobile apps which require backend server software, enabling you to use one language for both front and back ends.
+Perfect is a complete and powerful toolbox, framework, and application server for Linux, iOS, and macOS (OS X). It provides everything a Swift engineer needs for developing lightweight, maintainable, and scalable apps and other REST services entirely in the Swift programming language for both client-facing and server-side applications.
 
-Perfect operates using either its own stand-alone HTTP/HTTPS server or through FastCGI. It provides a system for loading your own Swift based modules at startup and for interfacing those modules with its request/response objects or to the built-in mustache template processing system.
+Perfect includes a suite of tools that will enhance your productivity as you use only one programming language to build your apps: Swift. The global development community’s most dynamic and popular server-side toolbox and framework available today, Perfect is the backbone for many live web applications and apps available on iTunes.
 
-Perfect is built on its own high performance completely asynchronous networking engine with the goal of providing a scalable option for internet services. It supports SSL out of the box and provides a suite of tools which are commonly required by internet servers, such as WebSockets and iOS push notifications, but does not limit your options. Feel free to swap in your own favorite JSON or templating systems, etc.
+This guide is designed for developers at all levels of experience to get Perfect up and running quickly.
 
-## Issues
+## Working with Perfect
 
-We are transitioning to using JIRA for all bugs and support related issues, therefore the GitHub issues has been disabled.
+###Compatibility with Swift
 
-If you find a mistake, bug, or any other helpful suggestion you'd like to make on the docs please head over to [http://jira.perfect.org:8080/servicedesk/customer/portal/1](http://jira.perfect.org:8080/servicedesk/customer/portal/1) and raise it.
+The master branch of this project currently compiles with the August 4, 2016, Swift toolchain snapshot: [DEVELOPMENT-SNAPSHOT-2016-08-04-a](https://swift.org/download/#snapshots)
 
-A comprehensive list of open issues can be found at [http://jira.perfect.org:8080/projects/ISS/issues](http://jira.perfect.org:8080/projects/ISS/issues)
+We focus exclusively on the latest and most stable version of Swift to maximize developers’ productivity. *Until the release of Swift 3.0 (expected in September 2016), please treat this version of Perfect for R&D purposes only*.
 
-## Quick Start
+###Getting Started
 
-### Swift 3.0
+[Access a tutorial](https://github.com/PerfectlySoft/PerfectDocs/blob/master/guide/gettingStarted.md) to help you get started using Perfect quickly. It includes straightforward examples of how Perfect can be used.
 
-Ensure you have properly installed a Swift 3.0 toolchain from [Swift.org](https://swift.org/getting-started/). In the terminal, typing:
+### Documentation
+[Get started working with Perfect](https://github.com/PerfectlySoft/PerfectDocs), deploy your apps, and find more detailed help by consulting our reference library.
 
-```
-swift --version
-```
+We welcome contributions to Perfect’s documentation. If you spot a typo, bug, or other errata, or have additions or suggestions to recommend, please [create a pull request or log an issue in JIRA](http://jira.perfect.org:8080/servicedesk/customer/portal/1/user/login?destination=portal%2F1).
 
-should produce something like the following:
+### Community
+We all need a little help now and then. If you do too, don’t be shy, ask us or the friendly and supportive Perfect community:
 
-```
-Apple Swift version 3.0-dev (LLVM 3a878c6fdb, Clang 4ca9e01a7c, Swift 2ef0a8fdcb)
-Target: x86_64-apple-macosx10.9
-```
 
-### OS X
-Perfect relies on [Home Brew](http://brew.sh) for installing dependencies on OS X. This is currently limited to OpenSSL. To install Home Brew, in the Terminal, type:
+[Slack](http://perfect.ly/) | [Gitter](https://gitter.im/PerfectlySoft/Perfect?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) | [Twitter](https://twitter.com/perfectlysoft)
 
-```
-/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-```
+### Deployment
 
-To install OpenSSL:
+Currently, there are options to deploy Perfect to [Docker](https://hub.docker.com/r/perfectlysoft/ubuntu/) and [Heroku](https://github.com/PerfectlySoft/Perfect-Heroku-Buildpack). We recommend you use these until the other deployment options are updated to compile with Swift 3.0 and Perfect 2.0.
 
-```
-brew install openssl
-brew link openssl --force
-```
+### Samples, Examples, and Tutorials
 
-### Linux
-Perfect relies on OpenSSL, libssl-dev and uuid:
+Our library continues to grow as members of [the Swift-Perfect development community have shared many samples and examples](https://github.com/PerfectlySoft/PerfectExamples) of their projects in Perfect. Examples include:
 
-```
-sudo apt-get install openssl libssl-dev uuid-dev
-```
+- [WebSockets Server](https://github.com/PerfectlySoft/PerfectExample-WebSocketsServer)
+- [URL Routing](https://github.com/PerfectlySoft/PerfectExample-URLRouting)
+- [Upload Enumerator](https://github.com/PerfectlySoft/PerfectExample-UploadEnumerator)
+- [Ultimate Naughts & Crosses](https://github.com/PerfectlySoft/PerfectExample-UltimateNaughtsAndCrosses/tree/d11348f106f04dd48057c8d6cfff5a45fba1093e) multiplayer game
 
-### Build Starter Project
-
-The following will clone and build an empty starter project and launch the server on port 8181.
-
-```
-git clone https://github.com/PerfectlySoft/PerfectTemplate.git
-cd PerfectTemplate
-swift build
-.build/debug/PerfectTemplate
-```
-
-You should see the following output:
-
-```
-Starting HTTP server on 0.0.0.0:8181 with document root ./webroot
-```
-
-This means the server is running and waiting for connections. Access [http://localhost:8181/](http://127.0.0.1:8181/) to see the greeting. Hit control-c to terminate the server.
-
-You can view the full source code for [PerfectTemplate](https://github.com/PerfectlySoft/PerfectTemplate). 
-
-### Xcode
-
-Swift Package Manager can generate an Xcode project which can run the PerfectTemplate server and provide full source code editing and debugging for your project. Enter the following in your terminal:
-
-```
-swift package generate-xcodeproj
-```
-
-Open the generated file "PerfectTemplate.xcodeproj". Ensure that you have selected the executable target and selected it to run on "My Mac". You can now run and debug the server.
-
-## Next Steps
-
-These example snippets show how to accomplish several common tasks that one might need to do when developing a Web/REST application. In all cases, the ```request``` and ```response``` variables refer, respectively, to the ```HTTPRequest``` and ```HTTPResponse``` objects which are given to your URL handlers.
-
-Consult the [API reference](http://www.perfect.org/docs/) for more details.
-
-### Get a client request header
-
-```swift
-if let acceptEncoding = request.header(.acceptEncoding) {
-	...
-}
-```
-
-### Get client GET or POST parameters
-
-```swift
-if let foo = request.param(name: "foo") {
-	...
-}   
-if let foo = request.param(name: "foo", defaultValue: "default foo") {
-	...
-}
-let foos: [String] = request.params(named: "foo")
-```
-
-### Get the current request path
-
-```swift
-let path = request.path
-```
-
-### Access the server's document directory and return an image file to the client
-
-```swift
-let docRoot = request.documentRoot
-do {
-    let mrPebbles = File("\(docRoot)/mr_pebbles.jpg")
-    let imageSize = mrPebbles.size
-    let imageBytes = try mrPebbles.readSomeBytes(count: imageSize)
-    response.setHeader(.contentType, value: MimeType.forExtension("jpg"))
-    response.setHeader(.contentLength, value: "\(imageBytes.count)")
-    response.setBody(bytes: imageBytes)
-} catch {
-    response.status = .internalServerError
-    response.setBody(string: "Error handling request: \(error)")
-}
-response.completed()
-```
-
-### Get client cookies
-
-```swift
-for (cookieName, cookieValue) in request.cookies {
-	...
-}
-```
-
-### Set client cookie
-
-```swift
-let cookie = HTTPCookie(name: "cookie-name", value: "the value", domain: nil,
-                    expires: .session, path: "/",
-                    secure: false, httpOnly: false)
-response.addCookie(cookie)
-```
-
-### Return JSON data to client
-
-```swift
-response.setHeader(.contentType, value: "application/json")
-let d: [String:Any] = ["a":1, "b":0.1, "c": true, "d":[2, 4, 5, 7, 8]]
-    
-do {
-    try response.setBody(json: d)
-} catch {
-    //...
-}
-response.completed()
-```
-*This snippet uses the built-in JSON encoding. Feel free to bring in your own favorite JSON encoder/decoder.*
-
-### Redirect the client
-
-```swift
-response.status = .movedPermanently
-response.setHeader(.location, value: "http://www.perfect.org/")
-response.completed()
-```
-
-### Filter and handle 404 errors in a custom manner
-
-```swift
-struct Filter404: HTTPResponseFilter {
-	func filterBody(response: HTTPResponse, callback: (HTTPResponseFilterResult) -> ()) {
-		callback(.continue)
-	}
+There are [many more examples](https://github.com/PerfectlySoft/PerfectExamples) you can explore. Please share yours!
 	
-	func filterHeaders(response: HTTPResponse, callback: (HTTPResponseFilterResult) -> ()) {
-		if case .notFound = response.status {
-			response.bodyBytes.removeAll()
-			response.setBody(string: "The file \(response.request.path) was not found.")
-			response.setHeader(.contentLength, value: "\(response.bodyBytes.count)")
-			callback(.done)
-		} else {
-			callback(.continue)
-		}
-	}
-}
+[Access tutorials for working in Perfect 1.0](http://perfect.org/tutorials.html) (which supports Swift 2.2) published by members of the Swift-Perfect community. Or [start working in Perfect 2.0](http://perfect.org/downloads.html#download-perfect) (supports Swift 3.0). 
 
-let server = HTTPServer()
-server.setResponseFilters([(Filter404(), .high)])
-server.serverPort = 8181
-try server.start()
-```
+## Core Perfect Modules
 
-## Repository Layout
+Perfect project is divided into several repositories to make it easy for you to find, download, and install the components you need:
 
-We have finished refactoring Perfect to support Swift Package Manager. The Perfect project has been split up into the following repositories:
+- [Perfect](https://github.com/PerfectlySoft/Perfect) – This repository contains the core PerfectLib and will continue to be the main landing point for the project
+- [PerfectTemplate](https://github.com/PerfectlySoft/PerfectTemplate) – A simple starter project which compiles with the Swift Package Manager into a standalone executable HTTP server. This repository is ideal for starting a Perfect-based project
+- [PerfectDocs](https://github.com/PerfectlySoft/PerfectDocs) – Contains all API reference-related material
+- [PerfectExamples](https://github.com/PerfectlySoft/PerfectExamples) – All the Perfect example projects and documentation
+- [PerfectEverything](https://github.com/PerfectlySoft/PerfectEverything) – This umbrella repository allows one to pull in all the related Perfect modules in one go, including the servers, examples, database connectors, and documentation. It is a great place to start for people wishing to get up-to-speed quickly using Perfect
+- [PerfectServer](https://github.com/PerfectlySoft/PerfectServer) – Contains the PerfectServer variants, including the standalone HTTP and FastCGI servers. Those wishing to do a manual deployment should clone and build from this repository
+- [Perfect-Redis](https://github.com/PerfectlySoft/Perfect-Redis) – The Redis database connector
+- [Perfect-SQLite](https://github.com/PerfectlySoft/Perfect-SQLite) – SQLite3 database connector
+- [Perfect-PostgreSQL](https://github.com/PerfectlySoft/Perfect-PostgreSQL) – PostgreSQL database connector
+- [Perfect-MySQL](https://github.com/PerfectlySoft/Perfect-MySQL) – MySQL database connector
+- [Perfect-MongoDB](https://github.com/PerfectlySoft/Perfect-MongoDB) – MongoDB database connector
+- [Perfect-FileMaker](https://github.com/PerfectlySoft/Perfect-FileMaker) - FileMaker Server database connector.
+- [Perfect-FastCGI-Apache 2.4](https://github.com/PerfectlySoft/Perfect-FastCGI-Apache2.4) – Apache 2.4 FastCGI module; required for the Perfect FastCGI server variant 
 
-* [Perfect](https://github.com/PerfectlySoft/Perfect) - This repository contains the core PerfectLib and will continue to be the main landing point for the project.
-* [PerfectTemplate](https://github.com/PerfectlySoft/PerfectTemplate) - A simple starter project which compiles with SPM into a stand-alone executable HTTP server. This repository is ideal for starting on your own Perfect based project.
-* [PerfectDocs](https://github.com/PerfectlySoft/PerfectDocs) - Contains all API reference related material.
-* [PerfectExamples](https://github.com/PerfectlySoft/PerfectExamples) - All the Perfect example projects and documentation.
-* [Perfect-Mustache](https://github.com/PerfectlySoft/Perfect-Mustache) - Mustache template processor.
-* [Perfect-Notifications](https://github.com/PerfectlySoft/Perfect-Notifications) - iOS Notifications (APNS) Support.
-* [PerfectTemplateFCGI](https://github.com/PerfectlySoft/PerfectTemplateFCGI) - A simple starter project which compiles with SPM into a FastCGI server suitable for use with Apache 2.4 or NGINX. This repository is ideal for starting on your own Perfect based project if you are required to use an existing server which supports FastCGI.
-* [Perfect-Redis](https://github.com/PerfectlySoft/Perfect-Redis) - Redis database connector.
-* [Perfect-SQLite](https://github.com/PerfectlySoft/Perfect-SQLite) - SQLite3 database connector.
-* [Perfect-PostgreSQL](https://github.com/PerfectlySoft/Perfect-PostgreSQL) - PostgreSQL database connector.
-* [Perfect-MySQL](https://github.com/PerfectlySoft/Perfect-MySQL) - MySQL database connector.
-* [Perfect-MongoDB](https://github.com/PerfectlySoft/Perfect-MongoDB) - MongoDB database connector.
-* [Perfect-FileMaker](https://github.com/PerfectlySoft/Perfect-FileMaker) - FileMaker Server database connector.
-* [Perfect-FastCGI-Apache2.4](https://github.com/PerfectlySoft/Perfect-FastCGI-Apache2.4) - Apache 2.4 FastCGI module; required for the Perfect FastCGI server variant.
+### More about Perfect
 
-The database connectors are all stand-alone and can be used outside of the Perfect framework and server.
+Perfect operates using either a standalone [HTTP server](https://github.com/PerfectlySoft/Perfect-HTTP), [HTTPS server](https://github.com/PerfectlySoft/Perfect-HTTPServer), or through [FastCGI server](https://github.com/PerfectlySoft/Perfect-FastCGI). It provides a system for loading your Swift-based modules at startup, for interfacing those modules with its request/response objects, or to the built-in [Mustache template processing system](https://github.com/PerfectlySoft/Perfect-Mustache).
 
-## Further Information
-For more information on the Perfect project, please visit [perfect.org](http://perfect.org).
+Perfect is built on a completely asynchronous, high-performance networking engine to provide a scalable option for internet services. It supports Secure Sockets Layer (SSL) encryption, and it features a suite of tools commonly required by internet servers such as [WebSockets](https://github.com/PerfectlySoft/Perfect-WebSockets) and [iOS push notifications](https://github.com/PerfectlySoft/Perfect-Notifications), but you are not limited to those options.
+
+Feel free to use your favourite JSON or templating systems, etc.
+
+### Join and Contribute to the Community
+
+The Swift-Perfect developer community is vital to improving Perfect and supporting one another.  
+
+You can help other developers by sharing your expertise and tips, as well as learn from others, by joining the [Perfect Gitter channel](https://gitter.im/PerfectlySoft/Perfect). Contributions of all kinds are welcome: reporting issues, updating documentation, fixing bugs, building examples, sharing projects, and any other tips that may help the Swift-Perfect community.
+
+If you would like to report an issue, make a new feature request, or help others by working on a known issue, please see the [Perfect JIRA repository](http://jira.perfect.org:8080/secure/Dashboard.jspa).
+
+If you would like to share your example project, tutorial, or video, please share the URL of your work on GitHub and [Twitter](https://twitter.com/perfectlysoft), and the Perfect team will highlight it to the community.
+
+### Code of Conduct
+The Perfect team welcomes people of all ethnicities, nationalities, ages, gender, disability, levels of experience, and religious beliefs to use and contribute to the Perfect project. We pledge to foster and enforce a harassment-free environment of openness, respect, and cooperation for everyone in all project and public spaces online or offline.
+
+Please report any behaviour that violates our Code of Conduct to [info@perfect.org](mailto:info@perfect.org). The Perfect team is committed to enforcing this Code of Conduct to ensure everyone who wishes to use, contribute to, and comment on the Perfect project may do so freely and openly and without fear of reprisal. 
+
+We will investigate all complaints of unacceptable or abusive behaviour or comments expediently, and we will maintain the confidentiality of the person who reports any perceived infraction or wrongdoing to us. We will not tolerate any form of direct or indirect harassment or discrimination within the Swift-Perfect community, and will take appropriate, fair, and corrective action to any instance of inappropriate behaviour. 
+
+The Perfect team maintains the right to remove, edit, or reject any comments, code, edits, or issues that do not align with our Code of Conduct.
