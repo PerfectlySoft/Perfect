@@ -20,7 +20,7 @@ This guide is designed for developers at all levels of experience to get Perfect
 
 ###Compatibility with Swift
 
-**The master branch of this project currently compiles with the August 15th Swift toolchain snapshot. [DEVELOPMENT-SNAPSHOT-2016-08-15-a](https://swift.org/download/#snapshots)**
+**The master branch of this project currently compiles with the August 18th Swift toolchain snapshot. [DEVELOPMENT-SNAPSHOT-2016-08-18-a](https://swift.org/download/#snapshots)**
 
 We focus exclusively on the latest and most stable version of Swift to maximize developers’ productivity. *Until the release of Swift 3.0 (expected in September 2016), please treat this version of Perfect for R&D purposes only*.
 
