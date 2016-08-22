@@ -29,13 +29,9 @@ This guide is designed for developers at all levels of experience to get Perfect
 
 **The master branch of this project currently compiles with the August 18th Swift toolchain snapshot. **
 
-<table width="100%">
-	<tr>
-		<td align="center" bgcolor="#CCC">
-			<a href="https://swift.org/download/#snapshots">DEVELOPMENT-SNAPSHOT-2016-08-18-a</a>
-		</td>
-	</tr>
-</table>
+```
+Current version: DEVELOPMENT-SNAPSHOT-2016-08-18-a
+```
 
 We focus exclusively on the latest and most stable version of Swift to maximize developers’ productivity. *Until the release of Swift 3.0 (expected in September 2016), please treat this version of Perfect for R&D purposes only*.
 
