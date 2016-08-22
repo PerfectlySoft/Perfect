@@ -1,5 +1,5 @@
 # Perfect: Server-Side Swift
-[![Perfect logo](http://www.perfect.org/github/Perfect_GH_header.jpg)](http://perfect.org/get-involved.html)
+[![Perfect logo](http://www.perfect.org/github/Perfect_GH_header_854.jpg)](http://perfect.org/get-involved.html)
 
 [![Perfect logo](http://www.perfect.org/github/Perfect_GH_button_1_Star.jpg)](https://github.com/PerfectlySoft/Perfect)
 [![Perfect logo](http://www.perfect.org/github/Perfect_GH_button_2_Git.jpg)](https://gitter.im/PerfectlySoft/Perfect)
