@@ -1,45 +1,45 @@
 # Perfect: Server-Side Swift
 <p align="center">
-    <a href="http://perfect.org/get-involved.html">
+    <a href="http://perfect.org/get-involved.html" target="_blank">
         <img src="http://www.perfect.org/github/Perfect_GH_header_854.jpg" alt="Get Involed with Perfect!" />
     </a>
 </p>
 
 <p align="center">
-    <a href="https://github.com/PerfectlySoft/Perfect">
+    <a href="https://github.com/PerfectlySoft/Perfect" target="_blank">
         <img src="http://www.perfect.org/github/Perfect_GH_button_1_Star.jpg" alt="Star Perfect On Github" />
     </a>  
-    <a href="https://gitter.im/PerfectlySoft/Perfect">
+    <a href="https://gitter.im/PerfectlySoft/Perfect" target="_blank">
         <img src="http://www.perfect.org/github/Perfect_GH_button_2_Git.jpg" alt="Chat on Gitter" />
     </a>  
-    <a href="https://twitter.com/perfectlysoft">
+    <a href="https://twitter.com/perfectlysoft" target="_blank">
         <img src="http://www.perfect.org/github/Perfect_GH_button_3_twit.jpg" alt="Follow Perfect on Twitter" />
     </a>  
-    <a href="http://perfect.ly">
+    <a href="http://perfect.ly" target="_blank">
         <img src="http://www.perfect.org/github/Perfect_GH_button_4_slack.jpg" alt="Join the Perfect Slack" />
     </a> 
 </p>
 
 <p align="center">
-    <a href="https://developer.apple.com/swift/">
+    <a href="https://developer.apple.com/swift/" target="_blank">
         <img src="https://img.shields.io/badge/Swift-3.0-orange.svg?style=flat" alt="Swift 3.0">
     </a>
-    <a href="https://developer.apple.com/swift/">
+    <a href="https://developer.apple.com/swift/" target="_blank">
         <img src="https://img.shields.io/badge/Platforms-OS%20X%20%7C%20Linux%20-lightgray.svg?style=flat" alt="Platforms OS X | Linux">
     </a>
-    <a href="http://perfect.org/licensing.html">
+    <a href="http://perfect.org/licensing.html" target="_blank">
         <img src="https://img.shields.io/badge/License-Apache-lightgrey.svg?style=flat" alt="License Apache">
     </a>
-    <a href="https://codebeat.co/projects/github-com-perfectlysoft-perfect">
+    <a href="https://codebeat.co/projects/github-com-perfectlysoft-perfect" target="_blank">
         <img src="https://codebeat.co/badges/85f8f628-6ce8-4818-867c-21b523484ee9" alt="codebeat">
     </a>
-    <a href="http://twitter.com/PerfectlySoft">
+    <a href="http://twitter.com/PerfectlySoft" target="_blank">
         <img src="https://img.shields.io/badge/Twitter-@PerfectlySoft-blue.svg?style=flat" alt="PerfectlySoft Twitter">
     </a>
-    <a href="https://gitter.im/PerfectlySoft/Perfect?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge">
+    <a href="https://gitter.im/PerfectlySoft/Perfect?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge" target="_blank">
         <img src="https://img.shields.io/badge/Gitter-Join%20Chat-brightgreen.svg" alt="Join the chat at https://gitter.im/PerfectlySoft/Perfect">
     </a>
-    <a href="http://perfect.ly">
+    <a href="http://perfect.ly" target="_blank">
         <img src="http://perfect.ly/badge.svg" alt="Slack Status">
     </a>
 </p>
