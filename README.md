@@ -27,7 +27,15 @@ This guide is designed for developers at all levels of experience to get Perfect
 
 ###Compatibility with Swift
 
-**The master branch of this project currently compiles with the August 18th Swift toolchain snapshot. [DEVELOPMENT-SNAPSHOT-2016-08-18-a](https://swift.org/download/#snapshots)**
+**The master branch of this project currently compiles with the August 18th Swift toolchain snapshot. **
+
+<table width="100%">
+	<tr>
+		<td align="center" bgcolor="#CCC">
+			<a href="https://swift.org/download/#snapshots">DEVELOPMENT-SNAPSHOT-2016-08-18-a</a>
+		</td>
+	</tr>
+</table>
 
 We focus exclusively on the latest and most stable version of Swift to maximize developers’ productivity. *Until the release of Swift 3.0 (expected in September 2016), please treat this version of Perfect for R&D purposes only*.
 
@@ -68,20 +76,36 @@ There are [many more examples](https://github.com/PerfectlySoft/PerfectExamples)
 Perfect project is divided into several repositories to make it easy for you to find, download, and install the components you need:
 
 - [Perfect](https://github.com/PerfectlySoft/Perfect) – This repository contains the core PerfectLib and will continue to be the main landing point for the project
-- [PerfectTemplate](https://github.com/PerfectlySoft/PerfectTemplate) – A simple starter project which compiles with the Swift Package Manager into a standalone executable HTTP server. This repository is ideal for starting a Perfect-based project
-- [PerfectDocs](https://github.com/PerfectlySoft/PerfectDocs) – Contains all API reference-related material
-- [PerfectExamples](https://github.com/PerfectlySoft/PerfectExamples) – All the Perfect example projects and documentation
-- [PerfectEverything](https://github.com/PerfectlySoft/PerfectEverything) – This umbrella repository allows one to pull in all the related Perfect modules in one go, including the servers, examples, database connectors, and documentation. It is a great place to start for people wishing to get up-to-speed quickly using Perfect
-- [PerfectServer](https://github.com/PerfectlySoft/PerfectServer) – Contains the PerfectServer variants, including the standalone HTTP and FastCGI servers. Those wishing to do a manual deployment should clone and build from this repository
-- [Perfect-Redis](https://github.com/PerfectlySoft/Perfect-Redis) – The Redis database connector
-- [Perfect-SQLite](https://github.com/PerfectlySoft/Perfect-SQLite) – SQLite3 database connector
-- [Perfect-PostgreSQL](https://github.com/PerfectlySoft/Perfect-PostgreSQL) – PostgreSQL database connector
-- [Perfect-MySQL](https://github.com/PerfectlySoft/Perfect-MySQL) – MySQL database connector
-- [Perfect-MongoDB](https://github.com/PerfectlySoft/Perfect-MongoDB) – MongoDB database connector
-- [Perfect-FileMaker](https://github.com/PerfectlySoft/Perfect-FileMaker) - FileMaker Server database connector.
-- [Perfect-FastCGI-Apache 2.4](https://github.com/PerfectlySoft/Perfect-FastCGI-Apache2.4) – Apache 2.4 FastCGI module; required for the Perfect FastCGI server variant 
+- [Perfect Docs](https://github.com/PerfectlySoft/PerfectDocs) – Contains all API reference-related material
 
-### More about Perfect
+
+### Examples
+
+- [Perfect Template](https://github.com/PerfectlySoft/PerfectTemplate) - A simple starter project which compiles with the Swift Package Manager into a standalone executable HTTP server. This repository is ideal for starting a Perfect-based project
+- [Perfect Examples](https://github.com/PerfectlySoft/PerfectExamples) - All the Perfect example projects and documentation
+
+
+### DataSources
+
+
+- [Perfect Redis](https://github.com/PerfectlySoft/Perfect-Redis) - The Redis database connector
+- [Perfect SQLite](https://github.com/PerfectlySoft/Perfect-SQLite) - SQLite3 database connector
+- [Perfect PostgreSQL](https://github.com/PerfectlySoft/Perfect-PostgreSQL) - PostgreSQL database connector
+- [Perfect MySQL](https://github.com/PerfectlySoft/Perfect-MySQL) - MySQL database connector
+- [Perfect MongoDB](https://github.com/PerfectlySoft/Perfect-MongoDB) - MongoDB database connector
+- [Perfect FileMaker](https://github.com/PerfectlySoft/Perfect-FileMaker) - FileMaker Server database connector
+
+### Utilities
+
+- [Perfect FastCGI Apache 2.4](https://github.com/PerfectlySoft/Perfect-FastCGI-Apache2.4) - Apache 2.4 FastCGI module; required for the Perfect FastCGI server variant 
+- [Perfect XML](https://github.com/PerfectlySoft/Perfect-XML) - DOM Core level 2 read-only APIs and XPath support
+- [Perfect HTTP Server](https://github.com/PerfectlySoft/Perfect-HTTPServer) - HTTP 1.1 server for Perfect
+- [Perfect Mustache](https://github.com/PerfectlySoft/Perfect-Mustache) - Mustache template support for Perfect
+- [Perfect CURL](https://github.com/PerfectlySoft/Perfect-CURL) - cURL support for Perfect
+- [Perfect WebSockets](https://github.com/PerfectlySoft/Perfect-WebSockets) - WebSockets support for Perfect
+- [Perfect Zip](https://github.com/PerfectlySoft/Perfect-Zip) - provides simple zip and unzip functionality
+
+## More about Perfect
 
 Perfect operates using either a standalone [HTTP server](https://github.com/PerfectlySoft/Perfect-HTTP), [HTTPS server](https://github.com/PerfectlySoft/Perfect-HTTPServer), or through [FastCGI server](https://github.com/PerfectlySoft/Perfect-FastCGI). It provides a system for loading your Swift-based modules at startup, for interfacing those modules with its request/response objects, or to the built-in [Mustache template processing system](https://github.com/PerfectlySoft/Perfect-Mustache).
 
@@ -93,7 +117,7 @@ Feel free to use your favourite JSON or templating systems, etc.
 
 The Swift-Perfect developer community is vital to improving Perfect and supporting one another.  
 
-You can help other developers by sharing your expertise and tips, as well as learn from others, by joining the [Perfect Gitter channel](https://gitter.im/PerfectlySoft/Perfect). Contributions of all kinds are welcome: reporting issues, updating documentation, fixing bugs, building examples, sharing projects, and any other tips that may help the Swift-Perfect community.
+You can help other developers by sharing your expertise and tips, as well as learn from others, by joining the [Perfect Slack channel](http://perfect.ly) or the [Perfect Gitter channel](https://gitter.im/PerfectlySoft/Perfect), whichever is your preference - we will be hanging out in both mediums. Contributions of all kinds are welcome: reporting issues, updating documentation, fixing bugs, building examples, sharing projects, and any other tips that may help the Swift-Perfect community.
 
 If you would like to report an issue, make a new feature request, or help others by working on a known issue, please see the [Perfect JIRA repository](http://jira.perfect.org:8080/secure/Dashboard.jspa).
 
@@ -102,7 +126,7 @@ If you would like to share your example project, tutorial, or video, please shar
 ### Code of Conduct
 The Perfect team welcomes people of all ethnicities, nationalities, ages, gender, disability, levels of experience, and religious beliefs to use and contribute to the Perfect project. We pledge to foster and enforce a harassment-free environment of openness, respect, and cooperation for everyone in all project and public spaces online or offline.
 
-Please report any behaviour that violates our Code of Conduct to [info@perfect.org](mailto:info@perfect.org). The Perfect team is committed to enforcing this Code of Conduct to ensure everyone who wishes to use, contribute to, and comment on the Perfect project may do so freely and openly and without fear of reprisal. 
+Please report any behaviour that violates our [Code of Conduct](https://github.com/PerfectlySoft/Perfect/blob/master/CODE_OF_CONDUCT.md) to [info@perfect.org](mailto:info@perfect.org). The Perfect team is committed to enforcing this Code of Conduct to ensure everyone who wishes to use, contribute to, and comment on the Perfect project may do so freely and openly and without fear of reprisal. 
 
 We will investigate all complaints of unacceptable or abusive behaviour or comments expediently, and we will maintain the confidentiality of the person who reports any perceived infraction or wrongdoing to us. We will not tolerate any form of direct or indirect harassment or discrimination within the Swift-Perfect community, and will take appropriate, fair, and corrective action to any instance of inappropriate behaviour. 
 
