@@ -18,7 +18,7 @@
 //
 
 /// A Bytes object represents an array of UInt8 and provides various utilities for importing and exporting values into and out of that array.
-/// A Bytes object maintains a position marker which is used to denote the position from which new export operations proceed.
+/// The object maintains a position marker which is used to denote the position from which new export operations proceed.
 /// An export will advance the position by the appropriate amount.
 public final class Bytes {
 	
