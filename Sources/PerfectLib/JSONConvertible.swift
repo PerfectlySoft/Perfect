@@ -73,7 +73,7 @@ public protocol JSONConvertible {
 /// Base for a custom object which can be converted to and from JSON.
 open class JSONConvertibleObject: JSONConvertible {
     /// Default initializer.
-    open init() {}
+	public init() {}
     /// Get the JSON keys/value.
     open func setJSONValues(_ values:[String:Any]) {}
     /// Set the object properties based on the JSON keys/values.
