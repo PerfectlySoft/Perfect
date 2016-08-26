@@ -86,15 +86,29 @@ open class JSONConvertibleObject: JSONConvertible {
 
 /// Get the JSON keys/values from a custom object.
 public extension JSONConvertibleObject {
-    /// Get a named value from the Dictionary converting to the given type with a default value.
-    func getJSONValue<T: JSONConvertible>(named namd: String, from:[String:Any], defaultValue: T) -> T {
-        let f = from[namd]
-        if let v = f as? T {
-            return v
+
+    func getJSONValue<T: JSONConvertible>(named namd: String, from: [String:Any], defaultValue: T, separator: String? = ".") -> T {
+        let keys = namd.components(separatedBy: separator!)
+        
+        var value: Any? = from
+        for key in keys {
+            guard value != nil else {
+                return defaultValue
+            }
+            
+            if let data = value as? [String:Any] {
+                value = data[key]
+            }
         }
+        
+        if let result = value as? T {
+            return result
+        }
+
         return defaultValue
     }
 }
+
 
 /// An error occurring during JSON conversion.
 public enum JSONConversionError: Error {
