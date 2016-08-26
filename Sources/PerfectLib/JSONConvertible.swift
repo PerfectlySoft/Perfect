@@ -88,7 +88,7 @@ open class JSONConvertibleObject: JSONConvertible {
 public extension JSONConvertibleObject {
 
     func getJSONValue<T: JSONConvertible>(named namd: String, from: [String:Any], defaultValue: T, separator: String? = ".") -> T {
-        let keys = namd.components(separatedBy: separator!)
+        let keys = namd.components(separatedBy: (separator == nil ? "." : separator!))
         
         var value: Any? = from
         for key in keys {
