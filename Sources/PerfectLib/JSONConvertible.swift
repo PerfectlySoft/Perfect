@@ -79,7 +79,7 @@ open class JSONConvertibleObject: JSONConvertible {
     /// Set the object properties based on the JSON keys/values.
     open func getJSONValues() -> [String:Any] { return [String:Any]() }
     /// Encode the object into JSON text
-    public func jsonEncodedString() throws -> String {
+    open func jsonEncodedString() throws -> String {
         return try self.getJSONValues().jsonEncodedString()
     }
 }
