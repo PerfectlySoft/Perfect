@@ -1,7 +1,7 @@
 # Perfect: Server-Side Swift
 <p align="center">
     <a href="http://perfect.org/get-involved.html" target="_blank">
-        <img src="http://www.perfect.org/github/Perfect_GH_header_854.jpg" alt="Get Involed with Perfect!" />
+        <img src="http://perfect.org/assets/github/perfect_github_2_0_0.jpg" alt="Get Involed with Perfect!" />
     </a>
 </p>
 
