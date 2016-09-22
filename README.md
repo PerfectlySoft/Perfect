@@ -128,7 +128,7 @@ Perfect project is divided into several repositories to make it easy for you to 
 - [Perfect CURL](https://github.com/PerfectlySoft/Perfect-CURL) - cURL support for Perfect
 - [Perfect WebSockets](https://github.com/PerfectlySoft/Perfect-WebSockets) - WebSockets support for Perfect
 - [Perfect Zip](https://github.com/PerfectlySoft/Perfect-Zip) - provides simple zip and unzip functionality
-- [Perfect Zip](https://github.com/PerfectlySoft/Notifications) - provides support for Apple Push Notification Service (APNS).
+- [Perfect Notifications](https://github.com/PerfectlySoft/Notifications) - provides support for Apple Push Notification Service (APNS).
 
 ## More about Perfect
 
