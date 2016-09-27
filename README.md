@@ -1,4 +1,4 @@
-# Perfect: Server-Side Swift
+# Perfect: Server-Side Swift [简体中文](README.zh_CN.md)
 <p align="center">
     <a href="http://perfect.org/get-involved.html" target="_blank">
         <img src="http://perfect.org/assets/github/perfect_github_2_0_0.jpg" alt="Get Involed with Perfect!" width="854" />
@@ -17,7 +17,7 @@
     </a>  
     <a href="http://perfect.ly" target="_blank">
         <img src="http://www.perfect.org/github/Perfect_GH_button_4_slack.jpg" alt="Join the Perfect Slack" />
-    </a> 
+    </a>
 </p>
 
 <p align="center">
@@ -92,8 +92,8 @@ Our library continues to grow as members of [the Swift-Perfect development commu
 - [Ultimate Naughts & Crosses](https://github.com/PerfectlySoft/PerfectExample-UltimateNaughtsAndCrosses/tree/d11348f106f04dd48057c8d6cfff5a45fba1093e) multiplayer game
 
 There are [many more examples](https://github.com/PerfectlySoft/PerfectExamples) you can explore. Please share yours!
-	
-[Access tutorials for working in Perfect 1.0](http://perfect.org/tutorials.html) (which supports Swift 2.2) published by members of the Swift-Perfect community. Or [start working in Perfect 2.0](http://perfect.org/downloads.html#download-perfect) (supports Swift 3.0). 
+
+[Access tutorials for working in Perfect 1.0](http://perfect.org/tutorials.html) (which supports Swift 2.2) published by members of the Swift-Perfect community. Or [start working in Perfect 2.0](http://perfect.org/downloads.html#download-perfect) (supports Swift 3.0).
 
 ## Core Perfect Modules
 
@@ -121,7 +121,7 @@ Perfect project is divided into several repositories to make it easy for you to 
 
 ### Utilities
 
-- [Perfect FastCGI Apache 2.4](https://github.com/PerfectlySoft/Perfect-FastCGI-Apache2.4) - Apache 2.4 FastCGI module; required for the Perfect FastCGI server variant 
+- [Perfect FastCGI Apache 2.4](https://github.com/PerfectlySoft/Perfect-FastCGI-Apache2.4) - Apache 2.4 FastCGI module; required for the Perfect FastCGI server variant
 - [Perfect XML](https://github.com/PerfectlySoft/Perfect-XML) - DOM Core level 2 read-only APIs and XPath support
 - [Perfect HTTP Server](https://github.com/PerfectlySoft/Perfect-HTTPServer) - HTTP 1.1 server for Perfect
 - [Perfect Mustache](https://github.com/PerfectlySoft/Perfect-Mustache) - Mustache template support for Perfect
@@ -151,8 +151,8 @@ If you would like to share your example project, tutorial, or video, please shar
 ### Code of Conduct
 The Perfect team welcomes people of all ethnicities, nationalities, ages, gender, disability, levels of experience, and religious beliefs to use and contribute to the Perfect project. We pledge to foster and enforce a harassment-free environment of openness, respect, and cooperation for everyone in all project and public spaces online or offline.
 
-Please report any behaviour that violates our [Code of Conduct](https://github.com/PerfectlySoft/Perfect/blob/master/CODE_OF_CONDUCT.md) to [info@perfect.org](mailto:info@perfect.org). The Perfect team is committed to enforcing this Code of Conduct to ensure everyone who wishes to use, contribute to, and comment on the Perfect project may do so freely and openly and without fear of reprisal. 
+Please report any behaviour that violates our [Code of Conduct](https://github.com/PerfectlySoft/Perfect/blob/master/CODE_OF_CONDUCT.md) to [info@perfect.org](mailto:info@perfect.org). The Perfect team is committed to enforcing this Code of Conduct to ensure everyone who wishes to use, contribute to, and comment on the Perfect project may do so freely and openly and without fear of reprisal.
 
-We will investigate all complaints of unacceptable or abusive behaviour or comments expediently, and we will maintain the confidentiality of the person who reports any perceived infraction or wrongdoing to us. We will not tolerate any form of direct or indirect harassment or discrimination within the Swift-Perfect community, and will take appropriate, fair, and corrective action to any instance of inappropriate behaviour. 
+We will investigate all complaints of unacceptable or abusive behaviour or comments expediently, and we will maintain the confidentiality of the person who reports any perceived infraction or wrongdoing to us. We will not tolerate any form of direct or indirect harassment or discrimination within the Swift-Perfect community, and will take appropriate, fair, and corrective action to any instance of inappropriate behaviour.
 
 The Perfect team maintains the right to remove, edit, or reject any comments, code, edits, or issues that do not align with our Code of Conduct.
