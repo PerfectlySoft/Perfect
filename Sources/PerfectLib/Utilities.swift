@@ -89,6 +89,11 @@ public struct UTF8Encoding {
 	public static func encode<S : Sequence>(bytes byts: S) -> String where S.Iterator.Element == UTF8.CodeUnit {
 		return encode(generator: byts.makeIterator())
 	}
+	
+	/// Use a character sequence to create a String.
+	public static func encode(bytes byts: [UTF8.CodeUnit]) -> String {
+		return encode(generator: GenerateFromPointer(from: UnsafeMutablePointer(mutating: byts), count: byts.count))
+	}
 
 	/// Decode a String into an array of UInt8.
 	public static func decode(string str: String) -> Array<UInt8> {
