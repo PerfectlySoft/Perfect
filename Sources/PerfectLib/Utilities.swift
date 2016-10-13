@@ -467,12 +467,11 @@ public func secondsToICUDate(_ seconds: Int) -> Double {
 
 /// Format a date value according to the indicated format string and return a date string.
 /// - parameter date: The date value
-/// - parameter format: The format by which the date will be formatted
+/// - parameter format: The format by which the date will be formatted. Use a valid strftime style format string.
 /// - parameter timezone: The optional timezone in which the date is expected to be based. Default is the local timezone.
 /// - parameter locale: The optional locale which will be used when parsing the date. Default is the current global locale.
 /// - returns: The resulting date string
-/// - throws: `PerfectError.ICUError`
-/// - Seealso [Date Time Format Syntax](http://userguide.icu-project.org/formatparse/datetime#TOC-Date-Time-Format-Syntax)
+/// - throws: `PerfectError.systemError`
 public func formatDate(_ date: Double, format: String, timezone inTimezone: String? = nil, locale inLocale: String? = nil) throws -> String {
 
 	var t = tm()
