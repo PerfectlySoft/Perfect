@@ -123,6 +123,8 @@ public struct SysLogger: Logger {
 
 /// Placeholder functions for logging system
 public struct Log {
+	private init(){}
+	
 	public static var logger: Logger = ConsoleLogger()
 	
 	public static func debug(message: @autoclosure () -> String) {

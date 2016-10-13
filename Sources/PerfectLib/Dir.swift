@@ -28,7 +28,7 @@ import Darwin
 /// This class represents a directory on the file system.
 /// It can be used for creating & inspecting directories and enumerating directory contents.
 public struct Dir {
-
+	/// A typealias for directory permission modes.
 	public typealias PermissionMode = File.PermissionMode
 
 	var internalPath = ""
@@ -44,6 +44,7 @@ public struct Dir {
 		return exists(realPath)
 	}
 
+	/// Set this Dir as the process' working directory.
 	public func setAsWorkingDir() throws {
 		let res = chdir(self.internalPath)
 		guard res == 0 else {
@@ -51,6 +52,7 @@ public struct Dir {
 		}
 	}
 
+	/// Return the process' current working directory.
 	public static var workingDir: Dir {
 		let buffer = Array(repeating: 0 as UInt8, count: 2049)
 		let _ = getcwd(UnsafeMutableRawPointer(mutating: buffer).assumingMemoryBound(to: Int8.self), 2048)

@@ -58,6 +58,7 @@ let fileCopyBufferSize = 16384
 /// Provides access to a file on the local file system
 public class File {
 
+	/// The underlying file system descriptor.
 	public var fd = -1
 	var internalPath = ""
 
@@ -174,8 +175,11 @@ public extension File {
     }
 	/// A file or directory access permission value.
 	public struct PermissionMode: OptionSet {
+		/// File system mode type.
 		public typealias Mode = mode_t
+		/// The raw mode.
 		public let rawValue: Mode
+		/// Create a permission mode with a raw value.
 		public init(rawValue: Mode) {
 			self.rawValue = rawValue
 		}
