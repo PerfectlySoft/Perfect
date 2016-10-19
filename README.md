@@ -73,7 +73,7 @@ We welcome contributions to Perfect’s documentation. If you spot a typo, bug, 
 We all need a little help now and then. If you do too, don’t be shy, ask us or the friendly and supportive Perfect community:
 
 
-[Slack](http://perfect.ly/) | [Gitter](https://gitter.im/PerfectlySoft/Perfect?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) | [Twitter](https://twitter.com/perfectlysoft)
+[Slack](http://perfect.ly/) | [Twitter](https://twitter.com/perfectlysoft)
 
 ### Deployment
 
