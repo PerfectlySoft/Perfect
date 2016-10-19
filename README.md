@@ -139,7 +139,7 @@ Feel free to use your favourite JSON or templating systems, etc.
 
 The Swift-Perfect developer community is vital to improving Perfect and supporting one another.  
 
-You can help other developers by sharing your expertise and tips, as well as learn from others, by joining the [Perfect Slack channel](http://perfect.ly) or the [Perfect Gitter channel](https://gitter.im/PerfectlySoft/Perfect), whichever is your preference - we will be hanging out in both mediums. Contributions of all kinds are welcome: reporting issues, updating documentation, fixing bugs, building examples, sharing projects, and any other tips that may help the Swift-Perfect community.
+You can help other developers by sharing your expertise and tips, as well as learn from others, by joining the [Perfect Slack channel](http://perfect.ly). Contributions of all kinds are welcome: reporting issues, updating documentation, fixing bugs, building examples, sharing projects, and any other tips that may help the Swift-Perfect community.
 
 If you would like to report an issue, make a new feature request, or help others by working on a known issue, please see the [Perfect JIRA repository](http://jira.perfect.org:8080/secure/Dashboard.jspa).
 
