@@ -81,14 +81,13 @@ Currently, there are options to deploy Perfect to [Docker](https://hub.docker.co
 
 ### Samples, Examples, and Tutorials
 
-Our library continues to grow as members of [the Swift-Perfect development community have shared many samples and examples](https://github.com/PerfectlySoft/PerfectExamples) of their projects in Perfect. Examples include:
+Our library continues to grow as members of [the Swift-Perfect development community have shared many samples and examples](https://github.com/PerfectExamples) of their projects in Perfect. Examples include:
 
-- [WebSockets Server](https://github.com/PerfectlySoft/PerfectExample-WebSocketsServer)
-- [URL Routing](https://github.com/PerfectlySoft/PerfectExample-URLRouting)
-- [Upload Enumerator](https://github.com/PerfectlySoft/PerfectExample-UploadEnumerator)
-- [Ultimate Naughts & Crosses](https://github.com/PerfectlySoft/PerfectExample-UltimateNaughtsAndCrosses/tree/d11348f106f04dd48057c8d6cfff5a45fba1093e) multiplayer game
+- [WebSockets Server](https://github.com/PerfectExamples/PerfectExample-WebSocketsServer)
+- [URL Routing](https://github.com/PerfectExamples/PerfectExample-URLRouting)
+- [Upload Enumerator](https://github.com/PerfectExamples/PerfectExample-UploadEnumerator)
 
-There are [many more examples](https://github.com/PerfectlySoft/PerfectExamples) you can explore. Please share yours!
+There are [many more examples](https://github.com/PerfectExamples) you can explore. Please share yours!
 
 [Access tutorials for working in Perfect 1.0](http://perfect.org/tutorials.html) (which supports Swift 2.2) published by members of the Swift-Perfect community. Or [start working in Perfect 2.0](http://perfect.org/downloads.html#download-perfect) (supports Swift 3.0).
 
@@ -103,7 +102,7 @@ Perfect project is divided into several repositories to make it easy for you to 
 ### Examples
 
 - [Perfect Template](https://github.com/PerfectlySoft/PerfectTemplate) - A simple starter project which compiles with the Swift Package Manager into a standalone executable HTTP server. This repository is ideal for starting a Perfect-based project
-- [Perfect Examples](https://github.com/PerfectlySoft/PerfectExamples) - All the Perfect example projects and documentation
+- [Perfect Examples](https://github.com/PerfectExamples) - All the Perfect example projects
 
 
 ### DataSources
