@@ -99,7 +99,7 @@ public extension JSONConvertibleObject {
 /// An error occurring during JSON conversion.
 public enum JSONConversionError: Error {
     /// The object did not suppport JSON conversion.
-    case notConvertible(Any)
+    case notConvertible(Any?)
     /// A provided key was not a String.
     case invalidKey(Any)
     /// The JSON text contained a syntax error.
