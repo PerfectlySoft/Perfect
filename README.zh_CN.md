@@ -8,13 +8,13 @@
 <p align="center">
     <a href="https://github.com/PerfectlySoft/Perfect" target="_blank">
         <img src="http://www.perfect.org/github/Perfect_GH_button_1_Star.jpg" alt="Star Perfect On Github" />
-    </a>
-    <a href="https://gitter.im/PerfectlySoft/Perfect" target="_blank">
-        <img src="http://www.perfect.org/github/Perfect_GH_button_2_Git.jpg" alt="Chat on Gitter" />
-    </a>
+    </a>  
+    <a href="http://stackoverflow.com/questions/tagged/perfect" target="_blank">
+        <img src="http://www.perfect.org/github/perfect_gh_button_2_SO.jpg" alt="Stack Overflow" />
+    </a>  
     <a href="https://twitter.com/perfectlysoft" target="_blank">
         <img src="http://www.perfect.org/github/Perfect_GH_button_3_twit.jpg" alt="Follow Perfect on Twitter" />
-    </a>
+    </a>  
     <a href="http://perfect.ly" target="_blank">
         <img src="http://www.perfect.org/github/Perfect_GH_button_4_slack.jpg" alt="Join the Perfect Slack" />
     </a>
@@ -35,9 +35,6 @@
     </a>
     <a href="http://twitter.com/PerfectlySoft" target="_blank">
         <img src="https://img.shields.io/badge/Twitter-@PerfectlySoft-blue.svg?style=flat" alt="PerfectlySoft Twitter">
-    </a>
-    <a href="https://gitter.im/PerfectlySoft/Perfect?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge" target="_blank">
-        <img src="https://img.shields.io/badge/Gitter-Join%20Chat-brightgreen.svg" alt="Join the chat at https://gitter.im/PerfectlySoft/Perfect">
     </a>
     <a href="http://perfect.ly" target="_blank">
         <img src="http://perfect.ly/badge.svg" alt="Slack Status">
@@ -76,7 +73,7 @@ Current version: DEVELOPMENT-SNAPSHOT-2016-09-05-a, or Xcode 8 GM release
 我们总会需要您的帮助。如果您真的有想法，不妨加入我们的Perfect支持社区：
 
 
-[Slack](http://perfect.ly/) | [Gitter](https://gitter.im/PerfectlySoft/Perfect?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) | [Twitter](https://twitter.com/perfectlysoft)
+[Slack](http://perfect.ly/) | [Twitter](https://twitter.com/perfectlysoft)
 
 ### 部署
 
@@ -89,7 +86,6 @@ Current version: DEVELOPMENT-SNAPSHOT-2016-09-05-a, or Xcode 8 GM release
 - [WebSockets 服务器](https://github.com/PerfectlySoft/PerfectExample-WebSocketsServer)
 - [URL 路由](https://github.com/PerfectlySoft/PerfectExample-URLRouting)
 - [文件上传](https://github.com/PerfectlySoft/PerfectExample-UploadEnumerator)
-- [终极混战](https://github.com/PerfectlySoft/PerfectExample-UltimateNaughtsAndCrosses/tree/d11348f106f04dd48057c8d6cfff5a45fba1093e) 一个井字棋的双人对战游戏
 
 [更多例子敬请关注！](https://github.com/PerfectlySoft/PerfectExamples)
 
