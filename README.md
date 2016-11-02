@@ -53,12 +53,7 @@ This guide is designed for developers at all levels of experience to get Perfect
 
 ###Compatibility with Swift
 
-**The master branch of this project currently compiles with the Xcode 8 GM release. **
-
-```
-Current version: DEVELOPMENT-SNAPSHOT-2016-09-05-a, or Xcode 8 GM release
-```
-
+The master branch of this project currently compiles with Xcode 8.1 or the Swift 3.0.1 toolchain on Ubuntu.
 
 ###Getting Started
 
