@@ -188,7 +188,7 @@ public class SysProcess {
 			break
 		}
 		self.pid = -1
-		return code
+		return (((code) & 0xff00) >> 8)
 	}
 
 	/// Terminate the process and return its result code.
