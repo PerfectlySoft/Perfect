@@ -1,4 +1,4 @@
-# Perfect：用于服务器端编程的Swift语言 [English](README.md)
+# Perfect：Swift 语言服务器端软件框架 [English](README.md)
 <p align="center">
     <a href="http://perfect.org/get-involved.html" target="_blank">
         <img src="http://perfect.org/assets/github/perfect_github_2_0_0.jpg" alt="Get Involed with Perfect!" width="854" />
