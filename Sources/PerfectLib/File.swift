@@ -350,17 +350,6 @@ public extension File {
 		return Int(st.st_size)
 	}
 
-	/// Returns true if the file is a symbolic link
-    public var isLink: Bool {
-		var st = stat()
-		let statRes = lstat(internalPath, &st)
-		guard statRes != -1 else {
-			return false
-		}
-		let mode = st.st_mode
-		return (Int32(mode) & Int32(S_IFMT)) == Int32(S_IFLNK)
-	}
-
 	/// Returns true if the file is actually a directory
     public var isDir: Bool {
 		var st = stat()
@@ -387,6 +376,35 @@ public extension File {
 			_ = chmod(internalPath, newValue.rawValue)
 		}
     }
+}
+
+public extension File {
+	/// Returns true if the file is a symbolic link
+	public var isLink: Bool {
+		var st = stat()
+		let statRes = lstat(internalPath, &st)
+		guard statRes != -1 else {
+			return false
+		}
+		let mode = st.st_mode
+		return (Int32(mode) & Int32(S_IFMT)) == Int32(S_IFLNK)
+	}
+	
+	@discardableResult
+	public func linkTo(path: String, overWrite: Bool = false) throws -> File {
+		let destFile = File(path)
+		if destFile.exists {
+			guard overWrite else {
+				throw PerfectError.fileError(-1, "Can not overwrite existing file")
+			}
+			destFile.delete()
+		}
+		let res = symlink(self.path, path)
+		if res == 0 {
+			return File(path)
+		}
+		try ThrowFileError()
+	}
 }
 
 public extension File {
