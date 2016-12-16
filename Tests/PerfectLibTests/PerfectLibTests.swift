@@ -191,96 +191,6 @@ class PerfectLibTests: XCTestCase {
 		XCTAssert(emojiStr == "😳")
 	}
 
-
-
-//	func testNetSendFile() {
-//
-//		let testFile = File("/tmp/file_to_send.txt")
-//		let testContents = "Here are the contents"
-//		let sock = "/tmp/foo.sock"
-//		let sockFile = File(sock)
-//		if sockFile.exists {
-//			sockFile.delete()
-//		}
-//
-//		do {
-//
-//			try testFile.open(.truncate)
-//			let _ = try testFile.write(string: testContents)
-//			testFile.close()
-//			try testFile.open()
-//
-//			let server = NetNamedPipe()
-//			let client = NetNamedPipe()
-//
-//			try server.bind(address: sock)
-//			server.listen()
-//
-//			let serverExpectation = self.expectation(description: "server")
-//			let clientExpectation = self.expectation(description: "client")
-//
-//			try server.accept(timeoutSeconds: NetEvent.noTimeout) {
-//				(inn: NetTCP?) -> () in
-//				let n = inn as? NetNamedPipe
-//				XCTAssertNotNil(n)
-//
-//				do {
-//					try n?.sendFile(testFile) {
-//						(b: Bool) in
-//
-//						XCTAssertTrue(b)
-//
-//						n!.close()
-//
-//						serverExpectation.fulfill()
-//					}
-//				} catch let e {
-//					XCTAssert(false, "Exception accepting connection: \(e)")
-//					serverExpectation.fulfill()
-//				}
-//			}
-//
-//			try client.connect(address: sock, timeoutSeconds: 5) {
-//				(inn: NetTCP?) -> () in
-//				let n = inn as? NetNamedPipe
-//				XCTAssertNotNil(n)
-//				do {
-//					try n!.receiveFile {
-//						f in
-//
-//						XCTAssertNotNil(f)
-//						do {
-//							let testDataRead = try f!.readSomeBytes(count: f!.size)
-//							if testDataRead.count > 0 {
-//								XCTAssertEqual(UTF8Encoding.encode(bytes: testDataRead), testContents)
-//							} else {
-//								XCTAssertTrue(false, "Got no data from received file")
-//							}
-//							f!.close()
-//						} catch let e {
-//							XCTAssert(false, "Exception in connection: \(e)")
-//						}
-//						clientExpectation.fulfill()
-//					}
-//				} catch let e {
-//					XCTAssert(false, "Exception in connection: \(e)")
-//					clientExpectation.fulfill()
-//				}
-//			}
-//			self.waitForExpectations(timeout: 10000) {
-//				_ in
-//				server.close()
-//				client.close()
-//				testFile.close()
-//				testFile.delete()
-//			}
-//		} catch PerfectError.networkError(let code, let msg) {
-//			XCTAssert(false, "Exception: \(code) \(msg)")
-//		} catch let e {
-//			XCTAssert(false, "Exception: \(e)")
-//		}
-//	}
-
 	func testSysProcess() {
 #if !Xcode  // this always fails in Xcode but passes on the cli and on Linux.
             // I think it's some interaction with the debugger. System call interrupted.
@@ -544,6 +454,27 @@ class PerfectLibTests: XCTestCase {
 		XCTAssert(i16 == bytes2.export16Bits())
 		XCTAssert(bytes2.availableExportBytes == 1)
 		XCTAssert(i8 == bytes2.export8Bits())
+	}
+	
+	func testSymlink() {
+		let f1 = File("./foo")
+		let f2 = File("./foo2")
+		do {
+			f2.delete()
+			try f1.open(.truncate)
+			try f1.write(string: "test")
+			f1.close()
+			defer {
+				f1.delete()
+			}
+			
+			let newF2 = try f1.linkTo(path: f2.path)
+			
+			XCTAssert(try newF2.readString() == "test")
+			XCTAssert(newF2.isLink)
+		} catch {
+			XCTAssert(false, "\(error)")
+		}
 	}
 }
 
