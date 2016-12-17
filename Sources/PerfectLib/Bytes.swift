@@ -113,9 +113,10 @@ public final class Bytes {
 	/// Exports one UInt8 from the current position. Advances the position marker by 1 byte.
 	/// - returns: The UInt8 value
 	public func export8Bits() -> UInt8 {
-		let result = data[position]
-		position += 1
-		return result
+        defer {
+            position += 1
+        }
+		return data[position]
 	}
 	
 	/// Exports one UInt16 from the current position. Advances the position marker by 2 bytes.
