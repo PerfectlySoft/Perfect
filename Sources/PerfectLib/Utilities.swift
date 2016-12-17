@@ -96,7 +96,7 @@ public struct UTF8Encoding {
 	}
 
 	/// Decode a String into an array of UInt8.
-	public static func decode(string str: String) -> Array<UInt8> {
+	public static func decode(string str: String) -> [UInt8] {
 		return [UInt8](str.utf8)
 	}
 }

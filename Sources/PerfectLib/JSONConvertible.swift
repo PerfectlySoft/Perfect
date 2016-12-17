@@ -230,10 +230,7 @@ extension Optional: JSONConvertible {
 extension Bool: JSONConvertible {
     /// Convert a Bool into JSON text.
     public func jsonEncodedString() throws -> String {
-        if true == self {
-            return "true"
-        }
-        return "false"
+        return self ? "true" : "false"
     }
 }
 
