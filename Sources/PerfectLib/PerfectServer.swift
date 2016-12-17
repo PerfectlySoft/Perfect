@@ -34,11 +34,11 @@ public struct PerfectServer {
 	
     /// Switch the current process to run with the permissions of the indicated user
     public static func switchTo(userName unam: String) throws {
-        guard let pw = getpwnam(unam) else {
+        guard let pw = getpwnam(unam)?.pointee else {
             try ThrowSystemError()
         }
-        let gid = pw.pointee.pw_gid
-        let uid = pw.pointee.pw_uid
+        let gid = pw.pw_gid
+        let uid = pw.pw_uid
         guard 0 == setgid(gid) else {
             try ThrowSystemError()
         }
