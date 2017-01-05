@@ -137,6 +137,10 @@ public class File {
         self.fd = Int(fd)
 	}
 
+	deinit {
+		close()
+	}
+	
 	/// Closes the file if it had been opened
 	public func close() {
 		if fd != -1 {
