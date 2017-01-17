@@ -185,6 +185,9 @@ public class SysProcess {
 			guard status != -1 else {
 				try ThrowSystemError()
 			}
+			if status == 0 && !hang {
+				return 0
+			}
 			break
 		}
 		self.pid = -1
