@@ -88,11 +88,7 @@ open class JSONConvertibleObject: JSONConvertible {
 public extension JSONConvertibleObject {
     /// Get a named value from the Dictionary converting to the given type with a default value.
     func getJSONValue<T: JSONConvertible>(named namd: String, from:[String:Any], defaultValue: T) -> T {
-        let f = from[namd]
-        if let v = f as? T {
-            return v
-        }
-        return defaultValue
+        return (from[namd] as? T) ?? defaultValue
     }
 }
 
@@ -230,10 +226,7 @@ extension Optional: JSONConvertible {
 extension Bool: JSONConvertible {
     /// Convert a Bool into JSON text.
     public func jsonEncodedString() throws -> String {
-        if true == self {
-            return "true"
-        }
-        return "false"
+        return self ? "true" : "false"
     }
 }
 
@@ -269,18 +262,10 @@ func jsonEncodedStringWorkAround(_ o: Any) throws -> String {
 extension Array: JSONConvertible {
     /// Convert an Array into JSON text.
     public func jsonEncodedString() throws -> String {
-        var s = "["
-        var first = true
-        for v in self {
-            if !first {
-                s.append(",")
-            } else {
-                first = false
-            }
-            s.append(try jsonEncodedStringWorkAround(v))
-        }
-        s.append("]")
-        return s
+        let s = try map {
+            try jsonEncodedStringWorkAround($0)
+        }.joined(separator: ",")
+        return "[\(s)]"
     }
 }
 

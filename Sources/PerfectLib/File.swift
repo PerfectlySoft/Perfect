@@ -53,6 +53,16 @@ let F_OK: Int32 = 0
 import Darwin
 #endif
 
+extension stat {
+    var sec: Int {
+        #if os(Linux)
+            return Int(st_mtim.tv_sec)
+        #else
+            return Int(st_mtimespec.tv_sec)
+        #endif
+    }
+}
+
 let fileCopyBufferSize = 16384
 
 /// Provides access to a file on the local file system
@@ -105,11 +115,8 @@ public class File {
         guard res == 0 else {
             return Int.max
         }
-        #if os(Linux)
-            return Int(st.st_mtim.tv_sec)
-        #else
-            return Int(st.st_mtimespec.tv_sec)
-        #endif
+
+        return st.sec
     }
 
 	static func resolveTilde(inPath: String) -> String {

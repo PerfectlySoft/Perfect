@@ -30,9 +30,9 @@ public struct GenerateFromPointer<T> : IteratorProtocol {
 
 	public typealias Element = T
 
-	var count = 0
-	var pos = 0
-	var from: UnsafeMutablePointer<T>
+	private(set) var count = 0
+	private(set) var pos = 0
+	private(set) var from: UnsafeMutablePointer<T>
 
 	/// Initialize given an UnsafeMutablePointer and the number of elements pointed to.
 	public init(from: UnsafeMutablePointer<T>, count: Int) {
@@ -96,26 +96,26 @@ public struct UTF8Encoding {
 	}
 
 	/// Decode a String into an array of UInt8.
-	public static func decode(string str: String) -> Array<UInt8> {
+	public static func decode(string str: String) -> [UInt8] {
 		return [UInt8](str.utf8)
 	}
 }
 
 extension UInt8 {
 	var shouldURLEncode: Bool {
-		let cc = self
-		return ( ( cc >= 128 )
-			|| ( cc < 33 )
-			|| ( cc >= 34  && cc < 38 )
-			|| ( ( cc > 59  && cc < 61) || cc == 62 || cc == 58)
-			|| ( ( cc >= 91  && cc < 95 ) || cc == 96 )
-			|| ( cc >= 123 && cc <= 126 )
-			|| self == 43 )
+        switch self {
+        case 0..<33, 34..<38, 43, 58, 60, 62,
+             91..<95, 96, 123..<127, 128...UInt8.max:
+            return true
+        default:
+            return false
+        }
 	}
 
     // same as String(self, radix: 16)
     // but outputs two characters. i.e. 0 padded
 	var hexString: String {
+
 		var s = ""
 		let b = self >> 4
 		s.append(String(Character(UnicodeScalar(b > 9 ? b - 10 + 65 : b + 48))))
