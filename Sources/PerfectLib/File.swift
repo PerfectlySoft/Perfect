@@ -390,6 +390,7 @@ public extension File {
 		return (Int32(mode) & Int32(S_IFMT)) == Int32(S_IFLNK)
 	}
 	
+	/// Create a symlink from the target to the destination.
 	@discardableResult
 	public func linkTo(path: String, overWrite: Bool = false) throws -> File {
 		let destFile = File(path)
