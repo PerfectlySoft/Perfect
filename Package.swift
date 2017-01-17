@@ -30,6 +30,6 @@ urls += ["https://github.com/PerfectlySoft/Perfect-LinuxBridge.git"]
 let package = Package(
 	name: "PerfectLib",
 	targets: [],
-	dependencies: urls.map { .Package(url: $0, majorVersion: 2, minor: 0) },
+	dependencies: urls.map { .Package(url: $0, majorVersion: 2) },
 	exclude: []
 )
