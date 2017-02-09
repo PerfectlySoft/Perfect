@@ -192,8 +192,6 @@ class PerfectLibTests: XCTestCase {
 	}
 
 	func testSysProcess() {
-#if !Xcode  // this always fails in Xcode but passes on the cli and on Linux.
-            // I think it's some interaction with the debugger. System call interrupted.
 		do {
 			let proc = try SysProcess("ls", args:["-l", "/"], env:[("PATH", "/usr/bin:/bin")])
 
@@ -213,7 +211,44 @@ class PerfectLibTests: XCTestCase {
 		} catch {
 			XCTAssert(false, "Exception running SysProcess test: \(error)")
 		}
-#endif
+	}
+	
+	func testSysProcessGroup() {
+		do {
+			let proc = try SysProcess("sh", args: ["-c", "(sleep 10s &) ; (sleep 10s &) ; sleep 10s"], env: [("PATH", "/usr/bin:/bin")], newGroup: true)
+			
+			XCTAssert(proc.isOpen())
+			XCTAssertNotEqual(-1, proc.pid)
+			XCTAssertNotEqual(-1, proc.gid)
+			
+			// Ensure that the process group is different from the test process
+			#if os(Linux)
+				let testGid = SwiftGlibc.getpgrp()
+			#else
+				let testGid = Darwin.getpgrp()
+			#endif
+			XCTAssertNotEqual(testGid, proc.gid)
+			
+			let savedGid = proc.gid
+			
+			XCTAssertTrue(try hasChildProcesses(gid: savedGid))
+			_ = try proc.killGroup()
+			XCTAssertFalse(try hasChildProcesses(gid: savedGid))
+		} catch {
+			XCTAssert(false, "Exception running SysProcess group test: \(error)")
+		}
+	}
+	
+	private func hasChildProcesses(gid: pid_t) throws -> Bool {
+		let proc = try SysProcess("sh", args: ["-c", "ps -e -o pgid,comm | grep \(gid)"], env: [("PATH", "/usr/bin:/bin")])
+		
+		_ = try proc.wait()
+		
+		if let bytes = try proc.stdout?.readSomeBytes(count: 4096) {
+			return bytes.count > 0
+		} else {
+			return false
+		}
 	}
 
 	func testStringByEncodingHTML() {
@@ -323,44 +358,44 @@ class PerfectLibTests: XCTestCase {
 		XCTAssert(!a.ends(with: "abc"))
 	}
 
-    func testDeletingPathExtension() {
-        let path = "/a/b/c.txt"
-        let del = path.deletingFileExtension
-        XCTAssert("/a/b/c" == del)
-    }
+	func testDeletingPathExtension() {
+		let path = "/a/b/c.txt"
+		let del = path.deletingFileExtension
+		XCTAssert("/a/b/c" == del)
+	}
 
-    func testGetPathExtension() {
-        let path = "/a/b/c.txt"
-        let ext = path.filePathExtension
-        XCTAssert("txt" == ext)
-    }
+	func testGetPathExtension() {
+		let path = "/a/b/c.txt"
+		let ext = path.filePathExtension
+		XCTAssert("txt" == ext)
+	}
 
-    func testDirCreate() {
-        let path = "/tmp/a/b/c/d/e/f/g"
-        do {
-            try Dir(path).create()
+	func testDirCreate() {
+		let path = "/tmp/a/b/c/d/e/f/g"
+		do {
+			try Dir(path).create()
 
-            XCTAssert(Dir(path).exists)
+			XCTAssert(Dir(path).exists)
 
-            var unPath = path
+			var unPath = path
 
-            while unPath != "/tmp" {
-                try Dir(unPath).delete()
-                unPath = unPath.deletingLastFilePathComponent
-            }
-        } catch {
-            XCTAssert(false, "Error while creating dirs: \(error)")
-        }
-    }
+			while unPath != "/tmp" {
+				try Dir(unPath).delete()
+				unPath = unPath.deletingLastFilePathComponent
+			}
+		} catch {
+			XCTAssert(false, "Error while creating dirs: \(error)")
+		}
+	}
 
-    func testDirCreateRel() {
-        let path = "a/b/c/d/e/f/g"
-        do {
-            try Dir(path).create()
-            XCTAssert(Dir(path).exists)
-            var unPath = path
-            repeat {
-                try Dir(unPath).delete()
+	func testDirCreateRel() {
+		let path = "a/b/c/d/e/f/g"
+		do {
+			try Dir(path).create()
+			XCTAssert(Dir(path).exists)
+			var unPath = path
+			repeat {
+				try Dir(unPath).delete()
 
 								// this was killing linux on the final path component
 								//unPath = unPath.stringByDeletingLastPathComponent
@@ -369,35 +404,35 @@ class PerfectLibTests: XCTestCase {
 								splt.removeLast()
 								unPath = splt.joined(separator: "/")
 
-            } while !unPath.isEmpty
-        } catch {
+			} while !unPath.isEmpty
+		} catch {
 					print(error)
-            XCTAssert(false, "Error while creating dirs: \(error)")
-        }
-    }
+			XCTAssert(false, "Error while creating dirs: \(error)")
+		}
+	}
 
-    func testDirForEach() {
-        let dirs = ["a/", "b/", "c/"]
-        do {
-            try Dir("/tmp/a").create()
-            for d in dirs {
-                try Dir("/tmp/a/\(d)").create()
-            }
-            var ta = [String]()
-            try Dir("/tmp/a").forEachEntry {
-                name in
-                ta.append(name)
-            }
+	func testDirForEach() {
+		let dirs = ["a/", "b/", "c/"]
+		do {
+			try Dir("/tmp/a").create()
+			for d in dirs {
+				try Dir("/tmp/a/\(d)").create()
+			}
+			var ta = [String]()
+			try Dir("/tmp/a").forEachEntry {
+				name in
+				ta.append(name)
+			}
 						ta.sort()
-            XCTAssert(ta == dirs, "\(ta) == \(dirs)")
-            for d in dirs {
-                try Dir("/tmp/a/\(d)").delete()
-            }
-            try Dir("/tmp/a").delete()
-        } catch {
-            XCTAssert(false, "Error while creating dirs: \(error)")
-        }
-    }
+			XCTAssert(ta == dirs, "\(ta) == \(dirs)")
+			for d in dirs {
+				try Dir("/tmp/a/\(d)").delete()
+			}
+			try Dir("/tmp/a").delete()
+		} catch {
+			XCTAssert(false, "Error while creating dirs: \(error)")
+		}
+	}
 	
 	func testFilePerms() {
 		let fileName = "/tmp/\(UUID().string)"
@@ -466,6 +501,7 @@ class PerfectLibTests: XCTestCase {
 			f1.close()
 			defer {
 				f1.delete()
+				f2.delete()
 			}
 			
 			let newF2 = try f1.linkTo(path: f2.path)
@@ -479,35 +515,36 @@ class PerfectLibTests: XCTestCase {
 }
 
 extension PerfectLibTests {
-    static var allTests : [(String, (PerfectLibTests) -> () throws -> Void)] {
-        return [
-            ("testJSONConvertibleObject1", testJSONConvertibleObject1),
-            ("testJSONConvertibleObject2", testJSONConvertibleObject2),
-            ("testJSONEncodeDecode", testJSONEncodeDecode),
-            ("testJSONDecodeUnicode", testJSONDecodeUnicode),
-            ("testSysProcess", testSysProcess),
-            ("testStringByEncodingHTML", testStringByEncodingHTML),
-            ("testStringByEncodingURL", testStringByEncodingURL),
-            ("testStringByDecodingURL", testStringByDecodingURL),
-            ("testStringByDecodingURL2", testStringByDecodingURL2),
-            ("testStringByReplacingString", testStringByReplacingString),
-            ("testStringByReplacingString2", testStringByReplacingString2),
-            ("testStringByReplacingString3", testStringByReplacingString3),
-            ("testSubstringTo", testSubstringTo),
-            ("testRangeTo", testRangeTo),
-            ("testSubstringWith", testSubstringWith),
+	static var allTests : [(String, (PerfectLibTests) -> () throws -> Void)] {
+		return [
+			("testJSONConvertibleObject1", testJSONConvertibleObject1),
+			("testJSONConvertibleObject2", testJSONConvertibleObject2),
+			("testJSONEncodeDecode", testJSONEncodeDecode),
+			("testJSONDecodeUnicode", testJSONDecodeUnicode),
+			("testSysProcess", testSysProcess),
+			("testSysProcessGroup", testSysProcessGroup),
+			("testStringByEncodingHTML", testStringByEncodingHTML),
+			("testStringByEncodingURL", testStringByEncodingURL),
+			("testStringByDecodingURL", testStringByDecodingURL),
+			("testStringByDecodingURL2", testStringByDecodingURL2),
+			("testStringByReplacingString", testStringByReplacingString),
+			("testStringByReplacingString2", testStringByReplacingString2),
+			("testStringByReplacingString3", testStringByReplacingString3),
+			("testSubstringTo", testSubstringTo),
+			("testRangeTo", testRangeTo),
+			("testSubstringWith", testSubstringWith),
 
-            ("testDeletingPathExtension", testDeletingPathExtension),
-            ("testGetPathExtension", testGetPathExtension),
+			("testDeletingPathExtension", testDeletingPathExtension),
+			("testGetPathExtension", testGetPathExtension),
 
-            ("testDirCreate", testDirCreate),
-            ("testDirCreateRel", testDirCreateRel),
-            ("testDirForEach", testDirForEach),
-            
-            ("testFilePerms", testFilePerms),
-            ("testDirPerms", testDirPerms),
-            
-            ("testBytesIO", testBytesIO)
-        ]
-    }
+			("testDirCreate", testDirCreate),
+			("testDirCreateRel", testDirCreateRel),
+			("testDirForEach", testDirForEach),
+			
+			("testFilePerms", testFilePerms),
+			("testDirPerms", testDirPerms),
+			
+			("testBytesIO", testBytesIO)
+		]
+	}
 }
