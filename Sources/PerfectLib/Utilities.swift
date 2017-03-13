@@ -17,8 +17,6 @@
 //===----------------------------------------------------------------------===//
 //
 
-import Foundation
-
 #if os(Linux)
 import LinuxBridge
 #else
