@@ -6,6 +6,8 @@
 //  Copyright © 2016 PerfectlySoft. All rights reserved.
 //
 
+import Foundation
+
 extension String {
     func range(ofString string: String, ignoreCase: Bool = false) -> Range<String.Index>? {
         var idx = self.startIndex
