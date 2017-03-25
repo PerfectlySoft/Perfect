@@ -53,7 +53,7 @@ Perfect内建整套工具集，因为无论是客户端还是服务器都能够�
 
 ### Swift语言兼容性
 
-**目前本项目主干版本基于Xcode 8 GM release发行版本。 **
+**目前本项目主干版本基于Xcode 8 GM release发行版本。**
 
 ```
 Current version: DEVELOPMENT-SNAPSHOT-2016-09-05-a, or Xcode 8 GM release
