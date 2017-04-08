@@ -51,16 +51,16 @@ Perfect内建整套工具集，因为无论是客户端还是服务器都能够�
 
 ## 使用Perfect
 
-###Swift语言兼容性
+### Swift语言兼容性
 
-**目前本项目主干版本基于Xcode 8 GM release发行版本。 **
+**目前本项目主干版本基于Xcode 8 GM release发行版本。**
 
 ```
 Current version: DEVELOPMENT-SNAPSHOT-2016-09-05-a, or Xcode 8 GM release
 ```
 
 
-###快速上手
+### 快速上手
 
 [在线教程（简体中文）](https://github.com/PerfectlySoft/PerfectDocs/blob/master/guide.zh_CN/gettingStarted.md) 能够帮助您快速开始使用Perfect。该指南包括了如何使用Perfect的几个典型例子。
 
