@@ -116,7 +116,7 @@ class PerfectLibTests: XCTestCase {
 
 	func testJSONEncodeDecode() {
 
-		let srcAry: [[String:Any]] = [["i": -41451, "i2": 41451, "d": -42E+2, "t": true, "f": false, "n": nil as String?, "a":[1, 2, 3, 4]], ["another":"one"]]
+		let srcAry: [[String:Any]] = [["i": -41451, "i2": 41451, "d": -42E+2, "t": true, "f": false, "n": nil as String? as Any, "a":[1, 2, 3, 4]], ["another":"one"]]
 		var encoded = ""
 		var decoded: [Any]?
 		do {

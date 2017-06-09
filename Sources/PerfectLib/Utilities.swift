@@ -18,26 +18,26 @@
 //
 
 #if os(Linux)
-import LinuxBridge
+	import LinuxBridge
 #else
-import Darwin
+	import Darwin
 #endif
 
 /// This class permits an UnsafeMutablePointer to be used as a GeneratorType
 public struct GenerateFromPointer<T> : IteratorProtocol {
-
+	
 	public typealias Element = T
-
+	
 	var count = 0
 	var pos = 0
 	var from: UnsafeMutablePointer<T>
-
+	
 	/// Initialize given an UnsafeMutablePointer and the number of elements pointed to.
 	public init(from: UnsafeMutablePointer<T>, count: Int) {
 		self.from = from
 		self.count = count
 	}
-
+	
 	/// Return the next element or nil if the sequence has been exhausted.
 	mutating public func next() -> Element? {
 		guard count > 0 else {
@@ -52,7 +52,7 @@ public struct GenerateFromPointer<T> : IteratorProtocol {
 
 /// A generalized wrapper around the Unicode codec operations.
 public struct Encoding {
-
+	
 	/// Return a String given a character generator.
 	public static func encode<D : UnicodeCodec, G : IteratorProtocol>(codec inCodec: D, generator: G) -> String where G.Element == D.CodeUnit, G.Element == D.CodeUnit {
 		var encodedString = ""
@@ -77,12 +77,12 @@ public struct Encoding {
 
 /// Utility wrapper permitting a UTF-8 character generator to encode a String. Also permits a String to be converted into a UTF-8 byte array.
 public struct UTF8Encoding {
-
+	
 	/// Use a character generator to create a String.
 	public static func encode<G : IteratorProtocol>(generator gen: G) -> String where G.Element == UTF8.CodeUnit {
 		return Encoding.encode(codec: UTF8(), generator: gen)
 	}
-
+	
 	/// Use a character sequence to create a String.
 	public static func encode<S : Sequence>(bytes byts: S) -> String where S.Iterator.Element == UTF8.CodeUnit {
 		return encode(generator: byts.makeIterator())
@@ -90,9 +90,9 @@ public struct UTF8Encoding {
 	
 	/// Use a character sequence to create a String.
 	public static func encode(bytes byts: [UTF8.CodeUnit]) -> String {
-		return encode(generator: GenerateFromPointer(from: UnsafeMutablePointer(mutating: byts), count: byts.count))
+		return encode(generator: byts.makeIterator())
 	}
-
+	
 	/// Decode a String into an array of UInt8.
 	public static func decode(string str: String) -> Array<UInt8> {
 		return [UInt8](str.utf8)
@@ -110,9 +110,9 @@ extension UInt8 {
 			|| ( cc >= 123 && cc <= 126 )
 			|| self == 43 )
 	}
-
-    // same as String(self, radix: 16)
-    // but outputs two characters. i.e. 0 padded
+	
+	// same as String(self, radix: 16)
+	// but outputs two characters. i.e. 0 padded
 	var hexString: String {
 		var s = ""
 		let b = self >> 4
@@ -168,7 +168,7 @@ extension String {
 		}
 		return ret
 	}
-
+	
 	/// Returns the String with all special URL characters encoded.
 	public var stringByEncodingURL: String {
 		var ret = ""
@@ -183,19 +183,19 @@ extension String {
 		}
 		return ret
 	}
-
+	
 	// Utility - not sure if it makes the most sense to have here or outside or elsewhere
 	static func byteFromHexDigits(one c1v: UInt8, two c2v: UInt8) -> UInt8? {
-
+		
 		let capA: UInt8 = 65
 		let capF: UInt8 = 70
 		let lowA: UInt8 = 97
 		let lowF: UInt8 = 102
 		let zero: UInt8 = 48
 		let nine: UInt8 = 57
-
+		
 		var newChar = UInt8(0)
-
+		
 		if c1v >= capA && c1v <= capF {
 			newChar = c1v - capA + 10
 		} else if c1v >= lowA && c1v <= lowF {
@@ -205,9 +205,9 @@ extension String {
 		} else {
 			return nil
 		}
-
+		
 		newChar *= 16
-
+		
 		if c2v >= capA && c2v <= capF {
 			newChar += c2v - capA + 10
 		} else if c2v >= lowA && c2v <= lowF {
@@ -219,16 +219,13 @@ extension String {
 		}
 		return newChar
 	}
-
-    /// Decode the % encoded characters in a URL and return result
+	
+	/// Decode the % encoded characters in a URL and return result
 	public var stringByDecodingURL: String? {
-
 		let percent: UInt8 = 37
 		let plus: UInt8 = 43
 		let space: UInt8 = 32
-
 		var bytesArray = [UInt8]()
-
 		var g = self.utf8.makeIterator()
 		while let c = g.next() {
 			if c == percent {
@@ -248,24 +245,27 @@ extension String {
 				bytesArray.append(c)
 			}
 		}
-		return UTF8Encoding.encode(bytes: bytesArray)
+		bytesArray.append(0)
+		return UnsafePointer(bytesArray).withMemoryRebound(to: Int8.self, capacity: bytesArray.count) {
+			return String(validatingUTF8: $0)
+		}
 	}
-
-    /// Decode a hex string into resulting byte array
+	
+	/// Decode a hex string into resulting byte array
 	public var decodeHex: [UInt8]? {
-
+		
 		var bytesArray = [UInt8]()
 		var g = self.utf8.makeIterator()
 		while let c1v = g.next() {
-
+			
 			guard let c2v = g.next() else {
 				return nil
 			}
-
+			
 			guard let newChar = String.byteFromHexDigits(one: c1v, two: c2v) else {
 				return nil
 			}
-
+			
 			bytesArray.append(newChar)
 		}
 		return bytesArray
@@ -274,7 +274,7 @@ extension String {
 
 public struct UUID {
 	let uuid: uuid_t
-
+	
 	public init() {
 		let u = UnsafeMutablePointer<UInt8>.allocate(capacity:  MemoryLayout<uuid_t>.size)
 		defer {
@@ -283,7 +283,7 @@ public struct UUID {
 		uuid_generate_random(u)
 		self.uuid = UUID.uuidFromPointer(u)
 	}
-
+	
 	public init(_ string: String) {
 		let u = UnsafeMutablePointer<UInt8>.allocate(capacity:  MemoryLayout<uuid_t>.size)
 		defer {
@@ -292,16 +292,16 @@ public struct UUID {
 		uuid_parse(string, u)
 		self.uuid = UUID.uuidFromPointer(u)
 	}
-
+	
 	init(_ uuid: uuid_t) {
 		self.uuid = uuid
 	}
-
+	
 	private static func uuidFromPointer(_ u: UnsafeMutablePointer<UInt8>) -> uuid_t {
 		// is there a better way?
 		return uuid_t(u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15])
 	}
-
+	
 	public var string: String {
 		let u = UnsafeMutablePointer<UInt8>.allocate(capacity:  MemoryLayout<uuid_t>.size)
 		let unu = UnsafeMutablePointer<Int8>.allocate(capacity:  37) // as per spec. 36 + null
@@ -317,13 +317,13 @@ public struct UUID {
 }
 
 extension String {
-
+	
 	@available(*, unavailable, message: "Use UUID(_:String)")
 	public func asUUID() -> uuid_t {
 		return UUID(self).uuid
 	}
-
-    @available(*, unavailable, message: "Use UUID.string")
+	
+	@available(*, unavailable, message: "Use UUID.string")
 	public static func fromUUID(uuid: uuid_t) -> String {
 		return UUID(uuid).string
 	}
@@ -335,7 +335,7 @@ public func random_uuid() -> uuid_t {
 }
 
 extension String {
-
+	
 	/// Parse an HTTP Digest authentication header returning a Dictionary containing each part.
 	public func parseAuthentication() -> [String:String] {
 		var ret = [String:String]()
@@ -350,12 +350,12 @@ extension String {
 		}
 		return ret
 	}
-
+	
 	private static func extractField(from frm: String, named: String) -> String? {
 		guard let range = frm.range(ofString: named + "=") else {
 			return nil
 		}
-
+		
 		var currPos = range.upperBound
 		var ret = ""
 		let quoted = frm[currPos] == "\""
@@ -384,32 +384,32 @@ extension String {
 }
 
 extension String {
-
-    /// Replace all occurrences of `string` with `withString`.
+	
+	/// Replace all occurrences of `string` with `withString`.
 	public func stringByReplacing(string strng: String, withString: String) -> String {
-
+		
 		guard !strng.isEmpty else {
 			return self
 		}
 		guard !self.isEmpty else {
 			return self
 		}
-
+		
 		var ret = ""
 		var idx = self.startIndex
 		let endIdx = self.endIndex
-
+		
 		while idx != endIdx {
 			if self[idx] == strng[strng.startIndex] {
 				var newIdx = self.index(after: idx)
 				var findIdx = strng.index(after: strng.startIndex)
 				let findEndIdx = strng.endIndex
-
+				
 				while newIdx != endIndex && findIdx != findEndIdx && self[newIdx] == strng[findIdx] {
 					newIdx = self.index(after: newIdx)
 					findIdx = strng.index(after: findIdx)
 				}
-
+				
 				if findIdx == findEndIdx { // match
 					ret.append(withString)
 					idx = newIdx
@@ -419,10 +419,10 @@ extension String {
 			ret.append(self[idx])
 			idx = self.index(after: idx)
 		}
-
+		
 		return ret
 	}
-
+	
 	// For compatibility due to shifting swift
 	public func contains(string strng: String) -> Bool {
 		return nil != self.range(ofString: strng)
@@ -433,15 +433,15 @@ extension String {
 	func begins(with str: String) -> Bool {
 		return self.characters.starts(with: str.characters)
 	}
-
+	
 	func ends(with str: String) -> Bool {
 		let mine = self.characters
 		let theirs = str.characters
-
+		
 		guard mine.count >= theirs.count else {
 			return false
 		}
-
+		
 		return str.begins(with: self[self.index(self.endIndex, offsetBy: -theirs.count)..<mine.endIndex])
 	}
 }
@@ -449,7 +449,7 @@ extension String {
 /// Returns the current time according to ICU
 /// ICU dates are the number of milliseconds since the reference date of Thu, 01-Jan-1970 00:00:00 GMT
 public func getNow() -> Double {
-
+	
 	var posixTime = timeval()
 	gettimeofday(&posixTime, nil)
 	return Double((posixTime.tv_sec * 1000) + (Int(posixTime.tv_usec)/1000))
@@ -471,7 +471,7 @@ public func secondsToICUDate(_ seconds: Int) -> Double {
 /// - returns: The resulting date string
 /// - throws: `PerfectError.systemError`
 public func formatDate(_ date: Double, format: String, timezone inTimezone: String? = nil, locale inLocale: String? = nil) throws -> String {
-
+	
 	var t = tm()
 	var time = time_t(date / 1000.0)
 	gmtime_r(&time, &t)
@@ -489,31 +489,31 @@ public func formatDate(_ date: Double, format: String, timezone inTimezone: Stri
 }
 
 extension UnicodeScalar {
-
-    /// Returns true if the UnicodeScalar is a white space character
-    public func isWhiteSpace() -> Bool {
-        return isspace(Int32(self.value)) != 0
-    }
-    /// Returns true if the UnicodeScalar is a digit character
-    public func isDigit() -> Bool {
-        return isdigit(Int32(self.value)) != 0
-    }
-    /// Returns true if the UnicodeScalar is an alpha-numeric character
-    public func isAlphaNum() -> Bool {
-        return isalnum(Int32(self.value)) != 0
-    }
-    /// Returns true if the UnicodeScalar is a hexadecimal character
-    public func isHexDigit() -> Bool {
-        if self.isDigit() {
-            return true
-        }
-        switch self {
-        case "A", "B", "C", "D", "E", "F", "a", "b", "c", "d", "e", "f":
-            return true
-        default:
-            return false
-        }
-    }
+	
+	/// Returns true if the UnicodeScalar is a white space character
+	public func isWhiteSpace() -> Bool {
+		return isspace(Int32(self.value)) != 0
+	}
+	/// Returns true if the UnicodeScalar is a digit character
+	public func isDigit() -> Bool {
+		return isdigit(Int32(self.value)) != 0
+	}
+	/// Returns true if the UnicodeScalar is an alpha-numeric character
+	public func isAlphaNum() -> Bool {
+		return isalnum(Int32(self.value)) != 0
+	}
+	/// Returns true if the UnicodeScalar is a hexadecimal character
+	public func isHexDigit() -> Bool {
+		if self.isDigit() {
+			return true
+		}
+		switch self {
+		case "A", "B", "C", "D", "E", "F", "a", "b", "c", "d", "e", "f":
+			return true
+		default:
+			return false
+		}
+	}
 }
 
 //public extension NetNamedPipe {
@@ -591,15 +591,16 @@ extension String {
 		guard unis.count > 0 else {
 			return r
 		}
-		
-		if addfl && self.beginsWithFilePathSeparator {
+		let fsc = Character(filePathSeparator)
+		let beginSlash = unis[unis.startIndex] == fsc
+		if addfl && beginSlash {
 			r.append(String(filePathSeparator))
 		}
 		
-		r.append(contentsOf: self.characters.split(separator: Character(filePathSeparator)).map { String($0) })
+		r.append(contentsOf: self.characters.split(separator: fsc).map { String($0) })
 		
-		if addfl && self.endsWithFilePathSeparator {
-			if !self.beginsWithFilePathSeparator || r.count > 1 {
+		if addfl && unis[unis.index(before: unis.endIndex)] == fsc {
+			if !beginSlash || r.count > 1 {
 				r.append(String(filePathSeparator))
 			}
 		}

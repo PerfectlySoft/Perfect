@@ -41,7 +41,7 @@
     </a>
 </p>
 
-##Perfect: Server-Side Swift
+## Perfect: Server-Side Swift
 
 Perfect is a complete and powerful toolbox, framework, and application server for Linux, iOS, and macOS (OS X). It provides everything a Swift engineer needs for developing lightweight, maintainable, and scalable apps and other REST services entirely in the Swift programming language for both client-facing and server-side applications.
 
@@ -51,11 +51,11 @@ This guide is designed for developers at all levels of experience to get Perfect
 
 ## Working with Perfect
 
-###Compatibility with Swift
+### Compatibility with Swift
 
 The master branch of this project currently compiles with **Xcode 8.1** or the **Swift 3.0.1** toolchain on Ubuntu.
 
-###Getting Started
+### Getting Started
 
 [Access a tutorial](https://github.com/PerfectlySoft/PerfectDocs/blob/master/guide/gettingStarted.md) to help you get started using Perfect quickly. It includes straightforward examples of how Perfect can be used.
 
