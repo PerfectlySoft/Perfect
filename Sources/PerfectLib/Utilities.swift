@@ -54,7 +54,7 @@ public struct GenerateFromPointer<T> : IteratorProtocol {
 public struct Encoding {
 	
 	/// Return a String given a character generator.
-	public static func encode<D : UnicodeCodec, G : IteratorProtocol>(codec inCodec: D, generator: G) -> String where G.Element == D.CodeUnit, G.Element == D.CodeUnit {
+	public static func encode<D : UnicodeCodec, G : IteratorProtocol>(codec inCodec: D, generator: G) -> String where G.Element == D.CodeUnit {
 		var encodedString = ""
 		var finished: Bool = false
 		var mutableDecoder = inCodec
