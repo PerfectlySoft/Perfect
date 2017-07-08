@@ -26,39 +26,39 @@
 
 /// Placeholder functions for logging system
 public protocol Logger {
-	func debug(message: String)
-	func info(message: String)
-	func warning(message: String)
-	func error(message: String)
-	func critical(message: String)
-	func terminal(message: String)
+	func debug(message: String, _ even: Bool)
+	func info(message: String, _ even: Bool)
+	func warning(message: String, _ even: Bool)
+	func error(message: String, _ even: Bool)
+	func critical(message: String, _ even: Bool)
+	func terminal(message: String, _ even: Bool)
 }
 
 public struct ConsoleLogger: Logger {
 	public init(){}
 	
-	public func debug(message: String) {
-		print("[DBG] " + message)
+	public func debug(message: String, _ even: Bool) {
+		print((even ? "[DBG]  " : "[DBG] ") + message)
 	}
 	
-	public func info(message: String) {
-		print("[INFO] " + message)
+	public func info(message: String, _ even: Bool) {
+		print((even ? "[INFO] " : "[INFO] ") + message)
 	}
 	
-	public func warning(message: String) {
-		print("[WARN] " + message)
+	public func warning(message: String, _ even: Bool) {
+		print((even ? "[WARN] " : "[WARN] ") + message)
 	}
 	
-	public func error(message: String) {
-		print("[ERR] " + message)
+	public func error(message: String, _ even: Bool) {
+		print((even ? "[ERR]  " : "[ERR] ") + message)
 	}
 	
-	public func critical(message: String) {
-		print("[CRIT] " + message)
+	public func critical(message: String, _ even: Bool) {
+		print((even ? "[CRIT] " : "[CRIT] ") + message)
 	}
 	
-	public func terminal(message: String) {
-		print("[TERM] " + message)
+	public func terminal(message: String, _ even: Bool) {
+		print((even ? "[TERM] " : "[TERM] ") + message)
 	}
 }
 
@@ -72,48 +72,48 @@ public struct SysLogger: Logger {
 		}
 	}
 	
-	public func debug(message: String) {
-		consoleEcho.debug(message: message)
+	public func debug(message: String, _ even: Bool) {
+		consoleEcho.debug(message: message, even)
 		message.withCString {
 			f in
 			syslog(priority: LOG_DEBUG, f)
 		}
 	}
 	
-	public func info(message: String) {
-		consoleEcho.info(message: message)
+	public func info(message: String, _ even: Bool) {
+		consoleEcho.info(message: message, even)
 		message.withCString {
 			f in
 			syslog(priority: LOG_INFO, f)
 		}
 	}
 	
-	public func warning(message: String) {
-		consoleEcho.warning(message: message)
+	public func warning(message: String, _ even: Bool) {
+		consoleEcho.warning(message: message, even)
 		message.withCString {
 			f in
 			syslog(priority: LOG_WARNING, f)
 		}
 	}
 	
-	public func error(message: String) {
-		consoleEcho.error(message: message)
+	public func error(message: String, _ even: Bool) {
+		consoleEcho.error(message: message, even)
 		message.withCString {
 			f in
 			syslog(priority: LOG_ERR, f)
 		}
 	}
 	
-	public func critical(message: String) {
-		consoleEcho.critical(message: message)
+	public func critical(message: String, _ even: Bool) {
+		consoleEcho.critical(message: message, even)
 		message.withCString {
 			f in
 			syslog(priority: LOG_CRIT, f)
 		}
 	}
 	
-	public func terminal(message: String) {
-		consoleEcho.terminal(message: message)
+	public func terminal(message: String, _ even: Bool) {
+		consoleEcho.terminal(message: message, even)
 		message.withCString {
 			f in
 			syslog(priority: LOG_EMERG, f)
@@ -127,30 +127,34 @@ public struct Log {
 	
 	public static var logger: Logger = ConsoleLogger()
 	
+	/// Whether or not to even off the log messages
+	/// If set to true log messages will be inline with each other
+	public static var even = false
+	
 	public static func debug(message: @autoclosure () -> String) {
 //	#if DEBUG
-		Log.logger.debug(message: message())
+		Log.logger.debug(message: message(), even)
 //	#endif
 	}
 	
-	public static func info(message: String) {
-		Log.logger.info(message: message)
+	public static func info(message: String, evenIdents: Bool = even) {
+		Log.logger.info(message: message, evenIdents)
 	}
 	
-	public static func warning(message: String) {
-		Log.logger.warning(message: message)
+	public static func warning(message: String, evenIdents: Bool = even) {
+		Log.logger.warning(message: message, evenIdents)
 	}
 	
-	public static func error(message: String) {
-		Log.logger.error(message: message)
+	public static func error(message: String, evenIdents: Bool = even) {
+		Log.logger.error(message: message, evenIdents)
 	}
 	
-	public static func critical(message: String) {
-		Log.logger.critical(message: message)
+	public static func critical(message: String, evenIdents: Bool = even) {
+		Log.logger.critical(message: message, evenIdents)
 	}
 	
-	public static func terminal(message: String) -> Never  {
-		Log.logger.terminal(message: message)
+	public static func terminal(message: String, evenIdents: Bool = even) -> Never  {
+		Log.logger.terminal(message: message, evenIdents)
 		fatalError(message)
 	}
 }
