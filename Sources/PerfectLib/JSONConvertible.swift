@@ -214,6 +214,13 @@ extension Double: JSONConvertible {
     }
 }
 
+extension Float: JSONConvertible {
+    /// Convert a Float into JSON text.
+    public func jsonEncodedString() throws -> String {
+        return String(self)
+    }
+}
+
 extension Optional: JSONConvertible {
     /// Convert an Optional into JSON text.
     public func jsonEncodedString() throws -> String {
@@ -251,6 +258,8 @@ func jsonEncodedStringWorkAround(_ o: Any) throws -> String {
     case let jsonAble as UInt:
         return try jsonAble.jsonEncodedString()
     case let jsonAble as Double:
+        return try jsonAble.jsonEncodedString()
+    case let jsonAble as Float:
         return try jsonAble.jsonEncodedString()
     case let jsonAble as Bool:
         return try jsonAble.jsonEncodedString()
