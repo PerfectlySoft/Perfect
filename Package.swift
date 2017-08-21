@@ -19,10 +19,10 @@
 
 import PackageDescription
 
-var urls = [String]()
+var dependencies = Array<Package.Dependency>()
 
 #if os(Linux)
-urls += ["https://github.com/PerfectlySoft/Perfect-LinuxBridge.git"]
+dependencies += [.Package(url: "https://github.com/PerfectlySoft/Perfect-LinuxBridge.git", majorVersion: 2)]
 #else
 
 #endif
@@ -30,6 +30,6 @@ urls += ["https://github.com/PerfectlySoft/Perfect-LinuxBridge.git"]
 let package = Package(
 	name: "PerfectLib",
 	targets: [],
-	dependencies: urls.map { .Package(url: $0, majorVersion: 2) },
+	dependencies: dependencies,
 	exclude: []
 )
