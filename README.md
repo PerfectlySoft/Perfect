@@ -53,7 +53,7 @@ This guide is designed for developers at all levels of experience to get Perfect
 
 ### Compatibility with Swift
 
-The master branch of this project currently compiles with **Xcode 8.1** or the **Swift 3.0.1** toolchain on Ubuntu.
+The master branch of this project currently compiles with **Xcode 8.3** or the **Swift 3.1** toolchain on Ubuntu.
 
 ### Getting Started
 
@@ -67,12 +67,11 @@ We welcome contributions to Perfect’s documentation. If you spot a typo, bug, 
 ### Community
 We all need a little help now and then. If you do too, don’t be shy, ask us or the friendly and supportive Perfect community:
 
-
 [Slack](http://perfect.ly/) | [Twitter](https://twitter.com/perfectlysoft)
 
 ### Deployment
 
-Currently, there are options to deploy Perfect to [Docker](https://hub.docker.com/r/perfectlysoft/ubuntu/) and [Heroku](https://github.com/PerfectlySoft/Perfect-Heroku-Buildpack). We recommend you use these until the other deployment options are updated to compile with Swift 3.0 and Perfect 2.0.
+Your Perfect project can be deployed to any Swift compatible Linux server. We provide a macOS desktop application, [Perfect Assistant](https://www.perfect.org/en/perfect-assistant.html), to help with AWS and Google Cloud deployments. Additional deployment options are in the works.
 
 ### Samples, Examples, and Tutorials
 
@@ -83,8 +82,6 @@ Our library continues to grow as members of [the Swift-Perfect development commu
 - [Upload Enumerator](https://github.com/PerfectExamples/PerfectExample-UploadEnumerator)
 
 There are [many more examples](https://github.com/PerfectExamples) you can explore. Please share yours!
-
-[Access tutorials for working in Perfect 1.0](http://perfect.org/tutorials.html) (which supports Swift 2.2) published by members of the Swift-Perfect community. Or [start working in Perfect 2.0](http://perfect.org/downloads.html#download-perfect) (supports Swift 3.0).
 
 ## Core Perfect Modules
 
