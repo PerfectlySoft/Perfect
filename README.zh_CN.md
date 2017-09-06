@@ -81,7 +81,7 @@ Current version: DEVELOPMENT-SNAPSHOT-2016-09-05-a, or Xcode 8 GM release
 
 ### 教程和案例
 
-我们的资源库一直在随着社区成员的加入而不断增长，[Swift-Perfect开发社区有许多源程序共分享](https://github.com/PerfectlySoft/PerfectExamples)，都是建立在Perfect程序框架之上。典型例子包括：
+我们的资源库一直在随着社区成员的加入而不断增长，[Swift-Perfect开发社区有许多源程序共分享](https://github.com/PerfectExamples)，都是建立在Perfect程序框架之上。典型例子包括：
 
 - [WebSockets 服务器](https://github.com/PerfectlySoft/PerfectExample-WebSocketsServer)
 - [URL 路由](https://github.com/PerfectlySoft/PerfectExample-URLRouting)
