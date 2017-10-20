@@ -67,9 +67,12 @@ public struct SysLogger: Logger {
 	public init(){}
 	
 	func syslog(priority: Int32, _ args: CVarArg...) {
+// nerdo: TODO figure out how to actually fix the error with this code
+#if !os(iOS)
 		withVaList(args) {
 			vsyslog(priority, "%s", $0)
 		}
+#endif
 	}
 	
 	public func debug(message: String, _ even: Bool) {
