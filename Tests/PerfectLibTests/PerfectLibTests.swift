@@ -400,13 +400,12 @@ class PerfectLibTests: XCTestCase {
 								// this was killing linux on the final path component
 								//unPath = unPath.stringByDeletingLastPathComponent
 
-								var splt = unPath.characters.split(separator: "/").map(String.init)
+								var splt = unPath.split(separator: "/").map(String.init)
 								splt.removeLast()
 								unPath = splt.joined(separator: "/")
 
 			} while !unPath.isEmpty
 		} catch {
-					print(error)
 			XCTAssert(false, "Error while creating dirs: \(error)")
 		}
 	}

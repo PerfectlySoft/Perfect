@@ -431,18 +431,14 @@ extension String {
 
 extension String {
 	func begins(with str: String) -> Bool {
-		return self.characters.starts(with: str.characters)
+		return starts(with: str)
 	}
 	
 	func ends(with str: String) -> Bool {
-		let mine = self.characters
-		let theirs = str.characters
-		
-		guard mine.count >= theirs.count else {
+		guard count >= str.count else {
 			return false
 		}
-		
-		return str.begins(with: self[self.index(self.endIndex, offsetBy: -theirs.count)..<mine.endIndex])
+		return str.begins(with: self[index(endIndex, offsetBy: -str.count)..<endIndex])
 	}
 }
 
@@ -570,36 +566,33 @@ extension String {
 	}
 	
 	public var beginsWithFilePathSeparator: Bool {
-		let unis = self.characters
-		guard unis.count > 0 else {
+		guard count > 0 else {
 			return false
 		}
-		return unis[unis.startIndex] == Character(filePathSeparator)
+		return self[startIndex] == Character(filePathSeparator)
 	}
 	
 	public var endsWithFilePathSeparator: Bool {
-		let unis = self.characters
-		guard unis.count > 0 else {
+		guard count > 0 else {
 			return false
 		}
-		return unis[unis.index(before: unis.endIndex)] == Character(filePathSeparator)
+		return self[index(before: endIndex)] == Character(filePathSeparator)
 	}
 	
 	private func filePathComponents(addFirstLast addfl: Bool) -> [String] {
 		var r = [String]()
-		let unis = self.characters
-		guard unis.count > 0 else {
+		guard count > 0 else {
 			return r
 		}
 		let fsc = Character(filePathSeparator)
-		let beginSlash = unis[unis.startIndex] == fsc
+		let beginSlash = self[startIndex] == fsc
 		if addfl && beginSlash {
 			r.append(String(filePathSeparator))
 		}
 		
-		r.append(contentsOf: self.characters.split(separator: fsc).map { String($0) })
+		r.append(contentsOf: self.split(separator: fsc).map { String($0) })
 		
-		if addfl && unis[unis.index(before: unis.endIndex)] == fsc {
+		if addfl && self[index(before: endIndex)] == fsc {
 			if !beginSlash || r.count > 1 {
 				r.append(String(filePathSeparator))
 			}
@@ -612,8 +605,8 @@ extension String {
 	}
 	
 	public var lastFilePathComponent: String {
-		let last = self.filePathComponents(addFirstLast: false).last ?? ""
-		if last.isEmpty && self.characters.first == Character(filePathSeparator) {
+		let last = filePathComponents(addFirstLast: false).last ?? ""
+		if last.isEmpty && first == Character(filePathSeparator) {
 			return String(filePathSeparator)
 		}
 		return last
@@ -635,7 +628,7 @@ extension String {
 		return joined
 	}
 	
-	private func lastPathSeparator(in unis: String.CharacterView) -> String.CharacterView.Index {
+	private func lastPathSeparator(in unis: String) -> String.Index {
 		let startIndex = unis.startIndex
 		var endIndex = unis.endIndex
 		while endIndex != startIndex {
@@ -647,7 +640,7 @@ extension String {
 		return endIndex
 	}
 	
-	private func lastExtensionSeparator(in unis: String.CharacterView, endIndex: String.CharacterView.Index) -> String.CharacterView.Index {
+	private func lastExtensionSeparator(in unis: String, endIndex: String.Index) -> String.Index {
 		var endIndex = endIndex
 		while endIndex != startIndex {
 			endIndex = unis.index(before: endIndex)
@@ -659,11 +652,9 @@ extension String {
 	}
 	
 	public var deletingFileExtension: String {
-		let unis = self.characters
-		let startIndex = unis.startIndex
-		var endIndex = lastPathSeparator(in: unis)
+		var endIndex = lastPathSeparator(in: self)
 		let noTrailsIndex = endIndex
-		endIndex = lastExtensionSeparator(in: unis, endIndex: endIndex)
+		endIndex = lastExtensionSeparator(in: self, endIndex: endIndex)
 		guard endIndex != startIndex else {
 			if noTrailsIndex == startIndex {
 				return self
@@ -674,15 +665,13 @@ extension String {
 	}
 	
 	public var filePathExtension: String {
-		let unis = self.characters
-		let startIndex = unis.startIndex
-		var endIndex = lastPathSeparator(in: unis)
+		var endIndex = lastPathSeparator(in: self)
 		let noTrailsIndex = endIndex
-		endIndex = lastExtensionSeparator(in: unis, endIndex: endIndex)
+		endIndex = lastExtensionSeparator(in: self, endIndex: endIndex)
 		guard endIndex != startIndex else {
 			return ""
 		}
-		return self[unis.index(after: endIndex)..<noTrailsIndex]
+		return self[index(after: endIndex)..<noTrailsIndex]
 	}
 	
 	public var resolvingSymlinksInFilePath: String {
