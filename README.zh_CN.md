@@ -102,7 +102,7 @@ Perfect 项目由若干代码资源库构成，便于您按需查找、下载和
 ### 参考和样例
 
 - [Perfect 模板](https://github.com/PerfectlySoft/PerfectTemplate)：一个使用SPM软件包管理器快速上手的入门项目，能够编译为一个独立运行的HTTP服务器。该代码资源非常适合基于Perfect的项目就此开始开发过程。
-- [Perfect 样例](https://github.com/PerfectlySoft/PerfectExamples)：所有Perfect 项目的典型样例
+- [Perfect 样例](https://github.com/PerfectExamples)：所有Perfect 项目的典型样例
 
 
 ### 数据源
