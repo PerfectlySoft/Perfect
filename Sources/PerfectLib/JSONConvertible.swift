@@ -179,6 +179,20 @@ extension UInt: JSONConvertible {
     }
 }
 
+extension Int8: JSONConvertible {
+    /// Convert an Int8 into JSON text.
+    public func jsonEncodedString() throws -> String {
+        return String(self)
+    }
+}
+
+extension Int16: JSONConvertible {
+    /// Convert an Int16 into JSON text.
+    public func jsonEncodedString() throws -> String {
+        return String(self)
+    }
+}
+
 extension Int32: JSONConvertible {
     /// Convert an Int into JSON text.
     public func jsonEncodedString() throws -> String {
@@ -188,6 +202,20 @@ extension Int32: JSONConvertible {
 
 extension Int64: JSONConvertible {
     /// Convert an Int into JSON text.
+    public func jsonEncodedString() throws -> String {
+        return String(self)
+    }
+}
+
+extension UInt8: JSONConvertible {
+    /// Convert an UInt8 into JSON text.
+    public func jsonEncodedString() throws -> String {
+        return String(self)
+    }
+}
+
+extension UInt16: JSONConvertible {
+    /// Convert an UInt16 into JSON text.
     public func jsonEncodedString() throws -> String {
         return String(self)
     }
@@ -255,7 +283,23 @@ func jsonEncodedStringWorkAround(_ o: Any) throws -> String {
         return try jsonAble.jsonEncodedString()
     case let jsonAble as Int:
         return try jsonAble.jsonEncodedString()
+    case let jsonAble as Int8:
+        return try jsonAble.jsonEncodedString()
+    case let jsonAble as Int16:
+        return try jsonAble.jsonEncodedString()
+    case let jsonAble as Int32:
+        return try jsonAble.jsonEncodedString()
+    case let jsonAble as Int64:
+        return try jsonAble.jsonEncodedString()
     case let jsonAble as UInt:
+        return try jsonAble.jsonEncodedString()
+    case let jsonAble as UInt8:
+        return try jsonAble.jsonEncodedString()
+    case let jsonAble as UInt16:
+        return try jsonAble.jsonEncodedString()
+    case let jsonAble as UInt32:
+        return try jsonAble.jsonEncodedString()
+    case let jsonAble as UInt64:
         return try jsonAble.jsonEncodedString()
     case let jsonAble as Double:
         return try jsonAble.jsonEncodedString()
