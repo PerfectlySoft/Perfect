@@ -172,7 +172,156 @@ class PerfectLibTests: XCTestCase {
 
 		}
 	}
+    func testIntegerTypesEncode(){
+        let i8:Int8 = -12
+        let i16:Int16 = -1234
+        let i32:Int32 = -1234567890
+        let i64:Int64 = -123456789012345678
 
+        let u8:UInt8 = 12
+        let u16:UInt16 = 1234
+        let u32:UInt32 = 1234567890
+        let u64:UInt64 = 123456789012345678
+        
+        var srcDict:[String:Any] = [String:Any]()
+        var destDict:[String:Any]?
+        
+        srcDict["i8"] = i8
+        srcDict["i16"] = i8
+        srcDict["i32"] = i8
+        srcDict["i64"] = i8
+        srcDict["u8"] = i8
+        srcDict["u16"] = i8
+        srcDict["u32"] = i8
+        srcDict["u64"] = i8
+        
+        
+        var encoded = ""
+        
+        
+        do {
+            
+            encoded = try i8.jsonEncodedString()
+            XCTAssert(encoded == String(i8), "Invalid result")
+            
+        } catch let e {
+            XCTAssert(false, "Exception while encoding i8 \(e)")
+            return
+        }
+
+        do {
+            
+            encoded = try i16.jsonEncodedString()
+            XCTAssert(encoded == String(i16), "Invalid result")
+
+        } catch let e {
+            XCTAssert(false, "Exception while encoding i16 \(e)")
+            return
+        }
+
+        do {
+            
+            encoded = try i32.jsonEncodedString()
+            XCTAssert(encoded == String(i32), "Invalid result")
+
+        } catch let e {
+            XCTAssert(false, "Exception while encoding i32 \(e)")
+            return
+        }
+
+        do {
+            
+            encoded = try i64.jsonEncodedString()
+            XCTAssert(encoded == String(i64), "Invalid result")
+
+        } catch let e {
+            XCTAssert(false, "Exception while encoding i64 \(e)")
+            return
+        }
+
+        do {
+            
+            encoded = try u8.jsonEncodedString()
+            XCTAssert(encoded == String(u8), "Invalid result")
+
+        } catch let e {
+            XCTAssert(false, "Exception while encoding u8 \(e)")
+            return
+        }
+        
+        do {
+            
+            encoded = try u16.jsonEncodedString()
+            XCTAssert(encoded == String(u16), "Invalid result")
+
+        } catch let e {
+            XCTAssert(false, "Exception while encoding u16 \(e)")
+            return
+        }
+        
+        do {
+            
+            encoded = try u32.jsonEncodedString()
+            XCTAssert(encoded == String(u32), "Invalid result")
+
+        } catch let e {
+            XCTAssert(false, "Exception while encoding u32 \(e)")
+            return
+        }
+        
+        do {
+            
+            encoded = try u64.jsonEncodedString()
+            XCTAssert(encoded == String(u64), "Invalid result")
+
+        } catch let e {
+            XCTAssert(false, "Exception while encoding u64 \(e)")
+            return
+        }
+        
+        do {
+            encoded = ""
+            encoded = try srcDict.jsonEncodedString()
+            XCTAssert(encoded != "", "Invalid result")
+        } catch let e {
+            XCTAssert(false, "Exception while encoding srcDict \(e)")
+        }
+
+        do {
+            destDict = try encoded.jsonDecode() as? [String:Any]
+            
+        } catch let e {
+            XCTAssert(false, "Exception while decoding into destDict \(e)" )
+        }
+        
+        for (key, value) in destDict! {
+            
+            let value2 = srcDict[key]
+            XCTAssert(value2 != nil)
+            switch value2 {
+            case let i as Int8:
+                XCTAssert(value as! Int == Int(i))
+            case let i as Int16:
+                XCTAssert(value as! Int == Int(i))
+            case let i as Int32:
+                XCTAssert(value as! Int == Int(i))
+            case let i as Int64:
+                XCTAssert(value as! Int == Int(i))
+            case let i as UInt8:
+                XCTAssert(value as! Int == Int(i))
+            case let i as UInt16:
+                XCTAssert(value as! Int == Int(i))
+            case let i as UInt32:
+                XCTAssert(value as! Int == Int(i))
+            case let i as UInt64:
+                XCTAssert(value as! Int == Int(i))
+            default:
+                ()
+            }
+            
+        }
+    }
+    
 	func testJSONDecodeUnicode() {
 		var decoded: [String: Any]?
 		let jsonStr = "{\"emoji\": \"\\ud83d\\ude33\"}"     // {"emoji": "\ud83d\ude33"}
@@ -543,7 +692,8 @@ extension PerfectLibTests {
 			("testFilePerms", testFilePerms),
 			("testDirPerms", testDirPerms),
 			
-			("testBytesIO", testBytesIO)
+			("testBytesIO", testBytesIO),
+            ("testIntegerTypesEncode", testIntegerTypesEncode)
 		]
 	}
 }
