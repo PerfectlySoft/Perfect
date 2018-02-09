@@ -62,7 +62,7 @@ The master branch of this project currently compiles with **Xcode 9** or the **S
 ### Documentation
 [Get started working with Perfect](https://github.com/PerfectlySoft/PerfectDocs), deploy your apps, and find more detailed help by consulting our reference library.
 
-We welcome contributions to Perfect’s documentation. If you spot a typo, bug, or other errata, or have additions or suggestions to recommend, please [create a pull request or log an issue in JIRA](http://jira.perfect.org:8080/servicedesk/customer/portal/1/user/login?destination=portal%2F1).
+We welcome contributions to Perfect’s documentation. If you spot a typo, bug, or other errata, or have additions or suggestions to recommend, please create a pull request or issue in Github.
 
 ### Community
 We all need a little help now and then. If you do too, don’t be shy, ask us or the friendly and supportive Perfect community:
@@ -131,8 +131,6 @@ Feel free to use your favourite JSON or templating systems, etc.
 The Swift-Perfect developer community is vital to improving Perfect and supporting one another.  
 
 You can help other developers by sharing your expertise and tips, as well as learn from others, by joining the [Perfect Slack channel](http://perfect.ly). Contributions of all kinds are welcome: reporting issues, updating documentation, fixing bugs, building examples, sharing projects, and any other tips that may help the Swift-Perfect community.
-
-If you would like to report an issue, make a new feature request, or help others by working on a known issue, please see the [Perfect JIRA repository](http://jira.perfect.org:8080/secure/Dashboard.jspa).
 
 If you would like to share your example project, tutorial, or video, please share the URL of your work on GitHub and [Twitter](https://twitter.com/perfectlysoft), and the Perfect team will highlight it to the community.
 
