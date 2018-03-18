@@ -111,7 +111,7 @@ public class File {
     }
 
 	static func resolveTilde(inPath: String) -> String {
-#if !os(iOS)
+#if !os(iOS) && !os(tvOS)
 		if !inPath.isEmpty && inPath[inPath.startIndex] == "~" {
 			var wexp = wordexp_t()
 			guard 0 == wordexp(inPath, &wexp, 0),
