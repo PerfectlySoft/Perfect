@@ -68,7 +68,7 @@ public struct SysLogger: Logger {
 	public init(){}
 
 	func syslog(priority: Int32, _ args: CVarArg...) {
-#if os(Linux) || os(OSX)
+#if os(Linux) || os(macOS)
 		withVaList(args) {
 			vsyslog(priority, "%s", $0)
 		}
