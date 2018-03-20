@@ -18,7 +18,7 @@
 //
 
 #if os(Linux)
-	import SwiftGlib
+	import SwiftGlibc
 	import LinuxBridge
 #else
 	import Darwin
