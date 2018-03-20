@@ -28,16 +28,16 @@ public final class Bytes {
 	public var data: [UInt8]
 	
 	/// Indicates the number of bytes which may be successfully exported
-	public var availableExportBytes: Int { return self.data.count - self.position }
+	public var availableExportBytes: Int { return data.count - position }
 	
 	/// Create an empty Bytes object
 	public init() {
-		self.data = [UInt8]()
+		data = [UInt8]()
 	}
 	
 	/// Initialize with existing bytes
 	public init(existingBytes: [UInt8]) {
-		self.data = existingBytes
+		data = existingBytes
 	}
 	
 	// -- IMPORT
@@ -171,10 +171,10 @@ public final class Bytes {
 	/// Exports the indicated number of bytes
 	public func exportBytes(count cnt: Int) -> [UInt8] {
 		var sub = [UInt8]()
-		let end = self.position + cnt
-		while self.position < end {
-			sub.append(self.data[self.position])
-			self.position += 1
+		let end = position + cnt
+		while position < end {
+			sub.append(data[position])
+			position += 1
 		}
 		return sub
 	}

@@ -43,9 +43,9 @@ public struct GenerateFromPointer<T> : IteratorProtocol {
 		guard count > 0 else {
 			return nil
 		}
-		self.count -= 1
-		let result = self.from[self.pos]
-		self.pos += 1
+		count -= 1
+		let result = from[pos]
+		pos += 1
 		return result
 	}
 }
@@ -127,7 +127,7 @@ extension String {
 	/// Returns the String with all special HTML characters encoded.
 	public var stringByEncodingHTML: String {
 		var ret = ""
-		var g = self.unicodeScalars.makeIterator()
+		var g = unicodeScalars.makeIterator()
 		var lastWasCR = false
 		while let c = g.next() {
 			if c == UnicodeScalar(10) {
@@ -172,7 +172,7 @@ extension String {
 	/// Returns the String with all special URL characters encoded.
 	public var stringByEncodingURL: String {
 		var ret = ""
-		var g = self.utf8.makeIterator()
+		var g = utf8.makeIterator()
 		while let c = g.next() {
 			if c.shouldURLEncode {
 				ret.append(String(Character(UnicodeScalar(37))))
@@ -226,7 +226,7 @@ extension String {
 		let plus: UInt8 = 43
 		let space: UInt8 = 32
 		var bytesArray = [UInt8]()
-		var g = self.utf8.makeIterator()
+		var g = utf8.makeIterator()
 		while let c = g.next() {
 			if c == percent {
 				guard let c1v = g.next() else {
@@ -255,7 +255,7 @@ extension String {
 	public var decodeHex: [UInt8]? {
 		
 		var bytesArray = [UInt8]()
-		var g = self.utf8.makeIterator()
+		var g = utf8.makeIterator()
 		while let c1v = g.next() {
 			
 			guard let c2v = g.next() else {
@@ -281,7 +281,7 @@ public struct UUID {
 			u.deallocate(capacity: MemoryLayout<uuid_t>.size)
 		}
 		uuid_generate_random(u)
-		self.uuid = UUID.uuidFromPointer(u)
+		uuid = UUID.uuidFromPointer(u)
 	}
 	
 	public init(_ string: String) {
@@ -290,7 +290,7 @@ public struct UUID {
 			u.deallocate(capacity: MemoryLayout<uuid_t>.size)
 		}
 		uuid_parse(string, u)
-		self.uuid = UUID.uuidFromPointer(u)
+		uuid = UUID.uuidFromPointer(u)
 	}
 	
 	init(_ uuid: uuid_t) {
@@ -309,7 +309,7 @@ public struct UUID {
 			u.deallocate(capacity: MemoryLayout<uuid_t>.size)
 			unu.deallocate(capacity: 37)
 		}
-		var uu = self.uuid
+		var uu = uuid
 		memcpy(u, &uu, MemoryLayout<uuid_t>.size)
 		uuid_unparse_lower(u, unu)
 		return String(validatingUTF8: unu)!
@@ -339,7 +339,7 @@ extension String {
 	/// Parse an HTTP Digest authentication header returning a Dictionary containing each part.
 	public func parseAuthentication() -> [String:String] {
 		var ret = [String:String]()
-		if let _ = self.range(ofString: "Digest ") {
+		if let _ = range(ofString: "Digest ") {
 			ret["type"] = "Digest"
 			let wantFields = ["username", "nonce", "nc", "cnonce", "response", "uri", "realm", "qop", "algorithm"]
 			for field in wantFields {
@@ -391,22 +391,22 @@ extension String {
 		guard !strng.isEmpty else {
 			return self
 		}
-		guard !self.isEmpty else {
+		guard !isEmpty else {
 			return self
 		}
 		
 		var ret = ""
-		var idx = self.startIndex
-		let endIdx = self.endIndex
+		var idx = startIndex
+		let endIdx = endIndex
 		
 		while idx != endIdx {
 			if self[idx] == strng[strng.startIndex] {
-				var newIdx = self.index(after: idx)
+				var newIdx = index(after: idx)
 				var findIdx = strng.index(after: strng.startIndex)
 				let findEndIdx = strng.endIndex
 				
 				while newIdx != endIndex && findIdx != findEndIdx && self[newIdx] == strng[findIdx] {
-					newIdx = self.index(after: newIdx)
+					newIdx = index(after: newIdx)
 					findIdx = strng.index(after: findIdx)
 				}
 				
@@ -417,7 +417,7 @@ extension String {
 				}
 			}
 			ret.append(self[idx])
-			idx = self.index(after: idx)
+			idx = index(after: idx)
 		}
 		
 		return ret
@@ -425,7 +425,7 @@ extension String {
 	
 	// For compatibility due to shifting swift
 	public func contains(string strng: String) -> Bool {
-		return nil != self.range(ofString: strng)
+		return nil != range(ofString: strng)
 	}
 }
 
@@ -488,19 +488,19 @@ extension UnicodeScalar {
 	
 	/// Returns true if the UnicodeScalar is a white space character
 	public func isWhiteSpace() -> Bool {
-		return isspace(Int32(self.value)) != 0
+		return isspace(Int32(value)) != 0
 	}
 	/// Returns true if the UnicodeScalar is a digit character
 	public func isDigit() -> Bool {
-		return isdigit(Int32(self.value)) != 0
+		return isdigit(Int32(value)) != 0
 	}
 	/// Returns true if the UnicodeScalar is an alpha-numeric character
 	public func isAlphaNum() -> Bool {
-		return isalnum(Int32(self.value)) != 0
+		return isalnum(Int32(value)) != 0
 	}
 	/// Returns true if the UnicodeScalar is a hexadecimal character
 	public func isHexDigit() -> Bool {
-		if self.isDigit() {
+		if isDigit() {
 			return true
 		}
 		switch self {
@@ -511,49 +511,6 @@ extension UnicodeScalar {
 		}
 	}
 }
-
-//public extension NetNamedPipe {
-//    /// Send the existing & opened `File`'s descriptor over the connection to the recipient
-//    /// - parameter file: The `File` whose descriptor to send
-//    /// - parameter callBack: The callback to call when the send completes. The parameter passed will be `true` if the send completed without error.
-//    /// - throws: `PerfectError.NetworkError`
-//    public func sendFile(_ file: File, callBack: @escaping (Bool) -> ()) throws {
-//        try self.sendFd(Int32(file.fd), callBack: callBack)
-//    }
-//
-//    /// Receive an existing opened `File` descriptor from the sender
-//    /// - parameter callBack: The callback to call when the receive completes. The parameter passed will be the received `File` object or nil.
-//    /// - throws: `PerfectError.NetworkError`
-//    public func receiveFile(callBack: @escaping (File?) -> ()) throws {
-//        try self.receiveFd {
-//            fd in
-//
-//            if fd == invalidSocket {
-//                callBack(nil)
-//            } else {
-//                callBack(File("", fd: fd))
-//            }
-//        }
-//    }
-//}
-//
-//import OpenSSL
-//
-//extension String.UTF8View {
-//    var sha1: [UInt8] {
-//        let bytes = UnsafeMutablePointer<UInt8>.allocate(capacity:  Int(SHA_DIGEST_LENGTH))
-//        defer { bytes.deallocate(capacity: Int(SHA_DIGEST_LENGTH)) }
-//
-//        SHA1(Array<UInt8>(self), (self.count), bytes)
-//
-//        var r = [UInt8]()
-//        for idx in 0..<Int(SHA_DIGEST_LENGTH) {
-//            r.append(bytes[idx])
-//        }
-//        return r
-//    }
-//}
-
 
 extension String {
 	
@@ -590,7 +547,7 @@ extension String {
 			r.append(String(filePathSeparator))
 		}
 		
-		r.append(contentsOf: self.split(separator: fsc).map { String($0) })
+		r.append(contentsOf: split(separator: fsc).map { String($0) })
 		
 		if addfl && self[index(before: endIndex)] == fsc {
 			if !beginSlash || r.count > 1 {
@@ -601,7 +558,7 @@ extension String {
 	}
 	
 	public var filePathComponents: [String] {
-		return self.filePathComponents(addFirstLast: true)
+		return filePathComponents(addFirstLast: true)
 	}
 	
 	public var lastFilePathComponent: String {
@@ -613,16 +570,16 @@ extension String {
 	}
 	
 	public var deletingLastFilePathComponent: String {
-		var comps = self.filePathComponents(addFirstLast: false)
+		var comps = filePathComponents(addFirstLast: false)
 		guard comps.count > 1 else {
-			if self.beginsWithFilePathSeparator {
+			if beginsWithFilePathSeparator {
 				return String(filePathSeparator)
 			}
 			return ""
 		}
 		comps.removeLast()
 		let joined = comps.joined(separator: String(filePathSeparator))
-		if self.beginsWithFilePathSeparator {
+		if beginsWithFilePathSeparator {
 			return String(filePathSeparator) + joined
 		}
 		return joined

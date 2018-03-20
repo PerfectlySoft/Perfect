@@ -34,7 +34,7 @@ public struct Dir {
 	/// Create a new Dir object with the given path
 	public init(_ path: String) {
 		let pth = path.ends(with: "/") ? path : path + "/"
-		self.internalPath = File.resolveTilde(inPath: pth)
+		internalPath = File.resolveTilde(inPath: pth)
 	}
 
 	/// Returns true if the directory exists
@@ -44,7 +44,7 @@ public struct Dir {
 
 	/// Set this Dir as the process' working directory.
 	public func setAsWorkingDir() throws {
-		let res = chdir(self.internalPath)
+		let res = chdir(internalPath)
 		guard res == 0 else {
 			try ThrowFileError()
 		}

@@ -133,7 +133,7 @@ public class File {
 	/// - parameter path: Path to the file which will be accessed
     /// - parameter fd: The file descriptor, if any, for an already opened file
 	public init(_ path: String, fd: Int32 = -1) {
-		self.internalPath = File.resolveTilde(inPath: path)
+		internalPath = File.resolveTilde(inPath: path)
         self.fd = Int(fd)
 	}
 
@@ -255,13 +255,13 @@ public extension File {
         /// Returns the value of the file's current position marker
         get {
             if isOpen {
-                return Int(lseek(Int32(self.fd), 0, SEEK_CUR))
+                return Int(lseek(Int32(fd), 0, SEEK_CUR))
             }
             return 0
         }
         /// Sets the file's position marker given the value as measured from the begining of the file.
         set {
-            lseek(Int32(self.fd), off_t(newValue), SEEK_SET)
+            lseek(Int32(fd), off_t(newValue), SEEK_SET)
         }
     }
 }
@@ -293,8 +293,8 @@ public extension File {
             return destFile
         }
         if errno == EXDEV {
-            _ = try self.copyTo(path: path, overWrite: overWrite)
-            self.delete()
+            _ = try copyTo(path: path, overWrite: overWrite)
+            delete()
             return destFile
         }
         try ThrowFileError()
@@ -314,8 +314,8 @@ public extension File {
             }
             destFile.delete()
         }
-        let wasOpen = self.isOpen
-        let oldMarker = self.marker
+        let wasOpen = isOpen
+        let oldMarker = marker
         if !wasOpen {
             try open()
         } else {
@@ -331,10 +331,10 @@ public extension File {
 
         try destFile.open(.truncate)
 
-        var bytes = try self.readSomeBytes(count: fileCopyBufferSize)
+        var bytes = try readSomeBytes(count: fileCopyBufferSize)
         while bytes.count > 0 {
             try destFile.write(bytes: bytes)
-            bytes = try self.readSomeBytes(count: fileCopyBufferSize)
+            bytes = try readSomeBytes(count: fileCopyBufferSize)
         }
 
         destFile.close()
@@ -451,7 +451,7 @@ public extension File {
 
 	/// Reads the entire file as a string
 	public func readString() throws -> String {
-		let bytes = try self.readSomeBytes(count: self.size)
+		let bytes = try readSomeBytes(count: size)
 		return UTF8Encoding.encode(bytes: bytes)
     }
 }
@@ -497,7 +497,7 @@ public extension File {
 		if !isOpen {
 			try open(.write)
 		}
-		let res = lockf(Int32(self.fd), F_LOCK, off_t(byteCount))
+		let res = lockf(Int32(fd), F_LOCK, off_t(byteCount))
 		guard res == 0 else {
 			try ThrowFileError()
 		}
@@ -510,7 +510,7 @@ public extension File {
 		if !isOpen {
 			try open(.write)
 		}
-		let res = lockf(Int32(self.fd), F_ULOCK, off_t(byteCount))
+		let res = lockf(Int32(fd), F_ULOCK, off_t(byteCount))
 		guard res == 0 else {
 			try ThrowFileError()
 		}
@@ -523,7 +523,7 @@ public extension File {
 		if !isOpen {
 			try open(.write)
 		}
-		let res = lockf(Int32(self.fd), F_TLOCK, off_t(byteCount))
+		let res = lockf(Int32(fd), F_TLOCK, off_t(byteCount))
 		guard res == 0 else {
 			try ThrowFileError()
 		}
@@ -537,7 +537,7 @@ public extension File {
 		if !isOpen {
 			try open(.write)
 		}
-		let res = Int(lockf(Int32(self.fd), F_TEST, off_t(byteCount)))
+		let res = Int(lockf(Int32(fd), F_TEST, off_t(byteCount)))
 		guard res == 0 || res == Int(EACCES) || res == Int(EAGAIN) else {
 			try ThrowFileError()
 		}

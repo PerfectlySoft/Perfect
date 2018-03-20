@@ -134,7 +134,7 @@ public class SysProcess {
 		// On Ubuntu the getpgid(pid_t) call does not seem to work.
 		// However, the Posix standard says that the pgid is the same
 		// as the pid of the first process spawned, so we can just use that.
-		self.gid = procPid
+		gid = procPid
 		_ = SwiftGlibc.close(fSTDIN[0])
 		_ = SwiftGlibc.close(fSTDOUT[1])
 		_ = SwiftGlibc.close(fSTDERR[1])
@@ -145,7 +145,7 @@ public class SysProcess {
 			try ThrowSystemError()
 		}
 	#else
-		self.gid = Darwin.getpgid(procPid)
+		gid = Darwin.getpgid(procPid)
 		_ = Darwin.close(fSTDIN[0])
 		_ = Darwin.close(fSTDOUT[1])
 		_ = Darwin.close(fSTDERR[1])
@@ -156,57 +156,57 @@ public class SysProcess {
 			try ThrowSystemError()
 		}
 	#endif
-		self.pid = procPid
-		self.stdin = File("stdin", fd: fSTDIN[1])
-		self.stdout = File("stdout", fd: fSTDOUT[0])
-		self.stderr = File("stderr", fd: fSTDERR[0])
+		pid = procPid
+		stdin = File("stdin", fd: fSTDIN[1])
+		stdout = File("stdout", fd: fSTDOUT[0])
+		stderr = File("stderr", fd: fSTDERR[0])
 	}
 
 	deinit {
-		self.close()
+		close()
 	}
 
 	/// Returns true if the process was opened and was running at some point.
 	/// Note that the process may not be currently running. Use `wait(false)` to check if the process is currently running.
 	public func isOpen() -> Bool {
-		return self.pid != -1
+		return pid != -1
 	}
 
 	/// Terminate the process and clean up.
 	public func close() {
-		if self.stdin != nil {
-			self.stdin!.close()
+		if stdin != nil {
+			stdin!.close()
 		}
-		if self.stdout != nil {
-			self.stdout!.close()
+		if stdout != nil {
+			stdout!.close()
 		}
-		if self.stderr != nil {
-			self.stderr!.close()
+		if stderr != nil {
+			stderr!.close()
 		}
-		if self.pid != -1 {
+		if pid != -1 {
 			do {
-				let _ = try self.kill()
+				let _ = try kill()
 			} catch {
 
 			}
 		}
-		self.stdin = nil
-		self.stdout = nil
-		self.stderr = nil
-		self.pid = -1
-		self.gid = -1
+		stdin = nil
+		stdout = nil
+		stderr = nil
+		pid = -1
+		gid = -1
 	}
 
 	/// Detach from the process such that it will not be manually terminated when this object is deinitialized.
 	public func detach() {
-		self.pid = -1
+		pid = -1
 	}
 
 	/// Determine if the process has completed running and retrieve its result code.
 	public func wait(hang: Bool = true) throws -> Int32 {
 		var code = Int32(0)
 		while true {
-			let status = waitpid(self.pid, &code, WUNTRACED | (hang ? 0 : WNOHANG))
+			let status = waitpid(pid, &code, WUNTRACED | (hang ? 0 : WNOHANG))
 			if status == -1 && errno == EINTR {
 				continue
 			}
@@ -218,33 +218,33 @@ public class SysProcess {
 			}
 			break
 		}
-		self.pid = -1
+		pid = -1
 		return (((code) & 0xff00) >> 8)
 	}
 
 	/// Terminate the process and return its result code.
 	public func kill(signal: Int32 = SIGTERM) throws -> Int32 {
 	#if os(Linux)
-		let status = SwiftGlibc.kill(self.pid, signal)
+		let status = SwiftGlibc.kill(pid, signal)
 	#else
-		let status = Darwin.kill(self.pid, signal)
+		let status = Darwin.kill(pid, signal)
 	#endif
 		guard status != -1 else {
 			try ThrowSystemError()
 		}
-		return try self.wait()
+		return try wait()
 	}
 	
 	/// Terminate the process group and return the root process result code.
 	public func killGroup(signal: Int32 = SIGTERM) throws -> Int32 {
 		#if os(Linux)
-			let status = SwiftGlibc.killpg(self.gid, signal)
+			let status = SwiftGlibc.killpg(gid, signal)
 		#else
-			let status = Darwin.killpg(self.gid, signal)
+			let status = Darwin.killpg(gid, signal)
 		#endif
 		guard status != -1 else {
 			try ThrowSystemError()
 		}
-		return try self.wait()
+		return try wait()
 	}
 }
