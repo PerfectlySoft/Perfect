@@ -82,13 +82,20 @@ public class SysProcess {
 		pipe(UnsafeMutableRawPointer(mutating: fSTDIN).assumingMemoryBound(to: Int32.self))
 		pipe(UnsafeMutableRawPointer(mutating: fSTDOUT).assumingMemoryBound(to: Int32.self))
 		pipe(UnsafeMutableRawPointer(mutating: fSTDERR).assumingMemoryBound(to: Int32.self))
-#if os(Linux)
+    #if os(Linux)
 		var action = posix_spawn_file_actions_t()
 		var attr = posix_spawnattr_t()
-#else
+    #else
 		var action = posix_spawn_file_actions_t(nil as OpaquePointer?)
 		var attr = posix_spawnattr_t(nil as OpaquePointer?)
-#endif
+    #endif
+
+        // nerdo: This probably causes SysProcess to fail on tvOS, but it doesn't seem to be called in any of the
+        // basic, core Perfect libraries, so this is probably a non-issue unless it is used directly
+    #if os(tvOS)
+        var procPid = pid_t()
+        var spawnRes = 0
+    #else
 		posix_spawn_file_actions_init(&action);
 		posix_spawn_file_actions_adddup2(&action, fSTDOUT[1], STDOUT_FILENO);
 		posix_spawn_file_actions_adddup2(&action, fSTDIN[0], STDIN_FILENO);
@@ -121,6 +128,7 @@ public class SysProcess {
 		for idx in 0..<cEnvCount {
 			free(cEnv[idx])
 		}
+    #endif
 
 	#if os(Linux)
 		// On Ubuntu the getpgid(pid_t) call does not seem to work.
