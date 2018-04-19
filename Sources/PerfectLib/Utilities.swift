@@ -22,6 +22,7 @@
 #else
 	import Darwin
 #endif
+import Foundation
 
 /// This class permits an UnsafeMutablePointer to be used as a GeneratorType
 public struct GenerateFromPointer<T> : IteratorProtocol {
@@ -339,7 +340,7 @@ extension String {
 	/// Parse an HTTP Digest authentication header returning a Dictionary containing each part.
 	public func parseAuthentication() -> [String:String] {
 		var ret = [String:String]()
-		if let _ = range(ofString: "Digest ") {
+		if let _ = range(of: "Digest ") {
 			ret["type"] = "Digest"
 			let wantFields = ["username", "nonce", "nc", "cnonce", "response", "uri", "realm", "qop", "algorithm"]
 			for field in wantFields {
@@ -352,7 +353,7 @@ extension String {
 	}
 	
 	private static func extractField(from frm: String, named: String) -> String? {
-		guard let range = frm.range(ofString: named + "=") else {
+		guard let range = frm.range(of: named + "=") else {
 			return nil
 		}
 		
@@ -424,8 +425,8 @@ extension String {
 	}
 	
 	// For compatibility due to shifting swift
-	public func contains(string strng: String) -> Bool {
-		return nil != range(ofString: strng)
+	public func contains(string: String) -> Bool {
+		return nil != range(of: string)
 	}
 }
 

@@ -471,21 +471,6 @@ class PerfectLibTests: XCTestCase {
 		XCTAssert(res == "ABCDE")
 	}
 
-	func testRangeTo() {
-
-		let src = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
-		let res = src.range(ofString: "DEF")
-		XCTAssert(res == src.index(src.startIndex, offsetBy: 3)..<src.index(src.startIndex, offsetBy: 6))
-
-		let res2 = src.range(ofString: "FED")
-		XCTAssert(res2 == nil)
-
-
-		let res3 = src.range(ofString: "def", ignoreCase: true)
-		XCTAssert(res3 == src.index(src.startIndex, offsetBy: 3)..<src.index(src.startIndex, offsetBy: 6))
-	}
-
 	func testSubstringWith() {
 
 		let src = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -679,7 +664,6 @@ extension PerfectLibTests {
 			("testStringByReplacingString2", testStringByReplacingString2),
 			("testStringByReplacingString3", testStringByReplacingString3),
 			("testSubstringTo", testSubstringTo),
-			("testRangeTo", testRangeTo),
 			("testSubstringWith", testSubstringWith),
 
 			("testDeletingPathExtension", testDeletingPathExtension),
