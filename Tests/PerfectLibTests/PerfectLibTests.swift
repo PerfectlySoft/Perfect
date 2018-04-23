@@ -568,7 +568,7 @@ class PerfectLibTests: XCTestCase {
 	}
 	
 	func testFilePerms() {
-		let fileName = "/tmp/\(UUID().string)"
+		let fileName = "/tmp/\(UUID().uuidString)"
 		let file = File(fileName)
 		do {
 			try file.open(.readWrite, permissions: [.readUser, .writeUser])
@@ -585,7 +585,7 @@ class PerfectLibTests: XCTestCase {
 	}
 	
 	func testDirPerms() {
-		let fileName = "/tmp/\(UUID().string)"
+		let fileName = "/tmp/\(UUID().uuidString)"
 		let file = Dir(fileName)
 		do {
 			try file.create(perms: [.readUser, .writeUser])

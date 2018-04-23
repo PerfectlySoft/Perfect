@@ -273,6 +273,7 @@ extension String {
 	}
 }
 
+@available(*, deprecated, message: "Use Foundation.UUID")
 public struct UUID {
 	let uuid: uuid_t
 	
@@ -315,24 +316,6 @@ public struct UUID {
 		uuid_unparse_lower(u, unu)
 		return String(validatingUTF8: unu)!
 	}
-}
-
-extension String {
-	
-	@available(*, unavailable, message: "Use UUID(_:String)")
-	public func asUUID() -> uuid_t {
-		return UUID(self).uuid
-	}
-	
-	@available(*, unavailable, message: "Use UUID.string")
-	public static func fromUUID(uuid: uuid_t) -> String {
-		return UUID(uuid).string
-	}
-}
-
-@available(*, unavailable, renamed: "UUID()")
-public func random_uuid() -> uuid_t {
-	return UUID().uuid
 }
 
 extension String {
