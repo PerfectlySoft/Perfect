@@ -1,3 +1,4 @@
+// swift-tools-version:4.0
 //
 //  Package.swift
 //  PerfectLib
@@ -19,17 +20,24 @@
 
 import PackageDescription
 
-var urls = [String]()
+var urls: [String]?
+var deps: [Target.Dependency]?
 
 #if os(Linux)
-urls += ["https://github.com/PerfectlySoft/Perfect-LinuxBridge.git"]
+urls = ["https://github.com/PerfectlySoft/Perfect-LinuxBridge.git"]
+deps = ["LinuxBridge"]
 #else
 
 #endif
 
 let package = Package(
 	name: "PerfectLib",
-	targets: [],
-	dependencies: urls.map { .Package(url: $0, majorVersion: 3) },
-	exclude: []
+  products: [
+		.library(name: "PerfectLib", type: .`dynamic`, targets: ["PerfectLib"])
+  ],
+	dependencies: urls?.map { .package(url: $0, from: "3.0.0") } ?? [],
+	targets: [
+		.target(name: "PerfectLib", dependencies: deps ?? [], path: "Sources"),
+  ],
+  swiftLanguageVersions: [3]
 )
