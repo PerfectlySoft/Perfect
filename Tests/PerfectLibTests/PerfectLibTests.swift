@@ -463,21 +463,6 @@ class PerfectLibTests: XCTestCase {
 		XCTAssert(res == src)
 	}
 
-	func testSubstringTo() {
-
-		let src = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ"
-		let res = src.substring(to: src.index(src.startIndex, offsetBy: 5))
-
-		XCTAssert(res == "ABCDE")
-	}
-
-	func testSubstringWith() {
-
-		let src = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-		let range = src.index(src.startIndex, offsetBy: 3)..<src.index(src.startIndex, offsetBy: 6)
-		XCTAssert("DEF" == src.substring(with: range))
-	}
-
 	func testStringBeginsWith() {
 		let a = "123456"
 
@@ -663,8 +648,6 @@ extension PerfectLibTests {
 			("testStringByReplacingString", testStringByReplacingString),
 			("testStringByReplacingString2", testStringByReplacingString2),
 			("testStringByReplacingString3", testStringByReplacingString3),
-			("testSubstringTo", testSubstringTo),
-			("testSubstringWith", testSubstringWith),
 
 			("testDeletingPathExtension", testDeletingPathExtension),
 			("testGetPathExtension", testGetPathExtension),

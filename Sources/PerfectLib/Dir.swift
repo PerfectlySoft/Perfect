@@ -146,7 +146,7 @@ public struct Dir {
 
 		var ent = dirent()
 		let entPtr = UnsafeMutablePointer<UnsafeMutablePointer<dirent>?>.allocate(capacity:  1)
-		defer { entPtr.deallocate(capacity: 1) }
+		defer { entPtr.deallocate() }
 
 		while readDir(dir, &ent, entPtr) == 0 && entPtr.pointee != nil {
 			let name = ent.d_name

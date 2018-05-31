@@ -422,7 +422,7 @@ extension String {
 		guard count >= str.count else {
 			return false
 		}
-		return str.begins(with: self[index(endIndex, offsetBy: -str.count)..<endIndex])
+		return str.begins(with: String(self[index(endIndex, offsetBy: -str.count)..<endIndex]))
 	}
 }
 
@@ -458,7 +458,7 @@ public func formatDate(_ date: Double, format: String, timezone inTimezone: Stri
 	let maxResults = 1024
 	let results = UnsafeMutablePointer<Int8>.allocate(capacity:  maxResults)
 	defer {
-		results.deallocate(capacity: maxResults)
+		results.deallocate()
 	}
 	let res = strftime(results, maxResults, format, &t)
 	if res > 0 {
@@ -600,9 +600,9 @@ extension String {
 			if noTrailsIndex == startIndex {
 				return self
 			}
-			return self[startIndex..<noTrailsIndex]
+			return String(self[startIndex..<noTrailsIndex])
 		}
-		return self[startIndex..<endIndex]
+		return String(self[startIndex..<endIndex])
 	}
 	
 	public var filePathExtension: String {
@@ -612,7 +612,7 @@ extension String {
 		guard endIndex != startIndex else {
 			return ""
 		}
-		return self[index(after: endIndex)..<noTrailsIndex]
+		return String(self[index(after: endIndex)..<noTrailsIndex])
 	}
 	
 	public var resolvingSymlinksInFilePath: String {
