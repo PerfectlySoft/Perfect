@@ -1,3 +1,4 @@
+// swift-tools-version:4.1
 //
 //  Package.swift
 //  PerfectLib
@@ -29,7 +30,11 @@ urls += ["https://github.com/PerfectlySoft/Perfect-LinuxBridge.git"]
 
 let package = Package(
 	name: "PerfectLib",
-	targets: [],
-	dependencies: urls.map { .Package(url: $0, majorVersion: 3) },
-	exclude: []
+	products: [
+		.library(name: "PerfectLib", targets: ["PerfectLib"])
+	],
+	dependencies: urls.map { .package(url: $0, from: "3.0.0") },
+	targets: [
+		.target(name: "PerfectLib", dependencies: [])
+	]
 )
