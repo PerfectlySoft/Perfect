@@ -55,7 +55,7 @@ public class SysProcess {
 
 		defer {
 			cArgs.deinitialize(count: cArgsCount + 2)
-			cArgs.deallocate(capacity: cArgsCount + 2)
+			cArgs.deallocate()
 		}
 
 		cArgs[0] = strdup(cmd)
@@ -68,7 +68,10 @@ public class SysProcess {
 		let cEnvCount = env?.count ?? 0
 		let cEnv = UnsafeMutablePointer<maybeCChar>.allocate(capacity: cEnvCount + 1)
 
-		defer { cEnv.deinitialize(count: cEnvCount + 1) ; cEnv.deallocate(capacity: cEnvCount + 1) }
+		defer {
+            cEnv.deinitialize(count: cEnvCount + 1)
+            cEnv.deallocate()
+        }
 
 		cEnv[cEnvCount] = nil
 		for idx in 0..<cEnvCount {

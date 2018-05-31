@@ -573,7 +573,7 @@ public final class TemporaryFile: File {
         let fd = mkstemp(name)
         let tmpFileName = String(validatingUTF8: name)!
 
-        name.deallocate(capacity: utf8.count + 1)
+        name.deallocate()
 
         self.init(tmpFileName, fd: fd)
     }
