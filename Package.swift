@@ -20,21 +20,26 @@
 
 import PackageDescription
 
-var urls = [String]()
-
 #if os(Linux)
-urls += ["https://github.com/PerfectlySoft/Perfect-LinuxBridge.git"]
-#else
-
-#endif
-
 let package = Package(
 	name: "PerfectLib",
 	products: [
 		.library(name: "PerfectLib", targets: ["PerfectLib"])
 	],
-	dependencies: urls.map { .package(url: $0, from: "3.0.0") },
+	dependencies: [.package(url: "https://github.com/PerfectlySoft/Perfect-LinuxBridge.git", from: "3.0.0")],
+	targets: [
+		.target(name: "PerfectLib", dependencies: ["LinuxBridge"])
+	]
+)
+#else
+let package = Package(
+	name: "PerfectLib",
+	products: [
+		.library(name: "PerfectLib", targets: ["PerfectLib"])
+	],
+	dependencies: [],
 	targets: [
 		.target(name: "PerfectLib", dependencies: [])
 	]
 )
+#endif
