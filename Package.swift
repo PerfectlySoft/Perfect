@@ -28,7 +28,8 @@ let package = Package(
 	],
 	dependencies: [.package(url: "https://github.com/PerfectlySoft/Perfect-LinuxBridge.git", from: "3.0.0")],
 	targets: [
-		.target(name: "PerfectLib", dependencies: ["LinuxBridge"])
+		.target(name: "PerfectLib", dependencies: ["LinuxBridge"]),
+		.testTarget(name: "PerfectLibTests", dependencies: ["PerfectLib"])
 	]
 )
 #else
@@ -39,7 +40,8 @@ let package = Package(
 	],
 	dependencies: [],
 	targets: [
-		.target(name: "PerfectLib", dependencies: [])
+		.target(name: "PerfectLib", dependencies: []),
+		.testTarget(name: "PerfectLibTests", dependencies: ["PerfectLib"])
 	]
 )
 #endif
