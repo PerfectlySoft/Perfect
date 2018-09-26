@@ -609,7 +609,7 @@ private class JSONDecodeState {
             } else if last.isDigit() {
                 pushBack = c
                 if needPeriod && needExp {
-                    return Int(s)!
+                    return Int(s) ?? s
                 }
                 return Double(s)!
             } else {
