@@ -611,7 +611,7 @@ private class JSONDecodeState {
                 if needPeriod && needExp {
                     return Int(s) ?? s
                 }
-                return Double(s) ?? s
+                return Double(s)!
             } else {
                 break
             }
