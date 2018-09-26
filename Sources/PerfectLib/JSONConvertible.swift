@@ -609,9 +609,9 @@ private class JSONDecodeState {
             } else if last.isDigit() {
                 pushBack = c
                 if needPeriod && needExp {
-                    return Int(s)! ?? s
+                    return Int(s) ?? s
                 }
-                return Double(s)!
+                return Double(s) ?? s
             } else {
                 break
             }
