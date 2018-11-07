@@ -619,3 +619,48 @@ extension String {
 		return File(self).realPath
 	}
 }
+
+public class Environment {
+
+	public static func get() -> [String: String] {
+		var v: [String: String] = [:]
+		var array = environ
+		while let e = array.pointee {
+			let str = String.init(cString: e)
+			let eq:[String] = str.split(separator: "=").map { String($0) }
+			if let key = eq.first, let value = eq.last {
+			v[key] = value
+			}
+			array = array.advanced(by: 1)
+		}
+		return v
+	}
+
+	public static func get(_ variableName: String, defaultValue: String? = nil) -> String? {
+		guard let pval = getenv(variableName) else {
+			return defaultValue
+		}
+		return String.init(cString: pval)
+	}
+
+	public static func set(_ variableName: String, value: String, overwrite: Bool = true) -> Bool {
+		return 0 == setenv(variableName, value, overwrite ? 1 : 0)
+	}
+
+	public static func set(_ pairs: [String: String]) -> [String] {
+    	var failure: [String] = []
+    	pairs.forEach {
+      		guard Environment.set($0, value: $1) else {
+        		failure.append($0)
+        		return
+      		}
+    	}
+    	return failure
+	}
+
+	public static func del(_ variableName: String) -> Bool {
+		return 0 == unsetenv(variableName)
+	}
+}
+
+public typealias Env = Environment

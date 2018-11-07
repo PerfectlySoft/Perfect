@@ -630,6 +630,25 @@ class PerfectLibTests: XCTestCase {
 			XCTAssert(false, "\(error)")
 		}
 	}
+
+	func testEnvironments() {
+		XCTAssertTrue(Env.set("foo", value: "bar"))
+		XCTAssertTrue(Env.set("koo", value: "kar"))
+		XCTAssertEqual(Env.get("foo"), "bar")
+		XCTAssertEqual(Env.get("koo"), "kar")
+		XCTAssertTrue(Env.del("foo"))
+		XCTAssertTrue(Env.del("koo"))
+		XCTAssertNil(Env.get("foo"))
+		XCTAssertNil(Env.get("koo"))
+		let before = Env.get()
+		let empty = Env.set(["foo":"bar", "koo":"kar"])
+		let after = Env.get()
+		XCTAssertTrue(empty.isEmpty)
+		XCTAssertNil(before["foo"])
+		XCTAssertNil(before["koo"])
+		XCTAssertEqual(after["foo"], "bar")
+		XCTAssertEqual(after["koo"], "kar")
+	}
 }
 
 extension PerfectLibTests {
@@ -658,7 +677,8 @@ extension PerfectLibTests {
 			
 			("testFilePerms", testFilePerms),
 			("testDirPerms", testDirPerms),
-			
+      		("testEnvironments", testEnvironments),
+
 			("testBytesIO", testBytesIO),
             ("testIntegerTypesEncode", testIntegerTypesEncode)
 		]
