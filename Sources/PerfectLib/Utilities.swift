@@ -280,7 +280,7 @@ public struct UUID {
 	public init() {
 		let u = UnsafeMutablePointer<UInt8>.allocate(capacity:  MemoryLayout<uuid_t>.size)
 		defer {
-			u.deallocate(capacity: MemoryLayout<uuid_t>.size)
+			u.deallocate()
 		}
 		uuid_generate_random(u)
 		uuid = UUID.uuidFromPointer(u)
@@ -289,7 +289,7 @@ public struct UUID {
 	public init(_ string: String) {
 		let u = UnsafeMutablePointer<UInt8>.allocate(capacity:  MemoryLayout<uuid_t>.size)
 		defer {
-			u.deallocate(capacity: MemoryLayout<uuid_t>.size)
+			u.deallocate()
 		}
 		uuid_parse(string, u)
 		uuid = UUID.uuidFromPointer(u)
@@ -308,8 +308,8 @@ public struct UUID {
 		let u = UnsafeMutablePointer<UInt8>.allocate(capacity:  MemoryLayout<uuid_t>.size)
 		let unu = UnsafeMutablePointer<Int8>.allocate(capacity:  37) // as per spec. 36 + null
 		defer {
-			u.deallocate(capacity: MemoryLayout<uuid_t>.size)
-			unu.deallocate(capacity: 37)
+			u.deallocate()
+			unu.deallocate()
 		}
 		var uu = uuid
 		memcpy(u, &uu, MemoryLayout<uuid_t>.size)
