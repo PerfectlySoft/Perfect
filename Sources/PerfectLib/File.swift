@@ -161,7 +161,7 @@ public class File {
 
 public extension File {
     /// The open mode for the file.
-    public enum OpenMode {
+	enum OpenMode {
         /// Opens the file for read-only access.
         case read
         /// Opens the file for write-only access, creating the file if it did not exist.
@@ -184,7 +184,7 @@ public extension File {
         }
     }
 	/// A file or directory access permission value.
-	public struct PermissionMode: OptionSet {
+	struct PermissionMode: OptionSet {
 		/// File system mode type.
 		public typealias Mode = mode_t
 		/// The raw mode.
@@ -233,7 +233,7 @@ public extension File {
 
 	/// Opens the file using the given mode.
 	/// - throws: `PerfectError.FileError`
-	public func open(_ mode: OpenMode = .read, permissions: PermissionMode = .rwUserGroup) throws {
+	func open(_ mode: OpenMode = .read, permissions: PermissionMode = .rwUserGroup) throws {
         if fd != -1 {
             close()
         }
@@ -251,7 +251,7 @@ public extension File {
 
 public extension File {
     /// The current file read/write position.
-    public var marker: Int {
+	var marker: Int {
         /// Returns the value of the file's current position marker
         get {
             if isOpen {
@@ -269,7 +269,7 @@ public extension File {
 public extension File {
 
     /// Closes and deletes the file
-    public func delete() {
+	func delete() {
         close()
         unlink(path)
     }
@@ -279,7 +279,7 @@ public extension File {
     /// - parameter overWrite: Indicates that any existing file at the destination path should first be deleted
     /// - returns: Returns a new file object representing the new location
     /// - throws: `PerfectError.FileError`
-    public func moveTo(path: String, overWrite: Bool = false) throws -> File {
+	func moveTo(path: String, overWrite: Bool = false) throws -> File {
         let destFile = File(path)
         if destFile.exists {
             guard overWrite else {
@@ -306,7 +306,7 @@ public extension File {
     /// - returns: Returns a new file object representing the new location
     /// - throws: `PerfectError.FileError`
     @discardableResult
-    public func copyTo(path pth: String, overWrite: Bool = false) throws -> File {
+	func copyTo(path pth: String, overWrite: Bool = false) throws -> File {
         let destFile = File(pth)
         if destFile.exists {
             guard overWrite else {
@@ -345,7 +345,7 @@ public extension File {
 public extension File {
 
 	/// Returns the size of the file in bytes
-    public var size: Int {
+	var size: Int {
 		var st = stat()
 		let statRes = isOpen ?  fstat(Int32(fd), &st) : stat(internalPath, &st)
 		guard statRes != -1 else {
@@ -355,7 +355,7 @@ public extension File {
 	}
 
 	/// Returns true if the file is actually a directory
-    public var isDir: Bool {
+	var isDir: Bool {
 		var st = stat()
 		let statRes = isOpen ?  fstat(Int32(fd), &st) : stat(internalPath, &st)
 		guard statRes != -1 else {
@@ -366,7 +366,7 @@ public extension File {
 	}
 
 	/// Returns the UNIX style permissions for the file
-    public var perms: PermissionMode {
+	var perms: PermissionMode {
 		get {
 			var st = stat()
 			let statRes = isOpen ?  fstat(Int32(fd), &st) : stat(internalPath, &st)
@@ -384,7 +384,7 @@ public extension File {
 
 public extension File {
 	/// Returns true if the file is a symbolic link
-	public var isLink: Bool {
+	var isLink: Bool {
 		var st = stat()
 		let statRes = lstat(internalPath, &st)
 		guard statRes != -1 else {
@@ -396,7 +396,7 @@ public extension File {
 	
 	/// Create a symlink from the target to the destination.
 	@discardableResult
-	public func linkTo(path: String, overWrite: Bool = false) throws -> File {
+	func linkTo(path: String, overWrite: Bool = false) throws -> File {
 		let destFile = File(path)
 		if destFile.exists {
 			guard overWrite else {
@@ -418,7 +418,7 @@ public extension File {
 	/// - parameter count: The maximum number of bytes to read
 	/// - returns: The bytes read as an array of UInt8. May have a count of zero.
 	/// - throws: `PerfectError.FileError`
-	public func readSomeBytes(count: Int) throws -> [UInt8] {
+	func readSomeBytes(count: Int) throws -> [UInt8] {
         if !isOpen {
             try open()
         }
@@ -450,7 +450,7 @@ public extension File {
 	}
 
 	/// Reads the entire file as a string
-	public func readString() throws -> String {
+	func readString() throws -> String {
 		let bytes = try readSomeBytes(count: size)
 		return UTF8Encoding.encode(bytes: bytes)
     }
@@ -463,7 +463,7 @@ public extension File {
 	/// - returns: Returns the number of bytes which were written
 	/// - throws: `PerfectError.FileError`
     @discardableResult
-	public func write(string: String) throws -> Int {
+	func write(string: String) throws -> Int {
 		return try write(bytes: Array(string.utf8))
 	}
 
@@ -473,7 +473,7 @@ public extension File {
 	/// - parameter length: The number of bytes to write.
 	/// - throws: `PerfectError.FileError`
     @discardableResult
-	public func write(bytes: [UInt8], dataPosition: Int = 0, length: Int = Int.max) throws -> Int {
+	func write(bytes: [UInt8], dataPosition: Int = 0, length: Int = Int.max) throws -> Int {
         let len = min(bytes.count - dataPosition, length)
 		let ptr = UnsafeMutableRawPointer(mutating: bytes).assumingMemoryBound(to: UInt8.self).advanced(by: dataPosition)
     #if os(Linux)
@@ -493,7 +493,7 @@ public extension File {
 	/// Attempts to place an advisory lock starting from the current position marker up to the indicated byte count. This function will block the current thread until the lock can be performed.
 	/// - parameter byteCount: The number of bytes to lock
 	/// - throws: `PerfectError.FileError`
-	public func lock(byteCount: Int) throws {
+	func lock(byteCount: Int) throws {
 		if !isOpen {
 			try open(.write)
 		}
@@ -506,7 +506,7 @@ public extension File {
 	/// Unlocks the number of bytes starting from the current position marker up to the indicated byte count.
 	/// - parameter byteCount: The number of bytes to unlock
 	/// - throws: `PerfectError.FileError`
-	public func unlock(byteCount: Int) throws {
+	func unlock(byteCount: Int) throws {
 		if !isOpen {
 			try open(.write)
 		}
@@ -519,7 +519,7 @@ public extension File {
 	/// Attempts to place an advisory lock starting from the current position marker up to the indicated byte count. This function will throw an exception if the file is already locked, but will not block the current thread.
 	/// - parameter byteCount: The number of bytes to lock
 	/// - throws: `PerfectError.FileError`
-	public func tryLock(byteCount: Int) throws {
+	func tryLock(byteCount: Int) throws {
 		if !isOpen {
 			try open(.write)
 		}
@@ -533,7 +533,7 @@ public extension File {
 	/// - parameter byteCount: The number of bytes to test
 	/// - returns: True if the file is locked
 	/// - throws: `PerfectError.FileError`
-	public func testLock(byteCount: Int) throws -> Bool {
+	func testLock(byteCount: Int) throws -> Bool {
 		if !isOpen {
 			try open(.write)
 		}
