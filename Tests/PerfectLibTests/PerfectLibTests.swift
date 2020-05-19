@@ -538,7 +538,7 @@ class PerfectLibTests: XCTestCase {
 				name in
 				ta.append(name)
 			}
-						ta.sort()
+			ta.sort()
 			XCTAssert(ta == dirs, "\(ta) == \(dirs)")
 			for d in dirs {
 				try Dir("/tmp/a/\(d)").delete()

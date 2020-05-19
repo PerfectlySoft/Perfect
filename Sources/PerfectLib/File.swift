@@ -81,8 +81,11 @@ public class File {
             return internalPath
         }
         var ary = [UInt8](repeating: 0, count: maxPath)
-		let res = ary.withUnsafeMutableBytes {
-			readlink(internalPath, $0.bindMemory(to: Int8.self).baseAddress, maxPath)
+		let res: Int = ary.withUnsafeMutableBytes {
+			guard let p = $0.bindMemory(to: Int8.self).baseAddress else {
+				return -1
+			}
+			return readlink(internalPath, p, maxPath)
 		}
         guard res != -1 else {
             return internalPath

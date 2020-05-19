@@ -128,7 +128,11 @@ public struct Dir {
 
 #if os(Linux)
     func readDir(_ d: OpaquePointer, _ dirEnt: inout dirent, _ endPtr: UnsafeMutablePointer<UnsafeMutablePointer<dirent>?>!) -> Int32 {
-        return readdir_r(d, &dirEnt, endPtr)
+		guard let ent = readdir(d) else {
+			return -1
+		}
+		dirEnt = ent.pointee
+		return 0
     }
 #else
     func readDir(_ d: UnsafeMutablePointer<DIR>, _ dirEnt: inout dirent, _ endPtr: UnsafeMutablePointer<UnsafeMutablePointer<dirent>?>!) -> Int32 {
