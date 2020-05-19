@@ -247,8 +247,11 @@ extension String {
 			}
 		}
 		bytesArray.append(0)
-		return UnsafePointer(bytesArray).withMemoryRebound(to: Int8.self, capacity: bytesArray.count) {
-			return String(validatingUTF8: $0)
+		return bytesArray.withUnsafeBytes {
+			guard let p = $0.bindMemory(to: Int8.self).baseAddress else {
+				return nil
+			}
+			return String(validatingUTF8: p)
 		}
 	}
 	

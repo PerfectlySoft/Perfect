@@ -81,13 +81,13 @@ public class File {
             return internalPath
         }
         var ary = [UInt8](repeating: 0, count: maxPath)
-		let buffer = UnsafeMutableRawPointer(mutating: ary).assumingMemoryBound(to: Int8.self)
-        let res = readlink(internalPath, buffer, maxPath)
+		let res = ary.withUnsafeMutableBytes {
+			readlink(internalPath, $0.bindMemory(to: Int8.self).baseAddress, maxPath)
+		}
         guard res != -1 else {
             return internalPath
         }
-        ary.removeLast(maxPath - res)
-        let trailPath = UTF8Encoding.encode(bytes: ary)
+        let trailPath = String(cString: ary)
         let lastChar = trailPath[trailPath.startIndex]
         guard lastChar != "/" && lastChar != "." else {
             return trailPath
@@ -437,9 +437,10 @@ public extension File {
 
 		let bSize = min(count, sizeOr(count))
 		var ary = [UInt8](repeating: 0, count: bSize)
-		let ptr = UnsafeMutableRawPointer(mutating: ary).assumingMemoryBound(to: Int8.self)
-
-		let readCount = read(CInt(fd), ptr, bSize)
+		
+		let readCount = ary.withUnsafeMutableBytes {
+		   read(CInt(fd), $0.bindMemory(to: Int8.self).baseAddress, bSize)
+	    }
 		guard readCount >= 0 else {
 			try ThrowFileError()
 		}
@@ -475,11 +476,14 @@ public extension File {
     @discardableResult
 	func write(bytes: [UInt8], dataPosition: Int = 0, length: Int = Int.max) throws -> Int {
         let len = min(bytes.count - dataPosition, length)
-		let ptr = UnsafeMutableRawPointer(mutating: bytes).assumingMemoryBound(to: UInt8.self).advanced(by: dataPosition)
     #if os(Linux)
-		let wrote = SwiftGlibc.write(Int32(fd), ptr, len)
+		let wrote = bytes.withUnsafeBytes {
+			SwiftGlibc.write(Int32(fd), $0.bindMemory(to: Int8.self).baseAddress?.advanced(by: dataPosition), len)
+		}
 	#else
-		let wrote = Darwin.write(Int32(fd), ptr, len)
+		let wrote = bytes.withUnsafeBytes {
+			Darwin.write(Int32(fd), $0.bindMemory(to: Int8.self).baseAddress?.advanced(by: dataPosition), len)
+		}
 	#endif
 		guard wrote == len else {
 			try ThrowFileError()

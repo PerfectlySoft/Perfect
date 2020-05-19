@@ -82,9 +82,15 @@ public class SysProcess {
 		var fSTDOUT: [Int32] = [0, 0]
 		var fSTDERR: [Int32] = [0, 0]
 
-		pipe(UnsafeMutableRawPointer(mutating: fSTDIN).assumingMemoryBound(to: Int32.self))
-		pipe(UnsafeMutableRawPointer(mutating: fSTDOUT).assumingMemoryBound(to: Int32.self))
-		pipe(UnsafeMutableRawPointer(mutating: fSTDERR).assumingMemoryBound(to: Int32.self))
+		fSTDIN.withUnsafeMutableBytes {
+			_ = pipe($0.bindMemory(to: Int32.self).baseAddress)
+		}
+		fSTDOUT.withUnsafeMutableBytes {
+			_ = pipe($0.bindMemory(to: Int32.self).baseAddress)
+		}
+		fSTDERR.withUnsafeMutableBytes {
+			_ = pipe($0.bindMemory(to: Int32.self).baseAddress)
+		}
     #if os(Linux)
 		var action = posix_spawn_file_actions_t()
 		var attr = posix_spawnattr_t()
