@@ -128,6 +128,7 @@ private let dateFormatter: DateFormatter = {
 	fmt.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
 	return fmt
 }()
+private let re = try! NSRegularExpression(pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}[0-9\\-\\+]{5}$", options: .caseInsensitive)
 private let highSurrogateLowerBound = UInt32(strtoul("d800", nil, 16))
 private let highSurrogateUpperBound = UInt32(strtoul("dbff", nil, 16))
 private let lowSurrogateLowerBound = UInt32(strtoul("dc00", nil, 16))
@@ -481,7 +482,6 @@ private class JSONDecodeState {
             return d
         case jsonQuoteDouble:
             let str = try readString()
-            let re = try! NSRegularExpression(pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}[0-9\\-\\+]{5}$", options: .caseInsensitive)
             let m = re.matches(in: str, options: .reportCompletion, range: NSRange(location: 0, length: str.count))
             if m.isEmpty {
                 return str
