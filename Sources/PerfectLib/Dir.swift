@@ -52,9 +52,11 @@ public struct Dir {
 
 	/// Return the process' current working directory.
 	public static var workingDir: Dir {
-		let buffer = Array(repeating: 0 as UInt8, count: 2049)
-		let _ = getcwd(UnsafeMutableRawPointer(mutating: buffer).assumingMemoryBound(to: Int8.self), 2048)
-		let path = String(validatingUTF8: UnsafeMutableRawPointer(mutating: buffer).assumingMemoryBound(to: Int8.self)) ?? "."
+		var buffer = Array(repeating: 0 as UInt8, count: 2049)
+		buffer.withUnsafeMutableBytes {
+			_ = getcwd($0.bindMemory(to: Int8.self).baseAddress, 2048)
+		}
+		let path = String(cString: buffer)
 		return Dir(path)
 	}
 
@@ -83,7 +85,7 @@ public struct Dir {
         }
 	}
 
-	/// Deletes the directory. The directory must be empty in order to be successfuly deleted.
+	/// Deletes the directory. The directory must be empty in order to be successfully deleted.
 	/// - throws: `PerfectError.FileError`
 	public func delete() throws {
 		let res = rmdir(realPath)
@@ -126,7 +128,11 @@ public struct Dir {
 
 #if os(Linux)
     func readDir(_ d: OpaquePointer, _ dirEnt: inout dirent, _ endPtr: UnsafeMutablePointer<UnsafeMutablePointer<dirent>?>!) -> Int32 {
-        return readdir_r(d, &dirEnt, endPtr)
+		guard let ent = readdir(d) else {
+			return -1
+		}
+		dirEnt = ent.pointee
+		return 0
     }
 #else
     func readDir(_ d: UnsafeMutablePointer<DIR>, _ dirEnt: inout dirent, _ endPtr: UnsafeMutablePointer<UnsafeMutablePointer<dirent>?>!) -> Int32 {

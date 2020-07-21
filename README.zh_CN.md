@@ -6,38 +6,14 @@
 </p>
 
 <p align="center">
-    <a href="https://github.com/PerfectlySoft/Perfect" target="_blank">
-        <img src="http://www.perfect.org/github/Perfect_GH_button_1_Star.jpg" alt="Star Perfect On Github" />
-    </a>  
-    <a href="http://stackoverflow.com/questions/tagged/perfect" target="_blank">
-        <img src="http://www.perfect.org/github/perfect_gh_button_2_SO.jpg" alt="Stack Overflow" />
-    </a>  
-    <a href="https://twitter.com/perfectlysoft" target="_blank">
-        <img src="http://www.perfect.org/github/Perfect_GH_button_3_twit.jpg" alt="Follow Perfect on Twitter" />
-    </a>  
-    <a href="http://perfect.ly" target="_blank">
-        <img src="http://www.perfect.org/github/Perfect_GH_button_4_slack.jpg" alt="Join the Perfect Slack" />
-    </a>
-</p>
-
-<p align="center">
     <a href="https://developer.apple.com/swift/" target="_blank">
-        <img src="https://img.shields.io/badge/Swift-3.0-orange.svg?style=flat" alt="Swift 3.0">
+        <img src="https://img.shields.io/badge/Swift-5.2-orange.svg?style=flat" alt="Swift 5.2">
     </a>
     <a href="https://developer.apple.com/swift/" target="_blank">
         <img src="https://img.shields.io/badge/Platforms-OS%20X%20%7C%20Linux%20-lightgray.svg?style=flat" alt="Platforms OS X | Linux">
     </a>
     <a href="http://perfect.org/licensing.html" target="_blank">
         <img src="https://img.shields.io/badge/License-Apache-lightgrey.svg?style=flat" alt="License Apache">
-    </a>
-    <a href="https://codebeat.co/projects/github-com-perfectlysoft-perfect" target="_blank">
-        <img src="https://codebeat.co/badges/85f8f628-6ce8-4818-867c-21b523484ee9" alt="codebeat">
-    </a>
-    <a href="http://twitter.com/PerfectlySoft" target="_blank">
-        <img src="https://img.shields.io/badge/Twitter-@PerfectlySoft-blue.svg?style=flat" alt="PerfectlySoft Twitter">
-    </a>
-    <a href="http://perfect.ly" target="_blank">
-        <img src="http://perfect.ly/badge.svg" alt="Slack Status">
     </a>
 </p>
 
@@ -50,15 +26,6 @@ Perfect内建整套工具集，因为无论是客户端还是服务器都能够�
 无论您是资深程序员还是入门级的软件工程师，本文都能够帮助您快速启动Perfect实现服务器项目开发运行。
 
 ## 使用Perfect
-
-### Swift语言兼容性
-
-**目前本项目主干版本基于Xcode 8 GM release发行版本。**
-
-```
-Current version: DEVELOPMENT-SNAPSHOT-2016-09-05-a, or Xcode 8 GM release
-```
-
 
 ### 快速上手
 
@@ -139,8 +106,6 @@ Perfect是一个完全异步、高性能的网络引擎，并且能够为互联�
 Swift-Perfect开发者社区是改进Perfect产品并实现客户支持的关键。
 
 在社区里，您可以通过加入[Perfect Slack 频道](http://perfect.ly)和[Perfect Gitter 频道](https://gitter.im/PerfectlySoft/Perfect)互相帮助、分享技术、互相学习和研究诀窍。任何一种贡献方式我们都非常欢迎：问题汇报、文档更新、补丁修复、编写案例、分享项目或者任何编程窍门，我们相信这些都能够极大地帮助我们的Swift-Perfect社区。
-
-如果您发现了任何文字或者内容有错误，或者有任何建议，请[查看我们的Perfect JIRA资源库](http://jira.perfect.org:8080/secure/Dashboard.jspa).
 
 如果您希望分享一下您的项目、教程或者视频，请将URL共享到我们的推特或者GitHub账号：[Perfect 推特](https://twitter.com/perfectlysoft)。之后我们的Perfect团队会继续推广。
 

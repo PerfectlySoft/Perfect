@@ -102,12 +102,9 @@ class PerfectLibTests: XCTestCase {
 		
 		do {
 			let encoded = try user.jsonEncodedString()
-			print(encoded)
-			
 			guard let user2 = try encoded.jsonDecode() as? User else {
 				return XCTAssert(false, "Invalid object \(encoded)")
-			}
-			
+			}			
 			XCTAssert(user.firstName == user2.firstName)
 			XCTAssert(user.lastName == user2.lastName)
 			XCTAssert(user.age == user2.age)
@@ -541,7 +538,7 @@ class PerfectLibTests: XCTestCase {
 				name in
 				ta.append(name)
 			}
-						ta.sort()
+			ta.sort()
 			XCTAssert(ta == dirs, "\(ta) == \(dirs)")
 			for d in dirs {
 				try Dir("/tmp/a/\(d)").delete()
@@ -579,6 +576,18 @@ class PerfectLibTests: XCTestCase {
 			XCTAssert(res, "\(file.perms) != \([File.PermissionMode.readUser, File.PermissionMode.writeUser])")
 			
 			try file.delete()
+		} catch {
+			XCTAssert(false, "Error testing file perms: \(error)")
+		}
+	}
+	
+	func testDirWorkDir() {
+		let workDir = File("/tmp").realPath.replacingOccurrences(of: "//", with: "/") + "/"
+		let dir = Dir(workDir)
+		do {
+			try dir.setAsWorkingDir()
+			let fetch = Dir.workingDir.path
+			XCTAssertEqual(workDir, fetch)
 		} catch {
 			XCTAssert(false, "Error testing file perms: \(error)")
 		}

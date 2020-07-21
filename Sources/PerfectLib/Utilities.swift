@@ -247,8 +247,11 @@ extension String {
 			}
 		}
 		bytesArray.append(0)
-		return UnsafePointer(bytesArray).withMemoryRebound(to: Int8.self, capacity: bytesArray.count) {
-			return String(validatingUTF8: $0)
+		return bytesArray.withUnsafeBytes {
+			guard let p = $0.bindMemory(to: Int8.self).baseAddress else {
+				return nil
+			}
+			return String(validatingUTF8: p)
 		}
 	}
 	
@@ -280,7 +283,7 @@ public struct UUID {
 	public init() {
 		let u = UnsafeMutablePointer<UInt8>.allocate(capacity:  MemoryLayout<uuid_t>.size)
 		defer {
-			u.deallocate(capacity: MemoryLayout<uuid_t>.size)
+			u.deallocate()
 		}
 		uuid_generate_random(u)
 		uuid = UUID.uuidFromPointer(u)
@@ -289,7 +292,7 @@ public struct UUID {
 	public init(_ string: String) {
 		let u = UnsafeMutablePointer<UInt8>.allocate(capacity:  MemoryLayout<uuid_t>.size)
 		defer {
-			u.deallocate(capacity: MemoryLayout<uuid_t>.size)
+			u.deallocate()
 		}
 		uuid_parse(string, u)
 		uuid = UUID.uuidFromPointer(u)
@@ -308,8 +311,8 @@ public struct UUID {
 		let u = UnsafeMutablePointer<UInt8>.allocate(capacity:  MemoryLayout<uuid_t>.size)
 		let unu = UnsafeMutablePointer<Int8>.allocate(capacity:  37) // as per spec. 36 + null
 		defer {
-			u.deallocate(capacity: MemoryLayout<uuid_t>.size)
-			unu.deallocate(capacity: 37)
+			u.deallocate()
+			unu.deallocate()
 		}
 		var uu = uuid
 		memcpy(u, &uu, MemoryLayout<uuid_t>.size)

@@ -1,4 +1,4 @@
-// swift-tools-version:4.1
+// swift-tools-version:5.1
 //
 //  Package.swift
 //  PerfectLib
@@ -35,6 +35,9 @@ let package = Package(
 #else
 let package = Package(
 	name: "PerfectLib",
+	platforms: [
+		.macOS(.v10_15)
+	],
 	products: [
 		.library(name: "PerfectLib", targets: ["PerfectLib"])
 	],
