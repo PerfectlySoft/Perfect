@@ -22,6 +22,7 @@
 #else
     import Darwin
 #endif
+import Foundation
 
 /// This non-instantiable object serves as an access point to a registry for JSONConvertibleObjects
 /// A JSONConvertibleObject is a custom class or struct which can be converted to and from JSON.
@@ -120,7 +121,13 @@ private let jsonCloseArray = UnicodeScalar(UInt32(93))!
 private let jsonWhiteSpace = UnicodeScalar(UInt32(32))!
 private let jsonColon = UnicodeScalar(UInt32(58))!
 private let jsonComma = UnicodeScalar(UInt32(44))!
-
+private let dateFormatter: DateFormatter = {
+	let fmt = DateFormatter()
+	fmt.calendar = Calendar(identifier: .iso8601)
+	fmt.locale = Locale(identifier: "en_US_POSIX")
+	fmt.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+	return fmt
+}()
 private let highSurrogateLowerBound = UInt32(strtoul("d800", nil, 16))
 private let highSurrogateUpperBound = UInt32(strtoul("dbff", nil, 16))
 private let lowSurrogateLowerBound = UInt32(strtoul("dc00", nil, 16))
@@ -249,6 +256,14 @@ extension Float: JSONConvertible {
     }
 }
 
+extension Date: JSONConvertible {
+	/// Convert a Date into JSON test.
+	public func jsonEncodedString() throws -> String {
+		let dt = dateFormatter.string(from: self)
+		return "\"\(dt)\""
+	}
+}
+
 extension Optional: JSONConvertible {
     /// Convert an Optional into JSON text.
     public func jsonEncodedString() throws -> String {
@@ -279,6 +294,8 @@ func jsonEncodedStringWorkAround(_ o: Any) throws -> String {
         return try jsonAble.jsonEncodedString()
     case let jsonAble as JSONConvertible:
         return try jsonAble.jsonEncodedString()
+    case let jsonAble as Date:
+            return try jsonAble.jsonEncodedString()
     case let jsonAble as String:
         return try jsonAble.jsonEncodedString()
     case let jsonAble as Int:
@@ -463,7 +480,16 @@ private class JSONDecodeState {
             }
             return d
         case jsonQuoteDouble:
-            return try readString()
+            let str = try readString()
+            let re = try! NSRegularExpression(pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}[0-9\\-\\+]{5}$", options: .caseInsensitive)
+            let m = re.matches(in: str, options: .reportCompletion, range: NSRange(location: 0, length: str.count))
+            if m.isEmpty {
+                return str
+            } else if let dt = dateFormatter.date(from: str) {
+                return dt
+            } else {
+                return str
+            }
         default:
             if c.isWhiteSpace() {
                 // nothing
