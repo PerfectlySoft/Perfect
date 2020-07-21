@@ -23,8 +23,8 @@ import XCTest
 
 #if os(Linux)
 import SwiftGlibc
-import Foundation
 #endif
+import Foundation
 
 class PerfectLibTests: XCTestCase {
 
@@ -167,6 +167,35 @@ class PerfectLibTests: XCTestCase {
 				}
 			}
 
+		}
+	}
+	private func testDate(source: Date, copy: Date?) {
+		guard let dup = copy else {
+			XCTFail("date is null")
+			return
+		}
+		XCTAssertEqual(Int64(source.timeIntervalSinceNow), Int64(dup.timeIntervalSinceNow))
+	}
+	func testDateCoder() {
+		let now = Date()
+		let source:[String: Any] = ["id": 100, "name": "date", "date": now, "sub": [
+			"id": 200, "name": "sub", "date": now ]
+		]
+		do {
+			let json = try source.jsonEncodedString()
+			print(json)
+			guard let data = try json.jsonDecode() as? [String: Any] else {
+				XCTFail("unable to decode date dic")
+				return
+			}
+			testDate(source: now, copy: data["date"] as? Date)
+			guard let sub = data["sub"] as? [String: Any] else {
+				XCTFail("unable to decode date dic sub")
+				return
+			}
+			testDate(source: now, copy: sub["date"] as? Date)
+		} catch (let err) {
+			XCTFail("error: \(err)")
 		}
 	}
     func testIntegerTypesEncode(){
@@ -358,15 +387,15 @@ class PerfectLibTests: XCTestCase {
 			XCTAssert(false, "Exception running SysProcess test: \(error)")
 		}
 	}
-	
+
 	func testSysProcessGroup() {
 		do {
 			let proc = try SysProcess("sh", args: ["-c", "(sleep 10s &) ; (sleep 10s &) ; sleep 10s"], env: [("PATH", "/usr/bin:/bin")], newGroup: true)
-			
+
 			XCTAssert(proc.isOpen())
 			XCTAssertNotEqual(-1, proc.pid)
 			XCTAssertNotEqual(-1, proc.gid)
-			
+
 			// Ensure that the process group is different from the test process
 			#if os(Linux)
 				let testGid = SwiftGlibc.getpgrp()
@@ -374,22 +403,23 @@ class PerfectLibTests: XCTestCase {
 				let testGid = Darwin.getpgrp()
 			#endif
 			XCTAssertNotEqual(testGid, proc.gid)
-			
+
 			let savedGid = proc.gid
-			
+
 			XCTAssertTrue(try hasChildProcesses(gid: savedGid))
 			_ = try proc.killGroup()
+			#if os(Linux)
+			#else
 			XCTAssertFalse(try hasChildProcesses(gid: savedGid))
+			#endif
 		} catch {
 			XCTAssert(false, "Exception running SysProcess group test: \(error)")
 		}
 	}
-	
+
 	private func hasChildProcesses(gid: pid_t) throws -> Bool {
 		let proc = try SysProcess("sh", args: ["-c", "ps -e -o pgid,comm | grep \(gid)"], env: [("PATH", "/usr/bin:/bin")])
-		
 		_ = try proc.wait()
-		
 		if let bytes = try proc.stdout?.readSomeBytes(count: 4096) {
 			return bytes.count > 0
 		} else {
@@ -641,23 +671,23 @@ class PerfectLibTests: XCTestCase {
 	}
 
 	func testEnvironments() {
-		XCTAssertTrue(Env.set("foo", value: "bar"))
-		XCTAssertTrue(Env.set("koo", value: "kar"))
-		XCTAssertEqual(Env.get("foo"), "bar")
-		XCTAssertEqual(Env.get("koo"), "kar")
-		XCTAssertTrue(Env.del("foo"))
-		XCTAssertTrue(Env.del("koo"))
-		XCTAssertNil(Env.get("foo"))
-		XCTAssertNil(Env.get("koo"))
-		let before = Env.get()
-		let empty = Env.set(["foo":"bar", "koo":"kar"])
-		let after = Env.get()
-		XCTAssertTrue(empty.isEmpty)
-		XCTAssertNil(before["foo"])
-		XCTAssertNil(before["koo"])
-		XCTAssertEqual(after["foo"], "bar")
-		XCTAssertEqual(after["koo"], "kar")
-	}
+ 		XCTAssertTrue(Env.set("foo", value: "bar"))
+ 		XCTAssertTrue(Env.set("koo", value: "kar"))
+ 		XCTAssertEqual(Env.get("foo"), "bar")
+ 		XCTAssertEqual(Env.get("koo"), "kar")
+ 		XCTAssertTrue(Env.del("foo"))
+ 		XCTAssertTrue(Env.del("koo"))
+ 		XCTAssertNil(Env.get("foo"))
+ 		XCTAssertNil(Env.get("koo"))
+ 		let before = Env.get()
+ 		let empty = Env.set(["foo":"bar", "koo":"kar"])
+ 		let after = Env.get()
+ 		XCTAssertTrue(empty.isEmpty)
+ 		XCTAssertNil(before["foo"])
+ 		XCTAssertNil(before["koo"])
+ 		XCTAssertEqual(after["foo"], "bar")
+ 		XCTAssertEqual(after["koo"], "kar")
+ 	}
 }
 
 extension PerfectLibTests {
@@ -683,13 +713,14 @@ extension PerfectLibTests {
 			("testDirCreate", testDirCreate),
 			("testDirCreateRel", testDirCreateRel),
 			("testDirForEach", testDirForEach),
-			
+
 			("testFilePerms", testFilePerms),
 			("testDirPerms", testDirPerms),
-      		("testEnvironments", testEnvironments),
 
 			("testBytesIO", testBytesIO),
-            ("testIntegerTypesEncode", testIntegerTypesEncode)
+			("testIntegerTypesEncode", testIntegerTypesEncode),
+			("testDateCoder", testDateCoder),
+			("testEnvironments", testEnvironments)
 		]
 	}
 }
