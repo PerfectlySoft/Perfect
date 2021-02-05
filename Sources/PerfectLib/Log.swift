@@ -68,11 +68,11 @@ public struct SysLogger: Logger {
 	public init(){}
 
 	func syslog(priority: Int32, _ args: CVarArg...) {
-// #if os(Linux) || os(macOS)
-// 		withVaList(args) {
-// 			vsyslog(priority, "%s", $0)
-// 		}
-// #else
+#if os(Linux)// || os(macOS)
+		withVaList(args) {
+			vsyslog(priority, "%s", $0)
+		}
+#else
     // nerdo: Using unified logging (https://developer.apple.com/documentation/os/logging)
     // os_log isn't very well documented... but this seems like a step in the right direction.
     let osLogType: OSLogType
@@ -89,7 +89,7 @@ public struct SysLogger: Logger {
         osLogType = .default
     }
     os_log("%s", log: .default, type: osLogType, args)
-// #endif
+#endif
 	}
 
 	public func debug(message: String, _ even: Bool) {
