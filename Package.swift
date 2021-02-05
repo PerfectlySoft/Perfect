@@ -36,7 +36,7 @@ let package = Package(
 let package = Package(
 	name: "PerfectLib",
 	platforms: [
-		.macOS(.v10_15)
+		.macOS(.v10_16)
 	],
 	products: [
 		.library(name: "PerfectLib", targets: ["PerfectLib"])
