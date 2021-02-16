@@ -246,7 +246,7 @@ public extension File {
 		let openFd = Darwin.open(internalPath, CInt(mode.toMode), permissions.rawValue)
 	#endif
 		guard openFd != -1 else {
-			try ThrowFileError()
+			try ThrowFileError(file: internalPath)
 		}
 		fd = Int(openFd)
 	}
