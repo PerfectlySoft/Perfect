@@ -336,6 +336,24 @@ extension Array: JSONConvertible {
     }
 }
 
+extension Set: JSONConvertible {
+    /// Convert a Set into JSON text.
+    public func jsonEncodedString() throws -> String {
+        var s = "["
+        var first = true
+        for v in self {
+            if !first {
+                s.append(",")
+            } else {
+                first = false
+            }
+            s.append(try jsonEncodedStringWorkAround(v))
+        }
+        s.append("]")
+        return s
+    }
+}
+
 extension Dictionary: JSONConvertible {
     /// Convert a Dictionary into JSON text.
     public func jsonEncodedString() throws -> String {
