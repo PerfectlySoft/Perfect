@@ -5,7 +5,7 @@
 //  Created by Kyle Jessup on 2016-01-21.
 //  Copyright © 2016 Treefrog. All rights reserved.
 //
-//===----------------------------------------------------------------------===//
+// ===----------------------------------------------------------------------===//
 //
 // This source file is part of the Perfect.org open source project
 //
@@ -14,7 +14,7 @@
 //
 // See http://perfect.org/licensing.html for license information
 //
-//===----------------------------------------------------------------------===//
+// ===----------------------------------------------------------------------===//
 //
 
 #if os(Linux)
@@ -22,7 +22,6 @@
 #else
     import Darwin
 #endif
-import Foundation
 
 /// This non-instantiable object serves as an access point to a registry for JSONConvertibleObjects
 /// A JSONConvertibleObject is a custom class or struct which can be converted to and from JSON.
@@ -34,7 +33,7 @@ public class JSONDecoding {
     /// Function which returns a new instance of a custom object which will have its members set based on the JSON data.
     public typealias JSONConvertibleObjectCreator = () -> JSONConvertibleObject
 
-    static private var jsonDecodableRegistry = [String:JSONConvertibleObjectCreator]()
+    static private var jsonDecodableRegistry = [String: JSONConvertibleObjectCreator]()
 
     /// Register a custom object to be JSON encoded/decoded.
     static public func registerJSONDecodable(name nam: String, creator: @escaping JSONConvertibleObjectCreator) {
@@ -43,7 +42,7 @@ public class JSONDecoding {
 
     /// Instantiate a custom object based on the JSON data.
     /// The system will use the `JSONDecoding.objectIdentifierKey` key to locate the custom object creator.
-    static public func createJSONConvertibleObject(values:[String:Any]) -> JSONConvertibleObject? {
+    static public func createJSONConvertibleObject(values: [String: Any]) -> JSONConvertibleObject? {
         guard let objkey = values[JSONDecoding.objectIdentifierKey] as? String else {
             return nil
         }
@@ -52,7 +51,7 @@ public class JSONDecoding {
 
     /// Instantiate a custom object based on the JSON data.
     /// The system will use the `name` parameter to locate the custom object creator.
-    static public func createJSONConvertibleObject(name: String, values:[String:Any]) -> JSONConvertibleObject? {
+    static public func createJSONConvertibleObject(name: String, values: [String: Any]) -> JSONConvertibleObject? {
         guard let creator = JSONDecoding.jsonDecodableRegistry[name] else {
             return nil
         }
@@ -75,9 +74,9 @@ open class JSONConvertibleObject: JSONConvertible {
     /// Default initializer.
 	public init() {}
     /// Get the JSON keys/value.
-    open func setJSONValues(_ values:[String:Any]) {}
+    open func setJSONValues(_ values: [String: Any]) {}
     /// Set the object properties based on the JSON keys/values.
-    open func getJSONValues() -> [String:Any] { return [String:Any]() }
+    open func getJSONValues() -> [String: Any] { return [String: Any]() }
     /// Encode the object into JSON text
     open func jsonEncodedString() throws -> String {
         return try getJSONValues().jsonEncodedString()
@@ -87,7 +86,10 @@ open class JSONConvertibleObject: JSONConvertible {
 /// Get the JSON keys/values from a custom object.
 public extension JSONConvertibleObject {
     /// Get a named value from the Dictionary converting to the given type with a default value.
-    func getJSONValue<T: JSONConvertible>(named namd: String, from:[String:Any], defaultValue: T) -> T {
+    func getJSONValue<T: JSONConvertible>(
+        named namd: String,
+        from: [String: Any],
+        defaultValue: T) -> T {
         let f = from[namd]
         if let v = f as? T {
             return v
@@ -121,14 +123,7 @@ private let jsonCloseArray = UnicodeScalar(UInt32(93))!
 private let jsonWhiteSpace = UnicodeScalar(UInt32(32))!
 private let jsonColon = UnicodeScalar(UInt32(58))!
 private let jsonComma = UnicodeScalar(UInt32(44))!
-private let dateFormatter: DateFormatter = {
-	let fmt = DateFormatter()
-	fmt.calendar = Calendar(identifier: .iso8601)
-	fmt.locale = Locale(identifier: "en_US_POSIX")
-	fmt.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-	return fmt
-}()
-private let re = try! NSRegularExpression(pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}[0-9\\-\\+]{5}$", options: .caseInsensitive)
+
 private let highSurrogateLowerBound = UInt32(strtoul("d800", nil, 16))
 private let highSurrogateUpperBound = UInt32(strtoul("dbff", nil, 16))
 private let lowSurrogateLowerBound = UInt32(strtoul("dc00", nil, 16))
@@ -149,7 +144,7 @@ extension String: JSONConvertible {
     public func jsonEncodedString() throws -> String {
         var s = "\""
         for uchar in unicodeScalars {
-            switch(uchar) {
+            switch uchar {
             case jsonBackSlash:
                 s.append("\\\\")
             case jsonQuoteDouble:
@@ -257,14 +252,6 @@ extension Float: JSONConvertible {
     }
 }
 
-extension Date: JSONConvertible {
-	/// Convert a Date into JSON test.
-	public func jsonEncodedString() throws -> String {
-		let dt = dateFormatter.string(from: self)
-		return "\"\(dt)\""
-	}
-}
-
 extension Optional: JSONConvertible {
     /// Convert an Optional into JSON text.
     public func jsonEncodedString() throws -> String {
@@ -295,8 +282,6 @@ func jsonEncodedStringWorkAround(_ o: Any) throws -> String {
         return try jsonAble.jsonEncodedString()
     case let jsonAble as JSONConvertible:
         return try jsonAble.jsonEncodedString()
-    case let jsonAble as Date:
-            return try jsonAble.jsonEncodedString()
     case let jsonAble as String:
         return try jsonAble.jsonEncodedString()
     case let jsonAble as Int:
@@ -327,9 +312,9 @@ func jsonEncodedStringWorkAround(_ o: Any) throws -> String {
         return try jsonAble.jsonEncodedString()
     case let jsonAble as [Any]:
         return try jsonAble.jsonEncodedString()
-    case let jsonAble as [[String:Any]]:
+    case let jsonAble as [[String: Any]]:
         return try jsonAble.jsonEncodedString()
-    case let jsonAble as [String:Any]:
+    case let jsonAble as [String: Any]:
         return try jsonAble.jsonEncodedString()
     default:
         throw JSONConversionError.notConvertible(o)
@@ -384,7 +369,7 @@ extension String {
         state.g = unicodeScalars.makeIterator()
 
         let o = try state.readObject()
-        if let _ = o as? JSONDecodeState.EOF {
+        if nil != o as? JSONDecodeState.EOF {
             throw JSONConversionError.syntaxError
         }
         return o
@@ -415,7 +400,7 @@ private class JSONDecodeState {
             return EOF()
         }
 
-        switch(c) {
+        switch c {
         case jsonOpenArray:
             var a = [Any]()
             movePastWhite()
@@ -440,7 +425,7 @@ private class JSONDecodeState {
             }
             return a
         case jsonOpenObject:
-            var d = [String:Any]()
+            var d = [String: Any]()
             movePastWhite()
             guard let c = next() else {
                 throw JSONConversionError.syntaxError
@@ -481,15 +466,7 @@ private class JSONDecodeState {
             }
             return d
         case jsonQuoteDouble:
-            let str = try readString()
-            let m = re.matches(in: str, options: .reportCompletion, range: NSRange(location: 0, length: str.count))
-            if m.isEmpty {
-                return str
-            } else if let dt = dateFormatter.date(from: str) {
-                return dt
-            } else {
-                return str
-            }
+            return try readString()
         default:
             if c.isWhiteSpace() {
                 // nothing
@@ -524,7 +501,7 @@ private class JSONDecodeState {
         while let c = next {
 
             if esc {
-                switch(c) {
+                switch c {
                 case jsonBackSlash:
                     s.append(String(jsonBackSlash))
                 case jsonQuoteDouble:

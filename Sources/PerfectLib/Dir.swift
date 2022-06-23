@@ -5,7 +5,7 @@
 //  Created by Kyle Jessup on 7/7/15.
 //	Copyright (C) 2015 PerfectlySoft, Inc.
 //
-//===----------------------------------------------------------------------===//
+// ===----------------------------------------------------------------------===//
 //
 // This source file is part of the Perfect.org open source project
 //
@@ -14,11 +14,12 @@
 //
 // See http://perfect.org/licensing.html for license information
 //
-//===----------------------------------------------------------------------===//
+// ===----------------------------------------------------------------------===//
 //
 
 #if os(Linux)
 import LinuxBridge
+import Glibc
 #else
 import Darwin
 #endif
@@ -127,16 +128,18 @@ public struct Dir {
 	}
 
 #if os(Linux)
-    func readDir(_ d: OpaquePointer, _ dirEnt: inout dirent, _ endPtr: UnsafeMutablePointer<UnsafeMutablePointer<dirent>?>!) -> Int32 {
-		guard let ent = readdir(d) else {
+    func readDir(_ dPointer: OpaquePointer, _ dirEnt: inout dirent,
+                 _ endPtr: UnsafeMutablePointer<UnsafeMutablePointer<dirent>?>!) -> Int32 {
+		guard let ent = readdir(dPointer) else {
 			return -1
 		}
 		dirEnt = ent.pointee
 		return 0
     }
 #else
-    func readDir(_ d: UnsafeMutablePointer<DIR>, _ dirEnt: inout dirent, _ endPtr: UnsafeMutablePointer<UnsafeMutablePointer<dirent>?>!) -> Int32 {
-        return readdir_r(d, &dirEnt, endPtr)
+    func readDir(_ dPointer: UnsafeMutablePointer<DIR>, _ dirEnt: inout dirent,
+                 _ endPtr: UnsafeMutablePointer<UnsafeMutablePointer<dirent>?>!) -> Int32 {
+        return readdir_r(dPointer, &dirEnt, endPtr)
     }
 #endif
 
@@ -151,7 +154,7 @@ public struct Dir {
 		defer { closedir(dir) }
 
 		var ent = dirent()
-		let entPtr = UnsafeMutablePointer<UnsafeMutablePointer<dirent>?>.allocate(capacity:  1)
+		let entPtr = UnsafeMutablePointer<UnsafeMutablePointer<dirent>?>.allocate(capacity: 1)
 		defer { entPtr.deallocate() }
 
 		while readDir(dir, &ent, entPtr) == 0 && entPtr.pointee != nil {

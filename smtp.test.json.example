@@ -1,0 +1,6 @@
+{
+    "url": "smtp://smtp.mailtrap.io", 
+    "username": "someone", 
+    "password": "some password",
+    "requiresTLSUpgrade": true
+}

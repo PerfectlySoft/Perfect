@@ -5,7 +5,7 @@
 //  Created by Kyle Jessup on 7/7/15.
 //	Copyright (C) 2015 PerfectlySoft, Inc.
 //
-//===----------------------------------------------------------------------===//
+// ===----------------------------------------------------------------------===//
 //
 // This source file is part of the Perfect.org open source project
 //
@@ -14,11 +14,12 @@
 //
 // See http://perfect.org/licensing.html for license information
 //
-//===----------------------------------------------------------------------===//
+// ===----------------------------------------------------------------------===//
 //
 
 #if os(Linux)
 import LinuxBridge
+import Glibc
 // !FIX! these are obviously sketchy
 // I hope SwiftGlibc to eventually include these
 // Otherwise, export them from LinuxBridge
@@ -143,7 +144,7 @@ public class File {
 	deinit {
 		close()
 	}
-	
+
 	/// Closes the file if it had been opened
 	public func close() {
 		if fd != -1 {
@@ -396,7 +397,7 @@ public extension File {
 		let mode = st.st_mode
 		return (Int32(mode) & Int32(S_IFMT)) == Int32(S_IFLNK)
 	}
-	
+
 	/// Create a symlink from the target to the destination.
 	@discardableResult
 	func linkTo(path: String, overWrite: Bool = false) throws -> File {
@@ -440,7 +441,7 @@ public extension File {
 
 		let bSize = min(count, sizeOr(count))
 		var ary = [UInt8](repeating: 0, count: bSize)
-		
+
 		let readCount = ary.withUnsafeMutableBytes {
 		   read(CInt(fd), $0.bindMemory(to: Int8.self).baseAddress, bSize)
 	    }
@@ -553,7 +554,7 @@ public extension File {
 }
 
 // Subclass to represent a file which can not be closed
-private final class UnclosableFile : File {
+private final class UnclosableFile: File {
     override init(_ path: String, fd: Int32) {
 		super.init(path, fd: fd)
 	}

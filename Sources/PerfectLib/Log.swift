@@ -5,7 +5,7 @@
 //  Created by Kyle Jessup on 7/21/15.
 //	Copyright (C) 2015 PerfectlySoft, Inc.
 //
-//===----------------------------------------------------------------------===//
+// ===----------------------------------------------------------------------===//
 //
 // This source file is part of the Perfect.org open source project
 //
@@ -14,11 +14,12 @@
 //
 // See http://perfect.org/licensing.html for license information
 //
-//===----------------------------------------------------------------------===//
+// ===----------------------------------------------------------------------===//
 //
 
 #if os(Linux)
 	import SwiftGlibc
+	import Glibc
 	import LinuxBridge
 #else
 	import Darwin
@@ -36,7 +37,7 @@ public protocol Logger {
 }
 
 public struct ConsoleLogger: Logger {
-	public init(){}
+	public init() { }
 
 	public func debug(message: String, _ even: Bool) {
 		print((even ? "[DBG]  " : "[DBG] ") + message)
@@ -65,77 +66,73 @@ public struct ConsoleLogger: Logger {
 
 public struct SysLogger: Logger {
 	let consoleEcho = ConsoleLogger()
-	public init(){}
+	public init() { }
 
 	func syslog(priority: Int32, _ args: CVarArg...) {
-#if os(Linux)// || os(macOS)
+        #if os(Linux)// || os(macOS)
 		withVaList(args) {
 			vsyslog(priority, "%s", $0)
 		}
-#else
-    // nerdo: Using unified logging (https://developer.apple.com/documentation/os/logging)
-    // os_log isn't very well documented... but this seems like a step in the right direction.
-    let osLogType: OSLogType
-    switch priority {
-    case 0, 1, 2:
-        osLogType = .fault
-    case 3:
-        osLogType = .error
-    case 4, 5, 6:
-        osLogType = .info
-    case 7:
-        osLogType = .debug
-    default:
-        osLogType = .default
-    }
-    os_log("%s", log: .default, type: osLogType, args)
-#endif
+        #else
+        // nerdo: Using unified logging (https://developer.apple.com/documentation/os/logging)
+        // os_log isn't very well documented... but this seems like a step in the right direction.
+        if #available(macOS 10.12, *) {
+            let osLogType: OSLogType
+            switch priority {
+            case 0, 1, 2:
+                osLogType = .fault
+            case 3:
+                osLogType = .error
+            case 4, 5, 6:
+                osLogType = .info
+            case 7:
+                osLogType = .debug
+            default:
+                osLogType = .default
+            }
+            os_log("%s", log: .default, type: osLogType, args)
+        }
+        #endif
 	}
 
 	public func debug(message: String, _ even: Bool) {
 		consoleEcho.debug(message: message, even)
-		message.withCString {
-			f in
+		message.withCString { f in
 			syslog(priority: LOG_DEBUG, f)
 		}
 	}
 
 	public func info(message: String, _ even: Bool) {
 		consoleEcho.info(message: message, even)
-		message.withCString {
-			f in
+		message.withCString { f in
 			syslog(priority: LOG_INFO, f)
 		}
 	}
 
 	public func warning(message: String, _ even: Bool) {
 		consoleEcho.warning(message: message, even)
-		message.withCString {
-			f in
+		message.withCString { f in
 			syslog(priority: LOG_WARNING, f)
 		}
 	}
 
 	public func error(message: String, _ even: Bool) {
 		consoleEcho.error(message: message, even)
-		message.withCString {
-			f in
+		message.withCString { f in
 			syslog(priority: LOG_ERR, f)
 		}
 	}
 
 	public func critical(message: String, _ even: Bool) {
 		consoleEcho.critical(message: message, even)
-		message.withCString {
-			f in
+		message.withCString { f in
 			syslog(priority: LOG_CRIT, f)
 		}
 	}
 
 	public func terminal(message: String, _ even: Bool) {
 		consoleEcho.terminal(message: message, even)
-		message.withCString {
-			f in
+		message.withCString { f in
 			syslog(priority: LOG_EMERG, f)
 		}
 	}
@@ -143,7 +140,7 @@ public struct SysLogger: Logger {
 
 /// Placeholder functions for logging system
 public struct Log {
-	private init(){}
+	private init() { }
 
 	public static var logger: Logger = ConsoleLogger()
 
@@ -173,7 +170,7 @@ public struct Log {
 		Log.logger.critical(message: message, evenIdents)
 	}
 
-	public static func terminal(message: String, evenIdents: Bool = even) -> Never  {
+	public static func terminal(message: String, evenIdents: Bool = even) -> Never {
 		Log.logger.terminal(message: message, evenIdents)
 		fatalError(message)
 	}

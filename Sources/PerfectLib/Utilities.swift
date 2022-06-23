@@ -5,7 +5,7 @@
 //  Created by Kyle Jessup on 7/17/15.
 //	Copyright (C) 2015 PerfectlySoft, Inc.
 //
-//===----------------------------------------------------------------------===//
+// ===----------------------------------------------------------------------===//
 //
 // This source file is part of the Perfect.org open source project
 //
@@ -14,7 +14,7 @@
 //
 // See http://perfect.org/licensing.html for license information
 //
-//===----------------------------------------------------------------------===//
+// ===----------------------------------------------------------------------===//
 //
 
 #if os(Linux)
@@ -25,20 +25,20 @@
 import Foundation
 
 /// This class permits an UnsafeMutablePointer to be used as a GeneratorType
-public struct GenerateFromPointer<T> : IteratorProtocol {
-	
+public struct GenerateFromPointer<T>: IteratorProtocol {
+
 	public typealias Element = T
-	
+
 	var count = 0
 	var pos = 0
 	var from: UnsafeMutablePointer<T>
-	
+
 	/// Initialize given an UnsafeMutablePointer and the number of elements pointed to.
 	public init(from: UnsafeMutablePointer<T>, count: Int) {
 		self.from = from
 		self.count = count
 	}
-	
+
 	/// Return the next element or nil if the sequence has been exhausted.
 	mutating public func next() -> Element? {
 		guard count > 0 else {
@@ -53,9 +53,9 @@ public struct GenerateFromPointer<T> : IteratorProtocol {
 
 /// A generalized wrapper around the Unicode codec operations.
 public struct Encoding {
-	
+
 	/// Return a String given a character generator.
-	public static func encode<D : UnicodeCodec, G : IteratorProtocol>(codec inCodec: D, generator: G) -> String where G.Element == D.CodeUnit {
+	public static func encode<D: UnicodeCodec, G: IteratorProtocol>(codec inCodec: D, generator: G) -> String where G.Element == D.CodeUnit {
 		var encodedString = ""
 		var finished: Bool = false
 		var mutableDecoder = inCodec
@@ -78,24 +78,24 @@ public struct Encoding {
 
 /// Utility wrapper permitting a UTF-8 character generator to encode a String. Also permits a String to be converted into a UTF-8 byte array.
 public struct UTF8Encoding {
-	
+
 	/// Use a character generator to create a String.
-	public static func encode<G : IteratorProtocol>(generator gen: G) -> String where G.Element == UTF8.CodeUnit {
+	public static func encode<G: IteratorProtocol>(generator gen: G) -> String where G.Element == UTF8.CodeUnit {
 		return Encoding.encode(codec: UTF8(), generator: gen)
 	}
-	
+
 	/// Use a character sequence to create a String.
-	public static func encode<S : Sequence>(bytes byts: S) -> String where S.Iterator.Element == UTF8.CodeUnit {
+	public static func encode<S: Sequence>(bytes byts: S) -> String where S.Iterator.Element == UTF8.CodeUnit {
 		return encode(generator: byts.makeIterator())
 	}
-	
+
 	/// Use a character sequence to create a String.
 	public static func encode(bytes byts: [UTF8.CodeUnit]) -> String {
 		return encode(generator: byts.makeIterator())
 	}
-	
+
 	/// Decode a String into an array of UInt8.
-	public static func decode(string str: String) -> Array<UInt8> {
+	public static func decode(string str: String) -> [UInt8] {
 		return [UInt8](str.utf8)
 	}
 }
@@ -111,7 +111,7 @@ extension UInt8 {
 			|| ( cc >= 123 && cc <= 126 )
 			|| self == 43 )
 	}
-	
+
 	// same as String(self, radix: 16)
 	// but outputs two characters. i.e. 0 padded
 	var hexString: String {
@@ -169,7 +169,7 @@ extension String {
 		}
 		return ret
 	}
-	
+
 	/// Returns the String with all special URL characters encoded.
 	public var stringByEncodingURL: String {
 		var ret = ""
@@ -184,19 +184,18 @@ extension String {
 		}
 		return ret
 	}
-	
+
 	// Utility - not sure if it makes the most sense to have here or outside or elsewhere
 	static func byteFromHexDigits(one c1v: UInt8, two c2v: UInt8) -> UInt8? {
-		
 		let capA: UInt8 = 65
 		let capF: UInt8 = 70
 		let lowA: UInt8 = 97
 		let lowF: UInt8 = 102
 		let zero: UInt8 = 48
 		let nine: UInt8 = 57
-		
+
 		var newChar = UInt8(0)
-		
+
 		if c1v >= capA && c1v <= capF {
 			newChar = c1v - capA + 10
 		} else if c1v >= lowA && c1v <= lowF {
@@ -206,9 +205,9 @@ extension String {
 		} else {
 			return nil
 		}
-		
+
 		newChar *= 16
-		
+
 		if c2v >= capA && c2v <= capF {
 			newChar += c2v - capA + 10
 		} else if c2v >= lowA && c2v <= lowF {
@@ -220,7 +219,7 @@ extension String {
 		}
 		return newChar
 	}
-	
+
 	/// Decode the % encoded characters in a URL and return result
 	public var stringByDecodingURL: String? {
 		let percent: UInt8 = 37
@@ -254,22 +253,22 @@ extension String {
 			return String(validatingUTF8: p)
 		}
 	}
-	
+
 	/// Decode a hex string into resulting byte array
 	public var decodeHex: [UInt8]? {
-		
+
 		var bytesArray = [UInt8]()
 		var g = utf8.makeIterator()
 		while let c1v = g.next() {
-			
+
 			guard let c2v = g.next() else {
 				return nil
 			}
-			
+
 			guard let newChar = String.byteFromHexDigits(one: c1v, two: c2v) else {
 				return nil
 			}
-			
+
 			bytesArray.append(newChar)
 		}
 		return bytesArray
@@ -279,37 +278,38 @@ extension String {
 @available(*, deprecated, message: "Use Foundation.UUID")
 public struct UUID {
 	let uuid: uuid_t
-	
+
 	public init() {
-		let u = UnsafeMutablePointer<UInt8>.allocate(capacity:  MemoryLayout<uuid_t>.size)
+		let u = UnsafeMutablePointer<UInt8>.allocate(capacity: MemoryLayout<uuid_t>.size)
 		defer {
 			u.deallocate()
 		}
 		uuid_generate_random(u)
 		uuid = UUID.uuidFromPointer(u)
 	}
-	
+
 	public init(_ string: String) {
-		let u = UnsafeMutablePointer<UInt8>.allocate(capacity:  MemoryLayout<uuid_t>.size)
+        let size = MemoryLayout<uuid_t>.size
+		let u = UnsafeMutablePointer<UInt8>.allocate(capacity: size)
 		defer {
 			u.deallocate()
 		}
 		uuid_parse(string, u)
 		uuid = UUID.uuidFromPointer(u)
 	}
-	
+
 	init(_ uuid: uuid_t) {
 		self.uuid = uuid
 	}
-	
+
 	private static func uuidFromPointer(_ u: UnsafeMutablePointer<UInt8>) -> uuid_t {
 		// is there a better way?
 		return uuid_t(u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15])
 	}
-	
+
 	public var string: String {
-		let u = UnsafeMutablePointer<UInt8>.allocate(capacity:  MemoryLayout<uuid_t>.size)
-		let unu = UnsafeMutablePointer<Int8>.allocate(capacity:  37) // as per spec. 36 + null
+		let u = UnsafeMutablePointer<UInt8>.allocate(capacity: MemoryLayout<uuid_t>.size)
+		let unu = UnsafeMutablePointer<Int8>.allocate(capacity: 37) // as per spec. 36 + null
 		defer {
 			u.deallocate()
 			unu.deallocate()
@@ -322,11 +322,11 @@ public struct UUID {
 }
 
 extension String {
-	
+
 	/// Parse an HTTP Digest authentication header returning a Dictionary containing each part.
-	public func parseAuthentication() -> [String:String] {
-		var ret = [String:String]()
-		if let _ = range(of: "Digest ") {
+	public func parseAuthentication() -> [String: String] {
+		var ret = [String: String]()
+		if nil != range(of: "Digest ") {
 			ret["type"] = "Digest"
 			let wantFields = ["username", "nonce", "nc", "cnonce", "response", "uri", "realm", "qop", "algorithm"]
 			for field in wantFields {
@@ -337,12 +337,12 @@ extension String {
 		}
 		return ret
 	}
-	
+
 	private static func extractField(from frm: String, named: String) -> String? {
 		guard let range = frm.range(of: named + "=") else {
 			return nil
 		}
-		
+
 		var currPos = range.upperBound
 		var ret = ""
 		let quoted = frm[currPos] == "\""
@@ -371,32 +371,32 @@ extension String {
 }
 
 extension String {
-	
+
 	/// Replace all occurrences of `string` with `withString`.
 	public func stringByReplacing(string strng: String, withString: String) -> String {
-		
+
 		guard !strng.isEmpty else {
 			return self
 		}
 		guard !isEmpty else {
 			return self
 		}
-		
+
 		var ret = ""
 		var idx = startIndex
 		let endIdx = endIndex
-		
+
 		while idx != endIdx {
 			if self[idx] == strng[strng.startIndex] {
 				var newIdx = index(after: idx)
 				var findIdx = strng.index(after: strng.startIndex)
 				let findEndIdx = strng.endIndex
-				
+
 				while newIdx != endIndex && findIdx != findEndIdx && self[newIdx] == strng[findIdx] {
 					newIdx = index(after: newIdx)
 					findIdx = strng.index(after: findIdx)
 				}
-				
+
 				if findIdx == findEndIdx { // match
 					ret.append(withString)
 					idx = newIdx
@@ -406,10 +406,10 @@ extension String {
 			ret.append(self[idx])
 			idx = index(after: idx)
 		}
-		
+
 		return ret
 	}
-	
+
 	// For compatibility due to shifting swift
 	public func contains(string: String) -> Bool {
 		return nil != range(of: string)
@@ -420,7 +420,7 @@ extension String {
 	func begins(with str: String) -> Bool {
 		return starts(with: str)
 	}
-	
+
 	func ends(with str: String) -> Bool {
 		guard count >= str.count else {
 			return false
@@ -432,7 +432,7 @@ extension String {
 /// Returns the current time according to ICU
 /// ICU dates are the number of milliseconds since the reference date of Thu, 01-Jan-1970 00:00:00 GMT
 public func getNow() -> Double {
-	
+
 	var posixTime = timeval()
 	gettimeofday(&posixTime, nil)
 	return Double((posixTime.tv_sec * 1000) + (Int(posixTime.tv_usec)/1000))
@@ -454,12 +454,12 @@ public func secondsToICUDate(_ seconds: Int) -> Double {
 /// - returns: The resulting date string
 /// - throws: `PerfectError.systemError`
 public func formatDate(_ date: Double, format: String, timezone inTimezone: String? = nil, locale inLocale: String? = nil) throws -> String {
-	
+
 	var t = tm()
 	var time = time_t(date / 1000.0)
 	gmtime_r(&time, &t)
 	let maxResults = 1024
-	let results = UnsafeMutablePointer<Int8>.allocate(capacity:  maxResults)
+	let results = UnsafeMutablePointer<Int8>.allocate(capacity: maxResults)
 	defer {
 		results.deallocate()
 	}
@@ -472,7 +472,7 @@ public func formatDate(_ date: Double, format: String, timezone inTimezone: Stri
 }
 
 extension UnicodeScalar {
-	
+
 	/// Returns true if the UnicodeScalar is a white space character
 	public func isWhiteSpace() -> Bool {
 		return isspace(Int32(value)) != 0
@@ -500,29 +500,29 @@ extension UnicodeScalar {
 }
 
 extension String {
-	
+
 	var filePathSeparator: UnicodeScalar {
 		return UnicodeScalar(47)
 	}
-	
+
 	var fileExtensionSeparator: UnicodeScalar {
 		return UnicodeScalar(46)
 	}
-	
+
 	public var beginsWithFilePathSeparator: Bool {
 		guard count > 0 else {
 			return false
 		}
 		return self[startIndex] == Character(filePathSeparator)
 	}
-	
+
 	public var endsWithFilePathSeparator: Bool {
 		guard count > 0 else {
 			return false
 		}
 		return self[index(before: endIndex)] == Character(filePathSeparator)
 	}
-	
+
 	private func filePathComponents(addFirstLast addfl: Bool) -> [String] {
 		var r = [String]()
 		guard count > 0 else {
@@ -533,9 +533,9 @@ extension String {
 		if addfl && beginSlash {
 			r.append(String(filePathSeparator))
 		}
-		
+
 		r.append(contentsOf: split(separator: fsc).map { String($0) })
-		
+
 		if addfl && self[index(before: endIndex)] == fsc {
 			if !beginSlash || r.count > 1 {
 				r.append(String(filePathSeparator))
@@ -543,11 +543,11 @@ extension String {
 		}
 		return r
 	}
-	
+
 	public var filePathComponents: [String] {
 		return filePathComponents(addFirstLast: true)
 	}
-	
+
 	public var lastFilePathComponent: String {
 		let last = filePathComponents(addFirstLast: false).last ?? ""
 		if last.isEmpty && first == Character(filePathSeparator) {
@@ -555,7 +555,7 @@ extension String {
 		}
 		return last
 	}
-	
+
 	public var deletingLastFilePathComponent: String {
 		var comps = filePathComponents(addFirstLast: false)
 		guard comps.count > 1 else {
@@ -571,7 +571,7 @@ extension String {
 		}
 		return joined
 	}
-	
+
 	private func lastPathSeparator(in unis: String) -> String.Index {
 		let startIndex = unis.startIndex
 		var endIndex = unis.endIndex
@@ -583,7 +583,7 @@ extension String {
 		}
 		return endIndex
 	}
-	
+
 	private func lastExtensionSeparator(in unis: String, endIndex: String.Index) -> String.Index {
 		var endIndex = endIndex
 		while endIndex != startIndex {
@@ -594,7 +594,7 @@ extension String {
 		}
 		return endIndex
 	}
-	
+
 	public var deletingFileExtension: String {
 		var endIndex = lastPathSeparator(in: self)
 		let noTrailsIndex = endIndex
@@ -607,7 +607,7 @@ extension String {
 		}
 		return String(self[startIndex..<endIndex])
 	}
-	
+
 	public var filePathExtension: String {
 		var endIndex = lastPathSeparator(in: self)
 		let noTrailsIndex = endIndex
@@ -617,53 +617,8 @@ extension String {
 		}
 		return String(self[index(after: endIndex)..<noTrailsIndex])
 	}
-	
+
 	public var resolvingSymlinksInFilePath: String {
 		return File(self).realPath
 	}
 }
-
-public class Environment {
-
-	public static func get() -> [String: String] {
-		var v: [String: String] = [:]
-		var array = environ
-		while let e = array.pointee {
-			let str = String.init(cString: e)
-			let eq:[String] = str.split(separator: "=").map { String($0) }
-			if let key = eq.first, let value = eq.last {
-			v[key] = value
-			}
-			array = array.advanced(by: 1)
-		}
-		return v
-	}
-
-	public static func get(_ variableName: String, defaultValue: String? = nil) -> String? {
-		guard let pval = getenv(variableName) else {
-			return defaultValue
-		}
-		return String.init(cString: pval)
-	}
-
-	public static func set(_ variableName: String, value: String, overwrite: Bool = true) -> Bool {
-		return 0 == setenv(variableName, value, overwrite ? 1 : 0)
-	}
-
-	public static func set(_ pairs: [String: String]) -> [String] {
-    	var failure: [String] = []
-    	pairs.forEach {
-      		guard Environment.set($0, value: $1) else {
-        		failure.append($0)
-        		return
-      		}
-    	}
-    	return failure
-	}
-
-	public static func del(_ variableName: String) -> Bool {
-		return 0 == unsetenv(variableName)
-	}
-}
-
-public typealias Env = Environment
