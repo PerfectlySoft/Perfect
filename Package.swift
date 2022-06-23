@@ -26,7 +26,7 @@ let package = Package(
         .library(name: "PerfectSMTP", targets: ["PerfectSMTP"]),
         .library(name: "PerfectSQLite", targets: ["PerfectSQLite"]),
         .library(name: "PerfectThread", targets: ["PerfectThread"]),
-        .executable(name: "template", targets: ["template"]),
+        .executable(name: "template", targets: ["template"])
     ],
     dependencies: [ ],
     targets: ostag + [
