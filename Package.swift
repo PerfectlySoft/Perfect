@@ -13,7 +13,7 @@ let ostag: [Target] = []
 let sqldep: [Target.Dependency] = ["PerfectCRUD"]
 #endif
 let package = Package(
-    name: "PerfectLib",
+    name: "Perfect",
     products: [
         .library(name: "PerfectCRUD", targets: ["PerfectCRUD"]),
         .library(name: "PerfectCrypto", targets: ["PerfectCrypto"]),
