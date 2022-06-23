@@ -56,3 +56,5 @@ PerfectServer/perfectserverhttp
 Packages/
 PerfectLib.xcodeproj/
 docs/
+.swiftpm/
+smtp.test.json

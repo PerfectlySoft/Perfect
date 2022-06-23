@@ -25,7 +25,8 @@ let package = Package(
         .library(name: "PerfectNet", targets: ["PerfectNet"]),
         .library(name: "PerfectSMTP", targets: ["PerfectSMTP"]),
         .library(name: "PerfectSQLite", targets: ["PerfectSQLite"]),
-        .library(name: "PerfectThread", targets: ["PerfectThread"])
+        .library(name: "PerfectThread", targets: ["PerfectThread"]),
+        .executable(name: "template", targets: ["template"]),
     ],
     dependencies: [ ],
     targets: ostag + [
@@ -53,6 +54,7 @@ let package = Package(
         .testTarget(name: "PerfectNetTests", dependencies: ["PerfectNet"]),
         .testTarget(name: "PerfectSMTPTests", dependencies: ["PerfectSMTP"]),
         .testTarget(name: "PerfectSQLiteTests", dependencies: ["PerfectSQLite"]),
-        .testTarget(name: "PerfectThreadTests", dependencies: ["PerfectThread"])
+        .testTarget(name: "PerfectThreadTests", dependencies: ["PerfectThread"]),
+        .executableTarget(name: "template", dependencies: ["PerfectHTTPServer", "PerfectHTTP"])
     ]
 )
