@@ -15,6 +15,7 @@ let sqldep: [Target.Dependency] = ["PerfectCRUD"]
 let package = Package(
     name: "Perfect",
     products: [
+        .library(name: "PerfectAuth", targets: ["PerfectAuth"]),
         .library(name: "PerfectCRUD", targets: ["PerfectCRUD"]),
         .library(name: "PerfectCrypto", targets: ["PerfectCrypto"]),
         .library(name: "PerfectCURL", targets: ["PerfectCURL"]),
@@ -32,6 +33,7 @@ let package = Package(
     targets: ostag + [
         .target(name: "COpenSSL"),
         .target(name: "cURL"),
+        .target(name: "PerfectAuth", dependencies: ["PerfectCrypto"]),
         .target(name: "PerfectCZlib"),
         .target(name: "PerfectCHTTPParser"),
         .target(name: "PerfectLib", dependencies: osdep),
@@ -45,6 +47,7 @@ let package = Package(
         .target(name: "PerfectNet", dependencies: ["PerfectCrypto", "PerfectThread"]),
         .target(name: "PerfectSMTP", dependencies: ["PerfectCURL", "PerfectCrypto", "PerfectHTTP"]),
         .target(name: "PerfectSQLite", dependencies: sqldep),
+        .testTarget(name: "PerfectAuthTests", dependencies: ["PerfectAuth"]),
         .testTarget(name: "PerfectCryptoTests", dependencies: ["PerfectCrypto"]),
         .testTarget(name: "PerfectCURLTests", dependencies: ["PerfectCURL"]),
         .testTarget(name: "PerfectHTTPTests", dependencies: ["PerfectHTTP"]),

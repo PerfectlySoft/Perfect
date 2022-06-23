@@ -1,0 +1,28 @@
+import Foundation
+import PerfectCrypto
+
+open class AuthenticationUtilities {
+    static func hash(password: String) -> (hexSalt: String, hexHash: String)? {
+        let saltBytes = Array<UInt8>(randomCount: 32)
+        guard let saltHex = saltBytes.encode(.hex),
+            let hashHex = hash(password: password, saltBytes: saltBytes) else {
+                return nil
+        }
+        return (String(validatingUTF8: saltHex) ?? "", hashHex)
+    }
+    static func validate(password: String, hexSalt: String, hexHash: String) -> Bool {
+        guard let saltBytes = hexSalt.decode(.hex),
+            let compareHexHash = hash(password: password, saltBytes: saltBytes) else {
+                return false
+        }
+        return compareHexHash == hexHash
+    }
+    private static func hash(password: String, saltBytes: [UInt8]) -> String? {
+        let pwBytes = Array(password.utf8)
+        guard let hashBytes = Digest.sha256.deriveKey(password: pwBytes, salt: saltBytes, iterations: 2048, keyLength: 32),
+            let hashHex = hashBytes.encode(.hex) else {
+                return nil
+        }
+        return String(validatingUTF8: hashHex) ?? ""
+    }
+}
