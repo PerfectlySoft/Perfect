@@ -1,3 +1,12 @@
+//
+//  Based on SAuth.swift & Codables.swift
+//  [SAuthLib](https://github.com/kjessup/SAuthLib)
+//  [SAuthCodables](https://github.com/kjessup/SAuthCodables)
+//
+//  Created by Kyle Jessup on 2018-02-26.
+//  Digested by Rockford Wei on 2022-06-23.
+//
+
 import Foundation
 import PerfectCrypto
 

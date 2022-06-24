@@ -15,8 +15,7 @@ class PerfectSMTPTests: XCTestCase {
         //     "requiresTLSUpgrade": true
         // }
         var client: SMTPClient? = nil
-
-        let testCredentialPath = "smtp.test.json"
+        let testCredentialPath = "/tmp/smtp.test.json"
         do {
             let testCredential = try Data(contentsOf: URL(fileURLWithPath: testCredentialPath))
             client = try JSONDecoder().decode(SMTPClient.self, from: testCredential)
