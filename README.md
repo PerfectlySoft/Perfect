@@ -17,6 +17,27 @@
     </a>
 </p>
 
+## Project Status
+
+### Build / Test
+
+Platform|Status
+--------|------
+Monterey Apple silicon macOS 12.4|<img src="https://img.shields.io/badge/build-passing-brightgreen" alt="Monterey Apple silicon">
+Ubuntu 20.04 LTS i386|<img src="https://img.shields.io/badge/build-passing-brightgreen" alt="Ubuntu 20.04 LTS i386">
+Ubuntu 20.04 LTS arm64|<img src="https://img.shields.io/badge/build-passing-brightgreen" alt="Ubuntu 20.04 LTS arm64">
+
+### Remastered Built-In Packages
+
+Package Name|Status|Package Name|Status
+------------|------|------------|------
+PerfectLib|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectLib">|PerfectThread|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectThread">
+PerfectAuth|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectAuth">|PerfectCRUD|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectCRUD">
+PerfectCrypto|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectCrypto">|PerfectCURL|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectCURL">
+PerfectHTTP|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectHTTP">|PerfectHTTPServer|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectHTTPServer">
+PerfectMustache|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectMustache">|PerfectNet|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectNet">
+PerfectSMTP|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectSMTP">|PerfectSQLite|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectSQLite">
+
 ## Perfect: Server-Side Swift
 
 Perfect is a complete and powerful toolbox, framework, and application server for Linux, iOS, and macOS (OS X). It provides everything a Swift engineer needs for developing lightweight, maintainable, and scalable apps and other REST services entirely in the Swift programming language for both client-facing and server-side applications.
