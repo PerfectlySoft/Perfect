@@ -1,6 +1,7 @@
 import Foundation
 import PerfectCrypto
 
+// swiftlint:disable line_length
 public struct AuthenticationTokenClaim {
     public enum Keys {
         public static let account = "acc"
@@ -62,7 +63,7 @@ public struct AuthenticationTokenClaim {
         try jwt.verify(algo: AuthenticationTokenClaim.algo, key: authorityPublicKey)
         self.init(fields: jwt.payload)
     }
-    
+
     public func generateJsonWebToken(authorityPrivateKey: PEMKey) throws -> String? {
         return try JWTCreator(payload: payload)?.sign(alg: AuthenticationTokenClaim.algo, key: authorityPrivateKey)
     }
