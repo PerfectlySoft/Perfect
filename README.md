@@ -16,6 +16,7 @@
         <img src="https://img.shields.io/badge/License-Apache-lightgrey.svg?style=flat" alt="License Apache">
     </a>
 </p>
+
 **OS**|**Version**|**Chip**|**Status**
 --|-------|----|------
 Monterey|macOS 12.4|Apple Silicon M1|<img src="https://img.shields.io/badge/build-passing-brightgreen" alt="Monterey Apple silicon">
