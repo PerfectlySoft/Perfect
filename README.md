@@ -21,16 +21,12 @@
 
 ### Build / Test
 
-Platform|Status
---------|------
-Monterey Apple silicon macOS 12.4|<img src="https://img.shields.io/badge/build-passing-brightgreen" alt="Monterey Apple silicon">
-Ubuntu 20.04 LTS i386|<img src="https://img.shields.io/badge/build-passing-brightgreen" alt="Ubuntu 20.04 LTS i386">
-Ubuntu 20.04 LTS arm64|<img src="https://img.shields.io/badge/build-passing-brightgreen" alt="Ubuntu 20.04 LTS arm64">
-
-### Remastered Built-In Packages
-
-Package Name|Status|Package Name|Status
-------------|------|------------|------
+**OS**|**Version**|**Chip**|**Status**
+--|-------|----|------
+Monterey|macOS 12.4|Apple Silicon M1|<img src="https://img.shields.io/badge/build-passing-brightgreen" alt="Monterey Apple silicon">
+Ubuntu|20.04 LTS|i386|<img src="https://img.shields.io/badge/build-passing-brightgreen" alt="Ubuntu 20.04 LTS i386">
+Ubuntu|20.04 LTS|arm64|<img src="https://img.shields.io/badge/build-passing-brightgreen" alt="Ubuntu 20.04 LTS arm64">
+**Package**|**Status**|**Package**|**Status**
 PerfectLib|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectLib">|PerfectThread|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectThread">
 PerfectAuth|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectAuth">|PerfectCRUD|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectCRUD">
 PerfectCrypto|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectCrypto">|PerfectCURL|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectCURL">
