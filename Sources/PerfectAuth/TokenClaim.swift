@@ -64,7 +64,7 @@ public struct AuthenticationTokenClaim {
         }
         payload = p
     }
-    static let algo = JWT.Alg.rs256
+    public static let algo = JWT.Alg.rs256
     public init(jsonWebToken: String, authorityPublicKey: PEMKey) throws {
         guard let jwt = JWTVerifier(jsonWebToken) else {
             throw Exception.invalidJsonWebToken

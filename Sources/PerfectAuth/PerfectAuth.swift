@@ -10,7 +10,7 @@ import Foundation
 import PerfectCrypto
 
 open class AuthenticationUtilities {
-    static func hash(password: String) -> (hexSalt: String, hexHash: String)? {
+    public static func hash(password: String) -> (hexSalt: String, hexHash: String)? {
         let saltBytes = Array<UInt8>(randomCount: 32)
         guard let saltHex = saltBytes.encode(.hex),
             let hashHex = hash(password: password, saltBytes: saltBytes) else {
@@ -18,7 +18,7 @@ open class AuthenticationUtilities {
         }
         return (String(validatingUTF8: saltHex) ?? "", hashHex)
     }
-    static func validate(password: String, hexSalt: String, hexHash: String) -> Bool {
+    public static func validate(password: String, hexSalt: String, hexHash: String) -> Bool {
         guard let saltBytes = hexSalt.decode(.hex),
             let compareHexHash = hash(password: password, saltBytes: saltBytes) else {
                 return false

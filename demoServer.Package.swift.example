@@ -9,7 +9,7 @@ let package = Package(
         .executable(name: "demoServer", targets: ["demoServer"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/RockfordWei/Perfect.git", branch: "master")
+        .package(url: "https://github.com/RockfordWei/Perfect.git", from: "5.6.6")
     ],
     targets: [
         .executableTarget(
