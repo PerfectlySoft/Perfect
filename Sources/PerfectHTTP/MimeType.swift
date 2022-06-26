@@ -1028,5 +1028,7 @@ let mimeMap = ["123" : "application/vnd.lotus-1-2-3",
                "zirz" : "application/vnd.zul",
                "zmm" : "application/vnd.handheld-entertainment+xml"]
 
-
-
+public extension MimeType {
+    static let html = forExtension("html")
+    static let json = forExtension("json")
+}

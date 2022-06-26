@@ -26,8 +26,6 @@ import Darwin
 import PerfectLib
 import Foundation
 
-private let applicationJson = "application/json"
-
 /// HTTP response status code/msg.
 public enum HTTPResponseStatus: CustomStringConvertible {
 	case `continue`
@@ -338,7 +336,7 @@ public extension HTTPResponse {
 	func setBody<T: Encodable>(json: T, encoder: JSONEncoder = JSONEncoder(), skipContentType: Bool = false) throws -> Self {
 		let data = try encoder.encode(json)
 		if !skipContentType {
-			setHeader(.contentType, value: applicationJson)
+            setHeader(.contentType, value: MimeType.json)
 		}
 		return setBody(bytes: Array(data))
 	}
@@ -349,7 +347,7 @@ public extension HTTPResponse {
 	func setBody(json: JSONConvertible, skipContentType: Bool = false) throws -> Self {
 		let string = try json.jsonEncodedString()
 		if !skipContentType {
-			setHeader(.contentType, value: applicationJson)
+			setHeader(.contentType, value: MimeType.json)
 		}
 		return setBody(string: string)
 	}

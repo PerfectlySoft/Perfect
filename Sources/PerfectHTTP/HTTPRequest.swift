@@ -18,6 +18,7 @@
 //
 //
 
+import Foundation
 import PerfectNet
 
 /// An HTTP based request object.
@@ -134,4 +135,18 @@ public extension HTTPRequest {
 			return (d2[0], d2[1])
 		}
 	}
+}
+
+public extension HTTPRequest {
+    func postBodyJson<T: Decodable>(_ `type`: T.Type) throws -> T? {
+        let ctype = header(.contentType)?.lowercased()
+        guard ctype == MimeType.json else {
+            throw HTTPResponseError(status: .badRequest, description: "unexpected content type \(ctype ?? "N/A"); expecting \(MimeType.json)")
+        }
+        guard let bytes = postBodyBytes else {
+            throw HTTPResponseError(status: .badRequest, description: "unexpected empty posting body")
+        }
+        let data = Data(bytes)
+        return try JSONDecoder().decode(T.self, from: data)
+    }
 }
