@@ -11,8 +11,7 @@ RUN cd /tmp/swift/usr/ && tar cf /tmp/sw.tar *
 RUN cd /usr && tar xf /tmp/sw.tar
 RUN rm -rf /tmp/sw*
 RUN apt-get update -y
-RUN apt-get install -y build-essential clang wget
+RUN apt-get install -y build-essential clang git
 RUN apt-get install -y libcurl4-openssl-dev uuid-dev
 RUN apt-get install -y libsqlite3-dev libncurses-dev
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y libxml2-dev
-RUN apt-get install -y git

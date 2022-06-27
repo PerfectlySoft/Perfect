@@ -622,3 +622,17 @@ extension String {
 		return File(self).realPath
 	}
 }
+
+public extension Int {
+    /// use the current number as a unix epoch in seconds
+    var date: Date {
+        return Date(timeIntervalSince1970: Double(self))
+    }
+}
+
+public extension Date {
+    /// get the unix epoch in seconds
+    var timestamp: Int {
+        return Int(timeIntervalSince1970)
+    }
+}

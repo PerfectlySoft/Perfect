@@ -21,6 +21,8 @@ public struct AuthenticationTokenClaim {
     }
     public enum Exception: Error {
         case invalidJsonWebToken
+        case invalidHostKey
+        case expired
     }
     public let payload: [String: Any]
     public var account: String? {
