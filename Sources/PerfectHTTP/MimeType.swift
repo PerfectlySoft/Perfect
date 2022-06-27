@@ -1031,4 +1031,5 @@ let mimeMap = ["123" : "application/vnd.lotus-1-2-3",
 public extension MimeType {
     static let html = forExtension("html")
     static let json = forExtension("json")
+    static let text = forExtension("conf")
 }
