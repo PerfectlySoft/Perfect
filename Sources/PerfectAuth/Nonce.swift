@@ -12,15 +12,15 @@ import PerfectCrypto
 /// For example, any post method should include a valid nonce before action, so if not, the server can just simply ignore it.
 public struct Nonce {
     fileprivate struct Payload: Codable {
-        let host: Int
+        let host: UUID
         let timestamp: TimeInterval
-        init(host h: Int, timestamp t: TimeInterval = Date().timeIntervalSince1970) {
+        init(host h: UUID, timestamp t: TimeInterval = Date().timeIntervalSince1970) {
             host = h; timestamp = t
         }
     }
 
     fileprivate static let algo = JWT.Alg.hs256
-    fileprivate static let host = Int.random
+    fileprivate static let host = UUID()
 
     /// allocate a nonce string
     public static func allocate(authorityPrivateKey: PEMKey) throws -> String {
