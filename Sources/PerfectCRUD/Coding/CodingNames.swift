@@ -331,8 +331,8 @@ struct SubTable<T: Decodable, R: Decodable>: SubTableProto {
 }
 
 extension Decodable where Self: Encodable {
-	// !FIX! causing ciompiler crash
-	func makeSubTable(name: String, decoder: CRUDColumnNameDecoder) -> some SubTableProto {
+    @available(macOS 10.15.0, *)
+    func makeSubTable(name: String, decoder: CRUDColumnNameDecoder) -> some SubTableProto {
 		return SubTable(name: name, type: Self.self, decoder: decoder, realType: Self.self)
 	}
 
