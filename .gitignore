@@ -54,7 +54,9 @@ PerfectServer/perfectserverhttp
 # SwiftPM
 .build/
 Packages/
-PerfectLib.xcodeproj/
+*.xcodeproj/
 docs/
 .swiftpm/
 smtp.test.json
+
+.vscode/
