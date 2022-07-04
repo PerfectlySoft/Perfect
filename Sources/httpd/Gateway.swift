@@ -161,12 +161,15 @@ public struct Gateway {
             guard let account = try Account.lookup(id: id) else {
                 throw Exception.invalidAccount
             }
-            let content: [String: Any] = [
+            var content: [String: Any] = [
                 "name": cfg.name,
                 "email": account.email,
-                "code": code.uuidString.lowercased,
+                "code": code.uuidString.lowercased(),
                 "minutes": cfg.validResetSeconds / 60
             ]
+            if let nonce = (try? Nonce.allocate(authorityPrivateKey: cfg.keyPrivate)) {
+                content["csrf"] = nonce
+            }
             let context = MustacheEvaluationContext(templatePath: "\(cfg.pathTemplates)/pages/accountnew.mustache", map: content)
             let collector = MustacheEvaluationOutputCollector()
             let html = try context.formulateResponse(withCollector: collector)
@@ -180,17 +183,16 @@ public struct Gateway {
         response.completed()
     }
     public static func register(request: HTTPRequest, response: HTTPResponse) {
-        struct Login: Codable {
-            let email: String
+        struct Form: Codable {
+            let code: String
             let password: String
         }
         do {
-            guard let login = try request.postBodyJson(Login.self) else {
+            guard let form = try request.postBodyJson(Form.self),
+            let code = UUID(uuidString: form.code) else {
                 throw Exception.invalidJSON
             }
-            guard let account = try Account.signUp(email: login.email, password: login.password) else {
-                throw Exception.invalidAccount
-            }
+            let account = try Account.resetPassword(code: code, password: form.password)
             let jwt = try account.claimJWT()
             let resp = LoginResponse(error: "ok", token: jwt)
             try response.setBody(json: resp)

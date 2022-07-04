@@ -71,7 +71,7 @@ public struct Account: Codable {
     }
 
     public static func signUp(email: String, mobile: String = "", name: String = "anonymous", password: String) throws -> Account? {
-        if let _ = try find(email: email) {
+        guard let _ = try find(email: email) else {
             throw Exception.accountExists
         }
         guard let hashed = AuthenticationUtilities.hash(password: password) else {
