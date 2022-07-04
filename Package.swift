@@ -49,7 +49,7 @@ let package = Package(
         .library(name: "PerfectSQLite", targets: ["PerfectSQLite"]),
         .library(name: "PerfectThread", targets: ["PerfectThread"]),
         .library(name: "PerfectWebSockets", targets: ["PerfectWebSockets"]),
-        .executable(name: "template", targets: ["template"])
+        .executable(name: "httpd", targets: ["httpd"])
     ],
     dependencies: [ ],
     targets: ostag + [
@@ -81,6 +81,9 @@ let package = Package(
         .testTarget(name: "PerfectSMTPTests", dependencies: ["PerfectSMTP"]),
         .testTarget(name: "PerfectSQLiteTests", dependencies: ["PerfectSQLite"]),
         .testTarget(name: "PerfectThreadTests", dependencies: ["PerfectThread"]),
-        .executableTarget(name: "template", dependencies: ["PerfectHTTPServer", "PerfectHTTP"])
+        .executableTarget(name: "httpd", dependencies: [
+			"PerfectAuth", "PerfectLib", "PerfectHTTPServer", "PerfectHTTP",
+			"PerfectMustache", "PerfectSMTP", "PerfectSQLite"
+		])
     ]
 )

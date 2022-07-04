@@ -60,3 +60,6 @@ docs/
 smtp.test.json
 
 .vscode/
+*.json
+*.pem
+*.sqlite*

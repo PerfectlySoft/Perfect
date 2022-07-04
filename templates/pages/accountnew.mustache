@@ -1,0 +1,32 @@
+{{ > inc/header }}
+        <h1>Welcome to join {{name}}!</h1>
+        <form method="post" action="/api/account/new">
+            <div>
+                <label>Email</label>
+                <input type="text" readonly name="email" value="{{ email }}" required maxlength="128">
+            </div>
+            <div>
+                <label>Password</label>
+                <input type="password" id="password" name="password" placeholder="Please enter your password." required minlength="8" maxlength="32">
+            </div>
+            <div>
+                <label>User Name</label>
+                <input type="text" name="name" placeholder="what should we call you?" required minlength="1" maxlength="32">
+            </div>
+            <div>
+                <label>Mobile Phone</label>
+                <input type="text" name="mobile" placeholder="Mobile phone number" required minlength="10" maxlength="13">
+            </div>
+            <div>
+                <input type="reset">
+            </div>
+            <div>
+                <input type="submit">
+            </div>
+            <div>
+                <input type="hidden" name="code" value="{{ code }}">
+            </div>
+        </form>
+        <hr>
+        <p><b>Note:</b> This page will expire in {{ minutes }} minutes.</p>
+{{ > inc/footer }}
