@@ -13,14 +13,16 @@ public struct Gateway {
         var error = ""
         var token = ""
     }
+    // swiftlint:disable comma
     public static func load(routes: Routes = Routes()) throws -> Routes {
         var routes = routes
-        routes.add(method: .get,    uri: "/p/account/new",      handler: accountNew)
         routes.add(method: .post,   uri: "/api/invite",         handler: invite)
-        routes.add(method: .post,   uri: "/api/register",       handler: register)
+        routes.add(method: .post,   uri: "/api/register",       handler: resetPassword)
         routes.add(method: .post,   uri: "/api/login",          handler: login)
         routes.add(method: .post,   uri: "/api/reset/attempt",  handler: resetPasswordRequest)
-        routes.add(method: .get,    uri: "/api/rest/confirm",   handler: resetPassword)
+        routes.add(method: .post,   uri: "/api/reset/confirm",  handler: resetPassword)
+        routes.add(method: .get,    uri: "/p/account/new",      handler: accountNew)
+        routes.add(method: .get,    uri: "/p/account/reset",    handler: accountReset)
         routes.add(method: .get,    uri: "/s/api/secret",       handler: secretResource)
         routes.add(method: .get,    uri: "/**",                 handler: template)
         return routes
@@ -42,7 +44,7 @@ public struct Gateway {
                 return
             }
             do {
-                try Nonce.validate(nonce: nonce, valid: Settings.default.validTokenSeconds, authorityPublicKey: Settings.default.keyPublic)
+                try Nonce.validate(nonce: nonce, seconds: Settings.default.validTokenSeconds, authorityPublicKey: Settings.default.keyPublic)
                 callback(.continue(request, response))
             } catch {
                 CRUDLogging.log(.warning, "invalid CSRF token: \(nonce) because \(error)")
@@ -147,7 +149,7 @@ public struct Gateway {
         }
     }
     public static func accountNew(request: HTTPRequest, response: HTTPResponse) {
-        guard let param = (request.queryParams.first { $0.0 == "code"}), 
+        guard let param = (request.queryParams.first { $0.0 == "code"}),
             let code = UUID(uuidString: param.1) else {
             response.setHeader(.contentType, value: MimeType.text)
             response.status = .badRequest
@@ -182,7 +184,7 @@ public struct Gateway {
         }
         response.completed()
     }
-    public static func register(request: HTTPRequest, response: HTTPResponse) {
+    public static func resetPassword(request: HTTPRequest, response: HTTPResponse) {
         struct Form: Codable {
             let code: String
             let password: String
@@ -230,13 +232,68 @@ public struct Gateway {
         response.completed()
     }
     public static func resetPasswordRequest(request: HTTPRequest, response: HTTPResponse) {
-        response.setHeader(.contentType, value: "application/json")
-        response.appendBody(string: Settings.default.json)
-        response.completed()
+        struct InvitationRequest: Codable {
+            let email: String
+        }
+        response.setHeader(.contentType, value: MimeType.json)
+        do {
+            guard let invitationRequest = try request.postBodyJson(InvitationRequest.self) else {
+                throw Exception.invalidJSON
+            }
+            guard let account = try Account.find(email: invitationRequest.email) else {
+                throw Exception.invalidAccount
+            }
+            let code = try Account.requestPasswordReset(email: account.email)
+            let cfg = Settings.default
+            let content: [String: Any] = [
+                "name": cfg.name,
+                "url": "\(cfg.url)/p/account/reset?code=\(code.uuidString.lowercased())",
+                "minutes": cfg.validResetSeconds / 60
+            ]
+            try Email.compose(recepient: account.email, content: content, template: "passwordreset") { error in
+                let error = error ?? Exception.ok
+                response.setBody(string: error.jsonString)
+                response.completed()
+            }
+        } catch {
+            response.setBody(string: error.jsonString)
+            response.completed()
+        }
     }
-    public static func resetPassword(request: HTTPRequest, response: HTTPResponse) {
-        response.setHeader(.contentType, value: "application/json")
-        response.appendBody(string: Settings.default.json)
+    public static func accountReset(request: HTTPRequest, response: HTTPResponse) {
+        guard let param = (request.queryParams.first { $0.0 == "code"}),
+            let code = UUID(uuidString: param.1) else {
+            response.setHeader(.contentType, value: MimeType.text)
+            response.status = .badRequest
+            response.setBody(string: "400 Bad Request")
+            response.completed()
+            return
+        }
+        let cfg = Settings.default
+        do {
+            let id = try Access.recover(code: code)
+            guard let account = try Account.lookup(id: id) else {
+                throw Exception.invalidAccount
+            }
+            var content: [String: Any] = [
+                "name": cfg.name,
+                "email": account.email,
+                "code": code.uuidString.lowercased(),
+                "minutes": cfg.validResetSeconds / 60
+            ]
+            if let nonce = (try? Nonce.allocate(authorityPrivateKey: cfg.keyPrivate)) {
+                content["csrf"] = nonce
+            }
+            let context = MustacheEvaluationContext(templatePath: "\(cfg.pathTemplates)/pages/accountreset.mustache", map: content)
+            let collector = MustacheEvaluationOutputCollector()
+            let html = try context.formulateResponse(withCollector: collector)
+            response.setHeader(.contentType, value: MimeType.html)
+            response.setBody(string: html)
+        } catch {
+            response.setHeader(.contentType, value: MimeType.text)
+            response.status = .badRequest
+            response.setBody(string: "\(error)")
+        }
         response.completed()
     }
     public static func secretResource(request: HTTPRequest, response: HTTPResponse) {

@@ -29,7 +29,8 @@ public struct Nonce {
     }
 
     /// check if this nonce is valid
-    public static func validate(nonce: String, valid seconds: Int = 900, authorityPublicKey: PEMKey) throws {
+    public static func validate(nonce: String, seconds: Int = 900, authorityPublicKey: PEMKey) throws {
+        // swiftlint:disable type_name
         typealias exception = AuthenticationTokenClaim.Exception
         guard let jwt = JWTVerifier(nonce) else {
             throw exception.invalidJsonWebToken

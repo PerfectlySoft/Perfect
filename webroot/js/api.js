@@ -55,3 +55,25 @@ function onClickJoin() {
         error => alert(error.responseText)
     );
 }
+function onClickReset() {
+    const form = {"email": $('#email').val()};
+    const body = preparePost("/api/reset/attempt", form);
+    $.post(body).done( () => {
+        alert("Please check your email for an password reset link.");
+    }).fail(
+        error => alert(error.responseText)
+    );
+}
+function onClickConfirmReset() {
+    const form = {
+        "code": $('#code').val(),
+        "password": $('#newPassword').val()
+    };
+    const body = preparePost("/api/reset/confirm", form);
+    $.post(body).done( () => {
+        alert("Success! Please login!");
+        window.location = "/";
+    }).fail(
+        error => alert(error.responseText)
+    );
+}
