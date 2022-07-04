@@ -43,8 +43,8 @@
                       <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Membership <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                          <li><a href="#">Sign Up</a></li>
-                          <li><a href="#">Sign In</a></li>
+                          <li><a data-toggle="modal" data-target="#popupLogin">Sign Up</a></li>
+                          <li><a data-toggle="modal" data-target="#popupLogin">Sign In</a></li>
                           <li role="separator" class="divider"></li>
                           <li><a href="#">Sign out</a></li>
                         </ul>
@@ -52,4 +52,25 @@
                     </ul>
                   </div><!-- /.navbar-collapse -->
                 </div><!-- /.container-fluid -->
+                <div class="modal" tabindex="-1" role="dialog" id="popupLogin">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title">Membership</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <p><input type="email" id="textEmail" name="email" placeholder="email address" required class="form-control"></p>
+                        <p><input type="password" id="password" name="password" placeholder="password" required class="form-control"></p>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="onClickSignUp()">Sign up</button>
+                        <button type="button" class="btn btn-primary">Sign in</button>
+                        <button type="button" class="btn btn-secondary"  data-dismiss="modal">Cancel</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
             </nav>
