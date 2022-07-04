@@ -80,14 +80,14 @@ public struct Account: Codable {
         let account = Account(mobile: mobile, email: email, name: name, shadow: hashed.hexHash, salt: hashed.hexSalt)
         return try account.save()
     }
-    public static func signIn(email: String, password: String) throws -> Account? {
+    public static func signIn(email: String, password: String) throws -> Account {
         guard let account = try find(email: email) else {
             throw Exception.invalidAccount
         }
         guard account.state != .inactive else {
             throw Exception.accountLocked
         }
-        guard AuthenticationUtilities.validate(password: password, hexSalt: account.shadow, hexHash: account.salt) else {
+        guard AuthenticationUtilities.validate(password: password, hexSalt: account.salt, hexHash: account.shadow) else {
             throw Exception.invalidPassword
         }
         return account
@@ -140,7 +140,7 @@ public struct Account: Codable {
         guard let hashed = AuthenticationUtilities.hash(password: password) else {
             throw Exception.invalidPassword
         }
-        let account = Account(mobile: acc.mobile, email: acc.email, name: acc.name, shadow: hashed.hexHash, salt: hashed.hexSalt, createdAt: acc.createdAt, updatedAt: Date().timestamp)
+        let account = Account(id: acc.id, mobile: acc.mobile, email: acc.email, name: acc.name, shadow: hashed.hexHash, salt: hashed.hexSalt, createdAt: acc.createdAt, updatedAt: Date().timestamp)
         return try account.save()
     }
 }

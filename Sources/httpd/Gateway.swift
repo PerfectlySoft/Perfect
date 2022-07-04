@@ -203,8 +203,25 @@ public struct Gateway {
         response.completed()
     }
     public static func login(request: HTTPRequest, response: HTTPResponse) {
-        response.setHeader(.contentType, value: "application/json")
-        response.appendBody(string: Settings.default.json)
+        struct Form: Codable {
+            let email: String
+            let password: String
+        }
+        struct Resp: Codable {
+            let token: String
+        }
+        do {
+            guard let form = try request.postBodyJson(Form.self) else {
+                throw HTTPResponseError(status: .badRequest, description: "access denied")
+            }
+            let account = try Account.signIn(email: form.email, password: form.password)
+            let jwt = try account.claimJWT()
+            let resp = Resp(token: jwt)
+            try response.setBody(json: resp)
+        } catch {
+            response.setHeader(.contentType, value: MimeType.json)
+            response.setBody(string: error.jsonString)
+        }
         response.completed()
     }
     public static func validate(request: HTTPRequest, response: HTTPResponse) {
