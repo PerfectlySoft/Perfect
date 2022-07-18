@@ -55,7 +55,7 @@ let package = Package(
     targets: ostag + [
         .target(name: "COpenSSL"),
         .target(name: "cURL"),
-        .target(name: "PerfectAuth", dependencies: ["PerfectCrypto"]),
+        .target(name: "PerfectAuth", dependencies: ["PerfectCrypto", "PerfectCRUD", "PerfectSQLite"]),
         .target(name: "PerfectCZlib", exclude: czLibExcludes),
         .target(name: "PerfectCHTTPParser"),
         .target(name: "PerfectLib", dependencies: osdep),
@@ -70,7 +70,7 @@ let package = Package(
         .target(name: "PerfectSMTP", dependencies: ["PerfectCURL", "PerfectCrypto", "PerfectHTTP"]),
         .target(name: "PerfectSQLite", dependencies: sqldep),
         .target(name: "PerfectWebSockets", dependencies: ["PerfectHTTP"]),
-        .testTarget(name: "PerfectAuthTests", dependencies: ["PerfectAuth"]),
+        .testTarget(name: "PerfectAuthTests", dependencies: ["PerfectAuth", "PerfectCRUD", "PerfectLib", "PerfectSQLite"]),
         .testTarget(name: "PerfectCryptoTests", dependencies: ["PerfectCrypto"]),
         .testTarget(name: "PerfectCURLTests", dependencies: ["PerfectCURL"]),
         .testTarget(name: "PerfectHTTPTests", dependencies: ["PerfectHTTP"]),

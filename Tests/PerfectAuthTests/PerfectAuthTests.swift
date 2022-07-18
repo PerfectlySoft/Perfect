@@ -1,4 +1,5 @@
 import Foundation
+import PerfectLib
 import PerfectCrypto
 import XCTest
 
@@ -6,6 +7,41 @@ import XCTest
 
 // swiftlint:disable line_length
 class PerfectAuthTests: XCTestCase {
+
+    func testOneTimeCode() throws {
+        File(Transient.dbPath).delete()
+        let subject = "800-000-1111"
+        let expiry = 3
+        var code = try Transient.allocate(subject: subject, minimalRetry: expiry)
+        XCTAssertTrue(code >= 0 && code < 1_000_000)
+        do {
+            _ = try Transient.allocate(subject: subject, minimalRetry: expiry)
+        } catch Transient.Exception.overAttempted {
+            print("over attempt caught")
+        }
+        try Transient.validate(id: code, subject: subject)
+        do {
+            try Transient.validate(id: code, subject: "")
+        } catch Transient.Exception.subjectNotFound {
+            print("invalid subject caught")
+        }
+        do {
+            try Transient.validate(id: -1, subject: subject)
+        } catch Transient.Exception.invalidCode {
+            print("invalid code caught")
+        }
+        sleep(UInt32(expiry + 1))
+        do {
+            try Transient.validate(id: code, subject: subject, expiry: expiry)
+        } catch Transient.Exception.expired {
+            print("expiration caught")
+        }
+        Transient.cleanup(expiry: expiry)
+        code = try Transient.allocate(subject: subject, minimalRetry: expiry)
+        XCTAssertTrue(code >= 0 && code < 1_000_000)
+        sleep(UInt32(expiry) + 1)
+        XCTAssertNil(try Transient.record(of: subject))
+    }
 
 	func testPasswordUtilities() throws {
         let password = UUID().uuidString.lowercased()
