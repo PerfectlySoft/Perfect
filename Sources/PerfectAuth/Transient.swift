@@ -20,7 +20,7 @@ public struct OneTimeRecord: Codable {
 
 public final class Transient {
     public enum Exception: Error {
-        case overAttempted
+        case overAttempted(shouldWaitSeconds: Int)
         case subjectNotFound
         case invalidCode
         case expired
@@ -63,8 +63,9 @@ public final class Transient {
     public static func allocate(subject: String, minimalRetry: Int = minimalRetrySeconds) throws -> Int {
         let table = db.table(OneTimeRecord.self)
         if let record = try record(of: subject) {
-            if Date().timestamp - record.createdAt < minimalRetry {
-                throw Exception.overAttempted
+            let secondsToWait = minimalRetry - (Date().timestamp - record.createdAt)
+            if  secondsToWait > 0 {
+                throw Exception.overAttempted(shouldWaitSeconds: secondsToWait)
             } else {
                 try table.where(\OneTimeRecord.subject == subject).delete()
             }

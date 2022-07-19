@@ -16,8 +16,8 @@ class PerfectAuthTests: XCTestCase {
         XCTAssertTrue(code >= 0 && code < 1_000_000)
         do {
             _ = try Transient.allocate(subject: subject, minimalRetry: expiry)
-        } catch Transient.Exception.overAttempted {
-            print("over attempt caught")
+        } catch Transient.Exception.overAttempted(let secondsToWait) {
+            print("over attempt caught: \(secondsToWait) seconds")
         }
         try Transient.validate(id: code, subject: subject)
         do {
