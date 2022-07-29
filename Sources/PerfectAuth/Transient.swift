@@ -10,9 +10,9 @@ import PerfectCRUD
 import PerfectSQLite
 
 public struct OneTimeRecord: Codable {
-    let id: Int
-    let subject: String
-    let createdAt: Int
+    public let id: Int
+    public let subject: String
+    public let createdAt: Int
     init(id i: Int = Int.random(in: 0..<1_000_000), subject s: String, createdAt c: Int = Date().timestamp) {
         id = i; subject = s; createdAt = c
     }
