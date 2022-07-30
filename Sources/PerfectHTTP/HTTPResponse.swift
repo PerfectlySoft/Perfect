@@ -341,6 +341,18 @@ public extension HTTPResponse {
 		return setBody(bytes: Array(data))
 	}
 
+    @discardableResult
+    func setBody(error: Error, asJson: Bool = true) -> Self {
+        let text = "\(error)".replacingOccurrences(of: "\"", with: "'")
+        if asJson {
+            setHeader(.contentType, value: MimeType.json)
+            return setBody(string: "{\n\t\"error\": \"\(text)\"\n}\n")
+        } else {
+            setHeader(.contentType, value: MimeType.text)
+            return setBody(string: "\(text)")
+        }
+    }
+
 	/// Encodes the JSONConvertible as a JSON string and converts that to a UTF-8 encoded [UInt8].
 	/// Adds the "application/json" content type unless `skipContentType` is true.
 	@discardableResult

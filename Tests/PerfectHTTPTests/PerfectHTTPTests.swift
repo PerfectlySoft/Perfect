@@ -744,7 +744,36 @@ class PerfectHTTPTests: XCTestCase {
 	func testMimeForExtension() {
 		XCTAssert(MimeType.forExtension("ts") == "video/mp2t")
 	}
-	func testJSONBody() {
+
+    func testErrorBodyInJson() {
+        let response = ShimHTTPResponse()
+        let errResp = HTTPResponseError(status: .badRequest, description: "invalid request")
+        response.setBody(error: errResp)
+        let data = Data(response.bodyBytes)
+        struct ErrorCodable: Codable {
+            let error: String
+        }
+        do {
+            let e = try JSONDecoder().decode(ErrorCodable.self, from: data)
+            XCTAssertEqual(e.error, "HTTPResponseError(status: 400 Bad Request, description: 'invalid request')")
+        } catch {
+            XCTFail("\(error)")
+        }
+    }
+
+    func testErrorBodyIntext() {
+        let response = ShimHTTPResponse()
+        let errResp = HTTPResponseError(status: .badRequest, description: "invalid request")
+        response.setBody(error: errResp, asJson: false)
+        let data = Data(response.bodyBytes)
+        guard let text = String(data: data, encoding: .utf8) else {
+            XCTFail("unable to encode error body in text")
+            return
+        }
+        XCTAssertEqual(text, "HTTPResponseError(status: 400 Bad Request, description: 'invalid request')")
+    }
+
+    func testJSONBody() {
 		do {
 			let response = ShimHTTPResponse()
 			struct MyCodable: Codable {
