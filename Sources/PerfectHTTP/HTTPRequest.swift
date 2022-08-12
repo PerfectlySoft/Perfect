@@ -139,9 +139,9 @@ public extension HTTPRequest {
 
 public extension HTTPRequest {
     func postBodyJson<T: Decodable>(_ `type`: T.Type) throws -> T? {
-        let ctype = header(.contentType)?.lowercased()
-        guard ctype == MimeType.json else {
-            throw HTTPResponseError(status: .badRequest, description: "unexpected content type \(ctype ?? "N/A"); expecting \(MimeType.json)")
+        let ctype = header(.contentType)?.lowercased() ?? "N/A"
+        guard ctype.contains(string: MimeType.json) else {
+            throw HTTPResponseError(status: .badRequest, description: "unexpected content type \(ctype); expecting \(MimeType.json)")
         }
         guard let bytes = postBodyBytes else {
             throw HTTPResponseError(status: .badRequest, description: "unexpected empty posting body")
