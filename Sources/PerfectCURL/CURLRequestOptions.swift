@@ -127,8 +127,8 @@ extension CURLRequest.Option {
 			optArray.forEach { curl.setOption(CURLOPT_POSTQUOTE, s: $0) }
 		case .ftpPort(let optString):
 			curl.setOption(CURLOPT_FTPPORT, s: optString)
-		case .ftpResponseTimeout(let optInt):
-			curl.setOption(CURLOPT_FTP_RESPONSE_TIMEOUT, int: optInt)
+		//case .ftpResponseTimeout(let optInt):
+			// curl.setOption(CURLOPT_FTP_RESPONSE_TIMEOUT, int: optInt)
 		case .sshPublicKey(let optString):
 			curl.setOption(CURLOPT_SSH_PUBLIC_KEYFILE, s: optString)
 		case .sshPrivateKey(let optString):
@@ -196,6 +196,8 @@ extension CURLRequest.Option {
 			return CURLRequest.Option.upload(FileUploader(File(path))).apply(to: request)
 		case .acceptEncoding(let str):
 			curl.setOption(CURLOPT_ACCEPT_ENCODING, s: str)
+        default:
+            ()
 		}
 	}
 }
