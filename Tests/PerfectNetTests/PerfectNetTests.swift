@@ -119,8 +119,8 @@ class PerfectNetTests: XCTestCase {
     }
 
     func testTCPSSLClient() {
-        let address = "www.treefrog.ca"
-        let requestString = [UInt8](("GET / HTTP/1.0\r\nHost: \(address)\r\n\r\n").utf8)
+        let address = "httpbin.org"
+        let requestString = [UInt8](("GET /get HTTP/1.0\r\nHost: \(address)\r\n\r\n").utf8)
         let requestCount = requestString.count
 		let clientExpectation = self.expectation(description: "client")
         let net = NetTCPSSL()
@@ -147,7 +147,7 @@ class PerfectNetTests: XCTestCase {
 								readBytesCpy.append(0)
 								let s2 = readBytesCpy.withUnsafeBytes { String(validatingUTF8: $0.bindMemory(to: CChar.self).baseAddress!)! }
 								let s = s1 + s2
-								XCTAssert(s.starts(with: "HTTP/1.1 200 OK"))
+                                XCTAssert(s.starts(with: "HTTP/1.1 200 OK"))
 								clientExpectation.fulfill()
 							}
 						}
