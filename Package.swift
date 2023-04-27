@@ -24,7 +24,7 @@ let czLibExcludes: [String] = [
     "zlib.map", "zlib.pc", "zlib.pc.cmakein", "zlib.pc.in", "zlib2ansi"
 ]
 
-let flags: [String] = ["-Wno-conversion"]
+let flags: [String] = ["-Wno-conversion", "-Wno-deprecated-non-prototype"]
 let cSettings = [CSetting.unsafeFlags(flags)]
 
 #if os(Linux)

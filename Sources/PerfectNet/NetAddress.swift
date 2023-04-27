@@ -10,6 +10,8 @@ import PerfectThread
 
 #if os(Linux)
 	import SwiftGlibc
+	fileprivate let SOCK_STREAM = __socket_type(1)
+	fileprivate let SOCK_DGRAM = __socket_type(2)
 	public let AF_UNSPEC: Int32 = 0
 #else
 	import Darwin
