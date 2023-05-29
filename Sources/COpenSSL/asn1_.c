@@ -1,3 +1,4 @@
+#pragma clang diagnostic ignored "-Wconversion"
 /* crypto/asn1/asn1_err.c */
 /* ====================================================================
  * Copyright (c) 1999-2018 The OpenSSL Project.  All rights reserved.

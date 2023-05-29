@@ -1,3 +1,4 @@
+#pragma clang diagnostic ignored "-Wconversion"
 /* crypto/bio/bf_buff.c */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.

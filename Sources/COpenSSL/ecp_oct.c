@@ -1,3 +1,4 @@
+#pragma clang diagnostic ignored "-Wconversion"
 /* crypto/ec/ecp_oct.c */
 /*
  * Includes code written by Lenka Fibikova <fibikova@exp-math.uni-essen.de>

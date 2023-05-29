@@ -1,3 +1,4 @@
+#pragma clang diagnostic ignored "-Wconversion"
 /* crypto/mem_clr.c */
 /*
  * Written by Geoff Thorpe (geoff@geoffthorpe.net) for the OpenSSL project

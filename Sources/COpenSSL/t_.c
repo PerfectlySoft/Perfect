@@ -1,3 +1,4 @@
+#pragma clang diagnostic ignored "-Wconversion"
 /* t_bitst.c */
 /*
  * Written by Dr Stephen N Henson (steve@openssl.org) for the OpenSSL project

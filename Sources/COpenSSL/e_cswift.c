@@ -1,3 +1,4 @@
+#pragma clang diagnostic ignored "-Wconversion"
 /* crypto/engine/hw_cswift.c */
 /*
  * Written by Geoff Thorpe (geoff@geoffthorpe.net) for the OpenSSL project

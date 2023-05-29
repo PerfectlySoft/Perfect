@@ -1,3 +1,4 @@
+#pragma clang diagnostic ignored "-Wconversion"
 /* deflate.c -- compress data using the deflation algorithm
  * Copyright (C) 1995-2016 Jean-loup Gailly and Mark Adler
  * For conditions of distribution and use, see copyright notice in zlib.h

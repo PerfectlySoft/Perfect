@@ -1,3 +1,4 @@
+#pragma clang diagnostic ignored "-Wconversion"
 /* crypto/engine/e_chil.c */
 /*
  * Written by Richard Levitte (richard@levitte.org), Geoff Thorpe

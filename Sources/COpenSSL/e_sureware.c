@@ -1,3 +1,4 @@
+#pragma clang diagnostic ignored "-Wconversion"
 /*-
 *  Written by Corinne Dive-Reclus(cdive@baltimore.com)
 *

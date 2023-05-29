@@ -1,3 +1,4 @@
+#pragma clang diagnostic ignored "-Wconversion"
 /* crypto/rand/rand_egd.c */
 /* Written by Ulf Moeller and Lutz Jaenicke for the OpenSSL project. */
 /* ====================================================================

@@ -1,3 +1,4 @@
+#pragma clang diagnostic ignored "-Wconversion"
 /* ssl/d1_both.c */
 /*
  * DTLS implementation written by Nagendra Modadugu

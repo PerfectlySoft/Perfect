@@ -1,3 +1,4 @@
+#pragma clang diagnostic ignored "-Wconversion"
 /* ====================================================================
  * Copyright (c) 2001-2018 The OpenSSL Project.  All rights reserved.
  *

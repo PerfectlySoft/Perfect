@@ -24,9 +24,6 @@ let czLibExcludes: [String] = [
     "zlib.map", "zlib.pc", "zlib.pc.cmakein", "zlib.pc.in", "zlib2ansi"
 ]
 
-let flags: [String] = ["-Wno-conversion", "-Wno-deprecated-non-prototype"]
-let cSettings = [CSetting.unsafeFlags(flags)]
-
 #if os(Linux)
 let osdep: [Target.Dependency] = ["LinuxBridge"]
 let ostag: [Target] = [.target(name: "LinuxBridge"), .target(name: "PerfectCSQLite3")]
@@ -56,10 +53,10 @@ let package = Package(
     ],
     dependencies: [ ],
     targets: ostag + [
-        .target(name: "COpenSSL", cSettings: cSettings),
+        .target(name: "COpenSSL"),
         .target(name: "cURL"),
         .target(name: "PerfectAuth", dependencies: ["PerfectCrypto", "PerfectCRUD", "PerfectSQLite"]),
-        .target(name: "PerfectCZlib", exclude: czLibExcludes, cSettings: cSettings),
+        .target(name: "PerfectCZlib", exclude: czLibExcludes),
         .target(name: "PerfectCHTTPParser"),
         .target(name: "PerfectLib", dependencies: osdep),
         .target(name: "PerfectThread", dependencies: osdep),

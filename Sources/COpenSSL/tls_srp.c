@@ -1,3 +1,4 @@
+#pragma clang diagnostic ignored "-Wconversion"
 /* ssl/tls_srp.c */
 /*
  * Written by Christophe Renou (christophe.renou@edelweb.fr) with the

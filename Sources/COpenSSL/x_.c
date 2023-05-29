@@ -1,3 +1,4 @@
+#pragma clang diagnostic ignored "-Wconversion"
 /* x_algor.c */
 /*
  * Written by Dr Stephen N Henson (steve@openssl.org) for the OpenSSL project

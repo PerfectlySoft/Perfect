@@ -1,3 +1,4 @@
+#pragma clang diagnostic ignored "-Wconversion"
 /* crypto/engine/eng_all.c */
 /*
  * Written by Richard Levitte <richard@levitte.org> for the OpenSSL project

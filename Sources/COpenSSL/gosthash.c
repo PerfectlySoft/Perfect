@@ -1,3 +1,4 @@
+#pragma clang diagnostic ignored "-Wconversion"
 /**********************************************************************
  *                          gosthash.c                                *
  *             Copyright (c) 2005-2006 Cryptocom LTD                  *

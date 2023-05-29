@@ -1,3 +1,4 @@
+#pragma clang diagnostic ignored "-Wconversion"
 /**********************************************************************
  *                          gost_ameth.c                              *
  *             Copyright (c) 2005-2006 Cryptocom LTD                  *

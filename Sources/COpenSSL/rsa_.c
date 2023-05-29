@@ -1,3 +1,4 @@
+#pragma clang diagnostic ignored "-Wconversion"
 /* crypto/rsa/rsa_ameth.c */
 /*
  * Written by Dr Stephen N Henson (steve@openssl.org) for the OpenSSL project

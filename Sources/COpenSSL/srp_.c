@@ -1,3 +1,4 @@
+#pragma clang diagnostic ignored "-Wconversion"
 /* crypto/srp/srp_lib.c */
 /*
  * Written by Christophe Renou (christophe.renou@edelweb.fr) with the
