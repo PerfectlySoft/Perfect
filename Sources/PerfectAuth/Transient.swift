@@ -25,7 +25,7 @@ public final class Transient {
         case invalidCode
         case expired
     }
-    public static let minimalRetrySeconds = 60
+    public static var minimalRetrySeconds = 60
     public static let expirySeconds = 900 // 15 minutes
     public static let dbPath = "/tmp/perfect-transient.sqlite3"
     private static let queue = DispatchQueue(label: UUID().uuidString)
