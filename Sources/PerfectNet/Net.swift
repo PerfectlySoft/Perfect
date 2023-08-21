@@ -211,6 +211,9 @@ open class Net {
 		let aiFlags: Int32 = 0
 		let family: Int32 = AF_UNSPEC
 		let bPort = port.bigEndian
+		#if os(Linux)
+		let SOCK_STREAM = __socket_type(1)
+		#endif
 		var hints = addrinfo(ai_flags: aiFlags, ai_family: family, ai_socktype: SOCK_STREAM, ai_protocol: 0, ai_addrlen: 0, ai_canonname: nil, ai_addr: nil, ai_next: nil)
 		var resultList = UnsafeMutablePointer<addrinfo>(bitPattern: 0)
 		var result = getaddrinfo(host, nil, &hints, &resultList)
