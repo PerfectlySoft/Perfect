@@ -87,7 +87,10 @@ public enum PerfectNetError: Error {
 
 func ThrowNetworkError(file: String = #file, function: String = #function, line: Int = #line) throws -> Never {
 	let err = errno
-	let msg = String(validatingUTF8: strerror(err))!
+    let bufferSize = 1024
+    var buffer = [CChar](repeating: 0, count: bufferSize)
+    _ = strerror_r(errno, &buffer, bufferSize)
+    let msg = String(cString: buffer)
 	throw PerfectNetError.networkError(err, msg + " \(file) \(function) \(line)")
 }
 
@@ -203,48 +206,55 @@ open class Net {
 			fd.switchToNonBlocking()
 		}
 	}
-//
-//	func makeAddress(_ sin: inout sockaddr_storage, host: String, port: UInt16) -> Int {
-//		let aiFlags: Int32 = 0
-//		let family: Int32 = AF_UNSPEC
-//		let bPort = port.bigEndian
-//		var hints = addrinfo(ai_flags: aiFlags, ai_family: family, ai_socktype: SOCK_STREAM, ai_protocol: 0, ai_addrlen: 0, ai_canonname: nil, ai_addr: nil, ai_next: nil)
-//		var resultList = UnsafeMutablePointer<addrinfo>(bitPattern: 0)
-//		var result = getaddrinfo(host, nil, &hints, &resultList)
-//		while EAI_AGAIN == result {
-//			Threading.sleep(seconds: 0.1)
-//			result = getaddrinfo(host, nil, &hints, &resultList)
-//		}
-//		if result == EAI_NONAME {
-//			hints = addrinfo(ai_flags: aiFlags, ai_family: AF_INET6, ai_socktype: SOCK_STREAM, ai_protocol: 0, ai_addrlen: 0, ai_canonname: nil, ai_addr: nil, ai_next: nil)
-//			result = getaddrinfo(host, nil, &hints, &resultList)
-//		}
-//		if result == 0, var resultList = resultList {
-//			defer {
-//				freeaddrinfo(resultList)
-//			}
-//			guard let addr = resultList.pointee.ai_addr else {
-//				return -1
-//			}
-//			switch Int32(addr.pointee.sa_family) {
-//			case AF_INET6:
-//				memcpy(&sin, addr, MemoryLayout<sockaddr_in6>.size)
-//				UnsafeMutablePointer(&sin).withMemoryRebound(to: sockaddr_in6.self, capacity: 1) {
-//					$0.pointee.sin6_port = in_port_t(bPort)
-//				}
-//			case AF_INET:
-//				memcpy(&sin, addr, MemoryLayout<sockaddr_in>.size)
-//				UnsafeMutablePointer(&sin).withMemoryRebound(to: sockaddr_in.self, capacity: 1) {
-//					$0.pointee.sin_port = in_port_t(bPort)
-//				}
-//			default:
-//				return -1
-//			}
-//		} else {
-//			return -1
-//		}
-//		return 0
-//	}
+
+	func makeAddress(_ sin: inout sockaddr_storage, host: String, port: UInt16) -> Int {
+		let aiFlags: Int32 = 0
+		let family: Int32 = AF_UNSPEC
+		let bPort = port.bigEndian
+		#if os(Linux)
+		let SOCK_STREAM = __socket_type(1)
+		#endif
+		var hints = addrinfo(ai_flags: aiFlags, ai_family: family, ai_socktype: SOCK_STREAM, ai_protocol: 0, ai_addrlen: 0, ai_canonname: nil, ai_addr: nil, ai_next: nil)
+		var resultList = UnsafeMutablePointer<addrinfo>(bitPattern: 0)
+		var result = getaddrinfo(host, nil, &hints, &resultList)
+		while EAI_AGAIN == result {
+			Threading.sleep(seconds: 0.1)
+			result = getaddrinfo(host, nil, &hints, &resultList)
+		}
+		if result == EAI_NONAME {
+			hints = addrinfo(ai_flags: aiFlags, ai_family: AF_INET6, ai_socktype: SOCK_STREAM, ai_protocol: 0, ai_addrlen: 0, ai_canonname: nil, ai_addr: nil, ai_next: nil)
+			result = getaddrinfo(host, nil, &hints, &resultList)
+		}
+        if result == 0, let resultList {
+			defer {
+				freeaddrinfo(resultList)
+			}
+			guard let addr = resultList.pointee.ai_addr else {
+				return -1
+			}
+			switch Int32(addr.pointee.sa_family) {
+			case AF_INET6:
+                let size = MemoryLayout<sockaddr_in6>.size
+				memcpy(&sin, addr, size)
+                var addr6 = sockaddr_in6()
+                memcpy(&addr6, &sin, size)
+                addr6.sin6_port = in_port_t(bPort)
+                memcpy(&sin, &addr6, size)
+			case AF_INET:
+                let size = MemoryLayout<sockaddr_in>.size
+                memcpy(&sin, addr, size)
+                var addr4 = sockaddr_in()
+                memcpy(&addr4, &sin, size)
+                addr4.sin_port = in_port_t(bPort)
+                memcpy(&sin, &addr4, size)
+			default:
+				return -1
+			}
+		} else {
+			return -1
+		}
+		return 0
+	}
 
 	func isEAgain(err: Int) -> Bool {
 		return err == -1 && errno == EAGAIN
