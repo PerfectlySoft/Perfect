@@ -1,0 +1,32 @@
+{
+  "pins" : [
+    {
+      "identity" : "perfect-copenssl",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/PerfectlySoft/Perfect-COpenSSL.git",
+      "state" : {
+        "revision" : "ce3113e159b8c6d8565e5d8db2672b572c81aea9",
+        "version" : "4.0.2"
+      }
+    },
+    {
+      "identity" : "perfect-czlib-src",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/PerfectlySoft/Perfect-CZlib-src.git",
+      "state" : {
+        "revision" : "b63e46909aad937c6434766f8f8c6720d8f3bd05",
+        "version" : "0.0.4"
+      }
+    },
+    {
+      "identity" : "perfect-libcurl",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/PerfectlySoft/Perfect-libcurl.git",
+      "state" : {
+        "revision" : "b3d7e65ef5c27c0a027cdc621f34835975301bf1",
+        "version" : "2.1.0"
+      }
+    }
+  ],
+  "version" : 2
+}
