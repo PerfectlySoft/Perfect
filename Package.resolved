@@ -1,32 +1,52 @@
 {
-  "pins" : [
-    {
-      "identity" : "perfect-copenssl",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/PerfectlySoft/Perfect-COpenSSL.git",
-      "state" : {
-        "revision" : "ce3113e159b8c6d8565e5d8db2672b572c81aea9",
-        "version" : "4.0.2"
+  "object": {
+    "pins": [
+      {
+        "package": "COpenSSL",
+        "repositoryURL": "https://github.com/PerfectlySoft/Perfect-COpenSSL.git",
+        "state": {
+          "branch": null,
+          "revision": "ce3113e159b8c6d8565e5d8db2672b572c81aea9",
+          "version": "4.0.2"
+        }
+      },
+      {
+        "package": "PerfectCZlib",
+        "repositoryURL": "https://github.com/RockfordWei/Perfect-CZlib-src.git",
+        "state": {
+          "branch": null,
+          "revision": "8295883fd760f601a2c8c3236af83c8c35f941c6",
+          "version": "0.0.6"
+        }
+      },
+      {
+        "package": "cURL",
+        "repositoryURL": "https://github.com/PerfectlySoft/Perfect-libcurl.git",
+        "state": {
+          "branch": null,
+          "revision": "b3d7e65ef5c27c0a027cdc621f34835975301bf1",
+          "version": "2.1.0"
+        }
+      },
+      {
+        "package": "LinuxBridge",
+        "repositoryURL": "https://github.com/PerfectlySoft/Perfect-LinuxBridge.git",
+        "state": {
+          "branch": null,
+          "revision": "d6e64c48e6b06b6f1ab7ab9338280447baa8ca5c",
+          "version": "3.1.0"
+        }
+      },
+      {
+        "package": "PerfectCSQLite3",
+        "repositoryURL": "https://github.com/PerfectlySoft/Perfect-sqlite3-support.git",
+        "state": {
+          "branch": null,
+          "revision": "64c2bd87e1fd3a41cdeeba073bab794db7e97e42",
+          "version": "3.1.1"
+        }
       }
-    },
-    {
-      "identity" : "perfect-czlib-src",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/PerfectlySoft/Perfect-CZlib-src.git",
-      "state" : {
-        "revision" : "b63e46909aad937c6434766f8f8c6720d8f3bd05",
-        "version" : "0.0.4"
-      }
-    },
-    {
-      "identity" : "perfect-libcurl",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/PerfectlySoft/Perfect-libcurl.git",
-      "state" : {
-        "revision" : "b3d7e65ef5c27c0a027cdc621f34835975301bf1",
-        "version" : "2.1.0"
-      }
-    }
-  ],
-  "version" : 2
+    ]
+  },
+  "version": 1
 }

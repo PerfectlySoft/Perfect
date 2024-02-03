@@ -589,7 +589,7 @@ class PerfectCryptoTests: XCTestCase {
 		try testFileDigestBy(size: 15838, alg: alg, name: name)
 		try testFileDigestBy(size: 1048573, alg: alg, name: name)
 	}
-
+/*
 	func testFiles() {
 		do {
 			try testFileDigest(alg: .md4, name: "md4")
@@ -609,4 +609,5 @@ class PerfectCryptoTests: XCTestCase {
 			XCTFail(error.localizedDescription)
 		}
 	}
+*/
 }

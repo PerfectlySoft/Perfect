@@ -325,7 +325,7 @@ struct SubTable<T: Decodable, R: Decodable>: SubTableProto {
 	func tableStructure() throws -> TableStructure {
 		return try type.self.CRUDTableStructure(columnDecoder: decoder)
 	}
-	func matches<T: Decodable>(_ type: T.Type) -> Bool {
+	func matches<U: Decodable>(_ type: U.Type) -> Bool {
 		return self.type == type
 	}
 }

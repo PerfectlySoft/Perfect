@@ -41,7 +41,7 @@ let package = Package(
     dependencies: pkdep + [
         .package(url: "https://github.com/PerfectlySoft/Perfect-libcurl.git", from: "2.0.0"),
         .package(url: "https://github.com/PerfectlySoft/Perfect-COpenSSL.git", from: "4.0.2"),
-        .package(url: "https://github.com/PerfectlySoft/Perfect-CZlib-src.git", from: "0.0.4")
+        .package(url: "https://github.com/RockfordWei/Perfect-CZlib-src.git", from: "0.0.6")
     ],
     targets: [
         .target(name: "PerfectAuth", dependencies: ["PerfectCrypto", "PerfectCRUD", "PerfectSQLite"]),

@@ -1,5 +1,5 @@
 {
-    "url": "smtp://smtp.mailtrap.io", 
+    "url": "smtps://sandbox.smtp.mailtrap.io", 
     "username": "someone", 
     "password": "some password",
     "requiresTLSUpgrade": true
