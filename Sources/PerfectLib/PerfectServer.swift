@@ -5,7 +5,7 @@
 //  Created by Kyle Jessup on 7/5/15.
 //	Copyright (C) 2015 PerfectlySoft, Inc.
 //
-//===----------------------------------------------------------------------===//
+// ===----------------------------------------------------------------------===//
 //
 // This source file is part of the Perfect.org open source project
 //
@@ -14,11 +14,13 @@
 //
 // See http://perfect.org/licensing.html for license information
 //
-//===----------------------------------------------------------------------===//
+// ===----------------------------------------------------------------------===//
 //
 
 #if os(Linux)
     import SwiftGlibc
+    import Glibc
+    import LinuxBridge
 #else
     import Darwin
 #endif
@@ -26,12 +28,12 @@
 /// Provides access to various system level features for the process.
 /// A static instance of this class is created at startup and all access to this object go through the `PerfectServer.staticPerfectServer` static property.
 public struct PerfectServer {
-	
+
 	@available(*, deprecated, message: "No longer required to call this")
 	public static func initializeServices() {
-	
+
 	}
-	
+
     /// Switch the current process to run with the permissions of the indicated user
     public static func switchTo(userName unam: String) throws {
         guard let pw = getpwnam(unam) else {
@@ -47,4 +49,3 @@ public struct PerfectServer {
         }
     }
 }
-

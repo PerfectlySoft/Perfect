@@ -7,7 +7,7 @@
 
 <p align="center">
     <a href="https://developer.apple.com/swift/" target="_blank">
-        <img src="https://img.shields.io/badge/Swift-5.2-orange.svg?style=flat" alt="Swift 5.2">
+        <img src="https://img.shields.io/badge/Swift-5.6-orange.svg?style=flat" alt="Swift 5.6">
     </a>
     <a href="https://developer.apple.com/swift/" target="_blank">
         <img src="https://img.shields.io/badge/Platforms-OS%20X%20%7C%20Linux%20-lightgray.svg?style=flat" alt="Platforms macOS | Linux">
@@ -16,6 +16,19 @@
         <img src="https://img.shields.io/badge/License-Apache-lightgrey.svg?style=flat" alt="License Apache">
     </a>
 </p>
+
+**OS**|**Version**|**Chip**|**Status**
+--|-------|----|------
+Ventura|macOS 13.6|Apple Silicon M2|<img src="https://img.shields.io/badge/build-passing-brightgreen" alt="Ventura Apple silicon">
+Ubuntu|22.04 LTS|i386|<img src="https://img.shields.io/badge/build-passing-brightgreen" alt="Ubuntu 22.04 LTS i386">
+Ubuntu|22.04 LTS|arm64|<img src="https://img.shields.io/badge/build-passing-brightgreen" alt="Ubuntu 22.04 LTS arm64">
+**Package**|**Status**|**Package**|**Status**
+PerfectLib|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectLib">|PerfectThread|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectThread">
+PerfectAuth|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectAuth">|PerfectCRUD|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectCRUD">
+PerfectCrypto|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectCrypto">|PerfectCURL|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectCURL">
+PerfectHTTP|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectHTTP">|PerfectHTTPServer|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectHTTPServer">
+PerfectMustache|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectMustache">|PerfectNet|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectNet">
+PerfectSMTP|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectSMTP">|PerfectSQLite|<img src="https://img.shields.io/badge/tests-100%25-brightgreen" alt="PerfectSQLite">
 
 ## Perfect: Server-Side Swift
 
@@ -53,7 +66,6 @@ Your Perfect project can be deployed to any Swift compatible Linux server. We pr
 
 Our library continues to grow as members of [the Swift-Perfect development community have shared many samples and examples](https://github.com/PerfectExamples) of their projects in Perfect. Examples include:
 
-- [WebSockets Server](https://github.com/PerfectExamples/PerfectExample-WebSocketsServer)
 - [URL Routing](https://github.com/PerfectExamples/PerfectExample-URLRouting)
 - [Upload Enumerator](https://github.com/PerfectExamples/PerfectExample-UploadEnumerator)
 
@@ -90,7 +102,6 @@ Perfect project is divided into several repositories to make it easy for you to 
 - [Perfect HTTP Server](https://github.com/PerfectlySoft/Perfect-HTTPServer) - HTTP 1.1 server for Perfect
 - [Perfect Mustache](https://github.com/PerfectlySoft/Perfect-Mustache) - Mustache template support for Perfect
 - [Perfect CURL](https://github.com/PerfectlySoft/Perfect-CURL) - cURL support for Perfect
-- [Perfect WebSockets](https://github.com/PerfectlySoft/Perfect-WebSockets) - WebSockets support for Perfect
 - [Perfect Zip](https://github.com/PerfectlySoft/Perfect-Zip) - provides simple zip and unzip functionality
 - [Perfect Notifications](https://github.com/PerfectlySoft/Perfect-Notifications) - provides support for Apple Push Notification Service (APNS).
 
@@ -98,7 +109,7 @@ Perfect project is divided into several repositories to make it easy for you to 
 
 Perfect operates using either a standalone [HTTP server](https://github.com/PerfectlySoft/Perfect-HTTP), [HTTPS server](https://github.com/PerfectlySoft/Perfect-HTTPServer), or through [FastCGI server](https://github.com/PerfectlySoft/Perfect-FastCGI). It provides a system for loading your Swift-based modules at startup, for interfacing those modules with its request/response objects, or to the built-in [Mustache template processing system](https://github.com/PerfectlySoft/Perfect-Mustache).
 
-Perfect is built on a completely asynchronous, high-performance networking engine to provide a scalable option for internet services. It supports Secure Sockets Layer (SSL) encryption, and it features a suite of tools commonly required by internet servers such as [WebSockets](https://github.com/PerfectlySoft/Perfect-WebSockets) and [iOS push notifications](https://github.com/PerfectlySoft/Perfect-Notifications), but you are not limited to those options.
+Perfect is built on a completely asynchronous, high-performance networking engine to provide a scalable option for internet services. It supports Secure Sockets Layer (SSL) encryption, and it features a suite of tools commonly required by internet servers such as [iOS push notifications](https://github.com/PerfectlySoft/Perfect-Notifications), but you are not limited to those options.
 
 Feel free to use your favourite JSON or templating systems, etc.
 

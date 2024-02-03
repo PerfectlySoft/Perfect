@@ -1,0 +1,25 @@
+{{ > inc/header }}
+    <div class="modal-content">
+        <div class="modal-header">
+            <h1>Welcome to join {{name}}!</h1>
+        </div>
+        <div class="modal-body">
+            <form>
+                <input type="hidden" id="code" name="code" value="{{ code }}">
+                <div>
+                    <label>Email</label>
+                    <input id="newEmail" type="text" readonly name="email" value="{{ email }}"  class="form-control" required maxlength="128">
+                </div>
+                <div>
+                    <label>Password</label>
+                    <input id="newPassword" type="password" name="password" class="form-control" placeholder="Please enter your password." required minlength="8" maxlength="32">
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <b>Note:</b> This page will expire in {{ minutes }} minutes.
+            <input type="reset" class="btn btn-seconday">
+            <button class="btn btn-primary" onclick="onClickJoin()">Submit</button>
+        </div>
+    </div>
+{{ > inc/footer }}

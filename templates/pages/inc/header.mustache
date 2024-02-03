@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset='utf-8'>
+        <meta http-equiv="Authorization" content="{{ jwt }}">
+        <meta http-equiv="X-CSRF-Token" content="{{ csrf }}">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+        <title>Welcome!</title>
+    </head>
+    <body>
+        <div class="container">
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+                  <div class="navbar-header">
+                    <a class="navbar-brand" href="#">
+                        <img alt="frc-logo" src="/img/logo.svg" width="20px">
+                      </a>
+                  </div>
+                  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                      <li class="active"><a href="#">About Us<span class="sr-only">(current)</span></a></li>
+                      <li><a href="#">Support</a></li>
+                      <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Services <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                          <li><a href="#">Perfect</a></li>
+                          <li role="separator" class="divider"></li>
+                          <li><a href="#">Perfect</a></li>
+                        </ul>
+                      </li>
+                    </ul>
+                    <form class="navbar-form navbar-left">
+                      <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search">
+                      </div>
+                      <button type="submit" class="btn btn-default">Submit</button>
+                    </form>
+                    <ul class="nav navbar-nav navbar-right">
+                      <li><a href="#">Privacy Policy</a></li>
+                      <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Membership <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                          <li><a data-toggle="modal" data-target="#popupLogin">Sign Up</a></li>
+                          <li><a data-toggle="modal" data-target="#popupLogin">Sign In</a></li>
+                          <li role="separator" class="divider"></li>
+                          <li><a href="#">Sign out</a></li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </div><!-- /.navbar-collapse -->
+                </div><!-- /.container-fluid -->
+                <div class="modal" tabindex="-1" role="dialog" id="popupLogin">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title">Membership</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <p><input type="email" id="email" name="email" placeholder="email address" required class="form-control"></p>
+                        <p><input type="password" id="password" name="password" placeholder="password" required class="form-control"></p>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="onClickSignUp()">Sign up</button>
+                        <button type="button" class="btn btn-primary" onclick="onClickSignIn()">Sign in</button>
+                        <button type="button" class="btn btn-primary" onclick="onClickReset()">Reset Password</button>
+                        <button type="button" class="btn btn-secondary"  data-dismiss="modal">Cancel</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </nav>

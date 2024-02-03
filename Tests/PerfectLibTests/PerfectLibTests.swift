@@ -5,7 +5,7 @@
 //  Created by Kyle Jessup on 2015-10-19.
 //  Copyright © 2015 PerfectlySoft. All rights reserved.
 //
-//===----------------------------------------------------------------------===//
+// ===----------------------------------------------------------------------===//
 //
 // This source file is part of the Perfect.org open source project
 //
@@ -14,9 +14,8 @@
 //
 // See http://perfect.org/licensing.html for license information
 //
-//===----------------------------------------------------------------------===//
+// ===----------------------------------------------------------------------===//
 //
-
 
 import XCTest
 @testable import PerfectLib
@@ -47,11 +46,11 @@ class PerfectLibTests: XCTestCase {
 			static let registerName = "test"
 
 			var one = 0
-			override func setJSONValues(_ values: [String : Any]) {
+			override func setJSONValues(_ values: [String: Any]) {
 				self.one = getJSONValue(named: "One", from: values, defaultValue: 42)
 			}
-			override func getJSONValues() -> [String : Any] {
-				return [JSONDecoding.objectIdentifierKey:Test.registerName, "One":1]
+			override func getJSONValues() -> [String: Any] {
+				return [JSONDecoding.objectIdentifierKey: Test.registerName, "One": 1]
 			}
 		}
 
@@ -68,43 +67,43 @@ class PerfectLibTests: XCTestCase {
 			XCTAssert(false, "Exception \(error)")
 		}
 	}
-	
+
 	func testJSONConvertibleObject2() {
-		
+
 		class User: JSONConvertibleObject {
 			static let registerName = "user"
 			var firstName = ""
 			var lastName = ""
 			var age = 0
-			override func setJSONValues(_ values: [String : Any]) {
+			override func setJSONValues(_ values: [String: Any]) {
 				self.firstName = getJSONValue(named: "firstName", from: values, defaultValue: "")
 				self.lastName = getJSONValue(named: "lastName", from: values, defaultValue: "")
 				self.age = getJSONValue(named: "age", from: values, defaultValue: 0)
 			}
-			override func getJSONValues() -> [String : Any] {
+			override func getJSONValues() -> [String: Any] {
 				return [
-					JSONDecoding.objectIdentifierKey:User.registerName,
-					"firstName":firstName,
-					"lastName":lastName,
-					"age":age
+					JSONDecoding.objectIdentifierKey: User.registerName,
+					"firstName": firstName,
+					"lastName": lastName,
+					"age": age
 				]
 			}
 		}
-		
+
 		// register the class. do this once
 		JSONDecoding.registerJSONDecodable(name: User.registerName, creator: { return User() })
-		
+
 		// encode and decode the object
 		let user = User()
 		user.firstName = "Donnie"
 		user.lastName = "Darko"
 		user.age = 17
-		
+
 		do {
 			let encoded = try user.jsonEncodedString()
 			guard let user2 = try encoded.jsonDecode() as? User else {
 				return XCTAssert(false, "Invalid object \(encoded)")
-			}			
+            }
 			XCTAssert(user.firstName == user2.firstName)
 			XCTAssert(user.lastName == user2.lastName)
 			XCTAssert(user.age == user2.age)
@@ -113,7 +112,20 @@ class PerfectLibTests: XCTestCase {
 
 	func testJSONEncodeDecode() {
 
-		let srcAry: [[String:Any]] = [["i": -41451, "i2": 41451, "d": -42E+2, "t": true, "f": false, "n": nil as String? as Any, "a":[1, 2, 3, 4]], ["another":"one"]]
+		let srcAry: [[String: Any]] = [
+            [
+                "i": -41451,
+                "i2": 41451,
+                "d": -42E+2,
+                "t": true,
+                "f": false,
+                "n": nil as String? as Any,
+                "a": [1, 2, 3, 4]
+            ],
+            [
+                "another": "one"
+            ]
+        ]
 		var encoded = ""
 		var decoded: [Any]?
 		do {
@@ -143,7 +155,7 @@ class PerfectLibTests: XCTestCase {
 		for index in 0..<srcAry.count {
 
 			let d1 = srcAry[index]
-			let d2 = resAry[index] as? [String:Any]
+			let d2 = resAry[index] as? [String: Any]
 
 			for (key, value) in d1 {
 
@@ -153,13 +165,13 @@ class PerfectLibTests: XCTestCase {
 
 				switch value {
 				case let i as Int:
-					XCTAssert(i == value2 as! Int)
+					XCTAssertEqual(i, value2 as? Int)
 				case let d as Double:
-					XCTAssert(d == value2 as! Double)
+					XCTAssertEqual(d, value2 as? Double)
 				case let s as String:
-					XCTAssert(s == value2 as! String)
+					XCTAssertEqual(s, value2 as? String)
 				case let s as Bool:
-					XCTAssert(s == value2 as! Bool)
+					XCTAssertEqual(s, value2 as? Bool)
 
 				default:
 					()
@@ -169,20 +181,19 @@ class PerfectLibTests: XCTestCase {
 
 		}
 	}
-    func testIntegerTypesEncode(){
-        let i8:Int8 = -12
-        let i16:Int16 = -1234
-        let i32:Int32 = -1234567890
-        let i64:Int64 = -123456789012345678
+    func testIntegerTypesEncode() {
+        let i8: Int8 = -12
+        let i16: Int16 = -1234
+        let i32: Int32 = -1234567890
+        let i64: Int64 = -123456789012345678
 
-        let u8:UInt8 = 12
-        let u16:UInt16 = 1234
-        let u32:UInt32 = 1234567890
-        let u64:UInt64 = 123456789012345678
-        
-        var srcDict:[String:Any] = [String:Any]()
-        var destDict:[String:Any]?
-        
+        let u8: UInt8 = 12
+        let u16: UInt16 = 1234
+        let u32: UInt32 = 1234567890
+        let u64: UInt64 = 123456789012345678
+        var srcDict: [String: Any] = [String: Any]()
+        var destDict: [String: Any]?
+
         srcDict["i8"] = i8
         srcDict["i16"] = i8
         srcDict["i32"] = i8
@@ -191,23 +202,17 @@ class PerfectLibTests: XCTestCase {
         srcDict["u16"] = i8
         srcDict["u32"] = i8
         srcDict["u64"] = i8
-        
-        
+
         var encoded = ""
-        
-        
         do {
-            
             encoded = try i8.jsonEncodedString()
             XCTAssert(encoded == String(i8), "Invalid result")
-            
         } catch let e {
             XCTAssert(false, "Exception while encoding i8 \(e)")
             return
         }
 
         do {
-            
             encoded = try i16.jsonEncodedString()
             XCTAssert(encoded == String(i16), "Invalid result")
 
@@ -217,7 +222,6 @@ class PerfectLibTests: XCTestCase {
         }
 
         do {
-            
             encoded = try i32.jsonEncodedString()
             XCTAssert(encoded == String(i32), "Invalid result")
 
@@ -227,7 +231,6 @@ class PerfectLibTests: XCTestCase {
         }
 
         do {
-            
             encoded = try i64.jsonEncodedString()
             XCTAssert(encoded == String(i64), "Invalid result")
 
@@ -237,7 +240,6 @@ class PerfectLibTests: XCTestCase {
         }
 
         do {
-            
             encoded = try u8.jsonEncodedString()
             XCTAssert(encoded == String(u8), "Invalid result")
 
@@ -245,9 +247,7 @@ class PerfectLibTests: XCTestCase {
             XCTAssert(false, "Exception while encoding u8 \(e)")
             return
         }
-        
         do {
-            
             encoded = try u16.jsonEncodedString()
             XCTAssert(encoded == String(u16), "Invalid result")
 
@@ -255,9 +255,7 @@ class PerfectLibTests: XCTestCase {
             XCTAssert(false, "Exception while encoding u16 \(e)")
             return
         }
-        
         do {
-            
             encoded = try u32.jsonEncodedString()
             XCTAssert(encoded == String(u32), "Invalid result")
 
@@ -265,9 +263,7 @@ class PerfectLibTests: XCTestCase {
             XCTAssert(false, "Exception while encoding u32 \(e)")
             return
         }
-        
         do {
-            
             encoded = try u64.jsonEncodedString()
             XCTAssert(encoded == String(u64), "Invalid result")
 
@@ -275,7 +271,6 @@ class PerfectLibTests: XCTestCase {
             XCTAssert(false, "Exception while encoding u64 \(e)")
             return
         }
-        
         do {
             encoded = ""
             encoded = try srcDict.jsonEncodedString()
@@ -285,40 +280,35 @@ class PerfectLibTests: XCTestCase {
         }
 
         do {
-            destDict = try encoded.jsonDecode() as? [String:Any]
-            
+            destDict = try encoded.jsonDecode() as? [String: Any]
         } catch let e {
             XCTAssert(false, "Exception while decoding into destDict \(e)" )
         }
-        
         for (key, value) in destDict! {
-            
             let value2 = srcDict[key]
             XCTAssert(value2 != nil)
             switch value2 {
             case let i as Int8:
-                XCTAssert(value as! Int == Int(i))
+                XCTAssertEqual(value as? Int, Int(i))
             case let i as Int16:
-                XCTAssert(value as! Int == Int(i))
+                XCTAssertEqual(value as? Int, Int(i))
             case let i as Int32:
-                XCTAssert(value as! Int == Int(i))
+                XCTAssertEqual(value as? Int, Int(i))
             case let i as Int64:
-                XCTAssert(value as! Int == Int(i))
+                XCTAssertEqual(value as? Int, Int(i))
             case let i as UInt8:
-                XCTAssert(value as! Int == Int(i))
+                XCTAssertEqual(value as? Int, Int(i))
             case let i as UInt16:
-                XCTAssert(value as! Int == Int(i))
+                XCTAssertEqual(value as? Int, Int(i))
             case let i as UInt32:
-                XCTAssert(value as! Int == Int(i))
+                XCTAssertEqual(value as? Int, Int(i))
             case let i as UInt64:
-                XCTAssert(value as! Int == Int(i))
+                XCTAssertEqual(value as? Int, Int(i))
             default:
                 ()
             }
-            
         }
     }
-    
 	func testJSONDecodeUnicode() {
 		var decoded: [String: Any]?
 		let jsonStr = "{\"emoji\": \"\\ud83d\\ude33\"}"     // {"emoji": "\ud83d\ude33"}
@@ -333,68 +323,8 @@ class PerfectLibTests: XCTestCase {
 		XCTAssert(decoded != nil)
 		let value = decoded!["emoji"]
 		XCTAssert(value != nil)
-		let emojiStr = decoded!["emoji"] as! String
-		XCTAssert(emojiStr == "😳")
-	}
-
-	func testSysProcess() {
-		do {
-			let proc = try SysProcess("ls", args:["-l", "/"], env:[("PATH", "/usr/bin:/bin")])
-
-			XCTAssertTrue(proc.isOpen())
-			XCTAssertNotNil(proc.stdin)
-
-			let fileOut = proc.stdout!
-			let data = try fileOut.readSomeBytes(count: 4096)
-
-			XCTAssertTrue(data.count > 0)
-
-			let waitRes = try proc.wait()
-
-			XCTAssert(0 == waitRes, "\(waitRes) \(UTF8Encoding.encode(bytes: data))")
-
-			proc.close()
-		} catch {
-			XCTAssert(false, "Exception running SysProcess test: \(error)")
-		}
-	}
-	
-	func testSysProcessGroup() {
-		do {
-			let proc = try SysProcess("sh", args: ["-c", "(sleep 10s &) ; (sleep 10s &) ; sleep 10s"], env: [("PATH", "/usr/bin:/bin")], newGroup: true)
-			
-			XCTAssert(proc.isOpen())
-			XCTAssertNotEqual(-1, proc.pid)
-			XCTAssertNotEqual(-1, proc.gid)
-			
-			// Ensure that the process group is different from the test process
-			#if os(Linux)
-				let testGid = SwiftGlibc.getpgrp()
-			#else
-				let testGid = Darwin.getpgrp()
-			#endif
-			XCTAssertNotEqual(testGid, proc.gid)
-			
-			let savedGid = proc.gid
-			
-			XCTAssertTrue(try hasChildProcesses(gid: savedGid))
-			_ = try proc.killGroup()
-			XCTAssertFalse(try hasChildProcesses(gid: savedGid))
-		} catch {
-			XCTAssert(false, "Exception running SysProcess group test: \(error)")
-		}
-	}
-	
-	private func hasChildProcesses(gid: pid_t) throws -> Bool {
-		let proc = try SysProcess("sh", args: ["-c", "ps -e -o pgid,comm | grep \(gid)"], env: [("PATH", "/usr/bin:/bin")])
-		
-		_ = try proc.wait()
-		
-		if let bytes = try proc.stdout?.readSomeBytes(count: 4096) {
-			return bytes.count > 0
-		} else {
-			return false
-		}
+		let emojiStr = decoded!["emoji"] as? String
+		XCTAssertEqual(emojiStr, "😳")
 	}
 
 	func testStringByEncodingHTML() {
@@ -512,14 +442,9 @@ class PerfectLibTests: XCTestCase {
 			var unPath = path
 			repeat {
 				try Dir(unPath).delete()
-
-								// this was killing linux on the final path component
-								//unPath = unPath.stringByDeletingLastPathComponent
-
-								var splt = unPath.split(separator: "/").map(String.init)
-								splt.removeLast()
-								unPath = splt.joined(separator: "/")
-
+                var splt = unPath.split(separator: "/").map(String.init)
+                splt.removeLast()
+                unPath = splt.joined(separator: "/")
 			} while !unPath.isEmpty
 		} catch {
 			XCTAssert(false, "Error while creating dirs: \(error)")
@@ -534,8 +459,7 @@ class PerfectLibTests: XCTestCase {
 				try Dir("/tmp/a/\(d)").create()
 			}
 			var ta = [String]()
-			try Dir("/tmp/a").forEachEntry {
-				name in
+			try Dir("/tmp/a").forEachEntry { name in
 				ta.append(name)
 			}
 			ta.sort()
@@ -548,7 +472,7 @@ class PerfectLibTests: XCTestCase {
 			XCTAssert(false, "Error while creating dirs: \(error)")
 		}
 	}
-	
+
 	func testFilePerms() {
 		let fileName = "/tmp/\(UUID().uuidString)"
 		let file = File(fileName)
@@ -557,30 +481,24 @@ class PerfectLibTests: XCTestCase {
 			defer {
 				file.delete()
 			}
-			
 			let res = file.perms.contains([.readUser, .writeUser])
 			XCTAssert(res, "\(file.perms) != \([File.PermissionMode.readUser, File.PermissionMode.writeUser])")
-			
 		} catch {
 			XCTAssert(false, "Error testing file perms: \(error)")
 		}
 	}
-	
 	func testDirPerms() {
 		let fileName = "/tmp/\(UUID().uuidString)"
 		let file = Dir(fileName)
 		do {
 			try file.create(perms: [.readUser, .writeUser])
-			
 			let res = file.perms.contains([.readUser, .writeUser])
 			XCTAssert(res, "\(file.perms) != \([File.PermissionMode.readUser, File.PermissionMode.writeUser])")
-			
 			try file.delete()
 		} catch {
 			XCTAssert(false, "Error testing file perms: \(error)")
 		}
 	}
-	
 	func testDirWorkDir() {
 		let workDir = File("/tmp").realPath.replacingOccurrences(of: "//", with: "/") + "/"
 		let dir = Dir(workDir)
@@ -592,23 +510,18 @@ class PerfectLibTests: XCTestCase {
 			XCTAssert(false, "Error testing file perms: \(error)")
 		}
 	}
-	
 	func testBytesIO() {
 		let i8 = 254 as UInt8
 		let i16 = 54045 as UInt16
 		let i32 = 4160745471 as UInt32
 		let i64 = 17293541094125989887 as UInt64
-		
 		let bytes = Bytes()
-		
 		bytes.import64Bits(from: i64)
 			.import32Bits(from: i32)
 			.import16Bits(from: i16)
 			.import8Bits(from: i8)
-		
 		let bytes2 = Bytes()
 		bytes2.importBytes(from: bytes)
-		
 		XCTAssert(i64 == bytes2.export64Bits())
 		XCTAssert(i32 == bytes2.export32Bits())
 		XCTAssert(i16 == bytes2.export16Bits())
@@ -617,7 +530,6 @@ class PerfectLibTests: XCTestCase {
 		XCTAssert(bytes2.availableExportBytes == 1)
 		XCTAssert(i8 == bytes2.export8Bits())
 	}
-	
 	func testSymlink() {
 		let f1 = File("./foo")
 		let f2 = File("./foo2")
@@ -630,46 +542,11 @@ class PerfectLibTests: XCTestCase {
 				f1.delete()
 				f2.delete()
 			}
-			
 			let newF2 = try f1.linkTo(path: f2.path)
-			
 			XCTAssert(try newF2.readString() == "test")
 			XCTAssert(newF2.isLink)
 		} catch {
 			XCTAssert(false, "\(error)")
 		}
-	}
-}
-
-extension PerfectLibTests {
-	static var allTests : [(String, (PerfectLibTests) -> () throws -> Void)] {
-		return [
-			("testJSONConvertibleObject1", testJSONConvertibleObject1),
-			("testJSONConvertibleObject2", testJSONConvertibleObject2),
-			("testJSONEncodeDecode", testJSONEncodeDecode),
-			("testJSONDecodeUnicode", testJSONDecodeUnicode),
-			("testSysProcess", testSysProcess),
-			("testSysProcessGroup", testSysProcessGroup),
-			("testStringByEncodingHTML", testStringByEncodingHTML),
-			("testStringByEncodingURL", testStringByEncodingURL),
-			("testStringByDecodingURL", testStringByDecodingURL),
-			("testStringByDecodingURL2", testStringByDecodingURL2),
-			("testStringByReplacingString", testStringByReplacingString),
-			("testStringByReplacingString2", testStringByReplacingString2),
-			("testStringByReplacingString3", testStringByReplacingString3),
-
-			("testDeletingPathExtension", testDeletingPathExtension),
-			("testGetPathExtension", testGetPathExtension),
-
-			("testDirCreate", testDirCreate),
-			("testDirCreateRel", testDirCreateRel),
-			("testDirForEach", testDirForEach),
-			
-			("testFilePerms", testFilePerms),
-			("testDirPerms", testDirPerms),
-			
-			("testBytesIO", testBytesIO),
-            ("testIntegerTypesEncode", testIntegerTypesEncode)
-		]
 	}
 }

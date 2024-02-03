@@ -17,6 +17,7 @@ DerivedData
 *.ipa
 *.xcuserstate
 *.xcscmblueprint
+*.resolved
 
 # CocoaPods
 #
@@ -54,5 +55,12 @@ PerfectServer/perfectserverhttp
 # SwiftPM
 .build/
 Packages/
-PerfectLib.xcodeproj/
+*.xcodeproj/
 docs/
+.swiftpm/
+smtp.test.json
+
+.vscode/
+*.json
+*.pem
+*.sqlite*

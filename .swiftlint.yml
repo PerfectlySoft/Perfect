@@ -1,0 +1,32 @@
+cyclomatic_complexity:
+  - 64 # warning
+  - 128 # error
+file_length:
+  - 2048 # warning
+  - 4096 # error
+function_body_length:
+  - 128 # warning
+  - 256 # error
+line_length:
+  - 256 # warning
+  - 512 # error
+type_body_length:
+  - 512 # warning
+  - 1024 # error
+disabled_rules:
+  - empty_enum_arguments
+  - function_parameter_count
+  - identifier_name
+  - inclusive_language
+  - large_tuple
+  - multiple_closures_with_trailing_closure
+  - nesting
+  - redundant_optional_initialization
+  - syntactic_sugar
+  - unused_optional_binding
+  - vertical_parameter_alignment
+  - void_return
+excluded:
+  - .build/
+  - Sources/PerfectHTTP/Mime*.swift
+  - Sources/PerfectHTTPServer/HTTP2/HPACK.swift
