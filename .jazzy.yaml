@@ -1,8 +1,0 @@
-module: PerfectLib
-author: PerfectlySoft
-author_url: https://perfect.org
-github_url: https://github.com/PerfectlySoft/Perfect
-copyright: '© 2016 PerfectlySoft Inc. and the Perfect project authors'
-theme: fullwidth
-xcodebuild_arguments: [-target, PerfectLib, -toolchain, org.swift.3020160620a]
-clean: true
